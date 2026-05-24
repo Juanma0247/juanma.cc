@@ -1,0 +1,13 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro'
+import GameCard from '../../components/cards/GameCard.astro'
+import games from '../../data/games.json'
+---
+
+<MainLayout title="Games">
+  <div class="selecccion selectionCards">
+    {games.map(g => (
+      <GameCard slug={g.slug} title={g.title} image={g.image} />
+    ))}
+  </div>
+</MainLayout>

@@ -1,0 +1,12 @@
+runConfig:
+  runtime: nodejs20
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+  maxInstances: 2
+  minInstances: 0
+  environmentVariables:
+    - variable: HOST
+      value: 0.0.0.0
+      availability:
+        - RUNTIME

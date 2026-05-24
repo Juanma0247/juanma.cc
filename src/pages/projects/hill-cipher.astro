@@ -1,0 +1,80 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro'
+---
+
+<MainLayout title="Hill Cipher">
+  <h1 class="subtitulo">Hill Cipher</h1>
+
+  <div class="input-group">
+    <input id="p1i1" required type="text" />
+    <label class="user-label">Alphabet</label>
+  </div>
+  <div class="input-group">
+    <input id="p1i2" required type="text" />
+    <label class="user-label">Key text</label>
+    <p class="p1Error" id="p1e1"></p>
+  </div>
+  <div class="input-group">
+    <input id="p1i3" required type="text" />
+    <label class="user-label">Text to encrypt or decrypt</label>
+  </div>
+
+  <div class="center">
+    <p style="margin-left: 15px; margin-right: 15px">Encrypted text</p>
+    <input class="resultado" id="p1r1" placeholder="..." />
+  </div>
+  <div class="center">
+    <p style="margin-left: 15px; margin-right: 15px">Decrypted text</p>
+    <input class="resultado" id="p1r2" placeholder="..." />
+  </div>
+
+  <div class="p1ContOptions">
+    <h2 id="p1Introduction" class="p1Option">Introduction</h2>
+    <h2 id="p1Instructions" class="p1Option">Instructions</h2>
+    <h2 id="p1Process" class="p1Option">Process</h2>
+  </div>
+
+  <div id="p1ContIntroduction" style="display: none;">
+    <p class="p1Descripcion">
+      The Hill cipher is a cryptographic method developed by mathematician Lester S. Hill in 1929.
+      It is based on linear algebra and uses matrices to transform blocks of plaintext into ciphertext.
+    </p>
+  </div>
+
+  <div id="p1ContInstructions" style="display: none;">
+    <p class="p1Descripcion">
+      1. Define your alphabet in the first field.<br />
+      2. Enter a key text (at least 4 characters). The matrix size is derived from the square root of its length.<br />
+      3. Enter the text you want to encrypt or decrypt.<br />
+      4. The results appear automatically.
+    </p>
+  </div>
+
+  <div id="p1ContProcess" style="display: none;">
+    <h3 class="latex">Character table</h3>
+    <div id="p1TablaDeCaracteres" class="latex"></div>
+    <h3 class="latex">Cipher matrix (MC)</h3>
+    <div id="p1MatrizDeCifrado" class="latex"></div>
+    <h3 class="latex">Message matrices</h3>
+    <div id="p1Matries" class="latex"></div>
+    <h3 class="latex">MC × Matrices</h3>
+    <div id="p1MCPorMatrices" class="latex"></div>
+    <h3 class="latex">MC inverse</h3>
+    <div id="p1MCInversa" class="latex"></div>
+    <h3 class="latex">MC⁻¹ × Matrices</h3>
+    <div id="p1MCIPorMatrices" class="latex"></div>
+  </div>
+
+  <div class="spaceBottom"></div>
+</MainLayout>
+
+<style>
+  @import '../../styles/sections/projects.css';
+</style>
+
+<script>
+  import HillCipher from '../../lib/projects/HillCipher.js'
+  const p1 = new HillCipher()
+  p1.starter()
+  p1.main()
+</script>

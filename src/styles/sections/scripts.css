@@ -1,0 +1,36 @@
+pre {
+  margin-top: 0.625rem;
+  tab-size: 2;
+}
+
+.codigo { margin-left: 0.9375rem; }
+
+code { border-radius: 0.625rem; width: max-content; }
+
+.codes { color: var(--c2); width: 100%; }
+
+.bCode {
+  background-color: var(--c3);
+  border-radius: 10rem;
+  padding: 0.625rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-left: calc(100% - 4rem);
+  margin-top: -3.2rem;
+  cursor: pointer;
+}
+
+.tCode { width: calc(100% - 40px); }
+.bCode:hover { background-color: var(--c4); }
+
+.pCodigos {
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  margin-left: 1.8rem;
+}
+
+.aLink { cursor: pointer; margin-left: 1rem; }
+.buttonsCodes { margin-top: 1rem; margin-left: 1.8rem; }
+.auxCode { margin-top: 1.2rem; margin-left: 1.4rem; }
+.icoTitle { margin-left: .6rem; margin-top: .4rem; width: 1.6rem; }
+.buttonSpace { height: 2rem; }

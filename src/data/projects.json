@@ -1,0 +1,98 @@
+[
+  {
+    "slug": "recursive-concat",
+    "title": "Concat. Recur.",
+    "image": "p16.png",
+    "order": 16
+  },
+  {
+    "slug": "sigma-star-enum",
+    "title": "Enumeración de Σ*",
+    "image": "p15.png",
+    "order": 15
+  },
+  {
+    "slug": "regular-expressions",
+    "title": "Expresiones R.",
+    "image": "p14.png",
+    "order": 14
+  },
+  {
+    "slug": "cross-matrix",
+    "title": "Cross matrix",
+    "image": "p13.png",
+    "order": 13
+  },
+  {
+    "slug": "sorting",
+    "title": "Sorting",
+    "image": "p12.png",
+    "order": 12
+  },
+  {
+    "slug": "fractal",
+    "title": "Fanctal",
+    "image": "p11.png",
+    "order": 11
+  },
+  {
+    "slug": "bernoulli",
+    "title": "Bernoulli",
+    "image": "p10.png",
+    "order": 10
+  },
+  {
+    "slug": "chi-squared",
+    "title": "F.D. χ²",
+    "image": "p9.png",
+    "order": 9
+  },
+  {
+    "slug": "t-student",
+    "title": "F.D. T-Student",
+    "image": "p8.png",
+    "order": 8
+  },
+  {
+    "slug": "normal-distribution",
+    "title": "F.D. Normal",
+    "image": "p7.png",
+    "order": 7
+  },
+  {
+    "slug": "ruffini",
+    "title": "Ruffini",
+    "image": "p6.png",
+    "order": 6
+  },
+  {
+    "slug": "fractions",
+    "title": "Fractions",
+    "image": "p5.png",
+    "order": 5
+  },
+  {
+    "slug": "voice",
+    "title": "Voice",
+    "image": "p4.png",
+    "order": 4
+  },
+  {
+    "slug": "cantor-sets",
+    "title": "S.E. Cantor",
+    "image": "p3.png",
+    "order": 3
+  },
+  {
+    "slug": "sets",
+    "title": "Sets",
+    "image": "p2.png",
+    "order": 2
+  },
+  {
+    "slug": "hill-cipher",
+    "title": "Cifrado Hill",
+    "image": "p1.png",
+    "order": 1
+  }
+]

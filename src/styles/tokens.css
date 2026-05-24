@@ -1,0 +1,40 @@
+@font-face {
+  font-family: jBM;
+  src: url('/font/jetBrainsMono.ttf');
+  font-weight: bold;
+}
+@font-face {
+  font-family: ps;
+  src: url('/font/productSans.ttf');
+  font-weight: normal;
+}
+@font-face {
+  font-family: ps_b;
+  src: url('/font/productSans_bold.ttf');
+  font-weight: bold;
+}
+@font-face {
+  font-family: ps_l;
+  src: url('/font/productSans_light.ttf');
+  font-weight: light;
+}
+@font-face {
+  font-family: iF;
+  src: url('/font/indieFlower.ttf');
+}
+@font-face {
+  font-family: cC;
+  src: url('/font/cascadiaCode.ttf');
+}
+@font-face {
+  font-family: cmunrm;
+  src: url('/font/cmunrm.ttf');
+}
+
+:root {
+  --c1: #008888;
+  --c2: #000000;
+  --c3: #ffffff;
+  --c4: #888888;
+  --ct: #00000000;
+}

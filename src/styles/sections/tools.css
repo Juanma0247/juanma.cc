@@ -1,0 +1,19 @@
+.bCopyCoordsMinecraft {
+  background-color: var(--c3);
+  border-radius: 10rem;
+  padding: 0.625rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 5rem;
+  margin-top: .6rem;
+  cursor: pointer;
+}
+
+.bCopyCoordsMinecraft:hover { background-color: var(--c4); }
+.bCopyCoordsMinecraft:active { background-color: var(--c2); }
+
+.h3Metric {
+  background-color: var(--c1);
+  width: 8.6cm;
+  height: 5.4cm;
+}

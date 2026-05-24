@@ -1,0 +1,38 @@
+---
+import MainLayout from '../layouts/MainLayout.astro'
+---
+
+<MainLayout title="Contact">
+  <p class="textContacto">If you want to get in touch with me, feel free to reach out through any of the following channels.</p>
+  <div class="contContContacto">
+    <div class="contGmail gmailA">
+      <a href="mailto:juanmanueldiazgomez247@gmail.com">
+        <img class="gmail" src="/img/gmail.svg" alt="Gmail" />
+      </a>
+    </div>
+    <div class="contWhatsApp whatsAppA">
+      <a href="https://wa.me/573176322001" target="_blank">
+        <img class="whatsApp" src="/img/whatsapp.svg" alt="WhatsApp" />
+      </a>
+    </div>
+    <div class="contDiscord discordA">
+      <img class="discordImg" src="/img/discord.svg" alt="Discord" />
+      <div class="discrodInfoCont">
+        <p>juamdg</p>
+      </div>
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  @import '../styles/sections/contact.css';
+</style>
+
+<script>
+  const discordImg = document.querySelector('.discordImg') as HTMLElement
+  const discordInfo = document.querySelector('.discrodInfoCont') as HTMLElement
+
+  discordImg?.addEventListener('click', () => {
+    discordInfo.style.display = discordInfo.style.display === 'block' ? 'none' : 'block'
+  })
+</script>

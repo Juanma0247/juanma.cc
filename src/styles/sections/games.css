@@ -1,0 +1,94 @@
+@font-face {
+  font-family: mc;
+  src: url('/font/cmunrm.ttf');
+}
+
+.j1Cont { display: flex; justify-content: center; }
+
+.inputTreLine {
+  color: var(--c2);
+  cursor: pointer;
+  border-color: var(--c3);
+  padding: 0;
+  font-size: 2rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0;
+  text-align: center;
+}
+
+.tableTreLine { border-collapse: collapse; }
+.tableTreLine td { border-radius: 0; padding: 0; border-color: #00000000; }
+.vLine { border-right: 3px solid var(--c1); }
+.hLine { border-bottom: 3px solid var(--c1); }
+
+#j1contButtons { margin-top: 2rem; display: flex; justify-content: center; gap: 5rem; }
+.divElementCheck { display: flex; }
+
+@keyframes BGgradient {
+  0%   { background-position: 0% 200%; }
+  50%  { background-position: 200% 0%; }
+  100% { background-position: 0% 330%; }
+}
+
+.j3Grid {
+  padding-right: .3rem;
+  padding-bottom: .3rem;
+  border-radius: .5rem;
+  position: relative;
+  background: #000;
+}
+
+.j3Grid:before, .j3Grid:after {
+  content: '';
+  position: absolute;
+  left: -.1rem;
+  top: -.1rem;
+  background: linear-gradient(120deg, #fff, #008888, #fff, #008888, #fff, #008888, #fff, #008888);
+  background-size: 300%;
+  width: calc(100% + .1rem);
+  height: calc(100% + .1rem);
+  z-index: -1;
+  animation: BGgradient 15s ease infinite;
+  filter: blur(.3rem);
+}
+
+.j3GridLose:before, .j3GridLose:after {
+  background: linear-gradient(120deg, #fff, #ff3939, #fff, #ff0000, #fff, #ff0000, #fff, #ff3939);
+  background-size: 300%;
+  animation: BGgradient 15s ease infinite;
+  filter: blur(.3rem);
+}
+
+.j3GridWin:before, .j3GridWin:after {
+  background: linear-gradient(120deg, #fff, #39ff39, #fff, #00ff00, #fff, #00ff00, #fff, #39ff39);
+  background-size: 300%;
+  animation: BGgradient 15s ease infinite;
+  filter: blur(.3rem);
+}
+
+.j3Row { background-color: var(--ct); height: 1.8rem; display: flex; }
+
+.j3Element {
+  background-color: var(--c1);
+  height: 1.5rem;
+  width: 1.5rem;
+  margin-left: .3rem;
+  margin-top: .3rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  border-radius: .2rem;
+}
+
+.j3ElementValue { color: var(--c2); }
+.j3ElementMine { background-color: #00000000; height: 1.5rem; width: 1.5rem; }
+.j3ElementFlag { background-color: #00000000; }
+.auxIconSVG { width: 1.5rem; height: 1.5rem; }
+.j3PStatistics { color: var(--c1); opacity: .8; }
+
+.j4Grid { color: var(--c3); margin-top: 1rem; margin-left: 1rem; }
+.j4Row { display: flex; }
+.j4InternalGrid { background-color: var(--c2); margin: .1rem; border: 2px var(--c1) solid; border-radius: .2rem; }
+.j4InternalRow { display: flex; }
+.j4Element { text-align: center; justify-content: center; font-family: mc; background-color: var(--c2); height: 1.5rem; width: 1.5rem; margin: .1rem; border: 2px var(--c1) solid; border-radius: .2rem; font-size: 1.2rem; }

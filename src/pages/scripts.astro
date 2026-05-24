@@ -1,0 +1,33 @@
+---
+import MainLayout from '../layouts/MainLayout.astro'
+---
+
+<MainLayout title="Scripts">
+  <p class="pCodigos">If you want, you can access my small Python repository with:</p>
+  <button class="buttonsCodes" id="ccb1">Copy</button>
+  <a class="p aLink" href="https://juamdg.web.app/jm.py" target="_blank">https://juamdg.web.app/jm.py</a>
+  <br />
+  <p class="pCodigos">To install the file directly you can use:</p>
+  <div style="display: flex;">
+    <button class="buttonsCodes" style="margin-top: 1.5rem" id="ccb2">Copy</button>
+    <pre class="auxCode"><code class="language-python">exec(__import__('requests').get('https://juamdg.web.app/jm.py').text)</code></pre>
+  </div>
+  <p class="pCodigos">Some algorithms:</p>
+</MainLayout>
+
+<style>
+  @import '../styles/sections/scripts.css';
+</style>
+
+<script>
+  import hljs from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/es/highlight.min.js'
+  hljs.highlightAll()
+
+  document.getElementById('ccb1')?.addEventListener('click', () => {
+    navigator.clipboard.writeText('https://juamdg.web.app/jm.py')
+  })
+
+  document.getElementById('ccb2')?.addEventListener('click', () => {
+    navigator.clipboard.writeText("exec(__import__('requests').get('https://juamdg.web.app/jm.py').text)")
+  })
+</script>

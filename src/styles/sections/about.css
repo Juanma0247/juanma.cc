@@ -1,0 +1,75 @@
+.juanmaHead {
+  display: flex;
+  margin: 1rem;
+  text-align: left;
+}
+
+.contJuanmaHead {
+  float: left;
+  text-align: left;
+  margin-left: 0.9375rem;
+  margin-right: 0.9375rem;
+}
+
+.imgJuanmaHead {
+  float: right;
+  border-radius: 5px;
+  width: 250px;
+  display: none;
+}
+
+.pc4 { color: var(--c4); }
+
+.ico {
+  margin-top: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  width: 1.9rem;
+}
+
+.jt1 { font-size: 1.5rem; cursor: pointer; }
+
+.jt2 {
+  font-size: 1.3rem;
+  margin-left: 2rem;
+  cursor: pointer;
+  color: var(--c2);
+  margin-bottom: .5rem;
+}
+
+.contToPage {
+  display: flex;
+  padding-bottom: .5rem;
+}
+
+.aToPage {
+  background-color: var(--c2);
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  border-radius: .5rem;
+  padding-left: .5rem;
+  padding-right: .5rem;
+  height: 2.1rem;
+  margin-left: 3rem;
+  margin-top: .4rem;
+}
+
+.icoToPage { height: 1.2rem; }
+
+.pToPage {
+  color: var(--c3);
+  padding-left: .5rem;
+  padding-right: 5rem;
+  font-family: ps_l;
+  font-size: 1rem;
+}
+
+.xToPage { margin-top: .2rem; height: .9rem; }
+
+.myFaceImg {
+  width: 20rem;
+  opacity: 50%;
+  position: absolute;
+  right: -3rem;
+}

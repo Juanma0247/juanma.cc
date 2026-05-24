@@ -1,0 +1,32 @@
+[
+  {
+    "slug": "tic-tac-toe",
+    "title": "Tic-Tac-Toe",
+    "image": "j1.png",
+    "order": 1
+  },
+  {
+    "slug": "game-2",
+    "title": "Game 2",
+    "image": "j3.png",
+    "order": 2
+  },
+  {
+    "slug": "minesweeper",
+    "title": "Minesweeper",
+    "image": "j3.png",
+    "order": 3
+  },
+  {
+    "slug": "sudoku",
+    "title": "Sudoku",
+    "image": "j3.png",
+    "order": 4
+  },
+  {
+    "slug": "game-5",
+    "title": "Game 5",
+    "image": "j3.png",
+    "order": 5
+  }
+]

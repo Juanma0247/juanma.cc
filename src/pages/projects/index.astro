@@ -1,0 +1,13 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro'
+import ProjectCard from '../../components/cards/ProjectCard.astro'
+import projects from '../../data/projects.json'
+---
+
+<MainLayout title="Projects">
+  <div class="selecccion selectionCards">
+    {projects.map(p => (
+      <ProjectCard slug={p.slug} title={p.title} image={p.image} />
+    ))}
+  </div>
+</MainLayout>

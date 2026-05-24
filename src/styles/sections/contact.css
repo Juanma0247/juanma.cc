@@ -1,0 +1,28 @@
+.textContacto {
+  color: var(--c2);
+  font-size: 1.2rem;
+  margin-left: 1rem;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+.contContContacto {
+  display: flex;
+  margin-left: 2rem;
+}
+
+.contGmail, .contWhatsApp, .contDiscord {
+  display: flex;
+  cursor: pointer;
+}
+
+.contWhatsApp, .contDiscord { margin-left: 5rem; }
+
+.discrodInfoCont {
+  position: absolute;
+  left: 35rem;
+  top: 5rem;
+  display: none;
+}
+
+.discordImg { cursor: pointer; }

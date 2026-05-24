@@ -1,0 +1,29 @@
+---
+import MainLayout from '../layouts/MainLayout.astro'
+---
+
+<MainLayout title="">
+  <div class="home-wrapper">
+    <div class="bHomeCont">
+      <a href="/about"    class="bHome"><i data-feather="user"></i><span>About me</span></a>
+      <a href="/projects" class="bHome"><i data-feather="folder"></i><span>Projects</span></a>
+      <a href="/tools"    class="bHome"><i data-feather="tool"></i><span>Tools</span></a>
+      <a href="/scripts"  class="bHome"><i data-feather="code"></i><span>Codes</span></a>
+      <a href="/contact"  class="bHome"><i data-feather="message-circle"></i><span>Contacts</span></a>
+      <a href="/games"    class="bHome"><i data-feather="pie-chart"></i><span>Games</span></a>
+    </div>
+    <div class="center spamHomeTop">
+      <img class="icoSpamHomeTop" src="/img/favicon.svg" alt="logo" />
+      <p class="titleSpamHomeTop">jm-247.web.app</p>
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  @import '../styles/sections/home.css';
+
+  .home-wrapper {
+    position: relative;
+    height: calc(100vh - 3rem);
+  }
+</style>

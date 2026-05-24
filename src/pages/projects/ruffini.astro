@@ -1,0 +1,13 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro'
+---
+<MainLayout title="Ruffini">
+  <h1 class="subtitulo">Ruffini</h1>
+  <!-- TODO: Copy HTML content from old public/index.html -->
+  <div class="spaceBottom"></div>
+</MainLayout>
+<style>@import '../../styles/sections/projects.css';</style>
+<script>
+  import Cls from '../../lib/projects/Ruffini.js'
+  const p = new Cls(); p.starter?.(); p.main()
+</script>

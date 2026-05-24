@@ -1,0 +1,59 @@
+.bHomeCont {
+  position: absolute;
+  right: .7rem;
+  top: .35rem;
+  display: flex;
+}
+
+.bHome {
+  margin-left: .8rem;
+  margin-top: .8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.bHome svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.bHome span {
+  margin-left: .5rem;
+  opacity: 0;
+  transform: translateX(calc(100% + 20rem));
+  transition: opacity 0.8s ease, transform 0.3s ease;
+  white-space: nowrap;
+  pointer-events: none;
+  position: absolute;
+  left: -2.2rem;
+  top: 2rem;
+}
+
+.bHome:hover span {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.spamHomeTop {
+  display: flex;
+  flex-wrap: wrap;
+  position: absolute;
+  top: 1rem;
+  left: .8rem;
+}
+
+.icoSpamHomeTop {
+  width: 2rem;
+  cursor: not-allowed;
+}
+
+.titleSpamHomeTop {
+  font-size: 1.3rem;
+  color: var(--c1);
+  margin-left: .5rem;
+  cursor: not-allowed;
+}
