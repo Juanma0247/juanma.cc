@@ -44,9 +44,9 @@ class RegularExpressions {
     uppers.forEach(l => {
       if (!this.extraContainer.querySelector(`.p14alpha-group[data-letter="${l}"]`)) {
         const div = document.createElement("div")
-        div.className    = "input-group p14alpha-group"
+        div.className    = "field p14alpha-group"
         div.dataset.letter = l
-        div.innerHTML    = `<input id="p14alpha_${l}" autocomplete="off" required="" value=""><label class="user-label">Alphabet for ${l}</label>`
+        div.innerHTML    = `<input id="p14alpha_${l}" autocomplete="off" required="" value="" placeholder=" "><label class="field-label">Alphabet for ${l}</label>`
         this.extraContainer.appendChild(div)
         document.getElementById(`p14alpha_${l}`)
           .addEventListener("input", () => this.schedulePreview())

@@ -32,7 +32,8 @@ const pageTitle = title ? `${title} — Juanma` : 'Juanma'
     <script is:inline>
       ;(function () {
         var cached = localStorage.getItem('site-default-landing')
-        if (cached && cached !== '/' && window.location.pathname === '/') {
+        if (cached && cached !== '/' && window.location.pathname === '/' && !sessionStorage.getItem('landing-done')) {
+          sessionStorage.setItem('landing-done', '1')
           window.location.replace(cached)
         }
       })()
@@ -109,9 +110,9 @@ const pageTitle = title ? `${title} — Juanma` : 'Juanma'
       else window.addEventListener('load', () => feather?.replace())
 
       document.addEventListener('click', e => {
-        const btn = (e.target as Element).closest<HTMLElement>('.fcs-spin [data-step]')
+        const btn = (e.target as Element).closest<HTMLElement>('.spin [data-step]')
         if (!btn) return
-        const input = btn.closest('.fcs-number-wrap')?.querySelector<HTMLInputElement>('input')
+        const input = btn.closest('.number-wrap')?.querySelector<HTMLInputElement>('input')
         if (!input) return
         input[btn.dataset.step === 'up' ? 'stepUp' : 'stepDown']()
         input.dispatchEvent(new Event('input', { bubbles: true }))
@@ -121,11 +122,14 @@ const pageTitle = title ? `${title} — Juanma` : 'Juanma'
     <script>
       import { getSettings, LANDING_CACHE_KEY } from '../lib/core/SiteSettings.js'
 
-      if (window.location.pathname === '/') {
+      if (window.location.pathname === '/' && !sessionStorage.getItem('landing-done')) {
         getSettings().then(s => {
           if (s?.defaultLanding) {
             localStorage.setItem(LANDING_CACHE_KEY, s.defaultLanding)
-            if (s.defaultLanding !== '/') window.location.replace(s.defaultLanding)
+            if (s.defaultLanding !== '/') {
+              sessionStorage.setItem('landing-done', '1')
+              window.location.replace(s.defaultLanding)
+            }
           }
         }).catch(() => {})
       }

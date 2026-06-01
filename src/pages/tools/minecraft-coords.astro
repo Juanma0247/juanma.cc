@@ -6,15 +6,15 @@ import ToolLayout from '../../layouts/ToolLayout.astro'
   <h1 class="subtitle" data-i18n="tools.minecraft.subtitle">Minecraft Coordinates</h1>
   <p class="description" data-i18n="tools.minecraft.desc">Convert between Overworld and Nether coordinates (× 8 / ÷ 8).</p>
 
-  <div class="input-group">
+  <div class="field">
     <input id="h2i1" required type="text" placeholder="100 64 200" />
-    <label class="user-label" data-i18n="tools.minecraft.coordsLabel">Coordinates (space-separated)</label>
+    <label class="field-label" data-i18n="tools.minecraft.coordsLabel">Coordinates (space-separated)</label>
   </div>
 
   <div class="result-row">
-    <div class="input-group result-group">
+    <div class="field result-group">
       <input id="h2r1" readonly type="text" data-i18n-placeholder="tools.minecraft.overworldToNether" placeholder="× 8 result" />
-      <label class="user-label" data-i18n="tools.minecraft.overworldToNether">Overworld → Nether (× 8)</label>
+      <label class="field-label" data-i18n="tools.minecraft.overworldToNether">Overworld → Nether (× 8)</label>
     </div>
     <button id="h2b1" class="btn-copy-coords" data-i18n-title="scripts.copy" title="Copy">
       <img src="/img/copy.svg" alt="Copy" width="24" height="24" />
@@ -22,9 +22,9 @@ import ToolLayout from '../../layouts/ToolLayout.astro'
   </div>
 
   <div class="result-row">
-    <div class="input-group result-group">
+    <div class="field result-group">
       <input id="h2r2" readonly type="text" data-i18n-placeholder="tools.minecraft.netherToOverworld" placeholder="÷ 8 result" />
-      <label class="user-label" data-i18n="tools.minecraft.netherToOverworld">Nether → Overworld (÷ 8)</label>
+      <label class="field-label" data-i18n="tools.minecraft.netherToOverworld">Nether → Overworld (÷ 8)</label>
     </div>
     <button id="h2b2" class="btn-copy-coords" data-i18n-title="scripts.copy" title="Copy">
       <img src="/img/copy.svg" alt="Copy" width="24" height="24" />

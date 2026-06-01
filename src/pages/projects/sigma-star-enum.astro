@@ -6,9 +6,9 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
     <h1 class="p15title subtitulo">Enumeration of Σ*</h1>
   </div>
   <div class="p15-controls">
-    <div class="input-group">
-      <input id="p15alphabet" autocomplete="off" required="" value="1 2 3 4 5 6 7 8 9 0">
-      <label class="user-label">Alphabet Σ (symbols separated by spaces)</label>
+    <div class="field">
+      <input id="p15alphabet" autocomplete="off" required="" value="1 2 3 4 5 6 7 8 9 0" placeholder=" ">
+      <label class="field-label">Alphabet Σ (symbols separated by spaces)</label>
     </div>
     <div class="p15-row">
       <div class="p15-select-wrap">
@@ -18,9 +18,9 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
         </select>
         <span class="p15-select-arrow">▾</span>
       </div>
-      <div class="input-group p15-query-group">
-        <input id="p15query" autocomplete="off" required="" value="1">
-        <label class="user-label" id="p15queryLabel">Number n ∈ ℕ</label>
+      <div class="field p15-query-group">
+        <input id="p15query" autocomplete="off" required="" value="1" placeholder=" ">
+        <label class="field-label" id="p15queryLabel">Number n ∈ ℕ</label>
       </div>
     </div>
   </div>

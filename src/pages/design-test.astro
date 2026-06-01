@@ -14,17 +14,17 @@ import MainLayout from '../layouts/MainLayout.astro'
     <section class="dt-section">
       <h2 class="dt-section-title"><span class="dt-num">01</span> Text Input · Floating Label</h2>
       <div class="dt-stack">
-        <div class="input-group dt-field">
+        <div class="field dt-field">
           <input type="text" placeholder=" " required />
-          <label class="user-label">Full name</label>
+          <label class="field-label">Full name</label>
         </div>
-        <div class="input-group dt-field">
+        <div class="field dt-field">
           <input type="email" placeholder=" " required value="hello@example.com" />
-          <label class="user-label">Email address</label>
+          <label class="field-label">Email address</label>
         </div>
-        <div class="input-group dt-field">
+        <div class="field dt-field">
           <input type="text" placeholder=" " disabled value="locked" />
-          <label class="user-label">Disabled field</label>
+          <label class="field-label">Disabled field</label>
         </div>
       </div>
     </section>
@@ -33,16 +33,16 @@ import MainLayout from '../layouts/MainLayout.astro'
     <section class="dt-section">
       <h2 class="dt-section-title"><span class="dt-num">02</span> Number · Custom Spinners</h2>
       <div class="dt-stack">
-        <div class="fcs-number-wrap dt-field">
-          <input type="number" class="fcs-number" value="8" min="0" max="100" />
-          <div class="fcs-spin">
+        <div class="number-wrap dt-field">
+          <input type="number" value="8" min="0" max="100" placeholder=" " />
+          <div class="spin">
             <button type="button" data-step="up" tabindex="-1">▲</button>
             <button type="button" data-step="down" tabindex="-1">▼</button>
           </div>
         </div>
-        <div class="fcs-number-wrap dt-field">
-          <input type="number" class="fcs-number" value="2.50" step="0.25" />
-          <div class="fcs-spin">
+        <div class="number-wrap dt-field">
+          <input type="number" value="2.50" step="0.25" placeholder=" " />
+          <div class="spin">
             <button type="button" data-step="up" tabindex="-1">▲</button>
             <button type="button" data-step="down" tabindex="-1">▼</button>
           </div>
@@ -55,26 +55,26 @@ import MainLayout from '../layouts/MainLayout.astro'
     <section class="dt-section">
       <h2 class="dt-section-title"><span class="dt-num">03</span> Checkbox · Drawn Check</h2>
       <div class="dt-stack">
-        <label class="fcs-checkbox">
+        <label class="checkbox">
           <input type="checkbox" checked />
-          <span class="fcs-box">
+          <span class="box">
             <svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg>
           </span>
-          <span class="fcs-checkbox-label">Email me about new work</span>
+          <span class="checkbox-label">Email me about new work</span>
         </label>
-        <label class="fcs-checkbox">
+        <label class="checkbox">
           <input type="checkbox" />
-          <span class="fcs-box">
+          <span class="box">
             <svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg>
           </span>
-          <span class="fcs-checkbox-label">Share analytics</span>
+          <span class="checkbox-label">Share analytics</span>
         </label>
-        <label class="fcs-checkbox">
+        <label class="checkbox">
           <input type="checkbox" checked disabled />
-          <span class="fcs-box">
+          <span class="box">
             <svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg>
           </span>
-          <span class="fcs-checkbox-label">Required (disabled)</span>
+          <span class="checkbox-label">Required (disabled)</span>
         </label>
       </div>
     </section>
@@ -82,21 +82,21 @@ import MainLayout from '../layouts/MainLayout.astro'
     <!-- ── 04 · Radio ────────────────────────────────────────── -->
     <section class="dt-section">
       <h2 class="dt-section-title"><span class="dt-num">04</span> Radio · Scale-In Dot</h2>
-      <div class="fcs-radio-group">
-        <label class="fcs-radio">
+      <div class="radio-group">
+        <label class="radio">
           <input type="radio" name="dt-plan" checked />
-          <span class="fcs-dot"></span>
-          <span class="fcs-radio-label">Minimal</span>
+          <span class="dot"></span>
+          <span class="radio-label">Minimal</span>
         </label>
-        <label class="fcs-radio">
+        <label class="radio">
           <input type="radio" name="dt-plan" />
-          <span class="fcs-dot"></span>
-          <span class="fcs-radio-label">Standard</span>
+          <span class="dot"></span>
+          <span class="radio-label">Standard</span>
         </label>
-        <label class="fcs-radio">
+        <label class="radio">
           <input type="radio" name="dt-plan" disabled />
-          <span class="fcs-dot"></span>
-          <span class="fcs-radio-label">Enterprise (disabled)</span>
+          <span class="dot"></span>
+          <span class="radio-label">Enterprise (disabled)</span>
         </label>
       </div>
     </section>
@@ -105,15 +105,19 @@ import MainLayout from '../layouts/MainLayout.astro'
     <section class="dt-section">
       <h2 class="dt-section-title"><span class="dt-num">05</span> Select · Custom Arrow</h2>
       <div class="dt-stack">
-        <select class="dt-field">
-          <option>Product design</option>
-          <option>Brand &amp; identity</option>
-          <option>Front-end engineering</option>
-          <option>Motion &amp; interaction</option>
-        </select>
-        <select class="dt-field" disabled>
-          <option>Unavailable</option>
-        </select>
+        <div class="select-wrap dt-field">
+          <select>
+            <option>Product design</option>
+            <option>Brand &amp; identity</option>
+            <option>Front-end engineering</option>
+            <option>Motion &amp; interaction</option>
+          </select>
+        </div>
+        <div class="select-wrap dt-field">
+          <select disabled>
+            <option>Unavailable</option>
+          </select>
+        </div>
       </div>
     </section>
 

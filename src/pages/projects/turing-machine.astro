@@ -11,29 +11,33 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
 
     <div class="tm-field">
       <label class="tm-label" for="tm-examples">Example</label>
-      <select id="tm-examples"></select>
+      <div class="select-wrap">
+        <select id="tm-examples"></select>
+      </div>
     </div>
 
-    <div class="input-group tm-alphabet-group">
-      <input id="tm-alphabet" autocomplete="off" required value="1 0 a">
-      <label class="user-label">Alphabet Σ (space-separated)</label>
+    <div class="field tm-alphabet-group">
+      <input id="tm-alphabet" autocomplete="off" required value="1 0 a" placeholder=" ">
+      <label class="field-label">Alphabet Σ (space-separated)</label>
     </div>
 
-    <div class="input-group">
-      <input id="tm-tape-input" autocomplete="off" required value="11010011">
-      <label class="user-label">Initial tape</label>
+    <div class="field">
+      <input id="tm-tape-input" autocomplete="off" required value="11010011" placeholder=" ">
+      <label class="field-label">Initial tape</label>
     </div>
 
     <div class="tm-field">
       <label class="tm-label" for="tm-init-state">Start state</label>
-      <select id="tm-init-state"></select>
+      <div class="select-wrap">
+        <select id="tm-init-state"></select>
+      </div>
     </div>
 
     <div class="tm-field">
       <label class="tm-label" for="tm-max-steps">Max steps</label>
-      <div class="fcs-number-wrap" style="width:6rem">
-        <input id="tm-max-steps" type="number" class="fcs-number" min="100" max="100000" value="5000">
-        <div class="fcs-spin">
+      <div class="number-wrap" style="width:6rem">
+        <input id="tm-max-steps" type="number" min="100" max="100000" value="5000" placeholder=" ">
+        <div class="spin">
           <button data-step="up">▲</button>
           <button data-step="down">▼</button>
         </div>
@@ -43,7 +47,7 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
     <!-- 9 · Import button -->
     <div class="tm-field">
       <label class="tm-label">Import JSON</label>
-      <button id="tm-btn-import" class="fcs-btn tm-io-btn" title="Load machine from JSON file">
+      <button id="tm-btn-import" class="tm-io-btn" title="Load machine from JSON file">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M8 2v9M4 8l4 5 4-5"/><rect x="2" y="12" width="12" height="3" rx="1"/>
         </svg>
@@ -69,14 +73,14 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
       <span class="tm-format-hint">Format: <code>symbol Direction state</code> — e.g. <code>1Rq0</code> &nbsp;·&nbsp; <code>#Lq2</code> &nbsp;·&nbsp; <code>aRq1</code></span>
       <div class="tm-card-actions">
         <!-- Clear table -->
-        <button id="tm-btn-clear" class="fcs-btn tm-io-btn" title="Clear all transition instructions">
+        <button id="tm-btn-clear" class="tm-io-btn" title="Clear all transition instructions">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M2 4h12M5 4V2h6v2M6 7v6M10 7v6"/><path d="M3 4l1 10h8l1-10"/>
           </svg>
           Clear
         </button>
         <!-- 9 · Export -->
-        <button id="tm-btn-export" class="fcs-btn tm-io-btn" title="Export machine as JSON">
+        <button id="tm-btn-export" class="tm-io-btn" title="Export machine as JSON">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M8 11V2M4 5l4-4 4 4"/><rect x="2" y="12" width="12" height="3" rx="1"/>
           </svg>
@@ -86,10 +90,10 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
         <button class="tm-help-btn" data-theory="table" title="Theory: instructions & final combinations">?</button>
         <!-- State management -->
         <div class="tm-state-btns">
-          <button id="tm-add-state" class="fcs-btn is-icon" title="Add state">
+          <button id="tm-add-state" class="is-icon" title="Add state">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
           </button>
-          <button id="tm-remove-state" class="fcs-btn is-icon" title="Remove last state">
+          <button id="tm-remove-state" class="is-icon" title="Remove last state">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="8" x2="14" y2="8"/></svg>
           </button>
         </div>
@@ -108,30 +112,30 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
 
     <!-- Controls -->
     <div class="tm-controls-bar">
-      <button id="tm-btn-reset" class="fcs-btn" title="Reset to initial configuration (R)">
+      <button id="tm-btn-reset" title="Reset to initial configuration (R)">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,7 1,1 7,1"/><path d="M1,1 C4,6 8,8 14,8 A6,6 0 1 1 8,2"/></svg>
         Reset
       </button>
-      <button id="tm-btn-back" class="fcs-btn" title="Step back (←)" disabled>
+      <button id="tm-btn-back" title="Step back (←)" disabled>
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13 2v12l-9-6 9-6zM2 2v12"/></svg>
         Back<span id="tm-back-count" class="tm-back-count"></span>
       </button>
-      <button id="tm-btn-step" class="fcs-btn">
+      <button id="tm-btn-step">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2v12l9-6L3 2zm11 0v12"/></svg>
         Step
       </button>
-      <button id="tm-btn-play" class="fcs-btn is-solid">
+      <button id="tm-btn-play" class="is-solid">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2l10 6-10 6V2z"/></svg>
         Play
       </button>
-      <button id="tm-btn-pause" class="fcs-btn" disabled>
+      <button id="tm-btn-pause" disabled>
         <svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2" width="4" height="12"/><rect x="9" y="2" width="4" height="12"/></svg>
         Pause
       </button>
 
       <div class="tm-speed-wrap">
         <span class="tm-speed-text">Speed</span>
-        <input type="range" id="tm-speed" class="fcs-range" min="1" max="20" value="5">
+        <input type="range" id="tm-speed" min="1" max="20" value="5">
         <span id="tm-speed-label" class="tm-speed-val">5×</span>
       </div>
 
@@ -218,7 +222,7 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   <aside id="tm-theory-panel" class="tm-theory-panel" aria-hidden="true">
     <div class="tm-theory-header">
       <span id="tm-theory-title" class="tm-theory-title"></span>
-      <button id="tm-theory-close" class="fcs-btn is-icon" title="Close">
+      <button id="tm-theory-close" class="is-icon" title="Close">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <line x1="2" y1="2" x2="14" y2="14"/>
           <line x1="14" y1="2" x2="2" y2="14"/>

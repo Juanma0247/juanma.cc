@@ -6,30 +6,30 @@ import GameLayout from '../../layouts/GameLayout.astro'
   <h2 id="j3t1" class="subtitle" data-i18n="games.minesweeper.subtitle">Minesweeper</h2>
 
   <div class="mine-options">
-    <div class="input-group">
-      <div class="fcs-number-wrap">
-        <input id="j3i1" type="number" class="fcs-number" required />
-        <div class="fcs-spin">
+    <div class="field">
+      <div class="number-wrap">
+        <input id="j3i1" type="number" required placeholder=" " />
+        <div class="spin">
           <button type="button" data-step="up" tabindex="-1">▲</button>
           <button type="button" data-step="down" tabindex="-1">▼</button>
         </div>
       </div>
-      <label class="user-label" data-i18n="games.minesweeper.height">Height</label>
+      <label class="field-label" data-i18n="games.minesweeper.height">Height</label>
     </div>
-    <div class="input-group">
-      <div class="fcs-number-wrap">
-        <input id="j3i2" type="number" class="fcs-number" required />
-        <div class="fcs-spin">
+    <div class="field">
+      <div class="number-wrap">
+        <input id="j3i2" type="number" required placeholder=" " />
+        <div class="spin">
           <button type="button" data-step="up" tabindex="-1">▲</button>
           <button type="button" data-step="down" tabindex="-1">▼</button>
         </div>
       </div>
-      <label class="user-label" data-i18n="games.minesweeper.width">Width</label>
+      <label class="field-label" data-i18n="games.minesweeper.width">Width</label>
     </div>
     <button id="j3b1" data-i18n="games.minesweeper.newGame">New Game</button>
-    <div class="input-group">
-      <input id="j3i3" type="text" required />
-      <label class="user-label" data-i18n="games.minesweeper.playerId">Player ID</label>
+    <div class="field">
+      <input id="j3i3" type="text" required placeholder=" " />
+      <label class="field-label" data-i18n="games.minesweeper.playerId">Player ID</label>
     </div>
     <button id="j3b2" data-i18n="games.minesweeper.load">Load</button>
     <button id="j3p3" data-i18n="games.minesweeper.register">Register</button>
@@ -45,13 +45,13 @@ import GameLayout from '../../layouts/GameLayout.astro'
   <div class="mine-grid"></div>
 
   <div class="mine-new-game" style="display:none">
-    <div class="input-group">
-      <input id="j3ngi1" type="text" required />
-      <label class="user-label" data-i18n="games.minesweeper.name">Name</label>
+    <div class="field">
+      <input id="j3ngi1" type="text" required placeholder=" " />
+      <label class="field-label" data-i18n="games.minesweeper.name">Name</label>
     </div>
-    <div class="input-group">
-      <input id="j3ngi2" type="text" maxlength="4" required />
-      <label class="user-label" data-i18n="games.minesweeper.digitCode">4-digit code</label>
+    <div class="field">
+      <input id="j3ngi2" type="text" maxlength="4" required placeholder=" " />
+      <label class="field-label" data-i18n="games.minesweeper.digitCode">4-digit code</label>
     </div>
     <button id="j3ngb1" data-i18n="games.minesweeper.register">Register</button>
   </div>

@@ -186,9 +186,11 @@
   color: color-mix(in srgb, var(--color-bg) 55%, transparent);
   cursor: pointer;
   transition: color 160ms;
+  text-decoration: none;
 }
 
-.topbar__settings:hover {
+.topbar__settings:hover,
+.topbar__settings--active {
   color: var(--color-bg);
 }
 

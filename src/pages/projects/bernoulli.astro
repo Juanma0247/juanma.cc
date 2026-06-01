@@ -6,19 +6,19 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   <div style="display: flex; flex-wrap: wrap;">
     <div id="p10ggbContainer" class="ggbContainer"></div>
     <div id="p10CalcContainer" class="calcContainer">
-      <div class="input-group">
-        <div class="fcs-number-wrap">
-          <input id="p10i1" required="" type="number" class="fcs-number" value="21">
-          <div class="fcs-spin">
+      <div class="field">
+        <div class="number-wrap">
+          <input id="p10i1" required="" type="number" value="21" placeholder=" ">
+          <div class="spin">
             <button type="button" data-step="up" tabindex="-1">▲</button>
             <button type="button" data-step="down" tabindex="-1">▼</button>
           </div>
         </div>
-        <label class="user-label">\(n \in \mathbb&#123;N&#125;\)</label>
+        <label class="field-label">\(n \in \mathbb&#123;N&#125;\)</label>
       </div>
-      <div class="input-group">
-        <input id="p10i2" required="" pattern="^-?\d+([.]\d+)?$" inputmode="decimal" value="1">
-        <label class="user-label">\(a \in \mathbb&#123;R&#125;\)</label>
+      <div class="field">
+        <input id="p10i2" required="" pattern="^-?\d+([.]\d+)?$" inputmode="decimal" value="1" placeholder=" ">
+        <label class="field-label">\(a \in \mathbb&#123;R&#125;\)</label>
       </div>
       <div style="display: flex; margin-left: 1rem;">
         <label class="checkbox-container">
