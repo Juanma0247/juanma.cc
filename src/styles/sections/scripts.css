@@ -3,14 +3,25 @@ pre {
   tab-size: 2;
 }
 
-.codigo { margin-left: 0.9375rem; }
-
 code { border-radius: 0.625rem; width: max-content; }
 
-.codes { color: var(--c2); width: 100%; }
+/* Static HTML elements */
+.code-description {
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  margin-left: 1.8rem;
+}
+
+.code-link { cursor: pointer; margin-left: 1rem; }
+.code-actions { margin-top: 1rem; margin-left: 1.8rem; }
+.code-extra { margin-top: 1.2rem; margin-left: 1.4rem; }
+
+/* JS-created elements — keep original names */
+.codigo { margin-left: 0.9375rem; }
+.codes { color: var(--color-text); width: 100%; }
 
 .bCode {
-  background-color: var(--c3);
+  background-color: var(--color-bg);
   border-radius: 10rem;
   padding: 0.625rem;
   width: 1.5rem;
@@ -21,16 +32,6 @@ code { border-radius: 0.625rem; width: max-content; }
 }
 
 .tCode { width: calc(100% - 40px); }
-.bCode:hover { background-color: var(--c4); }
-
-.pCodigos {
-  font-size: 1.1rem;
-  margin-top: 1rem;
-  margin-left: 1.8rem;
-}
-
-.aLink { cursor: pointer; margin-left: 1rem; }
-.buttonsCodes { margin-top: 1rem; margin-left: 1.8rem; }
-.auxCode { margin-top: 1.2rem; margin-left: 1.4rem; }
+.bCode:hover { background-color: var(--color-muted); }
 .icoTitle { margin-left: .6rem; margin-top: .4rem; width: 1.6rem; }
 .buttonSpace { height: 2rem; }

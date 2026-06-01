@@ -1,0 +1,42 @@
+.p1Descripcion {
+  max-width: 32rem;
+  margin-left: 1rem;
+  font-size: 1.1rem;
+  border-radius: 4px;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.p1ContOptions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin: 1rem;
+}
+
+.p1Option {
+  font-family: ProductSansBold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--color-primary);
+  transition: all 0.3s ease;
+  padding: .5rem 1rem;
+  border-radius: .3rem;
+}
+
+.p1Option:hover { opacity: 0.8; }
+
+.p1OptionActive {
+  color: var(--color-text);
+  background-color: var(--color-primary);
+}
+
+.p1Error {
+  color: #ef4444;
+  font-family: ProductSans;
+  font-size: .9rem;
+  margin-left: 1rem;
+}
+
+.p1result-label { margin: 0 1rem; }

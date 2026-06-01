@@ -1,12 +1,44 @@
 runConfig:
   runtime: nodejs20
-  concurrency: 80
-  cpu: 1
-  memoryMiB: 512
-  maxInstances: 2
-  minInstances: 0
-  environmentVariables:
-    - variable: HOST
-      value: 0.0.0.0
-      availability:
-        - RUNTIME
+
+env:
+  - variable: HOST
+    value: "0.0.0.0"
+    availability:
+      - RUNTIME
+
+  - variable: PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyBCMl-YozLCGBm3q3R0RYuXw3bt1T1qb64
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: juamdg.firebaseapp.com
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: PUBLIC_FIREBASE_PROJECT_ID
+    value: juamdg
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: juamdg.firebasestorage.app
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "859606265564"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: PUBLIC_FIREBASE_APP_ID
+    value: 1:859606265564:web:d24a76bad1823b08794e19
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: G-ZLP83CDTDJ
+    availability:
+      - BUILD
+      - RUNTIME

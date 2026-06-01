@@ -1,13 +1,52 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="CrossMatrix">
-  <h1 class="subtitulo">CrossMatrix</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
-<style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/CrossMatrix.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<ProjectLayout slug="cross-matrix">
+  <div id="p13container">
+    <h1 class="p13title subtitulo">Cross Matrix</h1>
+
+    <div id="p13canvas"></div>
+
+    <div class="p13input1">
+      <div class="control">
+        <label>Start: <span id="p13StartRowValue">0</span></label>
+        <input type="range" id="p13StartRow" min="0" max="29" value="0">
+      </div>
+    </div>
+
+    <div class="p13presets">
+      <p class="p13prefunc">\(f(x, y)\)</p>
+    </div>
+
+    <div class="p13input2">
+      <div class="input-group">
+        <input id="p13i21" required="" value="0 10">
+        <label class="user-label">\(x_0 \quad x_n\)</label>
+      </div>
+      <div class="input-group">
+        <input id="p13i22" required="" value="0 10">
+        <label class="user-label">\(y_0 \quad y_n\)</label>
+      </div>
+      <div class="p13functions">
+        <button id="p13b21">Generate</button>
+        <div class="input-group">
+          <input id="p13i23" required="" value="10*sin(x) + 8*cos(y*1.5) + 5*sin(x*y/10) + 20">
+          <label class="user-label">\(f(x, y)\)</label>
+        </div>
+        <p id="p13presetsBotton">Preset functions</p>
+      </div>
+    </div>
+
+    <div class="p13output">
+      <span class="label">Total cost: </span>
+      <span class="value highlight" id="p13TotalCost">0</span>
+    </div>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style>@import '../../styles/sections/projects.css';
+  @import '../../styles/sections/projects-cross-matrix.css';</style>
+<script type="module" is:inline>
+  import CrossMatrix from '/js/lib/CrossMatrix.js'
+  const p = new CrossMatrix(); p.starter?.(); p.main()
 </script>

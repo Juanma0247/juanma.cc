@@ -1,28 +1,28 @@
-.textContacto {
-  color: var(--c2);
+.contact-intro {
+  color: var(--color-text);
   font-size: 1.2rem;
   margin-left: 1rem;
   margin-bottom: 2rem;
   margin-top: 1rem;
 }
 
-.contContContacto {
+.contact-channels {
   display: flex;
   margin-left: 2rem;
 }
 
-.contGmail, .contWhatsApp, .contDiscord {
+.channel-gmail, .channel-whatsapp, .channel-discord {
   display: flex;
   cursor: pointer;
 }
 
-.contWhatsApp, .contDiscord { margin-left: 5rem; }
+.channel-whatsapp, .channel-discord { margin-left: 5rem; }
 
-.discrodInfoCont {
+.discord-info {
   position: absolute;
   left: 35rem;
   top: 5rem;
   display: none;
 }
 
-.discordImg { cursor: pointer; }
+.discord-icon { cursor: pointer; }

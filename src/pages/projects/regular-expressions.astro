@@ -1,13 +1,22 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="RegularExpressions">
-  <h1 class="subtitulo">RegularExpressions</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
-<style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/RegularExpressions.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<ProjectLayout slug="regular-expressions">
+  <div id="p14container">
+    <h1 class="p14title subtitulo">Regular Expressions</h1>
+  </div>
+  <div class="input-group">
+    <input id="p14i1" autocomplete="off" required="" value="a*b">
+    <label class="user-label p14ul">Regular Expression</label>
+  </div>
+  <div id="p14extraAlphabets"></div>
+  <h2 class="p14t1">Result:</h2>
+  <div id="p14r1"></div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style>@import '../../styles/sections/projects.css';
+  @import '../../styles/sections/projects-regexp.css';</style>
+<script type="module" is:inline>
+  import RegularExpressions from '/js/lib/RegularExpressions.js'
+  const p = new RegularExpressions(); p.starter?.(); p.main()
 </script>

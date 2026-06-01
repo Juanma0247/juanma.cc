@@ -1,13 +1,36 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="Sets">
-  <h1 class="subtitulo">Sets</h1>
-  <!-- TODO: Copy HTML content from old public/index.html (.p2Cont section) -->
-  <div class="spaceBottom"></div>
-</MainLayout>
-<style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Sets from '../../lib/projects/Sets.js'
+<ProjectLayout slug="sets">
+  <h1 class="subtitle p2subtitulo">Sets</h1>
+  <div id="p2Options0" class="center p2Options"></div>
+  <div style="display: flex;" class="center p2InputSets">
+    <div class="input-group">
+      <input id="p2i1" required="" type="text" class="p2input">
+      <label class="user-label">Set A</label>
+    </div>
+    <button id="p2bchange" style="margin-top: .7rem;">
+      <img src="/img/change.svg" class="p2icos"/>
+    </button>
+    <button id="p2bsetSet" style="margin-top: .7rem; margin-left: .7rem;">
+      <img src="/img/keys.svg" class="p2icos"/>
+    </button>
+    <div class="input-group">
+      <input id="p2i2" required="" type="text" class="p2input">
+      <label class="user-label">Set B</label>
+    </div>
+  </div>
+  <div id="p2Options1" class="center p2Options"></div>
+  <div id="p2Options2" class="center p2Options"></div>
+  <div id="p2Options3" class="center p2Options"></div>
+  <div id="p2Options4" class="center p2Options"></div>
+  <div class="latex center p2Latex" id="p2Res"></div>
+  <div id="p2VeenDiagram" class="center"></div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style>@import '../../styles/sections/projects.css';
+  @import '../../styles/sections/projects-sets.css';</style>
+<script type="module" is:inline>
+  import Sets from '/js/lib/Sets.js'
   const p = new Sets(); p.starter?.(); p.main()
 </script>

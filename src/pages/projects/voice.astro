@@ -1,13 +1,27 @@
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-<MainLayout title="Voice">
-  <h1 class="subtitulo">Voice</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
-<style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/Voice.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<ProjectLayout slug="voice">
+  <h1 class="subtitle">Voice Register</h1>
+  <div class="center voice-row">
+    <div class="input-group">
+      <input id="p4i1" required="" type="text" class="voice-name-input">
+      <label class="user-label">Audio name</label>
+    </div>
+    <audio class="voice-preview" id="audioPreview" controls></audio>
+  </div>
+  <div class="center voice-row">
+    <button id="startRecording">Start Recording</button>
+    <button id="stopRecording" disabled>Stop Recording</button>
+    <button id="uploadAudio" disabled>Upload Audio</button>
+  </div>
+  <p class="voice-saved-title">Saved audio</p>
+  <div id="audiosGuardados" class="center"></div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style>@import '../../styles/sections/projects.css';
+  @import '../../styles/sections/projects-voice.css';</style>
+<script type="module" is:inline>
+  import Voice from '/js/lib/Voice.js'
+  const p = new Voice(); p.starter?.(); p.main()
 </script>

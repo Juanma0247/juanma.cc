@@ -2,31 +2,35 @@
 import MainLayout from '../layouts/MainLayout.astro'
 ---
 
-<MainLayout title="Scripts">
-  <p class="pCodigos">If you want, you can access my small Python repository with:</p>
-  <button class="buttonsCodes" id="ccb1">Copy</button>
-  <a class="p aLink" href="https://juamdg.web.app/jm.py" target="_blank">https://juamdg.web.app/jm.py</a>
+<MainLayout title="Scripts" navTitle="Scripts" labels={["Python", "Lua", "Minecraft"]}>
+  <p class="code-description" data-i18n="scripts.intro1">If you want, you can access my small Python repository with:</p>
+  <button class="code-actions" id="ccb1" data-i18n="scripts.copy">Copy</button>
+  <a class="code-link" href="https://juamdg.web.app/jm.py" target="_blank">https://juamdg.web.app/jm.py</a>
   <br />
-  <p class="pCodigos">To install the file directly you can use:</p>
+  <p class="code-description" data-i18n="scripts.intro2">To install the file directly you can use:</p>
   <div style="display: flex;">
-    <button class="buttonsCodes" style="margin-top: 1.5rem" id="ccb2">Copy</button>
-    <pre class="auxCode"><code class="language-python">exec(__import__('requests').get('https://juamdg.web.app/jm.py').text)</code></pre>
+    <button class="code-actions" style="margin-top: 1.5rem" id="ccb2" data-i18n="scripts.copy">Copy</button>
+    <pre class="code-extra"><code class="language-python">exec(__import__('requests').get('https://juamdg.web.app/jm.py').text)</code></pre>
   </div>
-  <p class="pCodigos">Some algorithms:</p>
+  <p class="code-description" data-i18n="scripts.intro3">Some algorithms:</p>
+  <div class="scripts-container"></div>
 </MainLayout>
 
-<style>
+<style is:global>
   @import '../styles/sections/scripts.css';
 </style>
 
-<script>
+<script type="module" is:inline>
+  import Scripts from '/js/lib/Scripts.js'
   import hljs from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/es/highlight.min.js'
+
+  const container = document.querySelector('.scripts-container')
+  new Scripts().main(container)
   hljs.highlightAll()
 
   document.getElementById('ccb1')?.addEventListener('click', () => {
     navigator.clipboard.writeText('https://juamdg.web.app/jm.py')
   })
-
   document.getElementById('ccb2')?.addEventListener('click', () => {
     navigator.clipboard.writeText("exec(__import__('requests').get('https://juamdg.web.app/jm.py').text)")
   })

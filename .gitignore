@@ -2,6 +2,7 @@ node_modules/
 dist/
 .env
 .firebase/
+.astro/
 *.log
 .DS_Store
 Thumbs.db

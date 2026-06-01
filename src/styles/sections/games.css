@@ -1,14 +1,11 @@
-@font-face {
-  font-family: mc;
-  src: url('/font/cmunrm.ttf');
-}
+/* ── Tic-Tac-Toe ──────────────────────────────────────────── */
 
-.j1Cont { display: flex; justify-content: center; }
+.ttt-board { display: flex; justify-content: center; }
 
-.inputTreLine {
-  color: var(--c2);
+.ttt-cell {
+  color: var(--color-text);
   cursor: pointer;
-  border-color: var(--c3);
+  border-color: var(--color-bg);
   padding: 0;
   font-size: 2rem;
   width: 3rem;
@@ -17,13 +14,15 @@
   text-align: center;
 }
 
-.tableTreLine { border-collapse: collapse; }
-.tableTreLine td { border-radius: 0; padding: 0; border-color: #00000000; }
-.vLine { border-right: 3px solid var(--c1); }
-.hLine { border-bottom: 3px solid var(--c1); }
+.ttt-table { border-collapse: collapse; }
+.ttt-table td { border-radius: 0; padding: 0; border-color: transparent; }
+.ttt-vline { border-right: 3px solid var(--color-primary); }
+.ttt-hline { border-bottom: 3px solid var(--color-primary); }
 
 #j1contButtons { margin-top: 2rem; display: flex; justify-content: center; gap: 5rem; }
-.divElementCheck { display: flex; }
+.check-row { display: flex; }
+
+/* ── Minesweeper ──────────────────────────────────────────── */
 
 @keyframes BGgradient {
   0%   { background-position: 0% 200%; }
@@ -31,7 +30,7 @@
   100% { background-position: 0% 330%; }
 }
 
-.j3Grid {
+.mine-grid {
   padding-right: .3rem;
   padding-bottom: .3rem;
   border-radius: .5rem;
@@ -39,7 +38,7 @@
   background: #000;
 }
 
-.j3Grid:before, .j3Grid:after {
+.mine-grid:before, .mine-grid:after {
   content: '';
   position: absolute;
   left: -.1rem;
@@ -53,6 +52,7 @@
   filter: blur(.3rem);
 }
 
+/* JS adds these classes to .mine-grid — keep original names */
 .j3GridLose:before, .j3GridLose:after {
   background: linear-gradient(120deg, #fff, #ff3939, #fff, #ff0000, #fff, #ff0000, #fff, #ff3939);
   background-size: 300%;
@@ -67,10 +67,11 @@
   filter: blur(.3rem);
 }
 
-.j3Row { background-color: var(--ct); height: 1.8rem; display: flex; }
+/* JS-created cell elements — keep original names */
+.j3Row { background-color: transparent; height: 1.8rem; display: flex; }
 
 .j3Element {
-  background-color: var(--c1);
+  background-color: var(--color-primary);
   height: 1.5rem;
   width: 1.5rem;
   margin-left: .3rem;
@@ -81,14 +82,41 @@
   border-radius: .2rem;
 }
 
-.j3ElementValue { color: var(--c2); }
-.j3ElementMine { background-color: #00000000; height: 1.5rem; width: 1.5rem; }
-.j3ElementFlag { background-color: #00000000; }
+.j3ElementValue { color: var(--color-text); }
+.j3ElementMine { background-color: transparent; height: 1.5rem; width: 1.5rem; }
+.j3ElementFlag { background-color: transparent; }
 .auxIconSVG { width: 1.5rem; height: 1.5rem; }
-.j3PStatistics { color: var(--c1); opacity: .8; }
 
-.j4Grid { color: var(--c3); margin-top: 1rem; margin-left: 1rem; }
+.mine-stat { color: var(--color-primary); opacity: .8; }
+
+.mine-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin: 1rem 1rem 0.5rem;
+}
+
+.mine-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0.5rem 1rem;
+}
+
+.mine-new-game {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1rem;
+  max-width: 20rem;
+}
+
+/* ── Sudoku ───────────────────────────────────────────────── */
+
+/* JS-created grid elements — keep original names */
+.j4Grid { color: var(--color-bg); margin-top: 1rem; margin-left: 1rem; }
 .j4Row { display: flex; }
-.j4InternalGrid { background-color: var(--c2); margin: .1rem; border: 2px var(--c1) solid; border-radius: .2rem; }
+.j4InternalGrid { background-color: var(--color-text); margin: .1rem; border: 2px var(--color-primary) solid; border-radius: .2rem; }
 .j4InternalRow { display: flex; }
-.j4Element { text-align: center; justify-content: center; font-family: mc; background-color: var(--c2); height: 1.5rem; width: 1.5rem; margin: .1rem; border: 2px var(--c1) solid; border-radius: .2rem; font-size: 1.2rem; }
+.j4Element { text-align: center; justify-content: center; font-family: ComputerModern; background-color: var(--color-text); height: 1.5rem; width: 1.5rem; margin: .1rem; border: 2px var(--color-primary) solid; border-radius: .2rem; font-size: 1.2rem; }

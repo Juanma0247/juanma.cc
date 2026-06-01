@@ -1,13 +1,16 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="Fractions">
-  <h1 class="subtitulo">Fractions</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
+<ProjectLayout slug="fractions">
+  <h1 class="subtitle">Fractions</h1>
+  <div class="margin-tl">
+    <input id="p5i1" class="inputFractions" value="1/2">
+    <div id="p5ShowImput"></div>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
 <style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/Fractions.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<script type="module" is:inline>
+  import Fractions from '/js/lib/Fractions.js'
+  const p = new Fractions(); p.starter?.(); p.main()
 </script>

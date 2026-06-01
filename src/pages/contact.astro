@@ -3,21 +3,21 @@ import MainLayout from '../layouts/MainLayout.astro'
 ---
 
 <MainLayout title="Contact">
-  <p class="textContacto">If you want to get in touch with me, feel free to reach out through any of the following channels.</p>
-  <div class="contContContacto">
-    <div class="contGmail gmailA">
+  <p class="contact-intro" data-i18n="contact.intro">If you want to get in touch with me, feel free to reach out through any of the following channels.</p>
+  <div class="contact-channels">
+    <div class="channel-gmail">
       <a href="mailto:juanmanueldiazgomez247@gmail.com">
         <img class="gmail" src="/img/gmail.svg" alt="Gmail" />
       </a>
     </div>
-    <div class="contWhatsApp whatsAppA">
+    <div class="channel-whatsapp">
       <a href="https://wa.me/573176322001" target="_blank">
         <img class="whatsApp" src="/img/whatsapp.svg" alt="WhatsApp" />
       </a>
     </div>
-    <div class="contDiscord discordA">
-      <img class="discordImg" src="/img/discord.svg" alt="Discord" />
-      <div class="discrodInfoCont">
+    <div class="channel-discord">
+      <img class="discord-icon" src="/img/discord.svg" alt="Discord" />
+      <div class="discord-info">
         <p>juamdg</p>
       </div>
     </div>
@@ -29,10 +29,10 @@ import MainLayout from '../layouts/MainLayout.astro'
 </style>
 
 <script>
-  const discordImg = document.querySelector('.discordImg') as HTMLElement
-  const discordInfo = document.querySelector('.discrodInfoCont') as HTMLElement
+  const discordIcon = document.querySelector('.discord-icon') as HTMLElement
+  const discordInfo = document.querySelector('.discord-info') as HTMLElement
 
-  discordImg?.addEventListener('click', () => {
+  discordIcon?.addEventListener('click', () => {
     discordInfo.style.display = discordInfo.style.display === 'block' ? 'none' : 'block'
   })
 </script>

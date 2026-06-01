@@ -1,0 +1,242 @@
+---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
+---
+
+<ProjectLayout slug="turing-machine">
+
+  <h1 class="subtitle">Turing Machine Lab</h1>
+
+  <!-- ── Setup ──────────────────────────────────────────────── -->
+  <div class="tm-setup">
+
+    <div class="tm-field">
+      <label class="tm-label" for="tm-examples">Example</label>
+      <select id="tm-examples"></select>
+    </div>
+
+    <div class="input-group tm-alphabet-group">
+      <input id="tm-alphabet" autocomplete="off" required value="1 0 a">
+      <label class="user-label">Alphabet Σ (space-separated)</label>
+    </div>
+
+    <div class="input-group">
+      <input id="tm-tape-input" autocomplete="off" required value="11010011">
+      <label class="user-label">Initial tape</label>
+    </div>
+
+    <div class="tm-field">
+      <label class="tm-label" for="tm-init-state">Start state</label>
+      <select id="tm-init-state"></select>
+    </div>
+
+    <div class="tm-field">
+      <label class="tm-label" for="tm-max-steps">Max steps</label>
+      <div class="fcs-number-wrap" style="width:6rem">
+        <input id="tm-max-steps" type="number" class="fcs-number" min="100" max="100000" value="5000">
+        <div class="fcs-spin">
+          <button data-step="up">▲</button>
+          <button data-step="down">▼</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 · Import button -->
+    <div class="tm-field">
+      <label class="tm-label">Import JSON</label>
+      <button id="tm-btn-import" class="fcs-btn tm-io-btn" title="Load machine from JSON file">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 2v9M4 8l4 5 4-5"/><rect x="2" y="12" width="12" height="3" rx="1"/>
+        </svg>
+        Import
+      </button>
+      <input id="tm-import-file" type="file" accept=".json" style="display:none">
+    </div>
+
+  </div>
+
+  <!-- ── 6 · Formal definition panel ────────────────────────── -->
+  <div class="tm-fdef-bar">
+    <div id="tm-formal-def" class="tm-formal-def">Loading…</div>
+  </div>
+
+  <!-- ── Transition table ────────────────────────────────────── -->
+  <div class="tm-card">
+    <div class="tm-card-head">
+      <span class="tm-card-title">
+        Transition function
+        <span class="tm-def-inline">I : K × (Σ ∪ &#123;#&#125;) → (Σ ∪ &#123;#&#125;) × &#123;R, L&#125; × K</span>
+      </span>
+      <span class="tm-format-hint">Format: <code>symbol Direction state</code> — e.g. <code>1Rq0</code> &nbsp;·&nbsp; <code>#Lq2</code> &nbsp;·&nbsp; <code>aRq1</code></span>
+      <div class="tm-card-actions">
+        <!-- Clear table -->
+        <button id="tm-btn-clear" class="fcs-btn tm-io-btn" title="Clear all transition instructions">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 4h12M5 4V2h6v2M6 7v6M10 7v6"/><path d="M3 4l1 10h8l1-10"/>
+          </svg>
+          Clear
+        </button>
+        <!-- 9 · Export -->
+        <button id="tm-btn-export" class="fcs-btn tm-io-btn" title="Export machine as JSON">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 11V2M4 5l4-4 4 4"/><rect x="2" y="12" width="12" height="3" rx="1"/>
+          </svg>
+          Export
+        </button>
+        <!-- 7 · Help -->
+        <button class="tm-help-btn" data-theory="table" title="Theory: instructions & final combinations">?</button>
+        <!-- State management -->
+        <div class="tm-state-btns">
+          <button id="tm-add-state" class="fcs-btn is-icon" title="Add state">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
+          </button>
+          <button id="tm-remove-state" class="fcs-btn is-icon" title="Remove last state">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="8" x2="14" y2="8"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="tm-table-wrap" class="tm-table-wrap"></div>
+  </div>
+
+  <!-- ── Execution ───────────────────────────────────────────── -->
+  <div class="tm-card">
+
+    <div class="tm-card-head">
+      <span class="tm-card-title">Execution</span>
+      <button class="tm-help-btn" data-theory="execution" title="Theory: instantaneous configuration & step">?</button>
+    </div>
+
+    <!-- Controls -->
+    <div class="tm-controls-bar">
+      <button id="tm-btn-reset" class="fcs-btn" title="Reset to initial configuration (R)">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,7 1,1 7,1"/><path d="M1,1 C4,6 8,8 14,8 A6,6 0 1 1 8,2"/></svg>
+        Reset
+      </button>
+      <button id="tm-btn-back" class="fcs-btn" title="Step back (←)" disabled>
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13 2v12l-9-6 9-6zM2 2v12"/></svg>
+        Back<span id="tm-back-count" class="tm-back-count"></span>
+      </button>
+      <button id="tm-btn-step" class="fcs-btn">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2v12l9-6L3 2zm11 0v12"/></svg>
+        Step
+      </button>
+      <button id="tm-btn-play" class="fcs-btn is-solid">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2l10 6-10 6V2z"/></svg>
+        Play
+      </button>
+      <button id="tm-btn-pause" class="fcs-btn" disabled>
+        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2" width="4" height="12"/><rect x="9" y="2" width="4" height="12"/></svg>
+        Pause
+      </button>
+
+      <div class="tm-speed-wrap">
+        <span class="tm-speed-text">Speed</span>
+        <input type="range" id="tm-speed" class="fcs-range" min="1" max="20" value="5">
+        <span id="tm-speed-label" class="tm-speed-val">5×</span>
+      </div>
+
+      <div id="tm-status" class="tm-status">Idle</div>
+    </div>
+
+    <!-- Last instruction narration -->
+    <div id="tm-last-inst" class="tm-last-inst"></div>
+
+    <!-- Info bar -->
+    <div class="tm-info-bar">
+      <div class="tm-info-item">
+        <span class="tm-info-label">Current state</span>
+        <span id="tm-state-display" class="tm-info-val">q0</span>
+      </div>
+      <div class="tm-info-item">
+        <span class="tm-info-label">Reading</span>
+        <span id="tm-read-display" class="tm-info-val tm-read-sym">_</span>
+      </div>
+      <div class="tm-info-item">
+        <span class="tm-info-label">Head position</span>
+        <span id="tm-pos-display" class="tm-info-val tm-read-sym">0</span>
+      </div>
+      <div class="tm-info-item">
+        <span class="tm-info-label">Steps</span>
+        <span id="tm-step-display" class="tm-info-val">0</span>
+      </div>
+      <div class="tm-info-item">
+        <span class="tm-info-label">Shortcuts</span>
+        <span class="tm-info-val tm-shortcuts">
+          <kbd>Space</kbd> play/pause &nbsp;
+          <kbd>→</kbd> step &nbsp;
+          <kbd>←</kbd> back &nbsp;
+          <kbd>R</kbd> reset
+        </span>
+      </div>
+    </div>
+
+    <!-- Tape -->
+    <div class="tm-tape-outer">
+      <div id="tm-tape-viewport" class="tm-tape-viewport">
+        <div id="tm-tape-cells" class="tm-tape-cells"></div>
+        <div id="tm-tape-indices" class="tm-tape-indices"></div>
+      </div>
+      <div class="tm-tape-arrow-row">
+        <div id="tm-tape-arrow" class="tm-tape-arrow">▲</div>
+      </div>
+    </div>
+
+    <!-- Tape content summary -->
+    <div id="tm-tape-output" class="tm-tape-output"></div>
+
+  </div>
+
+  <!-- ── 10 · State diagram ──────────────────────────────────── -->
+  <div class="tm-card">
+    <div class="tm-card-head">
+      <span class="tm-card-title">State diagram</span>
+      <span class="tm-format-hint">Arrow format: read | write Direction — e.g. <code>1|aR</code></span>
+      <button class="tm-help-btn" data-theory="diagram" title="Theory: state diagram">?</button>
+    </div>
+    <div class="tm-diagram-wrap">
+      <svg id="tm-diagram-svg" class="tm-diagram-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+
+  <!-- ── Configuration history ───────────────────────────────── -->
+  <div class="tm-card tm-card--history">
+    <div class="tm-card-head">
+      <span class="tm-card-title">Configuration history</span>
+      <span class="tm-format-hint">u <em>q</em> v — content around the reading head</span>
+      <button class="tm-help-btn" data-theory="history" title="Theory: accepted language">?</button>
+    </div>
+    <div class="tm-hist-header">
+      <span>Step</span>
+      <span>State</span>
+      <span>Tape window</span>
+    </div>
+    <div id="tm-history" class="tm-history"></div>
+  </div>
+
+  <!-- ── 7 · Theory panel ────────────────────────────────────── -->
+  <div id="tm-theory-backdrop" class="tm-theory-backdrop" aria-hidden="true"></div>
+  <aside id="tm-theory-panel" class="tm-theory-panel" aria-hidden="true">
+    <div class="tm-theory-header">
+      <span id="tm-theory-title" class="tm-theory-title"></span>
+      <button id="tm-theory-close" class="fcs-btn is-icon" title="Close">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="2" y1="2" x2="14" y2="14"/>
+          <line x1="14" y1="2" x2="2" y2="14"/>
+        </svg>
+      </button>
+    </div>
+    <div id="tm-theory-body" class="tm-theory-body"></div>
+  </aside>
+
+  <div class="space-bottom"></div>
+</ProjectLayout>
+
+<style>@import '../../styles/sections/projects.css';
+  @import '../../styles/sections/projects-turing-machine.css';</style>
+
+<script type="module" is:inline>
+  import TuringMachine from '/js/lib/TuringMachine.js'
+  const tm = new TuringMachine()
+  tm.starter?.()
+  tm.main()
+</script>

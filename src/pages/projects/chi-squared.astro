@@ -1,13 +1,27 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="ChiSquared">
-  <h1 class="subtitulo">ChiSquared</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
+<ProjectLayout slug="chi-squared">
+  <h1 class="subtitle">Chi-Squared Distribution Function \(\scriptsize \chi^&#123;2&#125;\)</h1>
+  <div style="display: flex; flex-wrap: wrap;">
+    <div id="p9ggbContainer" class="ggbContainer"></div>
+    <div id="p9CalcContainer" class="calcContainer">
+      <div class="input-group">
+        <input id="p9i1" required="">
+        <label class="user-label">\(P(X) \quad\text&#123;or&#125;\quad X\)</label>
+      </div>
+      <div class="input-group">
+        <input id="p9i2" required="">
+        <label class="user-label">\(\text&#123;Degrees of freedom&#125;\)</label>
+      </div>
+      <div class="latex inLine" id="p9Res1"></div>
+      <div class="latex inLine" id="p9Res2"></div>
+    </div>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
 <style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/ChiSquared.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<script type="module" is:inline>
+  import ChiSquared from '/js/lib/ChiSquared.js'
+  const p = new ChiSquared(); p.starter?.(); p.main()
 </script>

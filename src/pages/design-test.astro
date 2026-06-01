@@ -1,0 +1,309 @@
+---
+import MainLayout from '../layouts/MainLayout.astro'
+---
+
+<MainLayout title="Design Test" navTitle="Design Test">
+<div class="dt-page">
+
+  <h1 class="dt-title">Form Design System</h1>
+  <p class="dt-subtitle">Visual test for every form element.</p>
+
+  <div class="dt-grid">
+
+    <!-- ── 01 · Text inputs ──────────────────────────────────── -->
+    <section class="dt-section">
+      <h2 class="dt-section-title"><span class="dt-num">01</span> Text Input · Floating Label</h2>
+      <div class="dt-stack">
+        <div class="input-group dt-field">
+          <input type="text" placeholder=" " required />
+          <label class="user-label">Full name</label>
+        </div>
+        <div class="input-group dt-field">
+          <input type="email" placeholder=" " required value="hello@example.com" />
+          <label class="user-label">Email address</label>
+        </div>
+        <div class="input-group dt-field">
+          <input type="text" placeholder=" " disabled value="locked" />
+          <label class="user-label">Disabled field</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 02 · Number ───────────────────────────────────────── -->
+    <section class="dt-section">
+      <h2 class="dt-section-title"><span class="dt-num">02</span> Number · Custom Spinners</h2>
+      <div class="dt-stack">
+        <div class="fcs-number-wrap dt-field">
+          <input type="number" class="fcs-number" value="8" min="0" max="100" />
+          <div class="fcs-spin">
+            <button type="button" data-step="up" tabindex="-1">▲</button>
+            <button type="button" data-step="down" tabindex="-1">▼</button>
+          </div>
+        </div>
+        <div class="fcs-number-wrap dt-field">
+          <input type="number" class="fcs-number" value="2.50" step="0.25" />
+          <div class="fcs-spin">
+            <button type="button" data-step="up" tabindex="-1">▲</button>
+            <button type="button" data-step="down" tabindex="-1">▼</button>
+          </div>
+        </div>
+        <p class="dt-hint">Click ▲▼ · scroll · arrow keys</p>
+      </div>
+    </section>
+
+    <!-- ── 03 · Checkbox ─────────────────────────────────────── -->
+    <section class="dt-section">
+      <h2 class="dt-section-title"><span class="dt-num">03</span> Checkbox · Drawn Check</h2>
+      <div class="dt-stack">
+        <label class="fcs-checkbox">
+          <input type="checkbox" checked />
+          <span class="fcs-box">
+            <svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg>
+          </span>
+          <span class="fcs-checkbox-label">Email me about new work</span>
+        </label>
+        <label class="fcs-checkbox">
+          <input type="checkbox" />
+          <span class="fcs-box">
+            <svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg>
+          </span>
+          <span class="fcs-checkbox-label">Share analytics</span>
+        </label>
+        <label class="fcs-checkbox">
+          <input type="checkbox" checked disabled />
+          <span class="fcs-box">
+            <svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg>
+          </span>
+          <span class="fcs-checkbox-label">Required (disabled)</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- ── 04 · Radio ────────────────────────────────────────── -->
+    <section class="dt-section">
+      <h2 class="dt-section-title"><span class="dt-num">04</span> Radio · Scale-In Dot</h2>
+      <div class="fcs-radio-group">
+        <label class="fcs-radio">
+          <input type="radio" name="dt-plan" checked />
+          <span class="fcs-dot"></span>
+          <span class="fcs-radio-label">Minimal</span>
+        </label>
+        <label class="fcs-radio">
+          <input type="radio" name="dt-plan" />
+          <span class="fcs-dot"></span>
+          <span class="fcs-radio-label">Standard</span>
+        </label>
+        <label class="fcs-radio">
+          <input type="radio" name="dt-plan" disabled />
+          <span class="fcs-dot"></span>
+          <span class="fcs-radio-label">Enterprise (disabled)</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- ── 05 · Select ───────────────────────────────────────── -->
+    <section class="dt-section">
+      <h2 class="dt-section-title"><span class="dt-num">05</span> Select · Custom Arrow</h2>
+      <div class="dt-stack">
+        <select class="dt-field">
+          <option>Product design</option>
+          <option>Brand &amp; identity</option>
+          <option>Front-end engineering</option>
+          <option>Motion &amp; interaction</option>
+        </select>
+        <select class="dt-field" disabled>
+          <option>Unavailable</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- ── 06 · Range ────────────────────────────────────────── -->
+    <section class="dt-section">
+      <h2 class="dt-section-title"><span class="dt-num">06</span> Range Slider</h2>
+      <div class="dt-stack">
+        <div class="dt-range-row">
+          <span class="dt-hint">Opacity</span>
+          <input type="range" class="dt-field" min="0" max="100" value="100" id="dt-r1" />
+          <output id="dt-r1-out" class="dt-range-out">100</output>
+        </div>
+        <div class="dt-range-row">
+          <span class="dt-hint">Disabled</span>
+          <input type="range" class="dt-field" min="0" max="100" value="30" disabled />
+          <output class="dt-range-out">30</output>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 07 · Textarea (full width) ───────────────────────── -->
+    <section class="dt-section dt-span-2">
+      <h2 class="dt-section-title"><span class="dt-num">07</span> Textarea · Vertical Resize</h2>
+      <textarea class="dt-field" placeholder="Write something..."></textarea>
+    </section>
+
+    <!-- ── 08 · Buttons (full width) ────────────────────────── -->
+    <section class="dt-section dt-span-2">
+      <h2 class="dt-section-title"><span class="dt-num">08</span> Buttons · Press to Collapse Shadow</h2>
+      <div class="dt-row">
+        <button>Text only</button>
+        <button class="is-solid">Solid</button>
+        <button>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 1v10M4 7l4 4 4-4M2 14h12"/>
+          </svg>
+          Download
+        </button>
+        <button class="is-solid">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 8h12M9 3l5 5-5 5"/>
+          </svg>
+          Continue
+        </button>
+        <button class="is-icon" aria-label="Add">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <path d="M8 2v12M2 8h12"/>
+          </svg>
+        </button>
+        <button class="is-icon is-solid" aria-label="Favorite">
+          <svg viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 14s-5.5-3.6-5.5-7A2.6 2.6 0 0 1 8 5a2.6 2.6 0 0 1 5.5 2c0 3.4-5.5 7-5.5 7z"/>
+          </svg>
+        </button>
+        <button disabled>Disabled</button>
+      </div>
+    </section>
+
+    <!-- ── 09 · Table (full width) ──────────────────────────── -->
+    <section class="dt-section dt-span-2">
+      <h2 class="dt-section-title"><span class="dt-num">09</span> Table</h2>
+      <table style="width: 100%;">
+        <thead>
+          <tr><th>Project</th><th>Year</th><th>Role</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Sigma Enumeration</td><td>2025</td><td>Author</td><td>Shipped</td></tr>
+          <tr><td>Hill Cipher</td><td>2024</td><td>Author</td><td>Shipped</td></tr>
+          <tr><td>Cantor Sets</td><td>2024</td><td>Author</td><td>In progress</td></tr>
+          <tr><td>Sorting Algorithms</td><td>2023</td><td>Author</td><td>Archived</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ── 10 · Result / readonly (full width) ──────────────── -->
+    <section class="dt-section dt-span-2">
+      <h2 class="dt-section-title"><span class="dt-num">10</span> Result · Read-only</h2>
+      <div class="dt-row">
+        <div class="dt-stack" style="flex: 1;">
+          <span class="dt-hint">Dashed border</span>
+          <output class="result">$ 2,480.00 / month</output>
+        </div>
+        <div class="dt-stack" style="flex: 1;">
+          <span class="dt-hint">Left accent</span>
+          <output class="result is-accent">Estimated delivery — 6 weeks</output>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+</MainLayout>
+
+<style is:global>
+  .dt-page {
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 6rem;
+  }
+
+  .dt-title {
+    font-family: var(--font-bold);
+    font-size: 2.2rem;
+    color: var(--color-primary);
+    margin: 0 0 .3rem;
+  }
+
+  .dt-subtitle {
+    color: var(--color-muted);
+    font-size: .9rem;
+    margin: 0 0 2.5rem;
+  }
+
+  /* 2-column grid */
+  .dt-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 3rem;
+  }
+
+  .dt-span-2 { grid-column: 1 / -1; }
+
+  .dt-section {
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-muted) 18%, transparent);
+  }
+
+  .dt-section-title {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-family: var(--font-bold);
+    font-size: 1rem;
+    margin: 0 0 1.25rem;
+    color: var(--color-text);
+  }
+
+  .dt-num {
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    padding: .1rem .4rem;
+  }
+
+  /* full-width field inside this page */
+  .dt-field {
+    width: 100% !important;
+    margin-left: 0 !important;
+    box-sizing: border-box;
+  }
+
+  .dt-stack { display: flex; flex-direction: column; gap: .85rem; }
+  .dt-row   { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+
+  .dt-range-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .dt-range-row input[type="range"] { flex: 1; width: auto; }
+
+  .dt-hint {
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    min-width: 5rem;
+  }
+
+  .dt-range-out {
+    font-family: var(--font-mono);
+    font-size: .85rem;
+    color: var(--color-primary);
+    min-width: 2.5rem;
+    text-align: right;
+  }
+
+  @media (max-width: 700px) {
+    .dt-grid { grid-template-columns: 1fr; }
+    .dt-span-2 { grid-column: 1; }
+  }
+</style>
+
+<script is:inline>
+  document.getElementById('dt-r1')?.addEventListener('input', e => {
+    document.getElementById('dt-r1-out').textContent = e.target.value
+  })
+</script>

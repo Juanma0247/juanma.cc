@@ -2,31 +2,28 @@
   {
     "slug": "tic-tac-toe",
     "title": "Tic-Tac-Toe",
+    "navTitle": "Tic-Tac-Toe",
+    "pageTitle": "Tic-Tac-Toe",
     "image": "j1.png",
-    "order": 1
-  },
-  {
-    "slug": "game-2",
-    "title": "Game 2",
-    "image": "j3.png",
-    "order": 2
+    "order": 1,
+    "labels": ["Strategy", "Board Game", "2 Players"]
   },
   {
     "slug": "minesweeper",
     "title": "Minesweeper",
+    "navTitle": "Minesweeper",
+    "pageTitle": "Minesweeper",
     "image": "j3.png",
-    "order": 3
+    "order": 2,
+    "labels": ["Strategy", "Puzzle", "Online"]
   },
   {
     "slug": "sudoku",
     "title": "Sudoku",
+    "navTitle": "Sudoku",
+    "pageTitle": "Sudoku",
     "image": "j3.png",
-    "order": 4
-  },
-  {
-    "slug": "game-5",
-    "title": "Game 5",
-    "image": "j3.png",
-    "order": 5
+    "order": 3,
+    "labels": ["Logic", "Puzzle", "Numbers"]
   }
 ]

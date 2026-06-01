@@ -3,27 +3,127 @@ import MainLayout from '../layouts/MainLayout.astro'
 ---
 
 <MainLayout title="">
-  <div class="home-wrapper">
-    <div class="bHomeCont">
-      <a href="/about"    class="bHome"><i data-feather="user"></i><span>About me</span></a>
-      <a href="/projects" class="bHome"><i data-feather="folder"></i><span>Projects</span></a>
-      <a href="/tools"    class="bHome"><i data-feather="tool"></i><span>Tools</span></a>
-      <a href="/scripts"  class="bHome"><i data-feather="code"></i><span>Codes</span></a>
-      <a href="/contact"  class="bHome"><i data-feather="message-circle"></i><span>Contacts</span></a>
-      <a href="/games"    class="bHome"><i data-feather="pie-chart"></i><span>Games</span></a>
-    </div>
-    <div class="center spamHomeTop">
-      <img class="icoSpamHomeTop" src="/img/favicon.svg" alt="logo" />
-      <p class="titleSpamHomeTop">jm-247.web.app</p>
-    </div>
+  <div class="home">
+
+    <section class="hero">
+      <div class="hero-text">
+        <h1 class="hero-name">Juan Manuel <span class="hero-accent">Diaz Gomez</span></h1>
+        <p class="hero-tagline" data-i18n="home.tagline">Computer Scientist · Math Lover · UX · Tech MC & Sci-Fi</p>
+        <p class="hero-bio" data-i18n="home.bio">Hi, I'm <strong>Juanma</strong>. I come from Las Mesas, Nariño, and currently live in Manizales, Caldas for my studies. Programming (once committed line by line, now practiced as the distinguished art of vibe coding) has become a way of life for me. I love building all kinds of projects that involve it, and I always will.</p>
+        <div class="quick-access">
+          <a href="/projects" class="quick-card">
+            <i data-feather="folder"></i>
+            <span data-i18n="home.quickProjects">Projects</span>
+          </a>
+          <a href="/games" class="quick-card">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" class="icon-games"><path d="M155.85-220q-31.46 0-49.12-21.46-17.65-21.46-12.81-56.08l47.24-328.07q6.84-47.24 43.53-80.81Q221.39-740 269-740h423q47.23 0 83.92 33.58 36.69 33.57 43.92 80.81l46.24 328.07q4.84 34.62-12.81 56.08Q835.61-220 804.54-220q-18.77 0-31.69-5.77-12.93-5.77-22.39-15.23L644.15-347.31h-328.3L209.54-241q-9.46 9.46-22.39 15.23-12.92 5.77-31.3 5.77Zm17.23-49.77L296-392.69h368l122.92 122.92q4.23 3.85 16.85 7.85 9.38 0 14.27-8.23 4.88-8.24 3.27-17.62l-46.85-330.92q-5-33.08-29.11-54.5-24.12-21.42-53.35-21.42H268q-29.23 0-53.35 21.42-24.11 21.42-28.73 54.5l-47.23 330.92q-1.61 9.38 3.27 17.62 4.89 8.23 14.66 8.23 6.23 0 16.46-7.85Zm546.84-184.92q10.85-10.85 10.85-25.31 0-14.46-10.85-25.31-10.84-10.84-25.31-10.84-14.46 0-25.3 10.84-10.85 10.85-10.85 25.31 0 14.46 10.85 25.31 10.84 10.84 25.3 10.84 14.47 0 25.31-10.84ZM636.27-582q11.04-10.85 11.04-25.31 0-14.46-11.04-25.3-11.04-10.85-25.31-10.85t-25.11 10.85Q575-621.77 575-607.31T585.85-582q10.84 10.85 25.11 10.85T636.27-582ZM308.85-450h40.38v-73.46h73.85v-40.39h-73.85v-73.84h-40.38v73.84h-73.46v40.39h73.46V-450ZM480-478.38Z"/></svg>
+            <span data-i18n="home.quickGames">Games</span>
+          </a>
+          <a href="/scripts" class="quick-card">
+            <i data-feather="code"></i>
+            <span data-i18n="home.quickCodes">Codes</span>
+          </a>
+        </div>
+      </div>
+      <div class="hero-portrait-reel">
+        <img src="/img/juanma/juanma_basilica_manizales.jpg" alt="Juan Manuel" />
+        <img src="/img/juanma/juanma_mountaind.jpeg" alt="Juan Manuel" />
+        <img src="/img/juanma/juanma_river.jpg" alt="Juan Manuel" />
+        <img src="/img/juanma/juanma_ruiz.jpg" alt="Juan Manuel" />
+        <img src="/img/juanma/juanma_ruiz_background.jpg" alt="Juan Manuel" />
+        <img src="/img/juanma/juanma_ruiz_road.jpg" alt="Juan Manuel" />
+        <img src="/img/juanma/juanma_ruiz_road_bottom.jpg" alt="Juan Manuel" />
+        <img src="/img/juanma/juanma_ruiz_somg.jpg" alt="Juan Manuel" />
+        <img src="/img/juanma/juanma_sit.jpg" alt="Juan Manuel" />
+        <img src="/img/juanma/juanma_stand.jpg" alt="Juan Manuel" />
+      </div>
+    </section>
+
+    <section class="skills-section">
+      <h2 class="section-label" data-i18n="home.skillsTitle">Skills</h2>
+      <div class="skill-group">
+        <p class="skill-group-title" data-i18n="home.programmingTitle">Programming</p>
+        <div class="skills-row">
+          <span class="skill-tag"><img src="/img/languages/java.svg" alt="Java" /><span>Java</span><span class="skill-level">70%</span></span>
+          <span class="skill-tag"><img src="/img/languages/python.svg" alt="Python" /><span>Python</span><span class="skill-level">85%</span></span>
+          <span class="skill-tag"><img src="/img/languages/javascript.svg" alt="JavaScript" /><span>JavaScript</span><span class="skill-level">65%</span></span>
+          <span class="skill-tag"><img src="/img/languages/kotlin.svg" alt="Kotlin" /><span>Kotlin</span><span class="skill-level">80%</span></span>
+          <span class="skill-tag"><img src="/img/html.svg" alt="HTML" /><span>HTML</span><span class="skill-level">95%</span></span>
+          <span class="skill-tag"><img src="/img/css.svg" alt="CSS" /><span>CSS</span><span class="skill-level">85%</span></span>
+          <span class="skill-tag"><img src="/img/firebase.svg" alt="Firebase" /><span>Firebase</span><span class="skill-level">80%</span></span>
+          <span class="skill-tag"><img src="/img/mysql.svg" alt="MySQL" /><span>MySQL</span><span class="skill-level">60%</span></span>
+          <span class="skill-tag"><img src="/img/nodejs.svg" alt="Node.js" /><span>Node.js</span><span class="skill-level">20%</span></span>
+          <span class="skill-tag"><img src="/img/git.svg" alt="Git" /><span>Git</span><span class="skill-level">20%</span></span>
+          <span class="skill-tag"><img src="/img/gsap.svg" alt="GSAP" /><span>GSAP</span><span class="skill-level">60%</span></span>
+          <span class="skill-tag skill-tag--dark"><img src="/img/LaTex.svg" alt="LaTeX" /><span>LaTeX</span><span class="skill-level">60%</span></span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <p class="skill-group-title" data-i18n="home.designTitle">Design</p>
+        <div class="skills-row">
+          <span class="skill-tag"><img src="/img/illustrator.svg" alt="Illustrator" /><span>Illustrator</span><span class="skill-level">80%</span></span>
+          <span class="skill-tag"><img src="/img/photoshop.svg" alt="Photoshop" /><span>Photoshop</span><span class="skill-level">75%</span></span>
+          <span class="skill-tag"><img src="/img/xd.svg" alt="XD" /><span>Adobe XD</span><span class="skill-level">90%</span></span>
+          <span class="skill-tag"><img src="/img/premiere.svg" alt="Premiere" /><span>Premiere</span><span class="skill-level">65%</span></span>
+          <span class="skill-tag"><img src="/img/indesign.svg" alt="InDesign" /><span>InDesign</span><span class="skill-level">75%</span></span>
+          <span class="skill-tag"><img src="/img/blender.svg" alt="Blender" /><span>Blender</span><span class="skill-level">30%</span></span>
+          <span class="skill-tag"><img src="/img/obs.svg" alt="OBS" /><span>OBS</span><span class="skill-level">80%</span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="built-section">
+      <h2 class="section-label" data-i18n="home.builtTitle">What I've built</h2>
+      <div class="built-grid">
+        <div class="built-card">
+          <div class="built-card-header">
+            <h3 class="built-card-name" data-i18n="home.builtCard1Title">Icfes para disciplinados</h3>
+            <a class="built-card-link" href="https://icfesparadisciplinados.github.io/pages/login.html" target="_blank">
+              <i data-feather="external-link"></i>
+              <span data-i18n="home.goToSite">Go to site</span>
+            </a>
+          </div>
+          <p data-i18n="home.builtCard1Desc">A platform to share study material for the Colombian Saber 11 exam. Access with document: <strong>0123456789</strong> / password: <strong>ABCD</strong></p>
+        </div>
+        <div class="built-card">
+          <div class="built-card-header">
+            <h3 class="built-card-name" data-i18n="home.builtCard2Title">Catálogo boutique Arcur</h3>
+            <a class="built-card-link" href="https://boutiquearcurcolombia.web.app/" target="_blank">
+              <i data-feather="external-link"></i>
+              <span data-i18n="home.goToSite">Go to site</span>
+            </a>
+          </div>
+          <p data-i18n="home.builtCard2Desc">Product catalog for Colombian clothing brand Arcur, with a hidden admin CRUD system.</p>
+        </div>
+      </div>
+    </section>
+
   </div>
 </MainLayout>
 
 <style>
   @import '../styles/sections/home.css';
-
-  .home-wrapper {
-    position: relative;
-    height: calc(100vh - 3rem);
-  }
 </style>
+
+<script>
+  const imgs = [...document.querySelectorAll('.hero-portrait-reel img')] as HTMLImageElement[];
+  const displayMs = [2600, 1700, 3100, 1500, 2900, 1300, 2400, 3300, 1800, 2200];
+  const CLOSE_MS = 380;
+  const BLINK_MS = 90;
+  let current = 0;
+
+  function next() {
+    const prev = current;
+    current = (current + 1) % imgs.length;
+
+    imgs[prev].classList.remove('active');
+
+    setTimeout(() => {
+      imgs[current].classList.add('active');
+      setTimeout(next, displayMs[current]);
+    }, CLOSE_MS + BLINK_MS);
+  }
+
+  imgs[0].classList.add('active');
+  setTimeout(next, displayMs[0]);
+</script>

@@ -1,0 +1,70 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro'
+---
+
+<ToolLayout slug="string-tool">
+  <h1 class="subtitle" data-i18n="tools.stringTool.subtitle">String Tool</h1>
+
+  <div class="input-grid">
+    <div class="input-group">
+      <input id="h1i1" required type="text" />
+      <label class="user-label" data-i18n="tools.stringTool.sourceString">Source string</label>
+    </div>
+    <div class="input-group">
+      <input id="h1i2" type="text" />
+      <label class="user-label" data-i18n="tools.stringTool.prefixWhole">Prefix (whole string)</label>
+    </div>
+    <div class="input-group">
+      <input id="h1i3" type="text" />
+      <label class="user-label" data-i18n="tools.stringTool.suffixWhole">Suffix (whole string)</label>
+    </div>
+    <div class="input-group">
+      <input id="h1i4" type="text" />
+      <label class="user-label" data-i18n="tools.stringTool.charPrefix">Char prefix</label>
+    </div>
+    <div class="input-group">
+      <input id="h1i5" type="text" />
+      <label class="user-label" data-i18n="tools.stringTool.charSuffix">Char suffix</label>
+    </div>
+    <div class="input-group">
+      <div class="fcs-number-wrap">
+        <input id="h1i6" type="number" class="fcs-number" min="1" />
+        <div class="fcs-spin">
+          <button type="button" data-step="up" tabindex="-1">▲</button>
+          <button type="button" data-step="down" tabindex="-1">▼</button>
+        </div>
+      </div>
+      <label class="user-label" data-i18n="tools.stringTool.repeat">Repeat ×</label>
+    </div>
+    <div class="input-group">
+      <div class="fcs-number-wrap">
+        <input id="h1i7" type="number" class="fcs-number" min="1" />
+        <div class="fcs-spin">
+          <button type="button" data-step="up" tabindex="-1">▲</button>
+          <button type="button" data-step="down" tabindex="-1">▼</button>
+        </div>
+      </div>
+      <label class="user-label" data-i18n="tools.stringTool.truncate">Truncate ÷</label>
+    </div>
+    <div class="input-group">
+      <input id="h1i8" type="text" />
+      <label class="user-label" data-i18n="tools.stringTool.splitBy">Split by</label>
+    </div>
+    <div class="input-group">
+      <input id="h1i9" type="text" />
+      <label class="user-label" data-i18n="tools.stringTool.joinBy">Join by</label>
+    </div>
+  </div>
+
+  <p class="length-label"><span data-i18n="tools.stringTool.length">Length:</span> <span id="h1p1">0</span></p>
+  <textarea id="h1ta1" class="result-output" readonly></textarea>
+
+  <div class="space-bottom"></div>
+</ToolLayout>
+
+<style>@import '../../styles/sections/tools.css';</style>
+
+<script type="module" is:inline>
+  import StringTool from '/js/lib/StringTool.js'
+  const p = new StringTool(); p.main()
+</script>

@@ -1,0 +1,44 @@
+h1 {
+  font-size: 2rem;
+  color: var(--color-primary);
+  font-family: var(--font-bold);
+  cursor: default;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 0.625rem;
+  color: var(--color-primary);
+  font-family: var(--font-bold);
+  cursor: default;
+}
+
+h3, h4 {
+  margin-top: 0.625rem;
+  margin-left: 0.9375rem;
+  color: var(--color-primary);
+  font-family: var(--font-bold);
+  cursor: default;
+}
+
+p {
+  font-family: var(--font-ui);
+  font-size: 1.1rem;
+  color: var(--color-text);
+}
+
+strong {
+  font-family: var(--font-bold);
+  font-size: 1.1rem;
+  color: var(--color-text);
+}
+
+a {
+  font-family: var(--font-bold);
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+a:hover {
+  color: var(--color-primary);
+}

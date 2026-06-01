@@ -1,98 +1,155 @@
 [
   {
+    "slug": "turing-machine",
+    "title": "Turing Machine",
+    "navTitle": "Turing Machine Lab",
+    "pageTitle": "Turing Machine Lab",
+    "image": "p17.svg",
+    "order": 17,
+    "labels": ["Automata Theory", "Computability", "Formal Languages"]
+  },
+  {
     "slug": "recursive-concat",
     "title": "Concat. Recur.",
+    "navTitle": "Recursive Concat.",
+    "pageTitle": "Recursive Concatenation",
     "image": "p16.png",
-    "order": 16
+    "order": 16,
+    "labels": ["Formal Languages", "Automata Theory"]
   },
   {
     "slug": "sigma-star-enum",
-    "title": "Enumeración de Σ*",
+    "title": "Enum of Σ*",  
+    "navTitle": "Σ* Enumeration",
+    "pageTitle": "Σ* Enumeration",
     "image": "p15.png",
-    "order": 15
+    "order": 15,
+    "labels": ["Formal Languages", "Automata Theory", "Enumeration"]
   },
   {
     "slug": "regular-expressions",
     "title": "Expresiones R.",
+    "navTitle": "Regular Expressions",
+    "pageTitle": "Regular Expressions",
     "image": "p14.png",
-    "order": 14
+    "order": 14,
+    "labels": ["Formal Languages", "Automata Theory"]
   },
   {
     "slug": "cross-matrix",
     "title": "Cross matrix",
+    "navTitle": "Cross Matrix",
+    "pageTitle": "Cross Matrix",
     "image": "p13.png",
-    "order": 13
+    "order": 13,
+    "labels": ["Linear Algebra", "Matrices"]
   },
   {
     "slug": "sorting",
     "title": "Sorting",
+    "navTitle": "Sorting",
+    "pageTitle": "Sorting Algorithms",
     "image": "p12.png",
-    "order": 12
+    "order": 12,
+    "labels": ["Algorithms", "Data Structures"]
   },
   {
     "slug": "fractal",
-    "title": "Fanctal",
+    "title": "Fractal",
+    "navTitle": "Fractal",
+    "pageTitle": "Fractal Geometry",
     "image": "p11.png",
-    "order": 11
+    "order": 11,
+    "labels": ["Fractals", "Geometry", "Visualization"]
   },
   {
     "slug": "bernoulli",
     "title": "Bernoulli",
+    "navTitle": "Bernoulli",
+    "pageTitle": "Bernoulli Inequality",
     "image": "p10.png",
-    "order": 10
+    "order": 10,
+    "labels": ["Statistics", "Probability", "Distribution"]
   },
   {
     "slug": "chi-squared",
     "title": "F.D. χ²",
+    "navTitle": "Chi-Squared",
+    "pageTitle": "Chi-Squared Distribution",
     "image": "p9.png",
-    "order": 9
+    "order": 9,
+    "labels": ["Statistics", "Probability", "Distribution"]
   },
   {
     "slug": "t-student",
     "title": "F.D. T-Student",
+    "navTitle": "T-Student",
+    "pageTitle": "T-Student Distribution",
     "image": "p8.png",
-    "order": 8
+    "order": 8,
+    "labels": ["Statistics", "Probability", "Distribution"]
   },
   {
     "slug": "normal-distribution",
     "title": "F.D. Normal",
+    "navTitle": "Normal Dist.",
+    "pageTitle": "Normal Distribution",
     "image": "p7.png",
-    "order": 7
+    "order": 7,
+    "labels": ["Statistics", "Probability", "Distribution"]
   },
   {
     "slug": "ruffini",
     "title": "Ruffini",
+    "navTitle": "Ruffini",
+    "pageTitle": "Ruffini Method",
     "image": "p6.png",
-    "order": 6
+    "order": 6,
+    "labels": ["Algebra", "Polynomials"]
   },
   {
     "slug": "fractions",
     "title": "Fractions",
+    "navTitle": "Fractions",
+    "pageTitle": "Fractions Calculator",
     "image": "p5.png",
-    "order": 5
+    "order": 5,
+    "labels": ["Arithmetic", "Number Theory"]
   },
   {
     "slug": "voice",
     "title": "Voice",
+    "navTitle": "Voice",
+    "pageTitle": "Voice Recorder",
     "image": "p4.png",
-    "order": 4
+    "order": 4,
+    "labels": ["Audio", "Web API"]
   },
   {
     "slug": "cantor-sets",
     "title": "S.E. Cantor",
+    "navTitle": "Cantor Sets",
+    "pageTitle": "Cantor Sets",
     "image": "p3.png",
-    "order": 3
+    "order": 3,
+    "labels": ["Set Theory", "Fractals", "Topology"]
   },
   {
     "slug": "sets",
     "title": "Sets",
+    "navTitle": "Sets",
+    "pageTitle": "Set Operations",
     "image": "p2.png",
-    "order": 2
+    "order": 2,
+    "labels": ["Set Theory", "Logic", "Discrete Math"]
   },
   {
     "slug": "hill-cipher",
     "title": "Cifrado Hill",
+    "navTitle": "Hill Cipher",
+    "pageTitle": "Hill Cipher",
     "image": "p1.png",
-    "order": 1
+    "order": 1,
+    "labels": ["Cryptography", "Linear Algebra"]
   }
 ]

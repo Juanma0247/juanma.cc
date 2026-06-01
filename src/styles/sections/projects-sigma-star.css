@@ -1,0 +1,44 @@
+#p15alphabet { width: 20rem; }
+.p15-controls { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.75rem; align-items: center; }
+.p15-row { display: flex; align-items: center; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+.p15-select-wrap { position: relative; display: inline-flex; }
+.p15-select-arrow { display: none; }
+.p15-result-area { display: flex; flex-direction: column; gap: .5rem; }
+
+.p15-hint { color: var(--color-muted); font-style: italic; text-align: center; padding: 1.5rem 1rem; }
+
+.p15-result-step { display: flex; align-items: center; justify-content: space-between; padding: .6rem 1rem; border-radius: .5rem; border: 1px solid var(--color-primary); background-color: rgba(0,136,136,.08); box-shadow: .15rem .15rem 0 var(--color-primary); }
+.p15-final-label { font-family: ProductSansBold; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--color-primary); }
+.p15-final-value { font-family: JetBrainsMono, monospace; font-size: 1.5rem; color: var(--color-primary); }
+
+@keyframes p15-step-in {
+  from { opacity: 0; transform: translateY(.4rem); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.p15-step { display: flex; flex-direction: column; gap: .35rem; padding: .55rem .85rem; border-radius: .4rem; border: 1px solid rgba(136,136,136,.18); animation: p15-step-in .25s ease both; }
+.p15-step-error { border-color: rgba(239,68,68,.4); background-color: rgba(239,68,68,.06); }
+.p15-step-error .p15-step-label { color: #ef4444; }
+.p15-step-header { display: flex; align-items: center; gap: .5rem; }
+.p15-step-num { min-width: 1.25rem; height: 1.25rem; border-radius: 50%; background-color: var(--color-primary); color: var(--color-bg); font-size: .65rem; font-family: ProductSansBold; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.p15-step-label { font-family: ProductSansBold; font-size: .78rem; letter-spacing: .05em; text-transform: uppercase; opacity: .85; }
+.p15-step-body { display: flex; flex-direction: column; gap: .3rem; padding-left: 1.75rem; }
+.p15-step-value { font-family: JetBrainsMono, monospace; font-size: .88rem; display: flex; flex-direction: column; gap: .12rem; }
+.p15-line { display: block; }
+.p15-step-detail { font-size: .8rem; color: var(--color-muted); font-style: italic; }
+.p15-strip-wrap { margin-top: .5rem; }
+
+.p15-block-strip { font-family: JetBrainsMono, monospace; font-size: .72rem; border: 1px solid var(--color-primary); border-radius: .5rem; overflow: hidden; box-shadow: .15rem .15rem 0 var(--color-primary); }
+.p15-bheader { display: grid; grid-template-columns: 9rem 12rem 1fr; padding: .35rem .75rem; background-color: var(--color-primary); color: var(--color-bg); font-weight: 700; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; gap: .5rem; }
+.p15-brow { display: grid; grid-template-columns: 9rem 12rem 1fr; padding: .38rem .75rem; gap: .5rem; border-top: 1px solid rgba(0,136,136,.12); transition: background .15s; align-items: center; }
+.p15-brow:hover { background-color: rgba(0,136,136,.05); }
+.p15-brow--active { background-color: rgba(0,136,136,.1); border-left: 3px solid var(--color-primary); padding-left: calc(.75rem - 3px); }
+.p15-brow--dots { opacity: .35; display: grid; grid-template-columns: 9rem 12rem 1fr; padding: .25rem .75rem; gap: .5rem; border-top: 1px solid rgba(0,136,136,.12); }
+.p15-bcell { display: flex; flex-direction: column; align-items: flex-start; gap: .1rem; }
+.p15-bcell--range { flex-direction: row; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.p15-bcell--examples { flex-direction: row; align-items: center; gap: .25rem; flex-wrap: wrap; }
+.p15-bk-label { font-weight: 700; }
+.p15-bsize { font-size: .62rem; color: var(--color-muted); }
+.p15-bex { display: inline-block; padding: .1rem .35rem; border-radius: .25rem; background-color: rgba(136,136,136,.08); border: 1px solid rgba(136,136,136,.15); font-size: .7rem; transition: background .15s; }
+.p15-bex--active { background-color: rgba(0,136,136,.12); border-color: rgba(0,136,136,.35); color: var(--color-primary); font-weight: 700; }
+.p15-n-pin { font-size: .65rem; color: var(--color-primary); font-weight: 700; white-space: nowrap; }

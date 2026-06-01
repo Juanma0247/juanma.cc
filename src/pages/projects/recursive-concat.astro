@@ -1,13 +1,26 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="RecursiveConcat">
-  <h1 class="subtitulo">RecursiveConcat</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
-<style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/RecursiveConcat.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<ProjectLayout slug="recursive-concat">
+  <div id="p16container">
+    <h1 class="p16title subtitulo">Recursive Concatenation</h1>
+  </div>
+  <div class="p16inputsCont">
+    <div class="input-group">
+      <input id="p16iAlpha" autocomplete="off" required="" value="a">
+      <label class="user-label">String α (prefix)</label>
+    </div>
+    <div class="input-group">
+      <input id="p16iBeta" autocomplete="off" required="" value="bcde">
+      <label class="user-label">String β (to concatenate)</label>
+    </div>
+  </div>
+  <div id="p16r1"></div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style>@import '../../styles/sections/projects.css';
+  @import '../../styles/sections/projects-concat.css';</style>
+<script type="module" is:inline>
+  import RecursiveConcat from '/js/lib/RecursiveConcat.js'
+  const p = new RecursiveConcat(); p.starter?.(); p.main()
 </script>

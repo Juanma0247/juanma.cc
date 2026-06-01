@@ -1,4 +1,4 @@
-# exec(__import__('requests').get('https://juamdg.web.app/jm.py').text)
+# exec(__import__('requests').get('https://juanma.cc/.py').text)
 
 # +----------------------------+--------------------------------------------------------------+
 # | Function                   | Description                                                  |

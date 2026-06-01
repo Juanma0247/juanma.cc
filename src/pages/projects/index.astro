@@ -5,7 +5,7 @@ import projects from '../../data/projects.json'
 ---
 
 <MainLayout title="Projects">
-  <div class="selecccion selectionCards">
+  <div class="cards-grid">
     {projects.map(p => (
       <ProjectCard slug={p.slug} title={p.title} image={p.image} />
     ))}

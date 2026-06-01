@@ -1,0 +1,23 @@
+---
+import MainLayout from './MainLayout.astro'
+import projects from '../data/projects.json'
+
+interface Props {
+  slug: string
+}
+
+const { slug } = Astro.props
+
+const project = projects.find(p => p.slug === slug)
+if (!project) throw new Error(`Project not found: "${slug}"`)
+---
+
+<MainLayout
+  title={project.pageTitle}
+  navTitle={project.navTitle}
+  section="Projects"
+  labels={project.labels}
+>
+  <slot name="head" slot="head" />
+  <slot />
+</MainLayout>

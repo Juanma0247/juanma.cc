@@ -1,0 +1,18 @@
+#p3ggbContainer {
+  border-radius: 0 3px 3px 0;
+  border-top: var(--color-primary) 3px solid;
+  border-bottom: var(--color-primary) 3px solid;
+  border-right: var(--color-primary) 3px solid;
+}
+
+.p3Processp { margin-top: .5rem; margin-right: 1rem; }
+
+#p3CalcContainer {
+  margin-left: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media screen and (min-width: 900px) {
+  #p3CalcContainer { width: 50%; }
+}

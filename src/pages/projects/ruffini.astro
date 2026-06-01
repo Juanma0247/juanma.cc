@@ -1,13 +1,25 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="Ruffini">
-  <h1 class="subtitulo">Ruffini</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
+<ProjectLayout slug="ruffini">
+  <h1 class="subtitle">Ruffini's Method</h1>
+  <div class="input-group">
+    <input id="p6i1" required="" type="text" value="7 8 0 4">
+    <label class="user-label">Coefficients</label>
+  </div>
+  <h2 class="inLine">Polynomial:</h2>
+  <div class="latex inLine" id="p6Preview"></div>
+  <br>
+  <h2 class="inLine">Process:</h2>
+  <div class="latex inLine" id="p6Process"></div>
+  <div class="latex inLine" id="p6Process2"></div>
+  <br>
+  <h2 class="inLine">Result:</h2>
+  <div class="latex inLine" id="p6Res"></div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
 <style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/Ruffini.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<script type="module" is:inline>
+  import Ruffini from '/js/lib/Ruffini.js'
+  const p = new Ruffini(); p.starter?.(); p.main()
 </script>

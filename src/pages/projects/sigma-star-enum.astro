@@ -1,13 +1,38 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="SigmaStarEnum">
-  <h1 class="subtitulo">SigmaStarEnum</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
-<style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/SigmaStarEnum.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<ProjectLayout slug="sigma-star-enum">
+  <div id="p15container">
+    <h1 class="p15title subtitulo">Enumeration of Σ*</h1>
+  </div>
+  <div class="p15-controls">
+    <div class="input-group">
+      <input id="p15alphabet" autocomplete="off" required="" value="1 2 3 4 5 6 7 8 9 0">
+      <label class="user-label">Alphabet Σ (symbols separated by spaces)</label>
+    </div>
+    <div class="p15-row">
+      <div class="p15-select-wrap">
+        <select id="p15mode">
+          <option value="n2s">ℕ → Σ*  (number to string)</option>
+          <option value="s2n">Σ* → ℕ  (string to number)</option>
+        </select>
+        <span class="p15-select-arrow">▾</span>
+      </div>
+      <div class="input-group p15-query-group">
+        <input id="p15query" autocomplete="off" required="" value="1">
+        <label class="user-label" id="p15queryLabel">Number n ∈ ℕ</label>
+      </div>
+    </div>
+  </div>
+  <div class="p15-results-header"></div>
+  <div id="p15r1" class="p15-result-area">
+    <p class="p15-hint">Enter a number to see the process.</p>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style>@import '../../styles/sections/projects.css';
+  @import '../../styles/sections/projects-sigma-star.css';</style>
+<script type="module" is:inline>
+  import SigmaStarEnum from '/js/lib/SigmaStarEnum.js'
+  const p = new SigmaStarEnum(); p.starter?.(); p.main()
 </script>

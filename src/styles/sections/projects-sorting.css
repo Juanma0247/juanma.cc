@@ -1,0 +1,5 @@
+#p12GCont { background-color: transparent; }
+.p12ControlPanel { display: flex; flex-wrap: wrap; background-color: var(--color-bg); padding: .5rem; border-radius: 1rem; }
+.p12imput { width: 9rem; }
+.p12button { display: flex; width: min-content; height: 3rem; align-items: center; margin-left: .6rem; margin-top: .6rem; padding-right: .8rem; }
+.p12button img { width: 1.8rem; margin-right: .3rem; }

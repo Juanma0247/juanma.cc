@@ -9,8 +9,9 @@
     "start": "node dist/server/entry.mjs"
   },
   "dependencies": {
-    "astro": "^4.16.0",
     "@astrojs/node": "^8.3.0",
+    "astro": "^4.16.0",
+    "firebase": "^12.14.0",
     "firebase-admin": "^12.0.0"
   },
   "devDependencies": {

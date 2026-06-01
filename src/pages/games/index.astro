@@ -5,7 +5,7 @@ import games from '../../data/games.json'
 ---
 
 <MainLayout title="Games">
-  <div class="selecccion selectionCards">
+  <div class="cards-grid">
     {games.map(g => (
       <GameCard slug={g.slug} title={g.title} image={g.image} />
     ))}

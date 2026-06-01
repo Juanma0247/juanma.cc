@@ -1,0 +1,37 @@
+#p11Title { margin-top: 1rem; }
+.p11Content { display: flex; flex-wrap: wrap; padding: 1rem; }
+#fractal { background-color: transparent; }
+.p11InputGroup { margin-top: 1rem; }
+.p11inputs { width: max-content; display: flex; flex-wrap: wrap; height: max-content; }
+.p11buttons { width: max-content; display: flex; height: max-content; margin-top: 1rem; }
+.p11Button { margin-right: 1rem; width: max-content; }
+.p11Ref {
+  display: inline-block;
+  margin-left: 1rem;
+  margin-top: 1.6rem;
+  padding: .3rem .6rem;
+  color: var(--color-primary);
+  border-radius: .3rem;
+  width: min-content;
+  height: min-content;
+}
+.p11Ref:hover { color: var(--color-text); }
+
+.p11AreaSection {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 1rem;
+  border-radius: .5rem;
+  font-size: 1.4rem;
+}
+
+.p11AreaCalc {
+  background-color: transparent;
+  padding: 1.5rem;
+  border-radius: .3rem;
+  line-height: 2.5;
+  overflow-x: auto;
+}
+
+#p11i1, #p11i2, #p11i13 { width: 9rem; }
+#p11ResArea { margin-top: 5rem; margin-left: 3rem; font-size: 1.4rem; }

@@ -1,0 +1,23 @@
+---
+import MainLayout from './MainLayout.astro'
+import games from '../data/games.json'
+
+interface Props {
+  slug: string
+}
+
+const { slug } = Astro.props
+
+const game = games.find(g => g.slug === slug)
+if (!game) throw new Error(`Game not found: "${slug}"`)
+---
+
+<MainLayout
+  title={game.pageTitle}
+  navTitle={game.navTitle}
+  section="Games"
+  labels={game.labels}
+>
+  <slot name="head" slot="head" />
+  <slot />
+</MainLayout>

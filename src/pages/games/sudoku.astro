@@ -1,0 +1,16 @@
+﻿---
+import GameLayout from '../../layouts/GameLayout.astro'
+---
+
+<GameLayout slug="sudoku">
+  <h1 class="subtitle" data-i18n="games.sudoku.subtitle">Sudoku</h1>
+  <div id="j4Grid"></div>
+  <div class="space-bottom"></div>
+</GameLayout>
+
+<style is:global>@import '../../styles/sections/games.css';</style>
+
+<script type="module" is:inline>
+  import Sudoku from '/js/lib/Sudoku.js'
+  const p = new Sudoku(); p.main()
+</script>

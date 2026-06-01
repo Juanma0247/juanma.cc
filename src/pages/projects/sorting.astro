@@ -1,13 +1,49 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="Sorting">
-  <h1 class="subtitulo">Sorting</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
-<style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/Sorting.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<ProjectLayout slug="sorting">
+  <h1 class="subtitle">Sorting Algorithms</h1>
+  <div>
+    <div class="p12ControlPanel">
+      <div class="input-group">
+        <div class="fcs-number-wrap">
+          <input id="p12i1" required="" type="number" class="fcs-number p12imput">
+          <div class="fcs-spin">
+            <button type="button" data-step="up" tabindex="-1">▲</button>
+            <button type="button" data-step="down" tabindex="-1">▼</button>
+          </div>
+        </div>
+        <label class="user-label" id="p12l1">Size</label>
+      </div>
+      <div class="input-group">
+        <div class="fcs-number-wrap">
+          <input id="p12i2" required="" type="number" class="fcs-number p12imput">
+          <div class="fcs-spin">
+            <button type="button" data-step="up" tabindex="-1">▲</button>
+            <button type="button" data-step="down" tabindex="-1">▼</button>
+          </div>
+        </div>
+        <label class="user-label">Delay</label>
+      </div>
+      <button id="p12bTim" class="p12button"><img src="/img/play.svg"/>Tim</button>
+      <button id="p12bMerge" class="p12button"><img src="/img/play.svg"/>Merge</button>
+      <button id="p12bHeap" class="p12button"><img src="/img/play.svg"/>Heap</button>
+      <button id="p12bQuick3" class="p12button"><img src="/img/play.svg"/>Quick3</button>
+      <button id="p12bQuick" class="p12button"><img src="/img/play.svg"/>Quick</button>
+      <button id="p12bShell" class="p12button"><img src="/img/play.svg"/>Shell</button>
+      <button id="p12bInsertion" class="p12button"><img src="/img/play.svg"/>Insertion</button>
+      <button id="p12bSelection" class="p12button"><img src="/img/play.svg"/>Selection</button>
+      <button id="p12bBubble" class="p12button"><img src="/img/play.svg"/>Bubble</button>
+    </div>
+  </div>
+  <div style="display: flex; flex-wrap: wrap;">
+    <svg id="p12GCont" height="100vh" width="100vw"></svg>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style>@import '../../styles/sections/projects.css';
+  @import '../../styles/sections/projects-sorting.css';</style>
+<script type="module" is:inline>
+  import Sorting from '/js/lib/Sorting.js'
+  const p = new Sorting(); p.starter?.(); p.main()
 </script>

@@ -1,13 +1,41 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="Fractal">
-  <h1 class="subtitulo">Fractal</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
-<style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/Fractal.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<ProjectLayout slug="fractal">
+  <h1 id="p11Title" class="subtitle">Fractal</h1>
+  <div class="p11Content">
+    <svg id="fractal"></svg>
+    <div>
+      <div class="p11inputs">
+        <div class="input-group p11InputGroup">
+          <input id="p11i1" required="" type="number" min="1" step="1" value="6">
+          <label class="user-label">\(\text&#123;\textbf&#123;n&#125;&#125;\)</label>
+        </div>
+        <div class="input-group p11InputGroup">
+          <input id="p11i2" required="" type="number" min="0" step="1" value="3">
+          <label class="user-label">\(\text&#123;\textbf&#123;a&#125;&#125;\)</label>
+        </div>
+        <div class="input-group p11InputGroup">
+          <input id="p11i3" required="" type="number">
+          <label class="user-label">\(\text&#123;\textbf&#123;Depth&#125;&#125;\)</label>
+        </div>
+      </div>
+      <div class="p11buttons">
+        <button id="p11b1" class="p11Button">Documentation</button>
+        <button id="p11b2" class="p11Button">Download SVG</button>
+      </div>
+      <div id="p11ResArea"></div>
+    </div>
+    <div class="p11AreaSection">
+      <h3>Area Calculation A(N)</h3>
+      <div id="p11AreaCalc" class="p11AreaCalc"></div>
+    </div>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style>@import '../../styles/sections/projects.css';
+  @import '../../styles/sections/projects-fractal.css';</style>
+<script type="module" is:inline>
+  import Fractal from '/js/lib/Fractal.js'
+  const p = new Fractal(); p.starter?.(); p.main()
 </script>

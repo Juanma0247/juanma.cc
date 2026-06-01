@@ -2,13 +2,19 @@
   {
     "slug": "minecraft-coords",
     "title": "Minecraft Coords",
+    "navTitle": "Minecraft Coords",
+    "pageTitle": "Minecraft Coordinates",
     "image": "h1.png",
-    "order": 1
+    "order": 1,
+    "labels": ["Minecraft", "Coordinates", "Gaming"]
   },
   {
-    "slug": "tool-2",
-    "title": "Tool 2",
+    "slug": "string-tool",
+    "title": "String Tool",
+    "navTitle": "String Tool",
+    "pageTitle": "String Tool",
     "image": "h2.png",
-    "order": 2
+    "order": 2,
+    "labels": ["Strings", "Text", "Utility"]
   }
 ]

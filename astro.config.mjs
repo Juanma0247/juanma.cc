@@ -2,15 +2,15 @@ import { defineConfig } from 'astro/config'
 import node from '@astrojs/node'
 
 export default defineConfig({
-  output: 'server',
+  output: 'hybrid',
   adapter: node({
     mode: 'standalone'
   }),
   vite: {
-    build: {
-      rollupOptions: {
-        external: ['firebase-admin']
-      }
-    }
-  }
+    server: {
+      headers: {
+        'Cross-Origin-Opener-Policy': 'unsafe-none',
+      },
+    }, 
+  },
 })

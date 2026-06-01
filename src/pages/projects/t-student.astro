@@ -1,13 +1,27 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="TStudent">
-  <h1 class="subtitulo">TStudent</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
+<ProjectLayout slug="t-student">
+  <h1 class="subtitle">T-Student Distribution Function</h1>
+  <div style="display: flex; flex-wrap: wrap;">
+    <div id="p8ggbContainer" class="ggbContainer"></div>
+    <div id="p8CalcContainer" class="calcContainer">
+      <div class="input-group">
+        <input id="p8i1" required="">
+        <label class="user-label">\(P(X) \quad\text&#123;or&#125;\quad X\)</label>
+      </div>
+      <div class="input-group">
+        <input id="p8i2" required="">
+        <label class="user-label">\(\text&#123;Degrees of freedom&#125;\)</label>
+      </div>
+      <div class="latex inLine" id="p8Res1"></div>
+      <div class="latex inLine" id="p8Res2"></div>
+    </div>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
 <style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/TStudent.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<script type="module" is:inline>
+  import TStudent from '/js/lib/TStudent.js'
+  const p = new TStudent(); p.starter?.(); p.main()
 </script>

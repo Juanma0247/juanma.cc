@@ -1,4 +1,6 @@
 ---
+import Card from './Card.astro'
+
 export interface Props {
   slug: string
   title: string
@@ -8,7 +10,4 @@ export interface Props {
 const { slug, title, image } = Astro.props
 ---
 
-<a href={`/tools/${slug}`} class="card">
-  <h2>{title}</h2>
-  <img class="cardImg" src={`/img/cards/${image}`} alt={title} />
-</a>
+<Card href={`/tools/${slug}`} title={title} image={image} />

@@ -1,0 +1,20 @@
+.voice-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top: .5rem;
+}
+
+.voice-name-input { width: 10rem; }
+
+audio.voice-preview { margin-top: .5rem; }
+
+.voice-saved-title {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  margin-left: 2rem;
+}
+
+#audiosGuardados { flex-wrap: wrap; gap: .5rem; }

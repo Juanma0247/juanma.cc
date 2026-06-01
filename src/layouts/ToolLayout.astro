@@ -1,0 +1,23 @@
+---
+import MainLayout from './MainLayout.astro'
+import tools from '../data/tools.json'
+
+interface Props {
+  slug: string
+}
+
+const { slug } = Astro.props
+
+const tool = tools.find(t => t.slug === slug)
+if (!tool) throw new Error(`Tool not found: "${slug}"`)
+---
+
+<MainLayout
+  title={tool.pageTitle}
+  navTitle={tool.navTitle}
+  section="Tools"
+  labels={tool.labels}
+>
+  <slot name="head" slot="head" />
+  <slot />
+</MainLayout>

@@ -1,13 +1,45 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="Bernoulli">
-  <h1 class="subtitulo">Bernoulli</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
-<style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/Bernoulli.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<ProjectLayout slug="bernoulli">
+  <h1 class="subtitle">Bernoulli Inequality for \(x\geq -2\)</h1>
+  <div style="display: flex; flex-wrap: wrap;">
+    <div id="p10ggbContainer" class="ggbContainer"></div>
+    <div id="p10CalcContainer" class="calcContainer">
+      <div class="input-group">
+        <div class="fcs-number-wrap">
+          <input id="p10i1" required="" type="number" class="fcs-number" value="21">
+          <div class="fcs-spin">
+            <button type="button" data-step="up" tabindex="-1">▲</button>
+            <button type="button" data-step="down" tabindex="-1">▼</button>
+          </div>
+        </div>
+        <label class="user-label">\(n \in \mathbb&#123;N&#125;\)</label>
+      </div>
+      <div class="input-group">
+        <input id="p10i2" required="" pattern="^-?\d+([.]\d+)?$" inputmode="decimal" value="1">
+        <label class="user-label">\(a \in \mathbb&#123;R&#125;\)</label>
+      </div>
+      <div style="display: flex; margin-left: 1rem;">
+        <label class="checkbox-container">
+          <input id="p10cb1" type="checkbox">
+          <svg viewBox="0 0 64 64">
+            <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" class="checkbox-svg"></path>
+          </svg>
+        </label>
+        <label class="checkbox-label">\((\text&#123;odd&#125; = 2n+1)\)</label>
+      </div>
+      <div class="p10Processp">
+        <a href="https://drive.google.com/uc?export=download&id=1-Sh9vxZMl7W3Fppa1w7_DbjFKL73qOzK">Proof.</a>
+        <a href="https://drive.google.com/uc?export=download&id=1sLSSU_sDr2LXx7PPFbmhGih_uchMjdfn">Proof 2.</a>
+      </div>
+    </div>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style>@import '../../styles/sections/projects.css';
+  @import '../../styles/sections/projects-bernoulli.css';</style>
+<script type="module" is:inline>
+  import Bernoulli from '/js/lib/Bernoulli.js'
+  const p = new Bernoulli(); p.starter?.(); p.main()
 </script>

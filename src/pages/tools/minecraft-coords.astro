@@ -1,0 +1,42 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro'
+---
+
+<ToolLayout slug="minecraft-coords">
+  <h1 class="subtitle" data-i18n="tools.minecraft.subtitle">Minecraft Coordinates</h1>
+  <p class="description" data-i18n="tools.minecraft.desc">Convert between Overworld and Nether coordinates (× 8 / ÷ 8).</p>
+
+  <div class="input-group">
+    <input id="h2i1" required type="text" placeholder="100 64 200" />
+    <label class="user-label" data-i18n="tools.minecraft.coordsLabel">Coordinates (space-separated)</label>
+  </div>
+
+  <div class="result-row">
+    <div class="input-group result-group">
+      <input id="h2r1" readonly type="text" data-i18n-placeholder="tools.minecraft.overworldToNether" placeholder="× 8 result" />
+      <label class="user-label" data-i18n="tools.minecraft.overworldToNether">Overworld → Nether (× 8)</label>
+    </div>
+    <button id="h2b1" class="btn-copy-coords" data-i18n-title="scripts.copy" title="Copy">
+      <img src="/img/copy.svg" alt="Copy" width="24" height="24" />
+    </button>
+  </div>
+
+  <div class="result-row">
+    <div class="input-group result-group">
+      <input id="h2r2" readonly type="text" data-i18n-placeholder="tools.minecraft.netherToOverworld" placeholder="÷ 8 result" />
+      <label class="user-label" data-i18n="tools.minecraft.netherToOverworld">Nether → Overworld (÷ 8)</label>
+    </div>
+    <button id="h2b2" class="btn-copy-coords" data-i18n-title="scripts.copy" title="Copy">
+      <img src="/img/copy.svg" alt="Copy" width="24" height="24" />
+    </button>
+  </div>
+
+  <div class="space-bottom"></div>
+</ToolLayout>
+
+<style>@import '../../styles/sections/tools.css';</style>
+
+<script type="module" is:inline>
+  import MinecraftCoords from '/js/lib/MinecraftCoords.js'
+  const p = new MinecraftCoords(); p.main()
+</script>

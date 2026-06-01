@@ -1,0 +1,24 @@
+.venn-circle path {
+  fill-opacity: 0.5;
+  stroke: var(--color-text);
+  stroke-width: 2px;
+}
+
+.venn-label text { font-size: 14px; font-family: ProductSansBold; }
+
+.venn-text {
+  font-size: 12px;
+  text-anchor: middle;
+  font-family: ProductSansBold;
+  color: var(--color-primary);
+}
+
+.p2subtitulo { margin-bottom: 1rem; }
+.p2Option { margin: .5rem; }
+.p2Options { display: flex; }
+.p2icos { width: 25px; height: 25px; }
+.p2input { font-family: ComputerModern; font-size: 1.2rem; }
+.p2Latex { display: block; text-align: center; }
+.p2InputOption { width: 1.8rem; padding: .5rem; border-radius: .3rem; margin-right: .3rem; }
+.p2OptionTopButton { display: flex; margin-right: .3rem; margin-left: 1.2rem; }
+.p2InputSets { margin-top: .5rem; }

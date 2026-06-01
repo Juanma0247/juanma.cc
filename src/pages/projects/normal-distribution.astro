@@ -1,13 +1,31 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
-import MainLayout from '../../layouts/MainLayout.astro'
----
-<MainLayout title="NormalDistribution">
-  <h1 class="subtitulo">NormalDistribution</h1>
-  <!-- TODO: Copy HTML content from old public/index.html -->
-  <div class="spaceBottom"></div>
-</MainLayout>
+<ProjectLayout slug="normal-distribution">
+  <h1 class="subtitle">Normal Distribution Function</h1>
+  <div style="display: flex; flex-wrap: wrap;">
+    <div id="p7ggbContainer" class="ggbContainer"></div>
+    <div id="p7CalcContainer" class="calcContainer">
+      <div class="input-group">
+        <input id="p7i1" required="">
+        <label class="user-label">\(X\)</label>
+      </div>
+      <div class="input-group">
+        <input id="p7i2" required="">
+        <label class="user-label">\(\mu\)</label>
+      </div>
+      <div class="input-group">
+        <input id="p7i3" required="">
+        <label class="user-label">\(\sigma\)</label>
+      </div>
+      <div class="latex inLine" id="p7Res1"></div>
+      <div class="latex inLine" id="p7Res2"></div>
+    </div>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
 <style>@import '../../styles/sections/projects.css';</style>
-<script>
-  import Cls from '../../lib/projects/NormalDistribution.js'
-  const p = new Cls(); p.starter?.(); p.main()
+<script type="module" is:inline>
+  import NormalDistribution from '/js/lib/NormalDistribution.js'
+  const p = new NormalDistribution(); p.starter?.(); p.main()
 </script>
