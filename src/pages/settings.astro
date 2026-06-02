@@ -180,6 +180,13 @@ import MainLayout from '../layouts/MainLayout.astro'
       </section>
 
     </div>
+
+    <div class="settings-storage-note">
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/>
+      </svg>
+      <span data-i18n="settings.storageNote"></span>
+    </div>
   </div>
 </MainLayout>
 
@@ -192,7 +199,7 @@ import MainLayout from '../layouts/MainLayout.astro'
 
   .settings-page__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
     align-content: start;
   }
@@ -200,6 +207,39 @@ import MainLayout from '../layouts/MainLayout.astro'
   .settings-font__select {
     cursor: pointer;
     opacity: 1;
+  }
+
+  .settings-storage-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    font-family: ProductSans, sans-serif;
+    font-size: 0.72rem;
+    color: var(--color-muted);
+    line-height: 1.5;
+    max-width: 48rem;
+  }
+
+  .settings-storage-note svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    flex-shrink: 0;
+    margin-top: 0.12rem;
+    color: var(--color-primary);
+    opacity: 0.75;
+  }
+
+  @media (max-width: 52rem) {
+    .settings-page__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 34rem) {
+    .settings-page__grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
 
@@ -289,11 +329,13 @@ import MainLayout from '../layouts/MainLayout.astro'
       if (saved) applyCustomColors(saved)
     }
     syncThemeButtons(name)
+    if (authorizedUser) saveSettings({ theme: name }).catch(console.error)
   }
 
+  let authorizedUser = false
+
   let prevTheme = 'light'
-  const rawTheme = localStorage.getItem(THEME_KEY) || 'light'
-  const currentTheme = rawTheme === 'seted' ? 'customizable' : rawTheme
+  const currentTheme = localStorage.getItem(THEME_KEY) || 'light'
   if (currentTheme !== 'customizable') prevTheme = currentTheme
   syncThemeButtons(currentTheme)
 
@@ -367,6 +409,7 @@ import MainLayout from '../layouts/MainLayout.astro'
     applyCustomColors(colors)
     document.documentElement.dataset.theme = 'customizable'
     localStorage.setItem(THEME_KEY, 'customizable')
+    if (authorizedUser) saveSettings({ theme: 'customizable', customColors: colors }).catch(console.error)
   })
 
   document.getElementById('cp-cancel')!.addEventListener('click', () => {
@@ -409,7 +452,10 @@ import MainLayout from '../layouts/MainLayout.astro'
 
   const fontSelect = document.getElementById('settings-font-select') as HTMLSelectElement
   fontSelect.value = localStorage.getItem('site-font') || ''
-  fontSelect.addEventListener('change', () => applyFont(fontSelect.value))
+  fontSelect.addEventListener('change', () => {
+    applyFont(fontSelect.value)
+    if (authorizedUser) saveSettings({ font: fontSelect.value || null }).catch(console.error)
+  })
 
   // ── Language Switcher ────────────────────────────────────────────────────────
 
@@ -428,6 +474,7 @@ import MainLayout from '../layouts/MainLayout.astro'
       const lang = btn.dataset.lang!
       syncLangButtons(lang)
       ;(window as any).applyLang?.(lang)
+      if (authorizedUser) saveSettings({ lang }).catch(console.error)
     })
   })
 
@@ -463,14 +510,17 @@ import MainLayout from '../layouts/MainLayout.astro'
 
   onAuthChange(async (user: any) => {
     if (!user) {
+      authorizedUser = false
       showAuthState('signedout')
       return
     }
     if (!isAuthorized(user.email)) {
+      authorizedUser = false
       showAuthState('unauthorized')
       await signOut()
       return
     }
+    authorizedUser = true
     userAvatar.src = user.photoURL || ''
     userName.textContent = user.displayName || user.email || ''
     showAuthState('authorized')

@@ -28,7 +28,7 @@ const isSettings = pathname === '/settings'
 const displayLabels = labels.slice(0, 3)
 ---
 
-<nav id="topbar" class="topbar" data-state="closed" aria-label="Main navigation">
+<nav id="topbar" class="topbar" aria-label="Main navigation">
 
   <div class="topbar__identity">
     <p class="topbar__title">{navTitle}</p>
@@ -54,53 +54,19 @@ const displayLabels = labels.slice(0, 3)
         <span data-i18n={`nav.${s.id}`}>{s.label}</span>
       </a>
     ))}
-  </div>
-
-  <div class="topbar__controls">
     <a
       href="/settings"
-      class={`topbar__settings${isSettings ? ' topbar__settings--active' : ''}`}
-      data-i18n-aria-label="settings.title"
-      aria-label="Settings"
+      class={`topbar__navitem${isSettings ? ' topbar__navitem--active' : ''}`}
       aria-current={isSettings ? 'page' : undefined}
     >
-      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fill-rule="evenodd" d="M8.34 1.804A1 1 0 0 1 9.32 1h1.36a1 1 0 0 1 .98.804l.295 1.473c.497.144.971.342 1.416.587l1.25-.834a1 1 0 0 1 1.262.125l.962.962a1 1 0 0 1 .125 1.262l-.834 1.25c.245.445.443.919.587 1.416l1.473.294a1 1 0 0 1 .804.98v1.361a1 1 0 0 1-.804.98l-1.473.295a6.95 6.95 0 0 1-.587 1.416l.834 1.25a1 1 0 0 1-.125 1.262l-.962.962a1 1 0 0 1-1.262.125l-1.25-.834a6.953 6.953 0 0 1-1.416.587l-.294 1.473a1 1 0 0 1-.98.804H9.32a1 1 0 0 1-.98-.804l-.295-1.473a6.957 6.957 0 0 1-1.416-.587l-1.25.834a1 1 0 0 1-1.262-.125l-.962-.962a1 1 0 0 1-.125-1.262l.834-1.25a6.957 6.957 0 0 1-.587-1.416l-1.473-.294A1 1 0 0 1 1 10.68V9.32a1 1 0 0 1 .804-.98l1.473-.295c.144-.497.342-.971.587-1.416l-.834-1.25a1 1 0 0 1 .125-1.262l.962-.962A1 1 0 0 1 5.38 2.93l1.25.834a6.957 6.957 0 0 1 1.416-.587L8.34 1.804ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
-      </svg>
+      <i data-feather="settings"></i>
+      <span data-i18n="nav.settings">Settings</span>
     </a>
   </div>
 
 </nav>
 
 <script>
-  const topbar = document.getElementById('topbar') as HTMLElement
-  let hoverTimer: ReturnType<typeof setTimeout> | null = null
-
-  function openTopbar() {
-    topbar.dataset.state = 'open'
-    hoverTimer = null
-  }
-
-  function closeTopbar() {
-    topbar.dataset.state = 'closed'
-  }
-
-  function scheduleOpen() {
-    if (hoverTimer !== null) clearTimeout(hoverTimer)
-    hoverTimer = setTimeout(openTopbar, 300)
-  }
-
-  topbar.addEventListener('mouseenter', scheduleOpen)
-  topbar.addEventListener('mousemove', scheduleOpen)
-
-  topbar.addEventListener('mouseleave', () => {
-    if (hoverTimer !== null) {
-      clearTimeout(hoverTimer)
-      hoverTimer = null
-    }
-    closeTopbar()
-  })
-
   const labelEl = document.getElementById('topbar-label') as HTMLElement | null
   if (labelEl) {
     const allLabels: string[] = JSON.parse(labelEl.dataset.labels || '[]')

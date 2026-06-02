@@ -65,6 +65,7 @@ export const es: I18n = {
       saved: '¡Guardado!',
       errorSaving: 'Error al guardar',
     },
+    storageNote: 'Los ajustes se almacenan en tu navegador y persisten entre visitas. Pueden perderse si borras los datos de navegación o el historial del sitio. Si inicias sesión, tus preferencias también se guardan como valores globales del sitio.',
   },
   home: {
     tagline: 'Científico Computacional · Amante de las Matemáticas · UX · Tech MC & Sci-Fi',

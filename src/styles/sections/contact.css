@@ -26,3 +26,20 @@
 }
 
 .discord-icon { cursor: pointer; }
+
+@media (max-width: 600px) {
+  .contact-channels {
+    flex-direction: column;
+    margin-left: 1rem;
+    gap: 1.5rem;
+  }
+
+  .channel-whatsapp,
+  .channel-discord {
+    margin-left: 0;
+  }
+
+  .discord-info {
+    position: static;
+  }
+}

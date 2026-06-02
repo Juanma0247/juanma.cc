@@ -26,4 +26,20 @@ export async function saveSettings(data) {
   if (data.defaultLanding !== undefined) {
     localStorage.setItem(LANDING_CACHE_KEY, data.defaultLanding)
   }
+  if (data.theme !== undefined) {
+    if (data.theme) localStorage.setItem('site-theme', data.theme)
+    else localStorage.removeItem('site-theme')
+  }
+  if (data.customColors !== undefined) {
+    if (data.customColors) localStorage.setItem('site-theme-custom', JSON.stringify(data.customColors))
+    else localStorage.removeItem('site-theme-custom')
+  }
+  if (data.font !== undefined) {
+    if (data.font) localStorage.setItem('site-font', data.font)
+    else localStorage.removeItem('site-font')
+  }
+  if (data.lang !== undefined) {
+    if (data.lang) localStorage.setItem('site-lang', data.lang)
+    else localStorage.removeItem('site-lang')
+  }
 }

@@ -259,3 +259,13 @@
 
   .hero-name { font-size: 2rem; }
 }
+
+@media (max-width: 26rem) {
+  .hero-name { font-size: 1.65rem; }
+  .hero-bio  { font-size: 0.95rem; }
+
+  .quick-card {
+    width: 100%;
+    justify-content: center;
+  }
+}

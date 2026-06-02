@@ -176,17 +176,9 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
 
     <!-- Tape -->
     <div class="tm-tape-outer">
-      <div id="tm-tape-viewport" class="tm-tape-viewport">
-        <div id="tm-tape-cells" class="tm-tape-cells"></div>
-        <div id="tm-tape-indices" class="tm-tape-indices"></div>
-      </div>
-      <div class="tm-tape-arrow-row">
-        <div id="tm-tape-arrow" class="tm-tape-arrow">▲</div>
-      </div>
+      <div id="tm-tape-track" class="tm-tape-track"></div>
     </div>
 
-    <!-- Tape content summary -->
-    <div id="tm-tape-output" class="tm-tape-output"></div>
 
   </div>
 
@@ -194,11 +186,12 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   <div class="tm-card">
     <div class="tm-card-head">
       <span class="tm-card-title">State diagram</span>
-      <span class="tm-format-hint">Arrow format: read | write Direction — e.g. <code>1|aR</code></span>
+      <span class="tm-format-hint">Drag ring to connect · Click edge to edit · Dbl-click to add state</span>
       <button class="tm-help-btn" data-theory="diagram" title="Theory: state diagram">?</button>
     </div>
     <div class="tm-diagram-wrap">
       <svg id="tm-diagram-svg" class="tm-diagram-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div id="tm-diag-panel" class="tm-diag-panel" style="display:none"></div>
     </div>
   </div>
 
@@ -235,8 +228,8 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   <div class="space-bottom"></div>
 </ProjectLayout>
 
-<style>@import '../../styles/sections/projects.css';
-  @import '../../styles/sections/projects-turing-machine.css';</style>
+<style>@import '../../styles/sections/projects.css';</style>
+<style is:global>@import '../../styles/sections/projects-turing-machine.css';</style>
 
 <script type="module" is:inline>
   import TuringMachine from '/js/lib/TuringMachine.js'

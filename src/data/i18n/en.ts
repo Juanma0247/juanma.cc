@@ -63,6 +63,7 @@ export interface I18n {
       saved: string
       errorSaving: string
     }
+    storageNote: string
   }
   home: {
     tagline: string
@@ -206,6 +207,7 @@ export const en: I18n = {
       saved: 'Saved!',
       errorSaving: 'Error saving',
     },
+    storageNote: 'Settings are stored in your browser and persist between visits. They may be lost if you clear your browsing data or site history. If signed in, your preferences are also saved as global site defaults.',
   },
   home: {
     tagline: 'Computer Scientist · Math Lover · UX · Tech MC & Sci-Fi',

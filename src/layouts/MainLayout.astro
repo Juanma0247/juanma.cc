@@ -41,8 +41,12 @@ const pageTitle = title ? `${title} — Juanma` : 'Juanma'
     <script is:inline>
       ;(function () {
         var t = localStorage.getItem('site-theme') || 'light'
-        document.documentElement.dataset.theme = t
         if (t === 'seted') {
+          t = 'customizable'
+          localStorage.setItem('site-theme', 'customizable')
+        }
+        document.documentElement.dataset.theme = t
+        if (t === 'customizable') {
           try {
             var c = JSON.parse(localStorage.getItem('site-theme-custom') || 'null')
             if (c) {
@@ -122,17 +126,63 @@ const pageTitle = title ? `${title} — Juanma` : 'Juanma'
     <script>
       import { getSettings, LANDING_CACHE_KEY } from '../lib/core/SiteSettings.js'
 
-      if (window.location.pathname === '/' && !sessionStorage.getItem('landing-done')) {
-        getSettings().then(s => {
-          if (s?.defaultLanding) {
-            localStorage.setItem(LANDING_CACHE_KEY, s.defaultLanding)
-            if (s.defaultLanding !== '/') {
-              sessionStorage.setItem('landing-done', '1')
-              window.location.replace(s.defaultLanding)
-            }
+      getSettings().then(s => {
+        if (!s) return
+
+        if (s.defaultLanding && window.location.pathname === '/' && !sessionStorage.getItem('landing-done')) {
+          localStorage.setItem(LANDING_CACHE_KEY, s.defaultLanding)
+          if (s.defaultLanding !== '/') {
+            sessionStorage.setItem('landing-done', '1')
+            window.location.replace(s.defaultLanding)
+            return
           }
-        }).catch(() => {})
-      }
+        }
+
+        const FONT_MAP: Record<string, { stack: string; url: string }> = {
+          inter:       { stack: "'Inter', sans-serif",        url: 'Inter:wght@400;700' },
+          roboto:      { stack: "'Roboto', sans-serif",       url: 'Roboto:wght@400;700' },
+          playfair:    { stack: "'Playfair Display', serif",  url: 'Playfair+Display:wght@400;700' },
+          montserrat:  { stack: "'Montserrat', sans-serif",   url: 'Montserrat:wght@400;700' },
+          'fira-code': { stack: "'Fira Code', monospace",     url: 'Fira+Code:wght@400;700' },
+        }
+
+        if (s.theme && !localStorage.getItem('site-theme')) {
+          const theme = s.theme
+          document.documentElement.dataset.theme = theme
+          localStorage.setItem('site-theme', theme)
+          if (theme === 'customizable' && s.customColors) {
+            const c = s.customColors
+            localStorage.setItem('site-theme-custom', JSON.stringify(c))
+            const root = document.documentElement
+            root.style.setProperty('--color-primary', c.primary)
+            root.style.setProperty('--color-text',    c.text)
+            root.style.setProperty('--color-bg',      c.bg)
+            root.style.setProperty('--color-muted',   c.muted)
+          }
+        }
+
+        if (s.font && !localStorage.getItem('site-font')) {
+          const fm = FONT_MAP[s.font]
+          if (fm) {
+            localStorage.setItem('site-font', s.font)
+            document.documentElement.style.setProperty('--font-ui',   fm.stack)
+            document.documentElement.style.setProperty('--font-bold', fm.stack)
+            let lnk = document.getElementById('gfont-link') as HTMLLinkElement | null
+            const href = `https://fonts.googleapis.com/css2?family=${fm.url}&display=swap`
+            if (!lnk) {
+              lnk = document.createElement('link')
+              lnk.id  = 'gfont-link'
+              lnk.rel = 'stylesheet'
+              document.head.appendChild(lnk)
+            }
+            if (lnk.href !== href) lnk.href = href
+          }
+        }
+
+        if (s.lang && !localStorage.getItem('site-lang')) {
+          ;(window as any).applyLang?.(s.lang)
+        }
+      }).catch(() => {})
     </script>
 
     <script is:inline define:vars={{ i18nEn: en, i18nEs: es }}>
@@ -192,6 +242,6 @@ const pageTitle = title ? `${title} — Juanma` : 'Juanma'
     position: relative;
     z-index: 0;
     padding-top: 1rem;
-    min-height: calc(100vh - 3rem);
+    min-height: calc(100vh - 3.375rem);
   }
 </style>
