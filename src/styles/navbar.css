@@ -126,6 +126,12 @@
 }
 
 
+/* ── Menu Toggle (mobile only) ─────────────────── */
+
+.topbar__menu-toggle {
+  display: none;
+}
+
 /* ── Responsive ────────────────────────────────── */
 
 @media (max-width: 580px) {
@@ -134,6 +140,7 @@
     min-height: 3.375rem;
     flex-wrap: wrap;
     overflow: visible;
+    position: relative;
   }
 
   .topbar__identity {
@@ -141,13 +148,45 @@
     max-width: none;
   }
 
+  .topbar__menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 3.375rem;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--color-text);
+    cursor: pointer;
+    padding: 0 0.5rem;
+    transition: color 160ms;
+  }
+
+  .topbar__menu-toggle:hover {
+    color: var(--color-primary);
+  }
+
+  .topbar__menu-toggle svg,
+  .topbar__menu-toggle i {
+    width: 1.125rem;
+    height: 1.125rem;
+    pointer-events: none;
+  }
+
   .topbar__nav {
+    display: none;
     width: 100%;
     margin-left: 0;
     flex-direction: column;
     align-items: stretch;
     gap: 0.25rem;
     padding: 0.5rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+  }
+
+  .topbar__nav--open {
+    display: flex;
   }
 
   .topbar__navitem {
