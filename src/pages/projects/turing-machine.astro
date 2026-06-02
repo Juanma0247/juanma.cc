@@ -4,8 +4,6 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
 
 <ProjectLayout slug="turing-machine">
 
-  <h1 class="subtitle">Turing Machine Lab</h1>
-
   <!-- ── Setup ──────────────────────────────────────────────── -->
   <div class="tm-setup">
 
@@ -19,11 +17,6 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
     <div class="field tm-alphabet-group">
       <input id="tm-alphabet" autocomplete="off" required value="1 0 a" placeholder=" ">
       <label class="field-label">Alphabet Σ (space-separated)</label>
-    </div>
-
-    <div class="field">
-      <input id="tm-tape-input" autocomplete="off" required value="11010011" placeholder=" ">
-      <label class="field-label">Initial tape</label>
     </div>
 
     <div class="tm-field">
@@ -63,43 +56,78 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
     <div id="tm-formal-def" class="tm-formal-def">Loading…</div>
   </div>
 
-  <!-- ── Transition table ────────────────────────────────────── -->
+  <!-- ── Transition function / State diagram (shared card) ─────── -->
   <div class="tm-card">
+
     <div class="tm-card-head">
-      <span class="tm-card-title">
-        Transition function
-        <span class="tm-def-inline">I : K × (Σ ∪ &#123;#&#125;) → (Σ ∪ &#123;#&#125;) × &#123;R, L&#125; × K</span>
-      </span>
-      <span class="tm-format-hint">Format: <code>symbol Direction state</code> — e.g. <code>1Rq0</code> &nbsp;·&nbsp; <code>#Lq2</code> &nbsp;·&nbsp; <code>aRq1</code></span>
-      <div class="tm-card-actions">
-        <!-- Clear table -->
-        <button id="tm-btn-clear" class="tm-io-btn" title="Clear all transition instructions">
+
+      <!-- View switch -->
+      <div class="tm-vs-group">
+        <button class="tm-vs-btn is-active" data-view="table" title="Transition table">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 4h12M5 4V2h6v2M6 7v6M10 7v6"/><path d="M3 4l1 10h8l1-10"/>
+            <rect x="1" y="1" width="14" height="14" rx="1"/>
+            <line x1="1" y1="5" x2="15" y2="5"/><line x1="6" y1="5" x2="6" y2="15"/>
           </svg>
-          Clear
+          Table
         </button>
-        <!-- 9 · Export -->
-        <button id="tm-btn-export" class="tm-io-btn" title="Export machine as JSON">
+        <button class="tm-vs-btn" data-view="diagram" title="State diagram">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 11V2M4 5l4-4 4 4"/><rect x="2" y="12" width="12" height="3" rx="1"/>
+            <circle cx="3" cy="8" r="2"/><circle cx="13" cy="4" r="2"/><circle cx="13" cy="12" r="2"/>
+            <line x1="5" y1="7" x2="11" y2="5"/><line x1="5" y1="9" x2="11" y2="11"/>
           </svg>
-          Export
+          Diagram
         </button>
-        <!-- 7 · Help -->
-        <button class="tm-help-btn" data-theory="table" title="Theory: instructions & final combinations">?</button>
-        <!-- State management -->
-        <div class="tm-state-btns">
-          <button id="tm-add-state" class="is-icon" title="Add state">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
+      </div>
+
+      <!-- Table-specific extras -->
+      <div id="tm-vs-table-extras" class="tm-vs-extras">
+        <span class="tm-format-hint">Format: <code>symbol Direction state</code> — e.g. <code>1Rq0</code> &nbsp;·&nbsp; <code>#Lq2</code></span>
+        <div class="tm-card-actions">
+          <button id="tm-btn-clear" class="tm-io-btn" title="Clear all transition instructions">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 4h12M5 4V2h6v2M6 7v6M10 7v6"/><path d="M3 4l1 10h8l1-10"/>
+            </svg>
+            Clear
           </button>
-          <button id="tm-remove-state" class="is-icon" title="Remove last state">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="8" x2="14" y2="8"/></svg>
+          <button id="tm-btn-export" class="tm-io-btn" title="Export machine as JSON">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 11V2M4 5l4-4 4 4"/><rect x="2" y="12" width="12" height="3" rx="1"/>
+            </svg>
+            Export
           </button>
+          <button class="tm-help-btn" data-theory="table" title="Theory: instructions & final combinations">?</button>
+          <div class="tm-state-btns">
+            <button id="tm-add-state" class="is-icon" title="Add state">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
+            </button>
+            <button id="tm-remove-state" class="is-icon" title="Remove last state">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="8" x2="14" y2="8"/></svg>
+            </button>
+          </div>
         </div>
       </div>
+
+      <!-- Diagram-specific extras -->
+      <div id="tm-vs-diagram-extras" class="tm-vs-extras" style="display:none">
+        <span class="tm-format-hint">Drag ring to connect · Click edge to edit · Dbl-click to add state · <kbd>Ctrl+scroll</kbd> zoom · <kbd>Ctrl+0</kbd> reset</span>
+        <button class="tm-help-btn" data-theory="diagram" title="Theory: state diagram">?</button>
+      </div>
+
     </div>
-    <div id="tm-table-wrap" class="tm-table-wrap"></div>
+
+    <!-- Table view -->
+    <div id="tm-vs-table">
+      <div id="tm-table-wrap" class="tm-table-wrap"></div>
+    </div>
+
+    <!-- Diagram view -->
+    <div id="tm-vs-diagram" style="display:none">
+      <div class="tm-diagram-wrap">
+        <svg id="tm-diagram-svg" class="tm-diagram-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div id="tm-diag-panel" class="tm-diag-panel" style="display:none"></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ── Execution ───────────────────────────────────────────── -->
@@ -113,7 +141,12 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
     <!-- Controls -->
     <div class="tm-controls-bar">
       <button id="tm-btn-reset" title="Reset to initial configuration (R)">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,7 1,1 7,1"/><path d="M1,1 C4,6 8,8 14,8 A6,6 0 1 1 8,2"/></svg>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <g transform="rotate(180 8 8)">
+            <path d="M8 3 A5 5 0 1 0 13 8"/>
+            <polyline transform="rotate(180 13 8)" points="11 6 13 8 15 6"/>
+          </g>
+        </svg>
         Reset
       </button>
       <button id="tm-btn-back" title="Step back (←)" disabled>
@@ -137,6 +170,11 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
         <span class="tm-speed-text">Speed</span>
         <input type="range" id="tm-speed" min="1" max="20" value="5">
         <span id="tm-speed-label" class="tm-speed-val">5×</span>
+      </div>
+
+      <div class="tm-tape-inline-wrap">
+        <label class="tm-tape-inline-lbl" for="tm-tape-input">Tape</label>
+        <input id="tm-tape-input" class="tm-tape-inline-input" autocomplete="off" value="11010011" placeholder="tape…" spellcheck="false">
       </div>
 
       <div id="tm-status" class="tm-status">Idle</div>
@@ -180,19 +218,6 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
     </div>
 
 
-  </div>
-
-  <!-- ── 10 · State diagram ──────────────────────────────────── -->
-  <div class="tm-card">
-    <div class="tm-card-head">
-      <span class="tm-card-title">State diagram</span>
-      <span class="tm-format-hint">Drag ring to connect · Click edge to edit · Dbl-click to add state</span>
-      <button class="tm-help-btn" data-theory="diagram" title="Theory: state diagram">?</button>
-    </div>
-    <div class="tm-diagram-wrap">
-      <svg id="tm-diagram-svg" class="tm-diagram-svg" xmlns="http://www.w3.org/2000/svg"></svg>
-      <div id="tm-diag-panel" class="tm-diag-panel" style="display:none"></div>
-    </div>
   </div>
 
   <!-- ── Configuration history ───────────────────────────────── -->

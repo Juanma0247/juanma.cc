@@ -100,6 +100,8 @@ class TuringMachine {
     this._diagConnFrom = null
     this._diagSel      = null
     this._diagPanel    = document.getElementById('tm-diag-panel')
+    this._diagVB       = null   // custom viewBox from zoom; null = use computed base
+    this._diagBaseW    = 0      // base viewBox width for clamping
   }
 
   // ── Tape helpers ──────────────────────────────────────────────
@@ -802,36 +804,49 @@ class TuringMachine {
   }
 
   _initNodePositions(W, H, CR) {
-    const N = this.states.length
-    const existing = new Set(Object.keys(this.nodePositions))
-    const missing  = this.states.filter(s => !existing.has(s))
+    const N       = this.states.length
+    const PAD     = CR + 36
+    const iW      = W - PAD * 2
+    const iH      = H - PAD * 2
+    const cx      = W / 2
+    const cy      = H / 2
 
-    if (missing.length > 0) {
-      const PAD = CR + 50
-      if (N <= 4) {
-        const SPACING = 130
-        const totalW  = (N - 1) * SPACING
-        const startX  = W / 2 - totalW / 2
-        const cy      = H / 2
-        this.states.forEach((s, i) => {
-          if (!this.nodePositions[s]) {
-            this.nodePositions[s] = { x: startX + i * SPACING, y: cy }
-          }
-        })
-      } else {
-        const LAY_R = Math.max(90, (N * 78) / (2 * Math.PI))
-        const cx = W / 2, cy = H / 2
-        this.states.forEach((s, i) => {
-          if (!this.nodePositions[s]) {
-            const a = (i * 2 * Math.PI / N) - Math.PI / 2
-            this.nodePositions[s] = {
-              x: cx + LAY_R * Math.cos(a),
-              y: cy + LAY_R * Math.sin(a)
-            }
-          }
-        })
-      }
+    // Preset 2D layouts as [fx, fy] fractions of available inner space
+    const LAYOUTS = {
+      1: [[.5, .5]],
+      2: [[.12, .5], [.88, .5]],
+      3: [[.12, .5], [.58, .1], [.88, .5]],
+      // Horizontal diamond: left · top · right · bottom
+      4: [[.1, .48], [.45, .1], [.9, .48], [.45, .88]],
+      // Wide pentagon
+      5: [[.08, .48], [.36, .08], [.78, .08], [.92, .65], [.42, .9]],
+      // Hexagon (2-3-1 or 2×3)
+      6: [[.08, .48], [.28, .1], [.62, .1], [.92, .32], [.92, .72], [.5, .9]],
+      // Two staggered rows for 7-8
+      7: [[.08, .3], [.35, .08], [.65, .08], [.92, .3], [.92, .7], [.65, .92], [.35, .92]],
+      8: [[.08, .3], [.35, .08], [.65, .08], [.92, .3], [.92, .7], [.65, .92], [.35, .92], [.08, .7]],
     }
+
+    this.states.forEach((s, i) => {
+      if (this.nodePositions[s]) return
+
+      let x, y
+      if (LAYOUTS[N]) {
+        const [fx, fy] = LAYOUTS[N][i] || [.5, .5]
+        x = Math.round(PAD + fx * iW)
+        y = Math.round(PAD + fy * iH)
+      } else {
+        // Grid for N > 8: wider than tall (1.6 ratio)
+        const cols = Math.ceil(Math.sqrt(N * 1.6))
+        const rows = Math.ceil(N / cols)
+        const col  = i % cols
+        const row  = Math.floor(i / cols)
+        x = Math.round(PAD + (col / Math.max(cols - 1, 1)) * iW)
+        y = Math.round(PAD + (row / Math.max(rows - 1, 1)) * iH)
+      }
+
+      this.nodePositions[s] = { x, y }
+    })
 
     for (const s of Object.keys(this.nodePositions)) {
       if (!this.states.includes(s)) delete this.nodePositions[s]
@@ -913,7 +928,15 @@ class TuringMachine {
       stroke-width="1.4" stroke-opacity=".5" stroke-dasharray="5 3"
       marker-end="url(#ta-g)" style="display:none"/>`
 
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`)
+    // Apply stored zoom or use base viewBox
+    if (this._diagVB) {
+      const { x, y, w, h } = this._diagVB
+      svg.setAttribute('viewBox', `${x.toFixed(1)} ${y.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`)
+    } else {
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`)
+      this._diagBaseW = W
+      this._diagBaseH = H
+    }
     svg.innerHTML = defs + bg + edgeParts + nodeParts + ghost
 
     this._tdAttachEvents(svg)
@@ -961,40 +984,41 @@ class TuringMachine {
     const dy  = pT.y - pF.y
     const len = Math.sqrt(dx * dx + dy * dy) || 1
     const ux  = dx / len, uy = dy / len
-    const px  = -uy, py = ux
 
-    const sign  = hasBidi ? (isFirst ? -1 : 1) : 0
-    const bend  = sign * Math.min(38, len * 0.3)
-    const nudge = hasBidi ? 0 : 0
+    // Canonical perpendicular: always referenced to the "first" (A→B) direction
+    // so both arrows in a bidi pair use the SAME axis but opposite signs.
+    // Formula: cpx = isFirst ? -uy : uy   (both resolve to the same absolute vector)
+    //          cpy = isFirst ?  ux : -ux
+    const cpx = isFirst ? -uy :  uy
+    const cpy = isFirst ?  ux : -ux
+
+    const bendAmt = hasBidi ? Math.max(48, Math.min(68, len * 0.36)) : 0
+    const sign    = hasBidi ? (isFirst ? 1 : -1) : 0
 
     const sx = pF.x + ux * CR
     const sy = pF.y + uy * CR
     const ex = pT.x - ux * (CR + 7)
     const ey = pT.y - uy * (CR + 7)
-    const mx = (sx + ex) / 2 + px * (bend || nudge)
-    const my = (sy + ey) / 2 + py * (bend || nudge)
+    const mx = (sx + ex) / 2 + cpx * sign * bendAmt
+    const my = (sy + ey) / 2 + cpy * sign * bendAmt
 
-    const pathD = bend !== 0
+    const pathD = bendAmt > 0
       ? `M${sx.toFixed(1)},${sy.toFixed(1)} Q${mx.toFixed(1)},${my.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}`
       : `M${sx.toFixed(1)},${sy.toFixed(1)} L${ex.toFixed(1)},${ey.toFixed(1)}`
 
-    const lx = mx + px * (bend !== 0 ? 12 : 10)
-    const ly = my + py * (bend !== 0 ? 12 : 10)
+    const lx = mx + cpx * sign * 12
+    const ly = my + cpy * sign * 12
 
     const stroke    = isSel ? 'var(--color-primary)' : 'var(--color-primary)'
     const opacity   = isSel ? '1' : '.75'
     const strokeW   = isSel ? '2' : '1.4'
     const markerId  = isSel ? 'ta-h' : 'ta'
 
-    const labels = edge.items.map(({ sym, inst }) =>
-      `${sym === '#' ? '_' : sym}|${inst.write === '#' ? '_' : inst.write}${inst.dir}`
-    )
-
     return `<g class="td-edge-g" data-key="${this._esc(edge.key)}" data-from="${this._esc(edge.from)}" data-to="${this._esc(edge.to)}">
       <path d="${pathD}" fill="none" stroke="${stroke}" stroke-width="${strokeW}"
         stroke-opacity="${opacity}" marker-end="url(#${markerId})"/>
       <path class="td-edge-hit" d="${pathD}" fill="none" stroke="transparent" stroke-width="14"/>
-      ${this._tdEdgeLbl(lx, ly, labels, isSel)}
+      ${this._tdEdgeLbl(lx, ly, edge.items, isSel)}
     </g>`
   }
 
@@ -1005,32 +1029,59 @@ class TuringMachine {
     const strokeW  = isSel ? '2' : '1.4'
     const markerId = isSel ? 'ta-h' : 'ta'
 
-    const labels = edge.items.map(({ sym, inst }) =>
-      `${sym === '#' ? '_' : sym}|${inst.write === '#' ? '_' : inst.write}${inst.dir}`
-    )
-
     return `<g class="td-edge-g" data-key="${this._esc(edge.key)}" data-from="${this._esc(edge.from)}" data-to="${this._esc(edge.to)}">
       <path d="${pathD}" fill="none" stroke="var(--color-primary)" stroke-width="${strokeW}"
         stroke-opacity="${opacity}" marker-end="url(#${markerId})"/>
       <path class="td-edge-hit" d="${pathD}" fill="none" stroke="transparent" stroke-width="14"/>
-      ${this._tdEdgeLbl(x, y - 32, labels, isSel)}
+      ${this._tdEdgeLbl(x, y - 32, edge.items, isSel)}
     </g>`
   }
 
-  _tdEdgeLbl(x, y, labels, isSel) {
-    const MAX    = 4
-    const shown  = labels.slice(0, MAX)
-    const extra  = labels.length > MAX ? `+${labels.length - MAX}` : ''
-    const total  = shown.length + (extra ? 1 : 0)
-    const yStart = (y - (total - 1) * 11 / 2).toFixed(1)
-    const fill   = isSel ? 'var(--color-primary)' : 'var(--color-text)'
-    const tspans = shown.map((l, i) =>
-      `<tspan x="${x.toFixed(1)}" dy="${i === 0 ? 0 : 11}">${this._esc(l)}</tspan>`
+  _tdEdgeLbl(cx, cy, items, isSel) {
+    const MAX  = 4
+    const fill = isSel ? 'var(--color-primary)' : 'var(--color-text)'
+    const shown = items.slice(0, MAX)
+    const overflow = items.length > MAX ? items.length - MAX : 0
+
+    if (window.katex) {
+      const LW     = 90
+      const LINE_H = 17
+      const H      = (shown.length + (overflow ? 1 : 0)) * LINE_H + 2
+      const x      = (cx - LW / 2).toFixed(1)
+      const y      = (cy - H / 2).toFixed(1)
+
+      const lines = shown.map(({ sym, inst }) => {
+        const r     = sym        === '#' ? '\\#' : this._esc(sym)
+        const w     = inst.write === '#' ? '\\#' : this._esc(inst.write)
+        const d     = inst.dir === 'R' ? '\\text{R}' : '\\text{L}'
+        const latex = `${r} \\to ${w},\\!${d}`
+        const html  = window.katex.renderToString(latex, { throwOnError: false, output: 'html' })
+        return `<div class="td-fo-line">${html}</div>`
+      }).join('')
+
+      const ovf = overflow ? `<div class="td-fo-more">+${overflow}</div>` : ''
+
+      return `<foreignObject x="${x}" y="${y}" width="${LW}" height="${H}" overflow="visible" pointer-events="none">
+          <div xmlns="http://www.w3.org/1999/xhtml" class="td-fo-lbl" style="color:${fill}">
+            ${lines}${ovf}
+          </div>
+        </foreignObject>`
+    }
+
+    // Fallback: plain SVG text
+    const fallback = shown.map(({ sym, inst }) => {
+      const r = sym === '#' ? '#' : sym
+      const w = inst.write === '#' ? '#' : inst.write
+      return `${r} → ${w}, ${inst.dir}`
+    })
+    const extra  = overflow ? `+${overflow}` : ''
+    const count  = fallback.length + (extra ? 1 : 0)
+    const yStart = (cy - (count - 1) * 11 / 2).toFixed(1)
+    const tspans = fallback.map((l, i) =>
+      `<tspan x="${cx.toFixed(1)}" dy="${i === 0 ? 0 : 11}">${this._esc(l)}</tspan>`
     ).join('')
-    const ext = extra
-      ? `<tspan x="${x.toFixed(1)}" dy="11" fill="var(--color-muted)">${extra}</tspan>`
-      : ''
-    return `<text x="${x.toFixed(1)}" y="${yStart}" class="tm-diag-edge-lbl" fill="${fill}" pointer-events="none">${tspans}${ext}</text>`
+    const ext = extra ? `<tspan x="${cx.toFixed(1)}" dy="11" fill="var(--color-muted)">${extra}</tspan>` : ''
+    return `<text x="${cx.toFixed(1)}" y="${yStart}" class="tm-diag-edge-lbl" fill="${fill}" pointer-events="none">${tspans}${ext}</text>`
   }
 
   _tdAttachEvents(svg) {
@@ -1047,15 +1098,54 @@ class TuringMachine {
       }
     }
 
-    svg.querySelector('.td-bg')?.addEventListener('click', (e) => {
-      if (e.target !== e.currentTarget) return
-      self._tdClosePanel()
-    })
+    // Background: pan on drag, deselect on click, add state on dblclick
+    const bgEl = svg.querySelector('.td-bg')
+    if (bgEl) {
+      bgEl.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return
+        e.preventDefault()
 
-    svg.querySelector('.td-bg')?.addEventListener('dblclick', (e) => {
-      const pt = svgPoint(e)
-      self._tdAddState(pt.x, pt.y)
-    })
+        const startX   = e.clientX, startY = e.clientY
+        const vb       = svg.viewBox.baseVal
+        const origX    = vb.x, origY = vb.y
+        const origW    = vb.width, origH = vb.height
+        const rect     = svg.getBoundingClientRect()
+        const scX      = origW / rect.width
+        const scY      = origH / rect.height
+        let panned     = false
+
+        const onMove = (me) => {
+          const dx = me.clientX - startX
+          const dy = me.clientY - startY
+          if (!panned && Math.abs(dx) + Math.abs(dy) < 4) return
+          panned = true
+          svg.classList.add('td-panning')
+          const nx = origX - dx * scX
+          const ny = origY - dy * scY
+          self._diagVB = { x: nx, y: ny, w: origW, h: origH }
+          svg.setAttribute('viewBox', `${nx.toFixed(1)} ${ny.toFixed(1)} ${origW.toFixed(1)} ${origH.toFixed(1)}`)
+        }
+
+        const onUp = () => {
+          document.removeEventListener('mousemove', onMove)
+          document.removeEventListener('mouseup', onUp)
+          svg.classList.remove('td-panning')
+          if (!panned) {
+            self._tdClosePanel()
+            self._diagSel = null
+            self.renderDiagram()
+          }
+        }
+
+        document.addEventListener('mousemove', onMove)
+        document.addEventListener('mouseup', onUp)
+      })
+
+      bgEl.addEventListener('dblclick', (e) => {
+        const pt = svgPoint(e)
+        self._tdAddState(pt.x, pt.y)
+      })
+    }
 
     svg.querySelectorAll('.td-node-g').forEach(g => {
       const state = g.dataset.state
@@ -1116,6 +1206,38 @@ class TuringMachine {
         self._tdShowEdgePanel(from, to, svg, pt)
       })
     })
+
+    // Ctrl+Scroll → zoom the diagram via viewBox manipulation
+    svg.addEventListener('wheel', (e) => {
+      if (!e.ctrlKey) return
+      e.preventDefault()
+
+      const vb   = svg.viewBox.baseVal
+      const rect = svg.getBoundingClientRect()
+
+      // Current viewBox values
+      let vx = vb.x, vy = vb.y, vw = vb.width, vh = vb.height
+
+      // Mouse position in SVG coordinates
+      const mx = vx + (e.clientX - rect.left) / rect.width  * vw
+      const my = vy + (e.clientY - rect.top)  / rect.height * vh
+
+      // Zoom factor (scroll up = zoom in)
+      const factor = e.deltaY < 0 ? 0.85 : 1 / 0.85
+      const nw     = vw * factor
+      const nh     = vh * factor
+
+      // Clamp: 20% – 400% of base viewBox
+      const bw = self._diagBaseW || vw
+      if (nw < bw * 0.2 || nw > bw * 4) return
+
+      // Shift origin so the point under the cursor stays fixed
+      const nx = mx - (mx - vx) * factor
+      const ny = my - (my - vy) * factor
+
+      self._diagVB = { x: nx, y: ny, w: nw, h: nh }
+      svg.setAttribute('viewBox', `${nx.toFixed(1)} ${ny.toFixed(1)} ${nw.toFixed(1)} ${nh.toFixed(1)}`)
+    }, { passive: false })
   }
 
   _tdStartConnect(fromState, e, svg) {
@@ -1274,7 +1396,7 @@ class TuringMachine {
       })
 
     const makeSelOpts = (list, val) =>
-      list.map(s => `<option value="${this._esc(s)}"${s === val ? ' selected' : ''}>${this._esc(s === '#' ? '_' : s)}</option>`).join('')
+      list.map(s => `<option value="${this._esc(s)}"${s === val ? ' selected' : ''}>${this._esc(s)}</option>`).join('')
 
     const rowsHtml = transItems.map(([key, inst]) => {
       const [, sym] = key.split(',')
@@ -1389,7 +1511,7 @@ class TuringMachine {
     const states = this.states
 
     const makeSelOpts = (list, val) =>
-      list.map(s => `<option value="${this._esc(s)}"${s === val ? ' selected' : ''}>${this._esc(s === '#' ? '_' : s)}</option>`).join('')
+      list.map(s => `<option value="${this._esc(s)}"${s === val ? ' selected' : ''}>${this._esc(s)}</option>`).join('')
 
     panel.innerHTML = `
       <div class="tdp-header">
@@ -1582,6 +1704,7 @@ class TuringMachine {
     this.states        = [...ex.states]
     this.initState     = ex.initState
     this.nodePositions = {}
+    this._diagVB       = null
     if (this.elAlphabet)  this.elAlphabet.value  = ex.alphabet
     if (this.elTapeInput) this.elTapeInput.value  = ex.tape
     this._syncStateSelect()
@@ -1597,6 +1720,25 @@ class TuringMachine {
   // ══════════════════════════════════════════════════════════════
 
   starter() {
+    // Table / Diagram view switch
+    const vsTable        = document.getElementById('tm-vs-table')
+    const vsDiagram      = document.getElementById('tm-vs-diagram')
+    const vsTableExtras  = document.getElementById('tm-vs-table-extras')
+    const vsDiagExtras   = document.getElementById('tm-vs-diagram-extras')
+    document.querySelectorAll('.tm-vs-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const view = btn.dataset.view
+        document.querySelectorAll('.tm-vs-btn').forEach(b =>
+          b.classList.toggle('is-active', b.dataset.view === view)
+        )
+        vsTable.style.display       = view === 'table'   ? '' : 'none'
+        vsDiagram.style.display     = view === 'diagram' ? '' : 'none'
+        vsTableExtras.style.display = view === 'table'   ? '' : 'none'
+        vsDiagExtras.style.display  = view === 'diagram' ? '' : 'none'
+        if (view === 'diagram') requestAnimationFrame(() => this.renderDiagram())
+      })
+    })
+
     // Examples
     if (this.elExamples) {
       this.elExamples.innerHTML = Object.entries(this.EXAMPLES)
@@ -1687,6 +1829,11 @@ class TuringMachine {
       if (e.key === 'ArrowRight') { e.preventDefault(); if (!this.isRunning) this.step() }
       if (e.key === 'ArrowLeft')  { e.preventDefault(); this.stepBack() }
       if (e.key === 'r' || e.key === 'R') this.reset()
+      if (e.ctrlKey && e.key === '0') {
+        e.preventDefault()
+        this._diagVB = null
+        this.renderDiagram()
+      }
       if (e.key === 'Escape') {
         this.hideTheory()
         if (this._diagMode === 'connecting' || this._diagSel) {

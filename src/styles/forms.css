@@ -37,11 +37,16 @@ select:hover {
 }
 
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([readonly]):focus,
-textarea:focus,
-select:focus {
+textarea:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: var(--shadow-primary);
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: none;
 }
 
 /* ── 1 · Input + floating label ──────────────────────────── */
@@ -243,14 +248,16 @@ input[type="number"]::-webkit-outer-spin-button {
 /* ── 5 · Select ──────────────────────────────────────────── */
 
 select {
-  padding-right: 2rem;
+  padding-right: 2.2rem;
   cursor: pointer;
-  box-shadow: var(--shadow-primary);
-  margin-top: 1rem;
+  /* Custom chevron arrow — always visible, vertically centered on the right */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0.5 L5 5.5 L10 0.5' fill='none' stroke='%23888888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .65rem center;
+  background-size: .6rem auto;
 }
 
-select:focus { box-shadow: var(--shadow-primary); }
-select:active { animation: btn-press .2s forwards; }
+select:focus { box-shadow: none; border-color: var(--color-primary); }
 select:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; pointer-events: none; }
 
 select option { background: var(--color-bg); color: var(--color-text); }
@@ -262,15 +269,8 @@ select option:checked { background: var(--primary-10); color: var(--color-primar
 }
 
 .select-wrap::after {
+  display: none; /* arrow is now handled by the select background-image */
   content: "";
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  width: .6rem;
-  height: .6rem;
-  border-right: var(--border-width) solid var(--color-primary);
-  border-bottom: var(--border-width) solid var(--color-primary);
-  transform: translateY(-65%) rotate(45deg);
   pointer-events: none;
 }
 
