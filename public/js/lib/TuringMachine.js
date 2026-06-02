@@ -1715,6 +1715,151 @@ class TuringMachine {
     this.updateFormalDef()
   }
 
+  loadFromData(data) {
+    this.alphabet      = (data.alphabet || '').split(/\s+/).filter(s => s && s !== '#')
+    this.states        = [...(data.states || ['q0'])]
+    this.initState     = data.initState || this.states[0] || 'q0'
+    this.nodePositions = {}
+    this._diagVB       = null
+    if (this.elAlphabet)  this.elAlphabet.value  = data.alphabet || ''
+    if (this.elTapeInput) this.elTapeInput.value  = data.tape    || ''
+    this._syncStateSelect()
+    if (this.elInitState) this.elInitState.value = this.initState
+    this.buildTable(data.trans || {})
+    this.buildTransitions()
+    this.reset()
+    this.updateFormalDef()
+    this._loadedTitle       = data.title       || ''
+    this._loadedDescription = data.description || ''
+    this._loadedAuthor      = data.author      || ''
+    this._onMachineLoaded?.()
+  }
+
+  collectMachineData() {
+    this.buildTransitions()
+    const trans = {}
+    Object.entries(this.transitions).forEach(([k, v]) => {
+      trans[k] = `${v.write}${v.dir}${v.next}`
+    })
+    return {
+      alphabet:  this.alphabet.join(' '),
+      states:    [...this.states],
+      initState: this.initState,
+      tape:      this.elTapeInput?.value || '',
+      trans,
+    }
+  }
+
+  static renderPreview(svgEl, machineData, opts = {}) {
+    const { cr = 16 } = opts
+    const states    = machineData.states || []
+    const initState = machineData.initState || states[0] || ''
+    if (states.length === 0) { svgEl.innerHTML = ''; return }
+
+    const transitions = {}
+    Object.entries(machineData.trans || {}).forEach(([k, v]) => {
+      const m = String(v).match(/^(.)(R|L)(\w+)$/i)
+      if (m) transitions[k] = { write: m[1], dir: m[2].toUpperCase(), next: m[3].toLowerCase() }
+    })
+
+    const vbW = 300, vbH = 200
+    const CR  = cr
+    const PAD = CR + 28
+    const iW  = vbW - PAD * 2
+    const iH  = vbH - PAD * 2
+    const N   = states.length
+
+    const LAYOUTS = {
+      1: [[.5,.5]],
+      2: [[.15,.5],[.85,.5]],
+      3: [[.12,.5],[.58,.1],[.88,.5]],
+      4: [[.1,.48],[.45,.1],[.9,.48],[.45,.88]],
+      5: [[.08,.48],[.36,.08],[.78,.08],[.92,.65],[.42,.9]],
+      6: [[.08,.48],[.28,.1],[.62,.1],[.92,.32],[.92,.72],[.5,.9]],
+    }
+
+    const nodePos = {}
+    states.forEach((s, i) => {
+      let x, y
+      const lay = LAYOUTS[N]
+      if (lay) {
+        const [fx, fy] = lay[i] || [.5,.5]
+        x = Math.round(PAD + fx * iW)
+        y = Math.round(PAD + fy * iH)
+      } else {
+        const cols = Math.ceil(Math.sqrt(N * 1.6))
+        const col  = i % cols, row = Math.floor(i / cols)
+        const rows = Math.ceil(N / cols)
+        x = Math.round(PAD + (col / Math.max(cols-1,1)) * iW)
+        y = Math.round(PAD + (row / Math.max(rows-1,1)) * iH)
+      }
+      nodePos[s] = { x, y }
+    })
+
+    const edgeMap = {}
+    Object.entries(transitions).forEach(([key, inst]) => {
+      const [from, ] = key.split(',')
+      const to = inst.next
+      const ek = `${from}→${to}`
+      if (!edgeMap[ek]) edgeMap[ek] = { from, to, items: [] }
+      edgeMap[ek].items.push(key)
+    })
+    const edges = Object.values(edgeMap)
+
+    const uid = `p${Math.random().toString(36).slice(2,7)}`
+    const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+
+    const defs = `<defs>
+      <marker id="ta-${uid}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+        <path d="M0,0 L10,5 L0,10 z" fill="var(--color-primary)" opacity=".8"/>
+      </marker></defs>`
+
+    let edgeParts = ''
+    edges.forEach(edge => {
+      const pF = nodePos[edge.from], pT = nodePos[edge.to]
+      if (!pF || !pT) return
+      if (edge.from === edge.to) {
+        edgeParts += `<path d="M ${pF.x-CR*.5},${pF.y-CR} C ${pF.x-CR*1.8},${pF.y-CR*2.4} ${pF.x+CR*1.8},${pF.y-CR*2.4} ${pF.x+CR*.5},${pF.y-CR}"
+          fill="none" stroke="var(--color-primary)" stroke-width="1.2" stroke-opacity=".7"
+          marker-end="url(#ta-${uid})"/>`
+        return
+      }
+      const dx = pT.x-pF.x, dy = pT.y-pF.y
+      const len = Math.sqrt(dx*dx+dy*dy) || 1
+      const ux = dx/len, uy = dy/len
+      const hasBidi = !!edgeMap[`${edge.to}→${edge.from}`]
+      const isFirst = edge.from < edge.to
+      const cpx = isFirst ? -uy : uy, cpy = isFirst ? ux : -ux
+      const bend = hasBidi ? Math.max(30, Math.min(50, len*0.35)) : 0
+      const sign = hasBidi ? (isFirst ? 1 : -1) : 0
+      const sx = pF.x+ux*CR, sy = pF.y+uy*CR
+      const ex = pT.x-ux*CR, ey = pT.y-uy*CR
+      const mx = (sx+ex)/2 + sign*bend*cpx, my = (sy+ey)/2 + sign*bend*cpy
+      edgeParts += `<path d="M ${sx.toFixed(1)},${sy.toFixed(1)} Q ${mx.toFixed(1)},${my.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}"
+        fill="none" stroke="var(--color-primary)" stroke-width="1.2" stroke-opacity=".7"
+        marker-end="url(#ta-${uid})"/>`
+    })
+
+    let nodeParts = ''
+    states.forEach(state => {
+      const p = nodePos[state]
+      if (!p) return
+      if (state === initState) {
+        nodeParts += `<line x1="${(p.x-CR-14).toFixed(1)}" y1="${p.y}" x2="${(p.x-CR-2).toFixed(1)}" y2="${p.y}"
+          stroke="var(--color-primary)" stroke-width="1.2" marker-end="url(#ta-${uid})"/>`
+      }
+      nodeParts += `<circle cx="${p.x}" cy="${p.y}" r="${CR}"
+        fill="var(--color-bg)" stroke="var(--color-primary)" stroke-width="1.4" stroke-opacity=".9"/>`
+      nodeParts += `<text x="${p.x}" y="${p.y+1}"
+        font-family="var(--font-mono)" font-size="${(CR*0.68).toFixed(1)}"
+        text-anchor="middle" dominant-baseline="middle"
+        fill="var(--color-primary)">${esc(state)}</text>`
+    })
+
+    svgEl.setAttribute('viewBox', `0 0 ${vbW} ${vbH}`)
+    svgEl.innerHTML = defs + edgeParts + nodeParts
+  }
+
   // ══════════════════════════════════════════════════════════════
   //  Init & event binding
   // ══════════════════════════════════════════════════════════════

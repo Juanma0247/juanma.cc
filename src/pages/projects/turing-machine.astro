@@ -1,6 +1,19 @@
 ---
 import ProjectLayout from '../../layouts/ProjectLayout.astro'
+
+const firebaseConfig = {
+  apiKey:            import.meta.env.PUBLIC_FIREBASE_API_KEY,
+  authDomain:        import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId:         import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket:     import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId:             import.meta.env.PUBLIC_FIREBASE_APP_ID,
+}
 ---
+
+<script is:inline define:vars={{ firebaseConfig }}>
+  window.__FIREBASE_CONFIG = firebaseConfig
+</script>
 
 <ProjectLayout slug="turing-machine">
 
@@ -8,9 +21,31 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   <div class="tm-setup">
 
     <div class="tm-field">
-      <label class="tm-label" for="tm-examples">Example</label>
-      <div class="select-wrap">
-        <select id="tm-examples"></select>
+      <label class="tm-label">Load machine</label>
+      <div class="tm-load-group">
+        <button id="tm-btn-library" class="tm-io-btn" title="Browse machine library">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="14" height="11" rx="1"/>
+            <line x1="1" y1="7" x2="15" y2="7"/>
+            <line x1="5" y1="7" x2="5" y2="14"/>
+          </svg>
+          TM Library
+        </button>
+        <button id="tm-btn-import" class="tm-io-btn" title="Load machine from JSON file">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v9M4 8l4 5 4-5"/><rect x="2" y="12" width="12" height="3" rx="1"/>
+          </svg>
+          Import JSON
+        </button>
+        <button id="tm-btn-json-info" class="tm-io-btn tm-io-btn--info" title="JSON format guide & AI prompt generator">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="8" r="6.5"/>
+            <line x1="8" y1="7" x2="8" y2="11.5"/>
+            <circle cx="8" cy="4.5" r=".6" fill="currentColor" stroke="none"/>
+          </svg>
+          JSON Guide
+        </button>
+        <input id="tm-import-file" type="file" accept=".json" style="display:none">
       </div>
     </div>
 
@@ -37,18 +72,12 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
       </div>
     </div>
 
-    <!-- 9 · Import button -->
-    <div class="tm-field">
-      <label class="tm-label">Import JSON</label>
-      <button id="tm-btn-import" class="tm-io-btn" title="Load machine from JSON file">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 2v9M4 8l4 5 4-5"/><rect x="2" y="12" width="12" height="3" rx="1"/>
-        </svg>
-        Import
-      </button>
-      <input id="tm-import-file" type="file" accept=".json" style="display:none">
-    </div>
+  </div>
 
+  <!-- ── Loaded machine info ─────────────────────────────────── -->
+  <div id="tm-machine-info" class="tm-machine-info" style="display:none">
+    <span id="tm-machine-title" class="tm-machine-title"></span>
+    <span id="tm-machine-desc"  class="tm-machine-desc"></span>
   </div>
 
   <!-- ── 6 · Formal definition panel ────────────────────────── -->
@@ -94,6 +123,12 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
               <path d="M8 11V2M4 5l4-4 4 4"/><rect x="2" y="12" width="12" height="3" rx="1"/>
             </svg>
             Export
+          </button>
+          <button id="tm-btn-upload" class="tm-io-btn" title="Upload machine to library">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 10V2M4 5l4-4 4 4"/><path d="M2 12v1a1 1 0 001 1h10a1 1 0 001-1v-1"/>
+            </svg>
+            Upload
           </button>
           <button class="tm-help-btn" data-theory="table" title="Theory: instructions & final combinations">?</button>
           <div class="tm-state-btns">
@@ -235,6 +270,106 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
     <div id="tm-history" class="tm-history"></div>
   </div>
 
+  <!-- ── JSON guide panel ──────────────────────────────────── -->
+  <div id="tm-json-backdrop" class="tm-json-backdrop" aria-hidden="true"></div>
+  <aside id="tm-json-panel" class="tm-json-panel" aria-hidden="true">
+    <div class="tm-json-header">
+      <span class="tm-json-title">JSON Format Guide</span>
+      <button id="tm-json-close" class="is-icon" title="Close">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/>
+        </svg>
+      </button>
+    </div>
+    <div class="tm-json-body">
+
+      <h4>Structure</h4>
+      <p>The JSON file must be an object with these fields:</p>
+
+      <div class="tm-json-field">
+        <code class="tm-json-key">title</code><span class="tm-json-type">string</span>
+        <p>Short, descriptive name. E.g. <em>"Count Ones"</em>.</p>
+      </div>
+      <div class="tm-json-field">
+        <code class="tm-json-key">description</code><span class="tm-json-type">string</span>
+        <p>What the machine does. Shown in the library detail view.</p>
+      </div>
+      <div class="tm-json-field">
+        <code class="tm-json-key">author</code><span class="tm-json-type">string</span>
+        <p>Creator's name.</p>
+      </div>
+      <div class="tm-json-field">
+        <code class="tm-json-key">alphabet</code><span class="tm-json-type">string</span>
+        <p>Space-separated input symbols — Σ. <strong>Never include <code>#</code></strong>: it is the implicit blank. E.g. <em>"1 0 a"</em>.</p>
+      </div>
+      <div class="tm-json-field">
+        <code class="tm-json-key">states</code><span class="tm-json-type">string[]</span>
+        <p>Array of state names — K. Must follow the pattern <code>q0, q1, q2 …</code> E.g. <em>["q0","q1","q2"]</em>.</p>
+      </div>
+      <div class="tm-json-field">
+        <code class="tm-json-key">initState</code><span class="tm-json-type">string</span>
+        <p>The starting state q₀. Must be a member of <code>states</code>.</p>
+      </div>
+      <div class="tm-json-field">
+        <code class="tm-json-key">tape</code><span class="tm-json-type">string</span>
+        <p>Initial tape content. Each character must be in Σ. Use <code>#</code> or <code>_</code> for blank cells. Can be empty.</p>
+      </div>
+      <div class="tm-json-field">
+        <code class="tm-json-key">trans</code><span class="tm-json-type">object</span>
+        <p>The instruction function I. Each entry defines one instruction (see below).</p>
+      </div>
+
+      <h4>Transition format</h4>
+      <p>Each key-value pair in <code>trans</code> encodes an instruction of T:</p>
+      <div class="tm-json-trans-box">
+        <div class="tm-json-trans-row">
+          <span class="tm-json-trans-key">"q<em>i</em>,s"</span>
+          <span class="tm-json-trans-arr">→</span>
+          <span class="tm-json-trans-val">"t D q<em>j</em>"</span>
+        </div>
+        <ul class="tm-json-trans-legend">
+          <li><code>q<em>i</em></code> — current state</li>
+          <li><code>s</code> — symbol being read (Σ ∪ &#123;#&#125;)</li>
+          <li><code>t</code> — symbol to write (Σ ∪ &#123;#&#125;)</li>
+          <li><code>D</code> — direction: <code>R</code> (right) or <code>L</code> (left)</li>
+          <li><code>q<em>j</em></code> — next state</li>
+        </ul>
+      </div>
+      <p class="tm-json-note">The machine <strong>halts</strong> when it reaches a state-symbol pair with no defined transition — called a <em>final combination</em>.</p>
+
+      <h4>Example</h4>
+      <pre id="tm-json-example-pre" class="tm-json-example"></pre>
+
+      <!-- ── AI Prompt generator ───────────────── -->
+      <div class="tm-json-divider"></div>
+      <h4>AI Prompt Generator</h4>
+      <p class="tm-json-note">Describe the machine you want and this tool will build a precise prompt you can paste into any AI (ChatGPT, Claude, Gemini…). The AI will return a ready-to-import JSON.</p>
+      <p class="tm-json-note"><strong>Tips for a good description:</strong> specify the input alphabet, what the machine should read, what it should write, and the expected final tape state.</p>
+
+      <div class="tm-json-gen">
+        <label class="tm-json-gen-label" for="tm-json-user-desc">What should the machine do?</label>
+        <textarea id="tm-json-user-desc" class="tm-json-gen-input" rows="3"
+          placeholder="E.g: Read a binary string and replace each 1 with 0 and each 0 with 1 (bit complement)."></textarea>
+        <button id="tm-json-gen-btn" class="tm-json-gen-submit">Generate prompt</button>
+      </div>
+
+      <div id="tm-json-prompt-wrap" class="tm-json-prompt-wrap" style="display:none">
+        <div class="tm-json-prompt-bar">
+          <span class="tm-json-prompt-label">Copy and paste this into your AI:</span>
+          <button id="tm-json-copy-btn" class="tm-json-copy-btn">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="5" width="9" height="9" rx="1"/>
+              <path d="M11 5V3a1 1 0 00-1-1H3a1 1 0 00-1 1v7a1 1 0 001 1h2"/>
+            </svg>
+            Copy
+          </button>
+        </div>
+        <pre id="tm-json-prompt-text" class="tm-json-prompt-text"></pre>
+      </div>
+
+    </div>
+  </aside>
+
   <!-- ── 7 · Theory panel ────────────────────────────────────── -->
   <div id="tm-theory-backdrop" class="tm-theory-backdrop" aria-hidden="true"></div>
   <aside id="tm-theory-panel" class="tm-theory-panel" aria-hidden="true">
@@ -250,6 +385,72 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
     <div id="tm-theory-body" class="tm-theory-body"></div>
   </aside>
 
+  <!-- ── Library overlay ───────────────────────────────────── -->
+  <div id="tm-lib-backdrop" class="tm-lib-backdrop"></div>
+  <div id="tm-lib-view" class="tm-lib-view" aria-label="Machine Library">
+
+    <div class="tm-lib-topbar">
+      <button id="tm-lib-back" class="tm-lib-back-btn" style="display:none" title="Back to library">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="10 4 4 8 10 12"/>
+        </svg>
+        Back
+      </button>
+      <span class="tm-lib-title">Machine Library</span>
+      <button id="tm-lib-close" class="tm-lib-close-btn is-icon" title="Close library">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Grid view -->
+    <div id="tm-lib-grid" class="tm-lib-grid"></div>
+
+    <!-- Detail view -->
+    <div id="tm-lib-detail" class="tm-lib-detail" style="display:none">
+      <div class="tm-lib-detail-diagram">
+        <svg class="tm-lib-detail-preview-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="tm-lib-detail-info">
+        <h2 class="tm-lib-detail-title"></h2>
+        <div class="tm-lib-detail-author"></div>
+        <p class="tm-lib-detail-desc"></p>
+        <button class="tm-lib-detail-load is-solid">Load Machine</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Upload modal ───────────────────────────────────────── -->
+  <div id="tm-up-backdrop" class="tm-up-backdrop"></div>
+  <div id="tm-up-modal" class="tm-up-modal" role="dialog" aria-label="Upload Machine">
+    <div class="tm-up-header">
+      <span class="tm-up-header-title">Upload Machine</span>
+      <button id="tm-up-close" class="is-icon" title="Close">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/>
+        </svg>
+      </button>
+    </div>
+    <form id="tm-up-form" class="tm-up-form" autocomplete="off">
+      <div class="tm-up-field">
+        <label class="tm-up-label" for="tm-up-title">Title</label>
+        <input id="tm-up-title" class="tm-up-input" autocomplete="off" required maxlength="70" placeholder="Short descriptive name">
+      </div>
+      <div class="tm-up-field">
+        <label class="tm-up-label" for="tm-up-author">Author</label>
+        <input id="tm-up-author" class="tm-up-input" autocomplete="off" required maxlength="60" placeholder="Your name">
+      </div>
+      <div class="tm-up-field">
+        <label class="tm-up-label" for="tm-up-desc">Description</label>
+        <textarea id="tm-up-desc" class="tm-up-textarea" required maxlength="400" placeholder="Describe what this machine does…" rows="4"></textarea>
+      </div>
+      <ul id="tm-up-errors" class="tm-up-errors"></ul>
+      <button type="submit" class="is-solid" style="width:100%">Upload</button>
+    </form>
+  </div>
+
   <div class="space-bottom"></div>
 </ProjectLayout>
 
@@ -257,8 +458,84 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
 <style is:global>@import '../../styles/sections/projects-turing-machine.css';</style>
 
 <script type="module" is:inline>
-  import TuringMachine from '/js/lib/TuringMachine.js'
+  import TuringMachine                   from '/js/lib/TuringMachine.js'
+  import { TMGallery, TMUpload, initDB } from '/js/lib/TMCloud.js'
+  import { buildAIPrompt, JSON_EXAMPLE } from '/js/lib/TMPrompt.js'
+
+  initDB(window.__FIREBASE_CONFIG)
+
   const tm = new TuringMachine()
   tm.starter?.()
   tm.main()
+
+  const gallery = new TMGallery(tm)
+  const upload  = new TMUpload(tm)
+
+  document.getElementById('tm-btn-library')?.addEventListener('click', () => gallery.open())
+  document.getElementById('tm-btn-upload')?.addEventListener('click',  () => upload.open())
+
+  const infoBar = document.getElementById('tm-machine-info')
+  const titleEl = document.getElementById('tm-machine-title')
+  const descEl  = document.getElementById('tm-machine-desc')
+
+  tm._onMachineLoaded = () => {
+    if (tm._loadedTitle) {
+      titleEl.textContent = tm._loadedTitle
+      descEl.textContent  = tm._loadedDescription || ''
+      infoBar.style.display = ''
+    } else {
+      infoBar.style.display = 'none'
+    }
+  }
+
+  // Inject JSON example
+  const exPre = document.getElementById('tm-json-example-pre')
+  if (exPre) exPre.textContent = JSON_EXAMPLE
+
+  // ── JSON guide panel ────────────────────────────────────────
+  const jsonBackdrop = document.getElementById('tm-json-backdrop')
+  const jsonPanel    = document.getElementById('tm-json-panel')
+
+  function openJsonPanel() {
+    jsonBackdrop.classList.add('tm-open')
+    jsonPanel.classList.add('tm-open')
+    jsonPanel.setAttribute('aria-hidden', 'false')
+  }
+  function closeJsonPanel() {
+    jsonBackdrop.classList.remove('tm-open')
+    jsonPanel.classList.remove('tm-open')
+    jsonPanel.setAttribute('aria-hidden', 'true')
+  }
+
+  document.getElementById('tm-btn-json-info')?.addEventListener('click', openJsonPanel)
+  document.getElementById('tm-json-close')?.addEventListener('click', closeJsonPanel)
+  jsonBackdrop?.addEventListener('click', closeJsonPanel)
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && jsonPanel?.classList.contains('tm-open')) closeJsonPanel()
+  })
+
+  // ── Prompt generator ────────────────────────────────────────
+  document.getElementById('tm-json-gen-btn')?.addEventListener('click', () => {
+    const desc = document.getElementById('tm-json-user-desc')?.value.trim()
+    if (!desc) {
+      document.getElementById('tm-json-user-desc')?.focus()
+      return
+    }
+    const prompt = buildAIPrompt(desc)
+    const wrap   = document.getElementById('tm-json-prompt-wrap')
+    const pre    = document.getElementById('tm-json-prompt-text')
+    pre.textContent = prompt
+    wrap.style.display = ''
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  })
+
+  document.getElementById('tm-json-copy-btn')?.addEventListener('click', async () => {
+    const text = document.getElementById('tm-json-prompt-text')?.textContent
+    if (!text) return
+    await navigator.clipboard.writeText(text)
+    const btn = document.getElementById('tm-json-copy-btn')
+    const orig = btn.innerHTML
+    btn.textContent = '✓ Copied!'
+    setTimeout(() => { btn.innerHTML = orig }, 2000)
+  })
 </script>
