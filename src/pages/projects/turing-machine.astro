@@ -21,29 +21,29 @@ const firebaseConfig = {
   <div class="tm-setup">
 
     <div class="tm-field">
-      <label class="tm-label">Load machine</label>
+      <label class="tm-label" data-i18n="projects.tm.loadMachineLabel">Cargar máquina</label>
       <div class="tm-load-group">
-        <button id="tm-btn-library" class="tm-io-btn" title="Browse machine library">
+        <button id="tm-btn-library" class="tm-io-btn" data-i18n-title="projects.tm.browseLibrary" title="Explorar librería de máquinas">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <rect x="1" y="3" width="14" height="11" rx="1"/>
             <line x1="1" y1="7" x2="15" y2="7"/>
             <line x1="5" y1="7" x2="5" y2="14"/>
           </svg>
-          TM Library
+          <span data-i18n="projects.tm.library">Librería</span>
         </button>
-        <button id="tm-btn-import" class="tm-io-btn" title="Load machine from JSON file">
+        <button id="tm-btn-import" class="tm-io-btn" data-i18n-title="projects.tm.importTitle" title="Cargar máquina desde archivo JSON">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M8 2v9M4 8l4 5 4-5"/><rect x="2" y="12" width="12" height="3" rx="1"/>
           </svg>
-          Import JSON
+          <span data-i18n="projects.tm.importJson">Importar JSON</span>
         </button>
-        <button id="tm-btn-json-info" class="tm-io-btn tm-io-btn--info" title="JSON format guide & AI prompt generator">
+        <button id="tm-btn-json-info" class="tm-io-btn tm-io-btn--info" data-i18n-title="projects.tm.guideTitle" title="Guía de formato JSON y generador de prompt IA">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="8" cy="8" r="6.5"/>
             <line x1="8" y1="7" x2="8" y2="11.5"/>
             <circle cx="8" cy="4.5" r=".6" fill="currentColor" stroke="none"/>
           </svg>
-          JSON Guide
+          <span data-i18n="projects.tm.guideJson">Guía JSON</span>
         </button>
         <input id="tm-import-file" type="file" accept=".json" style="display:none">
       </div>
@@ -51,18 +51,18 @@ const firebaseConfig = {
 
     <div class="field tm-alphabet-group">
       <input id="tm-alphabet" autocomplete="off" required value="1 0 a" placeholder=" ">
-      <label class="field-label">Alphabet Σ (space-separated)</label>
+      <label class="field-label" data-i18n="projects.tm.alphabetLabel">Alfabeto Σ (separado por espacios)</label>
     </div>
 
     <div class="tm-field">
-      <label class="tm-label" for="tm-init-state">Start state</label>
+      <label class="tm-label" for="tm-init-state" data-i18n="projects.tm.initState">Estado inicial</label>
       <div class="select-wrap">
         <select id="tm-init-state"></select>
       </div>
     </div>
 
     <div class="tm-field">
-      <label class="tm-label" for="tm-max-steps">Max steps</label>
+      <label class="tm-label" for="tm-max-steps" data-i18n="projects.tm.maxSteps">Pasos máx.</label>
       <div class="number-wrap" style="width:6rem">
         <input id="tm-max-steps" type="number" min="100" max="100000" value="5000" placeholder=" ">
         <div class="spin">
@@ -82,7 +82,7 @@ const firebaseConfig = {
 
   <!-- ── 6 · Formal definition panel ────────────────────────── -->
   <div class="tm-fdef-bar">
-    <div id="tm-formal-def" class="tm-formal-def">Loading…</div>
+    <div id="tm-formal-def" class="tm-formal-def">Cargando…</div>
   </div>
 
   <!-- ── Transition function / State diagram (shared card) ─────── -->
@@ -91,51 +91,51 @@ const firebaseConfig = {
     <div class="tm-card-head">
 
       <!-- View switch -->
-      <div class="tm-vs-group">
-        <button class="tm-vs-btn is-active" data-view="table" title="Transition table">
+      <div class="seg-ctrl">
+        <button class="seg-opt is-active" data-view="table" data-i18n-title="projects.tm.tableViewTitle" title="Tabla de transiciones">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <rect x="1" y="1" width="14" height="14" rx="1"/>
             <line x1="1" y1="5" x2="15" y2="5"/><line x1="6" y1="5" x2="6" y2="15"/>
           </svg>
-          Table
+          <span data-i18n="projects.tm.table">Tabla</span>
         </button>
-        <button class="tm-vs-btn" data-view="diagram" title="State diagram">
+        <button class="seg-opt" data-view="diagram" data-i18n-title="projects.tm.diagramViewTitle" title="Diagrama de estados">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="3" cy="8" r="2"/><circle cx="13" cy="4" r="2"/><circle cx="13" cy="12" r="2"/>
             <line x1="5" y1="7" x2="11" y2="5"/><line x1="5" y1="9" x2="11" y2="11"/>
           </svg>
-          Diagram
+          <span data-i18n="projects.tm.diagram">Diagrama</span>
         </button>
       </div>
 
       <!-- Table-specific extras -->
       <div id="tm-vs-table-extras" class="tm-vs-extras">
-        <span class="tm-format-hint">Format: <code>symbol Direction state</code> — e.g. <code>1Rq0</code> &nbsp;·&nbsp; <code>#Lq2</code></span>
+        <span class="tm-format-hint" data-i18n="projects.tm.tableHint">Formato: <code>símbolo Dirección estado</code> — ej. <code>1Rq0</code> &nbsp;·&nbsp; <code>#Lq2</code></span>
         <div class="tm-card-actions">
-          <button id="tm-btn-clear" class="tm-io-btn" title="Clear all transition instructions">
+          <button id="tm-btn-clear" class="tm-io-btn" data-i18n-title="projects.tm.clearTitle" title="Borrar todas las instrucciones">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M2 4h12M5 4V2h6v2M6 7v6M10 7v6"/><path d="M3 4l1 10h8l1-10"/>
             </svg>
-            Clear
+            <span data-i18n="projects.tm.clear">Borrar</span>
           </button>
-          <button id="tm-btn-export" class="tm-io-btn" title="Export machine as JSON">
+          <button id="tm-btn-export" class="tm-io-btn" data-i18n-title="projects.tm.exportTitle" title="Exportar máquina como JSON">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M8 11V2M4 5l4-4 4 4"/><rect x="2" y="12" width="12" height="3" rx="1"/>
             </svg>
-            Export
+            <span data-i18n="projects.tm.exportBtn">Exportar</span>
           </button>
-          <button id="tm-btn-upload" class="tm-io-btn" title="Upload machine to library">
+          <button id="tm-btn-upload" class="tm-io-btn" data-i18n-title="projects.tm.uploadTitle" title="Subir máquina a la librería">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M8 10V2M4 5l4-4 4 4"/><path d="M2 12v1a1 1 0 001 1h10a1 1 0 001-1v-1"/>
             </svg>
-            Upload
+            <span data-i18n="projects.tm.uploadBtn">Subir</span>
           </button>
-          <button class="tm-help-btn" data-theory="table" title="Theory: instructions & final combinations">?</button>
+          <button class="tm-help-btn" data-theory="table" title="Teoría: instrucciones y combinaciones finales">?</button>
           <div class="tm-state-btns">
-            <button id="tm-add-state" class="is-icon" title="Add state">
+            <button id="tm-add-state" class="is-icon" data-i18n-title="projects.tm.addStateTitle" title="Agregar estado">
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
             </button>
-            <button id="tm-remove-state" class="is-icon" title="Remove last state">
+            <button id="tm-remove-state" class="is-icon" data-i18n-title="projects.tm.removeStateTitle" title="Eliminar último estado">
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="8" x2="14" y2="8"/></svg>
             </button>
           </div>
@@ -144,8 +144,8 @@ const firebaseConfig = {
 
       <!-- Diagram-specific extras -->
       <div id="tm-vs-diagram-extras" class="tm-vs-extras" style="display:none">
-        <span class="tm-format-hint">Drag ring to connect · Click edge to edit · Dbl-click to add state · <kbd>Ctrl+scroll</kbd> zoom · <kbd>Ctrl+0</kbd> reset</span>
-        <button class="tm-help-btn" data-theory="diagram" title="Theory: state diagram">?</button>
+        <span class="tm-format-hint" data-i18n="projects.tm.diagramHint">Arrastra el anillo para conectar · Clic en arista para editar · Doble clic para agregar estado · <kbd>Ctrl+scroll</kbd> zoom · <kbd>Ctrl+0</kbd> reiniciar</span>
+        <button class="tm-help-btn" data-theory="diagram" title="Teoría: diagrama de estados">?</button>
       </div>
 
     </div>
@@ -165,54 +165,63 @@ const firebaseConfig = {
 
   </div>
 
+  <!-- ── Sub-machine call panel ──────────────────────────────── -->
+  <div id="tm-subcall-container" class="tm-subcall-container" style="display:none">
+    <div class="tm-subcall-header">
+      <span class="tm-subcall-header-icon">⟳</span>
+      <span>Máquina invocada</span>
+    </div>
+    <!-- Los sub-paneles se insertan aquí dinámicamente -->
+  </div>
+
   <!-- ── Execution ───────────────────────────────────────────── -->
   <div class="tm-card">
 
     <div class="tm-card-head">
-      <span class="tm-card-title">Execution</span>
-      <button class="tm-help-btn" data-theory="execution" title="Theory: instantaneous configuration & step">?</button>
+      <span class="tm-card-title" data-i18n="projects.tm.execution">Ejecución</span>
+      <button class="tm-help-btn" data-theory="execution" title="Teoría: configuración instantánea y paso">?</button>
     </div>
 
     <!-- Controls -->
     <div class="tm-controls-bar">
-      <button id="tm-btn-reset" title="Reset to initial configuration (R)">
+      <button id="tm-btn-reset" data-i18n-title="projects.tm.resetTitle" title="Reiniciar configuración inicial (R)">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <g transform="rotate(180 8 8)">
             <path d="M8 3 A5 5 0 1 0 13 8"/>
             <polyline transform="rotate(180 13 8)" points="11 6 13 8 15 6"/>
           </g>
         </svg>
-        Reset
+        <span data-i18n="projects.tm.reset">Reiniciar</span>
       </button>
-      <button id="tm-btn-back" title="Step back (←)" disabled>
+      <button id="tm-btn-back" data-i18n-title="projects.tm.stepBackTitle" title="Paso atrás (←)" disabled>
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13 2v12l-9-6 9-6zM2 2v12"/></svg>
-        Back<span id="tm-back-count" class="tm-back-count"></span>
+        <span data-i18n="projects.tm.stepBack">Atrás</span><span id="tm-back-count" class="tm-back-count"></span>
       </button>
       <button id="tm-btn-step">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2v12l9-6L3 2zm11 0v12"/></svg>
-        Step
+        <span data-i18n="projects.tm.step">Paso</span>
       </button>
       <button id="tm-btn-play" class="is-solid">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 2l10 6-10 6V2z"/></svg>
-        Play
+        <span data-i18n="projects.tm.play">Reproducir</span>
       </button>
       <button id="tm-btn-pause" disabled>
         <svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2" width="4" height="12"/><rect x="9" y="2" width="4" height="12"/></svg>
-        Pause
+        <span data-i18n="projects.tm.pause">Pausar</span>
       </button>
 
       <div class="tm-speed-wrap">
-        <span class="tm-speed-text">Speed</span>
+        <span class="tm-speed-text" data-i18n="projects.tm.speed">Velocidad</span>
         <input type="range" id="tm-speed" min="1" max="20" value="5">
         <span id="tm-speed-label" class="tm-speed-val">5×</span>
       </div>
 
       <div class="tm-tape-inline-wrap">
-        <label class="tm-tape-inline-lbl" for="tm-tape-input">Tape</label>
-        <input id="tm-tape-input" class="tm-tape-inline-input" autocomplete="off" value="11010011" placeholder="tape…" spellcheck="false">
+        <label class="tm-tape-inline-lbl" for="tm-tape-input" data-i18n="projects.tm.tape">Cinta</label>
+        <input id="tm-tape-input" class="tm-tape-inline-input" autocomplete="off" value="11010011" placeholder="cinta…" spellcheck="false">
       </div>
 
-      <div id="tm-status" class="tm-status">Idle</div>
+      <div id="tm-status" class="tm-status" data-i18n="projects.tm.statusWaiting">En espera</div>
     </div>
 
     <!-- Last instruction narration -->
@@ -221,28 +230,28 @@ const firebaseConfig = {
     <!-- Info bar -->
     <div class="tm-info-bar">
       <div class="tm-info-item">
-        <span class="tm-info-label">Current state</span>
+        <span class="tm-info-label" data-i18n="projects.tm.currentState">Estado actual</span>
         <span id="tm-state-display" class="tm-info-val">q0</span>
       </div>
       <div class="tm-info-item">
-        <span class="tm-info-label">Reading</span>
+        <span class="tm-info-label" data-i18n="projects.tm.reading">Leyendo</span>
         <span id="tm-read-display" class="tm-info-val tm-read-sym">_</span>
       </div>
       <div class="tm-info-item">
-        <span class="tm-info-label">Head position</span>
+        <span class="tm-info-label" data-i18n="projects.tm.headPos">Posición del cabezal</span>
         <span id="tm-pos-display" class="tm-info-val tm-read-sym">0</span>
       </div>
       <div class="tm-info-item">
-        <span class="tm-info-label">Steps</span>
+        <span class="tm-info-label" data-i18n="projects.tm.steps">Pasos</span>
         <span id="tm-step-display" class="tm-info-val">0</span>
       </div>
       <div class="tm-info-item">
-        <span class="tm-info-label">Shortcuts</span>
-        <span class="tm-info-val tm-shortcuts">
-          <kbd>Space</kbd> play/pause &nbsp;
-          <kbd>→</kbd> step &nbsp;
-          <kbd>←</kbd> back &nbsp;
-          <kbd>R</kbd> reset
+        <span class="tm-info-label" data-i18n="projects.tm.shortcuts">Atajos</span>
+        <span class="tm-info-val tm-shortcuts" data-i18n="projects.tm.shortcutsText">
+          <kbd>Space</kbd> reproducir/pausar &nbsp;
+          <kbd>→</kbd> paso &nbsp;
+          <kbd>←</kbd> atrás &nbsp;
+          <kbd>R</kbd> reiniciar
         </span>
       </div>
     </div>
@@ -258,14 +267,14 @@ const firebaseConfig = {
   <!-- ── Configuration history ───────────────────────────────── -->
   <div class="tm-card tm-card--history">
     <div class="tm-card-head">
-      <span class="tm-card-title">Configuration history</span>
-      <span class="tm-format-hint">u <em>q</em> v — content around the reading head</span>
-      <button class="tm-help-btn" data-theory="history" title="Theory: accepted language">?</button>
+      <span class="tm-card-title" data-i18n="projects.tm.history">Historial de configuraciones</span>
+      <span class="tm-format-hint" data-i18n="projects.tm.historyHint">u <em>q</em> v — contenido alrededor del cabezal</span>
+      <button class="tm-help-btn" data-theory="history" title="Teoría: lenguaje aceptado">?</button>
     </div>
     <div class="tm-hist-header">
-      <span>Step</span>
-      <span>State</span>
-      <span>Tape window</span>
+      <span data-i18n="projects.tm.histStep">Paso</span>
+      <span data-i18n="projects.tm.histState">Estado</span>
+      <span data-i18n="projects.tm.histTapeWindow">Ventana de cinta</span>
     </div>
     <div id="tm-history" class="tm-history"></div>
   </div>
@@ -274,7 +283,7 @@ const firebaseConfig = {
   <div id="tm-json-backdrop" class="tm-json-backdrop" aria-hidden="true"></div>
   <aside id="tm-json-panel" class="tm-json-panel" aria-hidden="true">
     <div class="tm-json-header">
-      <span class="tm-json-title">JSON Format Guide</span>
+      <span class="tm-json-title" data-i18n="projects.tm.jsonGuideTitle">Guía de formato JSON</span>
       <button id="tm-json-close" class="is-icon" title="Close">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/>
@@ -283,85 +292,178 @@ const firebaseConfig = {
     </div>
     <div class="tm-json-body">
 
-      <h4>Structure</h4>
-      <p>The JSON file must be an object with these fields:</p>
+      <h4 data-i18n="projects.tm.jsonStructure">Estructura</h4>
+      <p data-i18n="projects.tm.jsonStructureDesc">El archivo JSON debe ser un objeto con estos campos:</p>
 
       <div class="tm-json-field">
         <code class="tm-json-key">title</code><span class="tm-json-type">string</span>
-        <p>Short, descriptive name. E.g. <em>"Count Ones"</em>.</p>
+        <p data-i18n="projects.tm.jsonFieldTitleDesc">Nombre corto y descriptivo. Ej. <em>"Copiar los Unos"</em>.</p>
       </div>
       <div class="tm-json-field">
         <code class="tm-json-key">description</code><span class="tm-json-type">string</span>
-        <p>What the machine does. Shown in the library detail view.</p>
+        <p data-i18n="projects.tm.jsonFieldDescDesc">Qué hace la máquina. Se muestra en la vista de detalle de la librería.</p>
       </div>
       <div class="tm-json-field">
         <code class="tm-json-key">author</code><span class="tm-json-type">string</span>
-        <p>Creator's name.</p>
+        <p data-i18n="projects.tm.jsonFieldAuthorDesc">Nombre del creador.</p>
       </div>
       <div class="tm-json-field">
         <code class="tm-json-key">alphabet</code><span class="tm-json-type">string</span>
-        <p>Space-separated input symbols — Σ. <strong>Never include <code>#</code></strong>: it is the implicit blank. E.g. <em>"1 0 a"</em>.</p>
+        <p data-i18n="projects.tm.jsonFieldAlphabetDesc">Símbolos de entrada separados por espacios — Σ. <strong>Nunca incluyas <code>#</code></strong>: es el blanco implícito. Ej. <em>"1 0 a"</em>.</p>
       </div>
       <div class="tm-json-field">
         <code class="tm-json-key">states</code><span class="tm-json-type">string[]</span>
-        <p>Array of state names — K. Must follow the pattern <code>q0, q1, q2 …</code> E.g. <em>["q0","q1","q2"]</em>.</p>
+        <p data-i18n="projects.tm.jsonFieldStatesDesc">Arreglo de nombres de estado — K. Deben seguir el patrón <code>q0, q1, q2 …</code> Ej. <em>["q0","q1","q2"]</em>.</p>
       </div>
       <div class="tm-json-field">
         <code class="tm-json-key">initState</code><span class="tm-json-type">string</span>
-        <p>The starting state q₀. Must be a member of <code>states</code>.</p>
+        <p data-i18n="projects.tm.jsonFieldInitStateDesc">Estado inicial q₀. Debe ser un miembro de <code>states</code>.</p>
       </div>
       <div class="tm-json-field">
         <code class="tm-json-key">tape</code><span class="tm-json-type">string</span>
-        <p>Initial tape content. Each character must be in Σ. Use <code>#</code> or <code>_</code> for blank cells. Can be empty.</p>
+        <p data-i18n="projects.tm.jsonFieldTapeDesc">Contenido inicial de la cinta. Cada carácter debe estar en Σ. Usa <code>#</code> o <code>_</code> para celdas en blanco. Puede estar vacío.</p>
       </div>
       <div class="tm-json-field">
         <code class="tm-json-key">trans</code><span class="tm-json-type">object</span>
-        <p>The instruction function I. Each entry defines one instruction (see below).</p>
+        <p data-i18n="projects.tm.jsonFieldTransDesc">La función de instrucciones I. Cada entrada define una instrucción (ver abajo).</p>
       </div>
 
-      <h4>Transition format</h4>
-      <p>Each key-value pair in <code>trans</code> encodes an instruction of T:</p>
+      <h4 data-i18n="projects.tm.jsonTransFormat">Formato de transiciones</h4>
+      <p data-i18n="projects.tm.jsonTransDesc">Cada par clave-valor en <code>trans</code> codifica una instrucción de T:</p>
       <div class="tm-json-trans-box">
         <div class="tm-json-trans-row">
           <span class="tm-json-trans-key">"q<em>i</em>,s"</span>
           <span class="tm-json-trans-arr">→</span>
           <span class="tm-json-trans-val">"t D q<em>j</em>"</span>
         </div>
-        <ul class="tm-json-trans-legend">
-          <li><code>q<em>i</em></code> — current state</li>
-          <li><code>s</code> — symbol being read (Σ ∪ &#123;#&#125;)</li>
-          <li><code>t</code> — symbol to write (Σ ∪ &#123;#&#125;)</li>
-          <li><code>D</code> — direction: <code>R</code> (right) or <code>L</code> (left)</li>
-          <li><code>q<em>j</em></code> — next state</li>
+        <ul class="tm-json-trans-legend" data-i18n="projects.tm.jsonTransLegend">
+          <li><code>q<em>i</em></code> — estado actual</li>
+          <li><code>s</code> — símbolo leído (Σ ∪ &#123;#&#125;)</li>
+          <li><code>t</code> — símbolo a escribir (Σ ∪ &#123;#&#125;)</li>
+          <li><code>D</code> — dirección: <code>R</code> (derecha) o <code>L</code> (izquierda)</li>
+          <li><code>q<em>j</em></code> — estado siguiente</li>
         </ul>
       </div>
-      <p class="tm-json-note">The machine <strong>halts</strong> when it reaches a state-symbol pair with no defined transition — called a <em>final combination</em>.</p>
+      <p class="tm-json-note" data-i18n="projects.tm.jsonNoteHalt">La máquina se <strong>detiene</strong> al alcanzar un par estado-símbolo sin transición definida — llamado <em>combinación final</em>.</p>
 
-      <h4>Example</h4>
+      <h4 data-i18n="projects.tm.jsonExample">Ejemplo</h4>
       <pre id="tm-json-example-pre" class="tm-json-example"></pre>
+
+      <!-- ── Sub-machine calls documentation ───── -->
+      <div class="tm-json-divider"></div>
+      <h4>Llamadas entre máquinas</h4>
+      <p>Una instrucción puede <strong>invocar otra máquina de la librería</strong>. La máquina invocada recibe como cinta el contenido desde la posición actual del cabezal hasta el primer blanco. Su resultado reemplaza esa sección al terminar.</p>
+
+      <div class="tm-json-trans-box">
+        <div class="tm-json-trans-row">
+          <span class="tm-json-trans-key">"q<em>i</em>,s"</span>
+          <span class="tm-json-trans-arr">→</span>
+          <span class="tm-json-trans-val">"t D @machine-id:q<em>j</em>"</span>
+        </div>
+        <ul class="tm-json-trans-legend">
+          <li><code>t</code> — símbolo a escribir (Σ ∪ &#123;#&#125;)</li>
+          <li><code>D</code> — dirección: <code>R</code> o <code>L</code></li>
+          <li><code>@machine-id</code> — ID de la máquina a invocar (ver tarjeta en librería)</li>
+          <li><code>:q<em>j</em></code> — estado en que reanuda <em>esta</em> máquina al terminar <strong>(opcional)</strong></li>
+        </ul>
+      </div>
+
+      <p class="tm-json-note">Si omites <code>:qj</code> la máquina padre queda detenida tras la llamada. El ID de cada máquina se muestra con prefijo <strong>@</strong> en su tarjeta de la librería.</p>
+
+      <h4>Ejemplo de llamada</h4>
+      <pre id="tm-subcall-example-pre" class="tm-json-example" style="font-size:.7rem; line-height:1.6"></pre>
 
       <!-- ── AI Prompt generator ───────────────── -->
       <div class="tm-json-divider"></div>
-      <h4>AI Prompt Generator</h4>
-      <p class="tm-json-note">Describe the machine you want and this tool will build a precise prompt you can paste into any AI (ChatGPT, Claude, Gemini…). The AI will return a ready-to-import JSON.</p>
-      <p class="tm-json-note"><strong>Tips for a good description:</strong> specify the input alphabet, what the machine should read, what it should write, and the expected final tape state.</p>
+      <h4>Generador de Prompt IA</h4>
+      <p class="tm-json-note">Completa los campos y se construirá un prompt preciso para pegar en ChatGPT, Claude o Gemini. La IA te devolverá un JSON listo para importar.</p>
 
       <div class="tm-json-gen">
-        <label class="tm-json-gen-label" for="tm-json-user-desc">What should the machine do?</label>
-        <textarea id="tm-json-user-desc" class="tm-json-gen-input" rows="3"
-          placeholder="E.g: Read a binary string and replace each 1 with 0 and each 0 with 1 (bit complement)."></textarea>
-        <button id="tm-json-gen-btn" class="tm-json-gen-submit">Generate prompt</button>
+
+        <div class="tm-gen-field">
+          <label class="tm-gen-label" for="tm-gen-title">
+            Título de la máquina <span class="tm-gen-required">*</span>
+          </label>
+          <span class="tm-gen-hint">Nombre corto y descriptivo. Se usará para nombrar el archivo <code>.json</code> descargado.</span>
+          <input id="tm-gen-title" class="tm-json-gen-input" type="text"
+            autocomplete="off" placeholder="Ej: Binary Increment · Palindrome Checker · Copy Unary Number">
+        </div>
+
+        <div class="tm-gen-field">
+          <label class="tm-gen-label" for="tm-gen-desc">
+            Descripción <span class="tm-gen-optional">(opcional)</span>
+          </label>
+          <span class="tm-gen-hint">Qué hace la máquina, cómo funciona y en qué estado queda la cinta al detenerse.</span>
+          <textarea id="tm-gen-desc" class="tm-json-gen-input" rows="2"
+            placeholder="Ej: Recorre la cinta de izquierda a derecha complementando cada bit; se detiene en el primer blanco"></textarea>
+        </div>
+
+        <div class="tm-gen-field">
+          <label class="tm-gen-label" for="tm-gen-alphabet">
+            Alfabeto Σ <span class="tm-gen-required">*</span>
+          </label>
+          <span class="tm-gen-hint">Símbolos separados por espacio. <strong>Nunca incluyas <code>#</code></strong> — es el blanco implícito de la cinta.</span>
+          <input id="tm-gen-alphabet" class="tm-json-gen-input" type="text"
+            autocomplete="off" placeholder="Ej: 0 1   ·   a b c   ·   0 1 X Y">
+        </div>
+
+        <div class="tm-gen-field">
+          <label class="tm-gen-label" for="tm-gen-reads">
+            ¿Qué recibe la cinta? <span class="tm-gen-required">*</span>
+          </label>
+          <span class="tm-gen-hint">Tipo y formato de la entrada: cadena binaria, número unario, palíndromo, etc. Menciona casos típicos.</span>
+          <textarea id="tm-gen-reads" class="tm-json-gen-input" rows="2"
+            placeholder="Ej: Una cadena binaria de 0s y 1s de longitud ≥ 1, por ejemplo 1011010"></textarea>
+        </div>
+
+        <div class="tm-gen-field">
+          <label class="tm-gen-label" for="tm-gen-does">
+            ¿Qué debe hacer con la cinta? <span class="tm-gen-required">*</span>
+          </label>
+          <span class="tm-gen-hint">Sé específico: qué escribe, cómo transforma los símbolos, en qué dirección avanza el cabezal.</span>
+          <textarea id="tm-gen-does" class="tm-json-gen-input" rows="2"
+            placeholder="Ej: Reemplaza cada 1 por 0 y cada 0 por 1 (complemento bit a bit), avanzando de izquierda a derecha hasta el primer blanco"></textarea>
+        </div>
+
+        <div class="tm-gen-field">
+          <label class="tm-gen-label" for="tm-gen-final">
+            Estado final de la cinta <span class="tm-gen-optional">(opcional)</span>
+          </label>
+          <span class="tm-gen-hint">Cómo debe quedar la cinta y dónde el cabezal cuando la máquina se detiene.</span>
+          <textarea id="tm-gen-final" class="tm-json-gen-input" rows="2"
+            placeholder="Ej: La cinta contiene los bits invertidos; el cabezal queda en la primera celda en blanco a la derecha"></textarea>
+        </div>
+
+        <div class="tm-gen-field">
+          <label class="tm-gen-label" for="tm-gen-tape">
+            Cinta de ejemplo <span class="tm-gen-optional">(opcional)</span>
+          </label>
+          <span class="tm-gen-hint">Una entrada representativa que la IA usará como caso de prueba en el JSON generado.</span>
+          <input id="tm-gen-tape" class="tm-json-gen-input" type="text"
+            autocomplete="off" placeholder="Ej: 1011010">
+        </div>
+
+        <div class="tm-gen-field">
+          <label class="tm-gen-label" for="tm-gen-notes">
+            Notas y casos de borde <span class="tm-gen-optional">(opcional)</span>
+          </label>
+          <span class="tm-gen-hint">Comportamiento con entrada vacía, símbolos auxiliares permitidos, restricciones especiales…</span>
+          <textarea id="tm-gen-notes" class="tm-json-gen-input" rows="2"
+            placeholder="Ej: Si la cadena está vacía, detener sin modificar · Puede usar X e Y como marcadores auxiliares"></textarea>
+        </div>
+
+        <button id="tm-json-gen-btn" class="tm-json-gen-submit">Generar prompt</button>
       </div>
 
       <div id="tm-json-prompt-wrap" class="tm-json-prompt-wrap" style="display:none">
         <div class="tm-json-prompt-bar">
-          <span class="tm-json-prompt-label">Copy and paste this into your AI:</span>
+          <span class="tm-json-prompt-label" data-i18n="projects.tm.copyAndPaste">Copia y pega esto en tu IA:</span>
           <button id="tm-json-copy-btn" class="tm-json-copy-btn">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <rect x="5" y="5" width="9" height="9" rx="1"/>
               <path d="M11 5V3a1 1 0 00-1-1H3a1 1 0 00-1 1v7a1 1 0 001 1h2"/>
             </svg>
-            Copy
+            <span data-i18n="projects.tm.copy">Copiar</span>
           </button>
         </div>
         <pre id="tm-json-prompt-text" class="tm-json-prompt-text"></pre>
@@ -390,14 +492,14 @@ const firebaseConfig = {
   <div id="tm-lib-view" class="tm-lib-view" aria-label="Machine Library">
 
     <div class="tm-lib-topbar">
-      <button id="tm-lib-back" class="tm-lib-back-btn" style="display:none" title="Back to library">
+      <button id="tm-lib-back" class="tm-lib-back-btn" style="display:none" data-i18n-title="projects.tm.back" title="Back to library">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="10 4 4 8 10 12"/>
         </svg>
-        Back
+        <span data-i18n="projects.tm.back">Volver</span>
       </button>
-      <span class="tm-lib-title">Machine Library</span>
-      <button id="tm-lib-close" class="tm-lib-close-btn is-icon" title="Close library">
+      <span class="tm-lib-title" data-i18n="projects.tm.machineLibrary">Librería de Máquinas</span>
+      <button id="tm-lib-close" class="tm-lib-close-btn is-icon" data-i18n-title="projects.tm.closeLibrary" title="Cerrar librería">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/>
         </svg>
@@ -416,7 +518,8 @@ const firebaseConfig = {
         <h2 class="tm-lib-detail-title"></h2>
         <div class="tm-lib-detail-author"></div>
         <p class="tm-lib-detail-desc"></p>
-        <button class="tm-lib-detail-load is-solid">Load Machine</button>
+        <div class="tm-lib-detail-id" style="display:none"></div>
+        <button class="tm-lib-detail-load is-solid" data-i18n="projects.tm.loadMachineBtn">Cargar máquina</button>
       </div>
     </div>
 
@@ -426,7 +529,7 @@ const firebaseConfig = {
   <div id="tm-up-backdrop" class="tm-up-backdrop"></div>
   <div id="tm-up-modal" class="tm-up-modal" role="dialog" aria-label="Upload Machine">
     <div class="tm-up-header">
-      <span class="tm-up-header-title">Upload Machine</span>
+      <span class="tm-up-header-title" data-i18n="projects.tm.uploadMachine">Subir Máquina</span>
       <button id="tm-up-close" class="is-icon" title="Close">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
           <line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/>
@@ -435,19 +538,25 @@ const firebaseConfig = {
     </div>
     <form id="tm-up-form" class="tm-up-form" autocomplete="off">
       <div class="tm-up-field">
-        <label class="tm-up-label" for="tm-up-title">Title</label>
-        <input id="tm-up-title" class="tm-up-input" autocomplete="off" required maxlength="70" placeholder="Short descriptive name">
+        <label class="tm-up-label" for="tm-up-title" data-i18n="projects.tm.titleField">Título</label>
+        <input id="tm-up-title" class="tm-up-input" autocomplete="off" required maxlength="70"
+          data-i18n-placeholder="projects.tm.titlePlaceholder"
+          placeholder="Nombre corto y descriptivo">
       </div>
       <div class="tm-up-field">
-        <label class="tm-up-label" for="tm-up-author">Author</label>
-        <input id="tm-up-author" class="tm-up-input" autocomplete="off" required maxlength="60" placeholder="Your name">
+        <label class="tm-up-label" for="tm-up-author" data-i18n="projects.tm.authorField">Autor</label>
+        <input id="tm-up-author" class="tm-up-input" autocomplete="off" required maxlength="60"
+          data-i18n-placeholder="projects.tm.authorPlaceholder"
+          placeholder="Tu nombre">
       </div>
       <div class="tm-up-field">
-        <label class="tm-up-label" for="tm-up-desc">Description</label>
-        <textarea id="tm-up-desc" class="tm-up-textarea" required maxlength="400" placeholder="Describe what this machine does…" rows="4"></textarea>
+        <label class="tm-up-label" for="tm-up-desc" data-i18n="projects.tm.descriptionField">Descripción</label>
+        <textarea id="tm-up-desc" class="tm-up-textarea" required maxlength="400"
+          data-i18n-placeholder="projects.tm.descriptionPlaceholder"
+          placeholder="Describe qué hace esta máquina…" rows="4"></textarea>
       </div>
       <ul id="tm-up-errors" class="tm-up-errors"></ul>
-      <button type="submit" class="is-solid" style="width:100%">Upload</button>
+      <button type="submit" class="is-solid" style="width:100%" data-i18n="projects.tm.uploadSubmit">Subir</button>
     </form>
   </div>
 
@@ -458,9 +567,10 @@ const firebaseConfig = {
 <style is:global>@import '../../styles/sections/projects-turing-machine.css';</style>
 
 <script type="module" is:inline>
-  import TuringMachine                   from '/js/lib/TuringMachine.js'
-  import { TMGallery, TMUpload, initDB } from '/js/lib/TMCloud.js'
-  import { buildAIPrompt, JSON_EXAMPLE } from '/js/lib/TMPrompt.js'
+  import TuringMachine                                    from '/js/lib/TuringMachine.js'
+  import { TMGallery, TMUpload, initDB, getMachineById } from '/js/lib/TMCloud.js'
+  import { buildAIPrompt, JSON_EXAMPLE }                 from '/js/lib/TMPrompt.js'
+  import { TMSubExecutor }                               from '/js/lib/TMSubExecutor.js'
 
   initDB(window.__FIREBASE_CONFIG)
 
@@ -492,6 +602,20 @@ const firebaseConfig = {
   const exPre = document.getElementById('tm-json-example-pre')
   if (exPre) exPre.textContent = JSON_EXAMPLE
 
+  // Inject sub-call example
+  const subExPre = document.getElementById('tm-subcall-example-pre')
+  if (subExPre) subExPre.textContent = [
+    '{',
+    '  "alphabet": "1 0",',
+    '  "states":   ["q0", "q1"],',
+    '  "initState": "q0",',
+    '  "trans": {',
+    '    "q0,1": "1R@copy-unary:q1",',
+    '    "q1,1": "1Rq1"',
+    '  }',
+    '}'
+  ].join('\n')
+
   // ── JSON guide panel ────────────────────────────────────────
   const jsonBackdrop = document.getElementById('tm-json-backdrop')
   const jsonPanel    = document.getElementById('tm-json-panel')
@@ -516,14 +640,37 @@ const firebaseConfig = {
 
   // ── Prompt generator ────────────────────────────────────────
   document.getElementById('tm-json-gen-btn')?.addEventListener('click', () => {
-    const desc = document.getElementById('tm-json-user-desc')?.value.trim()
-    if (!desc) {
-      document.getElementById('tm-json-user-desc')?.focus()
-      return
-    }
-    const prompt = buildAIPrompt(desc)
-    const wrap   = document.getElementById('tm-json-prompt-wrap')
-    const pre    = document.getElementById('tm-json-prompt-text')
+    const g = id => document.getElementById(id)?.value.trim() ?? ''
+    const title    = g('tm-gen-title')
+    const alphabet = g('tm-gen-alphabet')
+    const reads    = g('tm-gen-reads')
+    const does     = g('tm-gen-does')
+
+    if (!title)    { document.getElementById('tm-gen-title')?.focus();    return }
+    if (!alphabet) { document.getElementById('tm-gen-alphabet')?.focus(); return }
+    if (!reads)    { document.getElementById('tm-gen-reads')?.focus();    return }
+    if (!does)     { document.getElementById('tm-gen-does')?.focus();     return }
+
+    const filename = title
+      .toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '')
+      + '.json'
+
+    const prompt = buildAIPrompt({
+      title,
+      description: g('tm-gen-desc'),
+      alphabet,
+      reads,
+      does,
+      finalState : g('tm-gen-final'),
+      tape       : g('tm-gen-tape'),
+      notes      : g('tm-gen-notes'),
+      filename,
+    })
+    const wrap = document.getElementById('tm-json-prompt-wrap')
+    const pre  = document.getElementById('tm-json-prompt-text')
     pre.textContent = prompt
     wrap.style.display = ''
     wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
@@ -535,7 +682,214 @@ const firebaseConfig = {
     await navigator.clipboard.writeText(text)
     const btn = document.getElementById('tm-json-copy-btn')
     const orig = btn.innerHTML
-    btn.textContent = '✓ Copied!'
+    btn.textContent = '✓ ¡Copiado!'
     setTimeout(() => { btn.innerHTML = orig }, 2000)
   })
+
+  // ══════════════════════════════════════════════════════════════════
+  //  Orquestación de llamadas entre máquinas (@machine-id)
+  // ══════════════════════════════════════════════════════════════════
+
+  const _subContainer = document.getElementById('tm-subcall-container')
+  let   _subCallActive = false   // se pone false al resetear para cancelar llamadas en curso
+
+  // ── Helpers de cinta ─────────────────────────────────────────────
+
+  /** Extrae la sección de la cinta del padre que recibirá la sub-máquina:
+   *  desde la posición actual del cabezal hasta el primer blanco (rightward). */
+  function _extractSubInput(tape, head) {
+    const keys = Object.keys(tape).map(Number).filter(k => k >= head).sort((a, b) => a - b)
+    if (!keys.length) return ''
+    let out = ''
+    for (let i = head; i <= keys[keys.length - 1]; i++) out += tape[i] ?? '#'
+    return out.replace(/#+$/, '')   // eliminar blancos finales
+  }
+
+  /** Escribe el output de la sub-máquina en la cinta del padre,
+   *  reemplazando la sección que ocupaba el input. */
+  function _writeSubOutput(tape, head, inputLen, outputStr) {
+    const clearEnd = head + Math.max(inputLen, outputStr.length) + 1
+    for (let i = head; i < clearEnd; i++) delete tape[i]
+    ;[...outputStr].forEach((c, i) => {
+      if (c !== '#' && c !== '_') tape[head + i] = c
+    })
+  }
+
+  // ── Gestión de sub-paneles ────────────────────────────────────────
+
+  function _createSubPanel(title, machineId) {
+    const panel = document.createElement('div')
+    panel.className = 'tm-sub-panel'
+    panel.dataset.machineId = machineId
+    panel.innerHTML = `
+      <div class="tm-sub-panel-header">
+        <span class="tm-sub-spinner" aria-hidden="true">◦</span>
+        <span class="tm-sub-title">${title || machineId}</span>
+        <span class="tm-sub-badge tm-sub-badge--running">Ejecutando…</span>
+      </div>
+      <div class="tm-sub-tape" aria-label="Cinta de la sub-máquina"></div>
+      <div class="tm-sub-footer">
+        <span class="tm-sub-state">q0</span>
+        <span class="tm-sub-sep" aria-hidden="true">·</span>
+        <span class="tm-sub-steps">Paso 0</span>
+      </div>
+    `
+    return panel
+  }
+
+  function _updateSubPanelUI(panel, exec) {
+    const tapeEl  = panel.querySelector('.tm-sub-tape')
+    const stateEl = panel.querySelector('.tm-sub-state')
+    const stepsEl = panel.querySelector('.tm-sub-steps')
+    if (!tapeEl) return
+
+    const { tape, head } = exec
+    const keys = Object.keys(tape).map(Number)
+    const VIEW = 10
+    const from = Math.max((keys.length ? Math.min(...keys) : head) - 1, head - VIEW)
+    const to   = Math.min((keys.length ? Math.max(...keys) : head) + 1, head + VIEW)
+
+    let html = ''
+    for (let i = from; i <= to; i++) {
+      const sym = tape[i] ?? '#'
+      const d   = sym === '#' ? '_' : sym
+      html += `<span class="tm-sub-cell${i === head ? ' tm-sub-cell--head' : ''}">${d}</span>`
+    }
+    tapeEl.innerHTML = html
+    if (stateEl) stateEl.textContent = exec.curState
+    if (stepsEl) stepsEl.textContent = `Paso ${exec.steps}`
+  }
+
+  async function _closeSubPanel(panel) {
+    const badge    = panel.querySelector('.tm-sub-badge')
+    const spinner  = panel.querySelector('.tm-sub-spinner')
+    if (badge)   { badge.className = 'tm-sub-badge tm-sub-badge--done'; badge.textContent = 'Detenida' }
+    if (spinner) spinner.textContent = '✓'
+
+    await new Promise(r => setTimeout(r, 800))    // breve pausa para que se vea "Detenida"
+    panel.classList.add('tm-sub-panel--closing')
+    await new Promise(r => setTimeout(r, 350))    // animación de cierre
+    panel.remove()
+
+    if (_subContainer && !_subContainer.querySelector('.tm-sub-panel')) {
+      _subContainer.style.display = 'none'
+    }
+  }
+
+  // ── Runner recursivo ──────────────────────────────────────────────
+
+  /**
+   * Ejecuta una sub-máquina en un panel flotante.
+   * Soporta llamadas anidadas de forma recursiva.
+   * @returns {Promise<string>}  cinta resultante como string
+   */
+  async function _runSubMachineRecursive(machineData, inputTape, depth = 0) {
+    const MAX_DEPTH = 10
+    if (depth > MAX_DEPTH) {
+      console.warn('[TM Orchestrator] Profundidad máxima de llamadas alcanzada')
+      return inputTape
+    }
+
+    const exec  = new TMSubExecutor(machineData, inputTape)
+    const panel = _createSubPanel(machineData.title || machineData.machineId || 'sub-máquina', depth)
+
+    if (_subContainer) {
+      _subContainer.style.display = ''
+      _subContainer.appendChild(panel)
+    }
+
+    let result
+    while (true) {
+      if (!_subCallActive) {
+        panel.remove()
+        return exec.getTapeString()
+      }
+
+      result = await exec.run(e => _updateSubPanelUI(panel, e))
+
+      if (result.status !== 'subcall') break
+
+      // Manejar llamada anidada
+      const { call: nestedId, resume: nestedResume } = result.subcall
+      const badge = panel.querySelector('.tm-sub-badge')
+      if (badge) badge.textContent = `Invocando @${nestedId}…`
+
+      const nestedData = await getMachineById(nestedId)
+      if (nestedData && _subCallActive) {
+        const nestedInput  = _extractSubInput(exec.tape, exec.head)
+        const nestedOutput = await _runSubMachineRecursive(nestedData, nestedInput, depth + 1)
+        _writeSubOutput(exec.tape, exec.head, nestedInput.length, nestedOutput)
+      } else if (!nestedData) {
+        console.warn(`[TM Orchestrator] Sub-máquina no encontrada: @${nestedId}`)
+      }
+
+      if (nestedResume && _subCallActive) {
+        exec.resumeAfterSubCall(nestedResume)
+        if (badge) badge.textContent = 'Ejecutando…'
+      } else {
+        exec.status = 'halted'
+        break
+      }
+    }
+
+    _updateSubPanelUI(panel, exec)
+    await _closeSubPanel(panel)
+    return result.tape ?? ''
+  }
+
+  // ── Hook principal en la máquina ──────────────────────────────────
+
+  tm._onSubCall = async ({ machineId, resumeState }) => {
+    // Capturar isRunning ANTES del primer await (mientras aún es true)
+    const wasRunning = tm.isRunning
+    _subCallActive   = true
+
+    const machineData = await getMachineById(machineId)
+
+    if (!machineData) {
+      console.warn(`[TM Orchestrator] Máquina "@${machineId}" no encontrada en la librería`)
+      // Mostrar error en el status y dejar la máquina padre detenida
+      if (tm.elStatus) {
+        tm.elStatus.textContent = `@${machineId} — máquina no encontrada`
+        tm.elStatus.className   = 'tm-status tm-s-loop'
+      }
+      return
+    }
+
+    const subInput = _extractSubInput(tm.tape, tm.head)
+    const inputLen = subInput.length
+
+    const subOutput = await _runSubMachineRecursive(machineData, subInput, 0)
+
+    if (!_subCallActive) return   // el usuario pulsó reset durante la ejecución
+
+    // Escribir resultado en la cinta del padre
+    _writeSubOutput(tm.tape, tm.head, inputLen, subOutput)
+
+    // Reanudar máquina padre
+    if (resumeState) {
+      tm.curState  = resumeState
+      tm.status    = 'idle'
+      tm.seenCfgs  = new Set()   // reiniciar detección de bucle (cinta cambió)
+      tm.renderTape()
+      tm.renderTapeOutput()
+      tm.renderUI()
+      if (wasRunning) tm.play()
+    } else {
+      // Sin estado de reanudación: la padre queda detenida con el nuevo contenido
+      tm.renderTape()
+      tm.renderTapeOutput()
+      tm.renderUI()
+    }
+  }
+
+  // ── Cancelar sub-llamadas al resetear ─────────────────────────────
+
+  const _origReset = tm.reset.bind(tm)
+  tm.reset = () => {
+    _subCallActive = false
+    document.querySelectorAll('.tm-sub-panel').forEach(p => p.remove())
+    if (_subContainer) _subContainer.style.display = 'none'
+    _origReset()
+  }
 </script>

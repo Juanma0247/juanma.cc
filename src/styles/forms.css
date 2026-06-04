@@ -462,6 +462,43 @@ input[readonly].is-accent {
   padding-left: .8rem;
 }
 
+/* ── 11 · Segmented control ──────────────────────────────────── */
+
+.seg-ctrl {
+  display: inline-flex;
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: 100rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.seg-ctrl .seg-opt {
+  border-radius: 0;
+  border: none;
+  border-right: var(--border-width) solid var(--primary-15);
+  box-shadow: none;
+  padding: .3rem .65rem;
+  font-family: var(--font-label);
+  font-size: .85rem;
+  color: var(--color-muted);
+  background: transparent;
+  gap: .3rem;
+  white-space: nowrap;
+}
+
+.seg-ctrl .seg-opt:last-child { border-right: none; }
+.seg-ctrl .seg-opt:hover:not(.is-active) { opacity: 1; background: var(--primary-05); color: var(--color-text); }
+.seg-ctrl .seg-opt:active { animation: none; }
+.seg-ctrl .seg-opt.is-active { opacity: 1; background: var(--color-primary); color: var(--color-bg); }
+.seg-ctrl .seg-opt:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--primary-15); }
+.seg-ctrl .seg-opt svg { width: .85rem; height: .85rem; flex-shrink: 0; }
+
+.seg-ctrl--sm .seg-opt {
+  padding: .15rem .4rem;
+  font-size: .72rem;
+  font-family: var(--font-mono);
+}
+
 /* ── Disabled · global ───────────────────────────────────── */
 
 input:disabled,

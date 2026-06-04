@@ -121,6 +121,12 @@ class TuringMachine {
   parseCell(raw) {
     const s = (raw ?? '').trim()
     if (!s || s === '–' || s === '-' || s === '—') return null
+
+    // Llamada a sub-máquina: tD@machine-id  o  tD@machine-id:qN
+    const cm = s.match(/^(.)(R|L)(@[a-z0-9-]+(?::q\d+)?)$/i)
+    if (cm) return { write: cm[1], dir: cm[2].toUpperCase(), next: cm[3] }
+
+    // Instrucción regular: tDqN
     const m = s.match(/^(.)(R|L)(q\d+)$/i)
     if (!m) return null
     return { write: m[1], dir: m[2].toUpperCase(), next: m[3].toLowerCase() }
@@ -153,7 +159,7 @@ class TuringMachine {
       this.renderUI()
       this._schedDiagram()
       if (this.elLastInst) {
-        this.elLastInst.innerHTML = `<span class="tm-li-state">${this.curState}</span> reads <span class="tm-li-sym">${sym === '#' ? '_' : sym}</span> — <strong>final combination, machine halts</strong>`
+        this.elLastInst.innerHTML = `<span class="tm-li-state">${this.curState}</span> lee <span class="tm-li-sym">${sym === '#' ? '_' : sym}</span> — <strong>combinación final, la máquina se detiene</strong>`
       }
       return false
     }
@@ -172,6 +178,24 @@ class TuringMachine {
     this.head    += dir === 'R' ? 1 : -1
     this.curState = inst.next
     this.steps++
+
+    // ── Llamada a sub-máquina ─────────────────────────────────────
+    if (this.curState.startsWith('@')) {
+      this.setStatus('halted')
+      this._snapshot()
+      this.renderTape()
+      this.renderTapeOutput()
+      this.renderUI()
+      this._schedDiagram()
+
+      const callStr     = this.curState.slice(1)
+      const colonIdx    = callStr.indexOf(':')
+      const machineId   = colonIdx >= 0 ? callStr.slice(0, colonIdx) : callStr
+      const resumeState = colonIdx >= 0 ? callStr.slice(colonIdx + 1) : null
+      this._onSubCall?.({ machineId, resumeState })
+      return false
+    }
+    // ─────────────────────────────────────────────────────────────
 
     const cfg = this._serializeCfg()
     if (this.seenCfgs.has(cfg)) {
@@ -231,7 +255,7 @@ class TuringMachine {
     this.seenCfgs = new Set()
     if (this.history.length > 0) this.history.shift()
     if (this.status === 'halted' || this.status === 'loop') this.setStatus('idle')
-    if (this.elLastInst) this.elLastInst.textContent = '← step undone'
+    if (this.elLastInst) this.elLastInst.textContent = '← paso deshecho'
     this.renderTape()
     this.renderTapeOutput()
     this.renderHistory()
@@ -257,12 +281,27 @@ class TuringMachine {
     if (!this.elLastInst) return
     const rs = sym  === '#' ? '_' : sym
     const ws = inst.write === '#' ? '_' : inst.write
-    const dr = inst.dir === 'R' ? 'Right →' : '← Left'
+    const dr = inst.dir === 'R' ? 'Derecha →' : '← Izquierda'
+
+    let nextHtml
+    if (inst.next.startsWith('@')) {
+      const callStr  = inst.next.slice(1)
+      const colonIdx = callStr.indexOf(':')
+      const callId   = colonIdx >= 0 ? callStr.slice(0, colonIdx) : callStr
+      const resume   = colonIdx >= 0 ? callStr.slice(colonIdx + 1) : null
+      const resumePart = resume
+        ? `, reanuda en <span class="tm-li-state">${resume}</span>`
+        : ' (sin reanudar)'
+      nextHtml = `invoca <span class="tm-li-call">@${callId}</span>${resumePart}`
+    } else {
+      nextHtml = `va a <span class="tm-li-state">${inst.next}</span>`
+    }
+
     this.elLastInst.innerHTML =
-      `<span class="tm-li-state">${state}</span> reads ` +
+      `<span class="tm-li-state">${state}</span> lee ` +
       `<span class="tm-li-sym">${rs}</span> → ` +
-      `write <span class="tm-li-sym">${ws}</span>, ` +
-      `move ${dr}, go to <span class="tm-li-state">${inst.next}</span>`
+      `escribe <span class="tm-li-sym">${ws}</span>, ` +
+      `mueve ${dr}, ${nextHtml}`
   }
 
   // ── Execution control ─────────────────────────────────────────
@@ -379,6 +418,15 @@ class TuringMachine {
     const v    = inp.value.trim()
     const inst = this.parseCell(v)
     if (!v || v === '-' || v === '–') { inp.classList.remove('tm-v', 'tm-x'); return }
+
+    // Llamadas a sub-máquina: solo validar que el símbolo escrito sea válido
+    if (inst?.next?.startsWith('@')) {
+      const symOk = inst.write === '#' || this.allSymbols.includes(inst.write)
+      inp.classList.toggle('tm-v', symOk)
+      inp.classList.toggle('tm-x', !symOk)
+      return
+    }
+
     const ok = inst
       && this.states.includes(inst.next)
       && (inst.write === '#' || this.allSymbols.includes(inst.write))
@@ -566,10 +614,10 @@ class TuringMachine {
   setStatus(type) {
     this.status = type
     const map = {
-      idle:    ['Idle',                ''],
-      running: ['Running…',            'tm-s-run'],
-      halted:  ['Halted',              'tm-s-halt'],
-      loop:    ['∞ Loop / step limit', 'tm-s-loop'],
+      idle:    ['En espera',              ''],
+      running: ['Ejecutando…',            'tm-s-run'],
+      halted:  ['Detenida',               'tm-s-halt'],
+      loop:    ['∞ Bucle / límite pasos', 'tm-s-loop'],
     }
     const [text, cls] = map[type] ?? map.idle
     this.elStatus.textContent = text
@@ -779,17 +827,21 @@ class TuringMachine {
     r.onload = e => {
       try {
         const d = JSON.parse(e.target.result)
-        this.states    = Array.isArray(d.states) && d.states.length ? d.states : ['q0','q1']
-        this.alphabet  = Array.isArray(d.alphabet) ? d.alphabet.filter(s => s !== '#') : ['0','1']
-        this.initState = d.initState || this.states[0]
-        if (this.elAlphabet)  this.elAlphabet.value  = this.alphabet.join(' ')
-        if (this.elTapeInput) this.elTapeInput.value  = d.tape || ''
-        this._syncStateSelect()
-        if (this.elInitState) this.elInitState.value = this.initState
-        this.buildTable(d.trans || {})
-        this.reset()
-        this.updateFormalDef()
-      } catch { alert('Invalid file. Expected a Turing Machine JSON export.') }
+        if (typeof d !== 'object' || d === null) throw new Error()
+
+        if (d.alphabet && Array.isArray(d.alphabet)) {
+          d.alphabet = d.alphabet.filter(s => s !== '#').join(' ')
+        }
+
+        this.loadFromData(d)
+
+        if (d.maxSteps) {
+          const el = document.getElementById('tm-max-steps')
+          if (el) el.value = d.maxSteps
+        }
+      } catch {
+        alert('Invalid file. Expected a Turing Machine JSON.')
+      }
     }
     r.readAsText(file)
   }
@@ -1051,8 +1103,8 @@ class TuringMachine {
       const y      = (cy - H / 2).toFixed(1)
 
       const lines = shown.map(({ sym, inst }) => {
-        const r     = sym        === '#' ? '\\#' : this._esc(sym)
-        const w     = inst.write === '#' ? '\\#' : this._esc(inst.write)
+        const r     = this._latexSym(sym)
+        const w     = this._latexSym(inst.write)
         const d     = inst.dir === 'R' ? '\\text{R}' : '\\text{L}'
         const latex = `${r} \\to ${w},\\!${d}`
         const html  = window.katex.renderToString(latex, { throwOnError: false, output: 'html' })
@@ -1070,8 +1122,8 @@ class TuringMachine {
 
     // Fallback: plain SVG text
     const fallback = shown.map(({ sym, inst }) => {
-      const r = sym === '#' ? '#' : sym
-      const w = inst.write === '#' ? '#' : inst.write
+      const r = this._esc(sym)
+      const w = this._esc(inst.write)
       return `${r} → ${w}, ${inst.dir}`
     })
     const extra  = overflow ? `+${overflow}` : ''
@@ -1404,9 +1456,9 @@ class TuringMachine {
         <select class="tdp-sel tdp-read" title="Read symbol">${makeSelOpts(syms, sym)}</select>
         <span class="tdp-arrow">→</span>
         <select class="tdp-sel tdp-write" title="Write symbol">${makeSelOpts(syms, inst.write)}</select>
-        <div class="tdp-dir-btns">
-          <button class="tdp-dir${inst.dir === 'R' ? ' active' : ''}" data-dir="R">R</button>
-          <button class="tdp-dir${inst.dir === 'L' ? ' active' : ''}" data-dir="L">L</button>
+        <div class="seg-ctrl seg-ctrl--sm">
+          <button class="seg-opt${inst.dir === 'R' ? ' is-active' : ''}" data-dir="R">R</button>
+          <button class="seg-opt${inst.dir === 'L' ? ' is-active' : ''}" data-dir="L">L</button>
         </div>
         <select class="tdp-sel tdp-next" title="Next state">${makeSelOpts(states, inst.next)}</select>
         <button class="tdp-del-trans" title="Delete transition">✕</button>
@@ -1418,9 +1470,9 @@ class TuringMachine {
         <select class="tdp-sel tdp-read" title="Read symbol">${makeSelOpts(syms, syms[0])}</select>
         <span class="tdp-arrow">→</span>
         <select class="tdp-sel tdp-write" title="Write symbol">${makeSelOpts(syms, syms[0])}</select>
-        <div class="tdp-dir-btns">
-          <button class="tdp-dir active" data-dir="R">R</button>
-          <button class="tdp-dir" data-dir="L">L</button>
+        <div class="seg-ctrl seg-ctrl--sm">
+          <button class="seg-opt is-active" data-dir="R">R</button>
+          <button class="seg-opt" data-dir="L">L</button>
         </div>
         <select class="tdp-sel tdp-next" title="Next state">${makeSelOpts(states, to)}</select>
         <button class="tdp-add-trans">+ Add</button>
@@ -1444,7 +1496,7 @@ class TuringMachine {
       panel.querySelectorAll('.tdp-trans-row:not(.tdp-add-row)').forEach(row => {
         const sym   = row.querySelector('.tdp-read').value
         const write = row.querySelector('.tdp-write').value
-        const dir   = row.querySelector('.tdp-dir.active')?.dataset.dir || 'R'
+        const dir   = row.querySelector('.seg-opt.is-active[data-dir]')?.dataset.dir || 'R'
         const next  = row.querySelector('.tdp-next').value
         newTransitions[`${from},${sym}`] = { write, dir, next }
       })
@@ -1455,10 +1507,10 @@ class TuringMachine {
 
     panel.querySelectorAll('.tdp-trans-row:not(.tdp-add-row)').forEach(row => {
       row.querySelectorAll('select').forEach(sel => sel.addEventListener('change', syncFromPanel))
-      row.querySelectorAll('.tdp-dir').forEach(btn => {
+      row.querySelectorAll('.seg-opt[data-dir]').forEach(btn => {
         btn.addEventListener('click', () => {
-          row.querySelectorAll('.tdp-dir').forEach(b => b.classList.remove('active'))
-          btn.classList.add('active')
+          row.querySelectorAll('.seg-opt[data-dir]').forEach(b => b.classList.remove('is-active'))
+          btn.classList.add('is-active')
           syncFromPanel()
         })
       })
@@ -1480,17 +1532,17 @@ class TuringMachine {
     })
 
     const addRow = panel.querySelector('.tdp-add-row')
-    addRow?.querySelectorAll('.tdp-dir').forEach(btn => {
+    addRow?.querySelectorAll('.seg-opt[data-dir]').forEach(btn => {
       btn.addEventListener('click', () => {
-        addRow.querySelectorAll('.tdp-dir').forEach(b => b.classList.remove('active'))
-        btn.classList.add('active')
+        addRow.querySelectorAll('.seg-opt[data-dir]').forEach(b => b.classList.remove('is-active'))
+        btn.classList.add('is-active')
       })
     })
 
     addRow?.querySelector('.tdp-add-trans')?.addEventListener('click', () => {
       const sym   = addRow.querySelector('.tdp-read').value
       const write = addRow.querySelector('.tdp-write').value
-      const dir   = addRow.querySelector('.tdp-dir.active')?.dataset.dir || 'R'
+      const dir   = addRow.querySelector('.seg-opt.is-active[data-dir]')?.dataset.dir || 'R'
       const next  = addRow.querySelector('.tdp-next').value
       this.transitions[`${from},${sym}`] = { write, dir, next }
       this._diagSel = { type: 'edge', from, to: next, key: `${from}→${next}` }
@@ -1523,9 +1575,9 @@ class TuringMachine {
           <select class="tdp-sel tdp-read" title="Read symbol">${makeSelOpts(syms, syms[0])}</select>
           <span class="tdp-arrow">→</span>
           <select class="tdp-sel tdp-write" title="Write symbol">${makeSelOpts(syms, syms[0])}</select>
-          <div class="tdp-dir-btns">
-            <button class="tdp-dir active" data-dir="R">R</button>
-            <button class="tdp-dir" data-dir="L">L</button>
+          <div class="seg-ctrl seg-ctrl--sm">
+            <button class="seg-opt is-active" data-dir="R">R</button>
+            <button class="seg-opt" data-dir="L">L</button>
           </div>
           <select class="tdp-sel tdp-next" title="Next state">${makeSelOpts(states, to)}</select>
         </div>
@@ -1533,17 +1585,17 @@ class TuringMachine {
       </div>`
 
     const addRow = panel.querySelector('.tdp-add-row')
-    addRow?.querySelectorAll('.tdp-dir').forEach(btn => {
+    addRow?.querySelectorAll('.seg-opt[data-dir]').forEach(btn => {
       btn.addEventListener('click', () => {
-        addRow.querySelectorAll('.tdp-dir').forEach(b => b.classList.remove('active'))
-        btn.classList.add('active')
+        addRow.querySelectorAll('.seg-opt[data-dir]').forEach(b => b.classList.remove('is-active'))
+        btn.classList.add('is-active')
       })
     })
 
     panel.querySelector('[data-action="add"]')?.addEventListener('click', () => {
       const sym   = addRow.querySelector('.tdp-read').value
       const write = addRow.querySelector('.tdp-write').value
-      const dir   = addRow.querySelector('.tdp-dir.active')?.dataset.dir || 'R'
+      const dir   = addRow.querySelector('.seg-opt.is-active[data-dir]')?.dataset.dir || 'R'
       const next  = addRow.querySelector('.tdp-next').value
       this.transitions[`${from},${sym}`] = { write, dir, next }
       this._diagSel = { type: 'edge', from, to: next, key: `${from}→${next}` }
@@ -1582,6 +1634,20 @@ class TuringMachine {
 
   _esc(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  }
+
+  _latexSym(s) {
+    if (s === '#') return '\\#'
+    return String(s)
+      .replace(/\\/g,  '\\backslash ')
+      .replace(/\{/g,  '\\{')
+      .replace(/\}/g,  '\\}')
+      .replace(/\$/g,  '\\$')
+      .replace(/%/g,   '\\%')
+      .replace(/&/g,   '\\&')
+      .replace(/_/g,   '\\_')
+      .replace(/\^/g,  '\\hat{}')
+      .replace(/~/g,   '\\sim ')
   }
 
   // ══════════════════════════════════════════════════════════════
@@ -1870,10 +1936,10 @@ class TuringMachine {
     const vsDiagram      = document.getElementById('tm-vs-diagram')
     const vsTableExtras  = document.getElementById('tm-vs-table-extras')
     const vsDiagExtras   = document.getElementById('tm-vs-diagram-extras')
-    document.querySelectorAll('.tm-vs-btn').forEach(btn => {
+    document.querySelectorAll('.seg-opt[data-view]').forEach(btn => {
       btn.addEventListener('click', () => {
         const view = btn.dataset.view
-        document.querySelectorAll('.tm-vs-btn').forEach(b =>
+        document.querySelectorAll('.seg-opt[data-view]').forEach(b =>
           b.classList.toggle('is-active', b.dataset.view === view)
         )
         vsTable.style.display       = view === 'table'   ? '' : 'none'
@@ -1969,7 +2035,7 @@ class TuringMachine {
 
     // Keyboard shortcuts
     document.addEventListener('keydown', e => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return
       if (e.key === ' ')          { e.preventDefault(); this.isRunning ? this.pause() : this.play() }
       if (e.key === 'ArrowRight') { e.preventDefault(); if (!this.isRunning) this.step() }
       if (e.key === 'ArrowLeft')  { e.preventDefault(); this.stepBack() }

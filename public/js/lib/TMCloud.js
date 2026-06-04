@@ -1,5 +1,5 @@
 import { initializeApp, getApps }      from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js'
-import { getFirestore, collection, getDocs, setDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js'
+import { getFirestore, collection, getDocs, setDoc, doc, query, where, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js'
 import TuringMachine from '/js/lib/TuringMachine.js'
 
 const COLLECTION = 'turing-machines'
@@ -16,6 +16,56 @@ async function fetchMachines() {
   const res  = {}
   snap.forEach(d => { res[d.id] = d.data() })
   return res
+}
+
+// ── Machine ID helpers ────────────────────────────────────────────
+
+/** Genera un ID URL-safe a partir del título. */
+function generateMachineId(title) {
+  return String(title)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .substring(0, 40) || 'machine'
+}
+
+/** True si el machineId no está en uso. */
+async function isMachineIdAvailable(id) {
+  if (!_db) return true
+  try {
+    const q    = query(collection(_db, COLLECTION), where('machineId', '==', id), limit(1))
+    const snap = await getDocs(q)
+    return snap.empty
+  } catch { return true }
+}
+
+/** Devuelve el primer machineId disponible a partir de la base dada. */
+async function resolveUniqueMachineId(base) {
+  if (await isMachineIdAvailable(base)) return base
+  for (let n = 2; n <= 99; n++) {
+    const candidate = `${base}-${n}`.substring(0, 44)
+    if (await isMachineIdAvailable(candidate)) return candidate
+  }
+  return `${base}-${Date.now()}`
+}
+
+/**
+ * Busca una máquina por su machineId (campo del documento, no el doc-id).
+ * @param   {string} machineId
+ * @returns {Promise<object|null>}
+ */
+export async function getMachineById(machineId) {
+  if (!_db || !machineId) return null
+  try {
+    const q    = query(collection(_db, COLLECTION), where('machineId', '==', machineId), limit(1))
+    const snap = await getDocs(q)
+    return snap.empty ? null : snap.docs[0].data()
+  } catch (e) {
+    console.warn('[TMCloud] getMachineById error:', e)
+    return null
+  }
 }
 
 async function saveMachine(id, data) {
@@ -38,27 +88,27 @@ export function validateMachine(data) {
   const K       = data.states || []
   const I       = data.trans  || {}
 
-  if (!String(data.title       || '').trim()) errors.push('Title is required.')
-  if (!String(data.description || '').trim()) errors.push('Description is required.')
-  if (!String(data.author      || '').trim()) errors.push('Author is required.')
+  if (!String(data.title       || '').trim()) errors.push('El título es obligatorio.')
+  if (!String(data.description || '').trim()) errors.push('La descripción es obligatoria.')
+  if (!String(data.author      || '').trim()) errors.push('El autor es obligatorio.')
 
   if (rawAlph.length === 0) {
-    errors.push('Alphabet Σ must have at least one symbol.')
+    errors.push('El alfabeto Σ debe tener al menos un símbolo.')
   } else {
     rawAlph.forEach(s => {
-      if (s.length !== 1) errors.push(`Symbol "${s}" must be a single character.`)
+      if (s.length !== 1) errors.push(`El símbolo "${s}" debe ser un único carácter.`)
     })
-    if (new Set(rawAlph).size !== rawAlph.length) errors.push('Alphabet Σ has duplicate symbols.')
+    if (new Set(rawAlph).size !== rawAlph.length) errors.push('El alfabeto Σ tiene símbolos duplicados.')
   }
 
   if (K.length === 0) {
-    errors.push('State set K must have at least one state.')
+    errors.push('El conjunto de estados K debe tener al menos un estado.')
   } else {
-    if (new Set(K).size !== K.length) errors.push('State set K has duplicate entries.')
+    if (new Set(K).size !== K.length) errors.push('El conjunto de estados K tiene entradas duplicadas.')
   }
 
   if (K.length > 0 && !K.includes(data.initState)) {
-    errors.push(`Initial state "${data.initState}" is not in K = {${K.join(', ')}}.`)
+    errors.push(`El estado inicial "${data.initState}" no pertenece a K = {${K.join(', ')}}.`)
   }
 
   if (data.tape) {
@@ -66,31 +116,42 @@ export function validateMachine(data) {
       .filter(c => c !== '#' && c !== '_')
       .filter(c => !rawAlph.includes(c))
     if (invalid.length) {
-      errors.push(`Tape contains symbols outside Σ ∪ {#}: ${[...new Set(invalid)].join(' ')}`)
+      errors.push(`La cinta contiene símbolos fuera de Σ ∪ {#}: ${[...new Set(invalid)].join(' ')}`)
     }
   }
 
   if (Object.keys(I).length === 0) {
-    errors.push('I must have at least one instruction (the machine cannot have an empty transition function).')
+    errors.push('I debe tener al menos una instrucción (la función de transición no puede estar vacía).')
   }
 
   Object.entries(I).forEach(([key, val]) => {
     const parts = key.split(',')
     if (parts.length !== 2) {
-      errors.push(`Malformed transition key: "${key}" — expected "state,symbol".`)
+      errors.push(`Clave de transición malformada: "${key}" — se esperaba "estado,símbolo".`)
       return
     }
     const [fromState, readSym] = parts
-    if (!K.includes(fromState))   errors.push(`Transition key "${key}": state "${fromState}" ∉ K.`)
-    if (!allSym.includes(readSym)) errors.push(`Transition key "${key}": symbol "${readSym}" ∉ Σ ∪ {#}.`)
+    if (!K.includes(fromState))    errors.push(`Transición "${key}": el estado "${fromState}" ∉ K.`)
+    if (!allSym.includes(readSym)) errors.push(`Transición "${key}": el símbolo "${readSym}" ∉ Σ ∪ {#}.`)
 
-    const m = String(val).trim().match(/^(.)(R|L)(\w+)$/i)
+    const str = String(val).trim()
+
+    // Llamada a sub-máquina: tD@machine-id  o  tD@machine-id:qN
+    const cm = str.match(/^(.)(R|L)(@[a-z0-9-]+(?::q\d+)?)$/i)
+    if (cm) {
+      const [, write] = cm
+      if (!allSym.includes(write)) errors.push(`Instrucción "${key}": escribe "${write}" ∉ Σ ∪ {#}.`)
+      return   // el estado destino (@machine-id) no se valida contra K
+    }
+
+    // Instrucción regular
+    const m = str.match(/^(.)(R|L)(\w+)$/i)
     if (!m) {
-      errors.push(`Instruction "${key}" → "${val}": invalid format. Expected ⟨symbol⟩⟨R|L⟩⟨state⟩ (e.g. 1Rq0, #Lq2).`)
+      errors.push(`Instrucción "${key}" → "${val}": formato inválido. Se espera ⟨símbolo⟩⟨R|L⟩⟨estado⟩ (ej. 1Rq0, #Lq2) o llamada a sub-máquina (ej. 1R@copy-unary:q2).`)
     } else {
       const [, write, , next] = m
-      if (!allSym.includes(write))        errors.push(`Instruction "${key}": writes "${write}" ∉ Σ ∪ {#}.`)
-      if (!K.includes(next.toLowerCase())) errors.push(`Instruction "${key}": next state "${next}" ∉ K.`)
+      if (!allSym.includes(write))         errors.push(`Instrucción "${key}": escribe "${write}" ∉ Σ ∪ {#}.`)
+      if (!K.includes(next.toLowerCase())) errors.push(`Instrucción "${key}": estado siguiente "${next}" ∉ K.`)
     }
   })
 
@@ -118,9 +179,13 @@ function buildCard(id, doc) {
 
   const info = document.createElement('div')
   info.className = 'tm-lib-card-info'
+  const idBadge = doc.machineId
+    ? `<span class="tm-lib-card-id" title="ID para llamadas: @${esc(doc.machineId)}">@${esc(doc.machineId)}</span>`
+    : ''
   info.innerHTML = `
     <span class="tm-lib-card-title">${esc(doc.title)}</span>
     <span class="tm-lib-card-author">by ${esc(doc.author || 'Unknown')}</span>
+    ${idBadge}
   `
 
   card.appendChild(svgWrap)
@@ -176,7 +241,7 @@ export class TMGallery {
 
   async _load() {
     if (!this.grid) return
-    this.grid.innerHTML = '<div class="tm-lib-status">Loading…</div>'
+    this.grid.innerHTML = '<div class="tm-lib-status">Cargando…</div>'
     const docs = await fetchMachines()
     this._renderGrid(docs)
   }
@@ -185,7 +250,7 @@ export class TMGallery {
     if (!this.grid) return
     const entries = Object.entries(docs)
     if (entries.length === 0) {
-      this.grid.innerHTML = '<div class="tm-lib-status">No machines in the library yet. Be the first to upload one!</div>'
+      this.grid.innerHTML = '<div class="tm-lib-status">Aún no hay máquinas en la librería. ¡Sé el primero en subir una!</div>'
       return
     }
     this.grid.innerHTML = ''
@@ -217,6 +282,23 @@ export class TMGallery {
     if (titleEl)  titleEl.textContent  = data.title || ''
     if (authorEl) authorEl.textContent = `by ${data.author || 'Unknown'}`
     if (descEl)   descEl.textContent   = data.description || ''
+
+    const idRowEl = this.detail.querySelector('.tm-lib-detail-id')
+    if (idRowEl) {
+      if (data.machineId) {
+        idRowEl.style.display = ''
+        idRowEl.innerHTML = `ID para llamadas: <code class="tm-lib-detail-id-code">@${esc(data.machineId)}</code>
+          <button class="tm-lib-id-copy-btn" data-id="@${esc(data.machineId)}">Copiar</button>`
+        idRowEl.querySelector('.tm-lib-id-copy-btn')?.addEventListener('click', function () {
+          navigator.clipboard.writeText(this.dataset.id).then(() => {
+            this.textContent = '✓ Copiado'
+            setTimeout(() => { this.textContent = 'Copiar' }, 2000)
+          }).catch(() => {})
+        })
+      } else {
+        idRowEl.style.display = 'none'
+      }
+    }
 
     if (svgEl) {
       svgEl.innerHTML = ''
@@ -281,19 +363,42 @@ export class TMUpload {
 
     if (this.errEl) this.errEl.innerHTML = ''
     const btn = this.form.querySelector('button[type="submit"]')
-    if (btn) { btn.disabled = true; btn.textContent = 'Uploading…' }
+    if (btn) { btn.disabled = true; btn.textContent = 'Subiendo…' }
+
+    // Generar machineId único a partir del título
+    const baseId    = generateMachineId(title)
+    const machineId = await resolveUniqueMachineId(baseId)
 
     const id = `tm_${Date.now()}_${Math.random().toString(36).slice(2,6)}`
-    const ok = await saveMachine(id, data)
+    const ok = await saveMachine(id, { ...data, machineId })
 
-    if (btn) { btn.disabled = false; btn.textContent = 'Upload' }
+    if (btn) { btn.disabled = false; btn.textContent = 'Subir' }
 
     if (ok) {
       this.tm._loadedTitle       = title
       this.tm._loadedDescription = desc
       this.tm._loadedAuthor      = author
       this.tm._onMachineLoaded?.()
-      this.close()
+      this._showUploadSuccess(machineId)
     }
+  }
+
+  _showUploadSuccess(machineId) {
+    if (!this.errEl) return
+    const id = esc(machineId)
+    this.errEl.innerHTML = `
+      <li class="tm-up-success">
+        ¡Máquina subida exitosamente!<br>
+        <strong>ID para llamadas:</strong>
+        <code class="tm-up-machine-id">@${id}</code>
+        <button class="tm-up-copy-id" data-copy="@${id}">Copiar</button>
+      </li>
+    `
+    this.errEl.querySelector('.tm-up-copy-id')?.addEventListener('click', function () {
+      navigator.clipboard.writeText(this.dataset.copy).then(() => {
+        this.textContent = '✓ Copiado'
+        setTimeout(() => { this.textContent = 'Copiar' }, 2000)
+      }).catch(() => {})
+    })
   }
 }

@@ -6,11 +6,99 @@ export interface I18n {
     scripts: string
     contact: string
     games: string
+    settings: string
   }
   sections: {
     tools: string
     games: string
     projects: string
+    settings: string
+  }
+  projects: {
+    tm: {
+      loadMachineLabel: string
+      browseLibrary: string
+      library: string
+      importTitle: string
+      importJson: string
+      guideTitle: string
+      guideJson: string
+      alphabetLabel: string
+      initState: string
+      maxSteps: string
+      tableViewTitle: string
+      table: string
+      diagramViewTitle: string
+      diagram: string
+      tableHint: string
+      clearTitle: string
+      clear: string
+      exportTitle: string
+      exportBtn: string
+      uploadTitle: string
+      uploadBtn: string
+      addStateTitle: string
+      removeStateTitle: string
+      diagramHint: string
+      execution: string
+      resetTitle: string
+      reset: string
+      stepBackTitle: string
+      stepBack: string
+      step: string
+      play: string
+      pause: string
+      speed: string
+      tape: string
+      statusWaiting: string
+      currentState: string
+      reading: string
+      headPos: string
+      steps: string
+      shortcuts: string
+      shortcutsText: string
+      history: string
+      historyHint: string
+      histStep: string
+      histState: string
+      histTapeWindow: string
+      jsonGuideTitle: string
+      jsonStructure: string
+      jsonStructureDesc: string
+      jsonFieldTitleDesc: string
+      jsonFieldDescDesc: string
+      jsonFieldAuthorDesc: string
+      jsonFieldAlphabetDesc: string
+      jsonFieldStatesDesc: string
+      jsonFieldInitStateDesc: string
+      jsonFieldTapeDesc: string
+      jsonFieldTransDesc: string
+      jsonTransFormat: string
+      jsonTransDesc: string
+      jsonTransLegend: string
+      jsonNoteHalt: string
+      jsonExample: string
+      aiGenerator: string
+      aiDesc: string
+      aiTips: string
+      descLabel: string
+      descPlaceholder: string
+      generatePrompt: string
+      copyAndPaste: string
+      copy: string
+      machineLibrary: string
+      back: string
+      closeLibrary: string
+      loadMachineBtn: string
+      uploadMachine: string
+      titleField: string
+      titlePlaceholder: string
+      authorField: string
+      authorPlaceholder: string
+      descriptionField: string
+      descriptionPlaceholder: string
+      uploadSubmit: string
+    }
   }
   settings: {
     title: string
@@ -150,11 +238,99 @@ export const en: I18n = {
     scripts: 'Scripts',
     contact: 'Contact',
     games: 'Games',
+    settings: 'Settings',
   },
   sections: {
     tools: 'Tools',
     games: 'Games',
     projects: 'Projects',
+    settings: 'Settings',
+  },
+  projects: {
+    tm: {
+      loadMachineLabel: 'Load machine',
+      browseLibrary: 'Browse machine library',
+      library: 'Library',
+      importTitle: 'Load machine from JSON file',
+      importJson: 'Import JSON',
+      guideTitle: 'JSON format guide and AI prompt generator',
+      guideJson: 'JSON Guide',
+      alphabetLabel: 'Alphabet Σ (space-separated)',
+      initState: 'Initial state',
+      maxSteps: 'Max steps',
+      tableViewTitle: 'Transition table',
+      table: 'Table',
+      diagramViewTitle: 'State diagram',
+      diagram: 'Diagram',
+      tableHint: 'Format: <code>symbol Direction state</code> — e.g. <code>1Rq0</code> &nbsp;·&nbsp; <code>#Lq2</code>',
+      clearTitle: 'Clear all instructions',
+      clear: 'Clear',
+      exportTitle: 'Export machine as JSON',
+      exportBtn: 'Export',
+      uploadTitle: 'Upload machine to library',
+      uploadBtn: 'Upload',
+      addStateTitle: 'Add state',
+      removeStateTitle: 'Remove last state',
+      diagramHint: 'Drag the ring to connect · Click edge to edit · Double-click to add state · <kbd>Ctrl+scroll</kbd> zoom · <kbd>Ctrl+0</kbd> reset',
+      execution: 'Execution',
+      resetTitle: 'Reset initial configuration (R)',
+      reset: 'Reset',
+      stepBackTitle: 'Step back (←)',
+      stepBack: 'Back',
+      step: 'Step',
+      play: 'Play',
+      pause: 'Pause',
+      speed: 'Speed',
+      tape: 'Tape',
+      statusWaiting: 'Waiting',
+      currentState: 'Current state',
+      reading: 'Reading',
+      headPos: 'Head position',
+      steps: 'Steps',
+      shortcuts: 'Shortcuts',
+      shortcutsText: '<kbd>Space</kbd> play/pause &nbsp; <kbd>→</kbd> step &nbsp; <kbd>←</kbd> back &nbsp; <kbd>R</kbd> reset',
+      history: 'Configuration history',
+      historyHint: 'u <em>q</em> v — tape content around head',
+      histStep: 'Step',
+      histState: 'State',
+      histTapeWindow: 'Tape window',
+      jsonGuideTitle: 'JSON Format Guide',
+      jsonStructure: 'Structure',
+      jsonStructureDesc: 'The JSON file must be an object with these fields:',
+      jsonFieldTitleDesc: 'Short and descriptive name. E.g. <em>"Copy the Ones"</em>.',
+      jsonFieldDescDesc: 'What the machine does. Shown in the library detail view.',
+      jsonFieldAuthorDesc: 'Name of the creator.',
+      jsonFieldAlphabetDesc: 'Input symbols separated by spaces — Σ. <strong>Never include <code>#</code></strong>: it is the implicit blank. E.g. <em>"1 0 a"</em>.',
+      jsonFieldStatesDesc: 'Array of state names — K. Must follow the pattern <code>q0, q1, q2 …</code> E.g. <em>["q0","q1","q2"]</em>.',
+      jsonFieldInitStateDesc: 'Initial state q₀. Must be a member of <code>states</code>.',
+      jsonFieldTapeDesc: 'Initial tape content. Each character must be in Σ. Use <code>#</code> or <code>_</code> for blank cells. Can be empty.',
+      jsonFieldTransDesc: 'The instruction function I. Each entry defines an instruction (see below).',
+      jsonTransFormat: 'Transition format',
+      jsonTransDesc: 'Each key-value pair in <code>trans</code> encodes an instruction of T:',
+      jsonTransLegend: '<li><code>q<em>i</em></code> — current state</li><li><code>s</code> — symbol read (Σ ∪ {#})</li><li><code>t</code> — symbol to write (Σ ∪ {#})</li><li><code>D</code> — direction: <code>R</code> (right) or <code>L</code> (left)</li><li><code>q<em>j</em></code> — next state</li>',
+      jsonNoteHalt: 'The machine <strong>halts</strong> when it reaches a state-symbol pair with no defined transition — called a <em>final combination</em>.',
+      jsonExample: 'Example',
+      aiGenerator: 'AI Prompt Generator',
+      aiDesc: 'Describe the machine you want and this tool will build a precise prompt you can paste into any AI (ChatGPT, Claude, Gemini…). The AI will return a JSON ready to import.',
+      aiTips: '<strong>Tips for a good description:</strong> specify the input alphabet, what the machine should read, what it should write, and the expected final state of the tape.',
+      descLabel: 'What should the machine do?',
+      descPlaceholder: 'E.g. Read a binary string and replace each 1 with 0 and each 0 with 1 (bit complement).',
+      generatePrompt: 'Generate prompt',
+      copyAndPaste: 'Copy and paste this into your AI:',
+      copy: 'Copy',
+      machineLibrary: 'Machine Library',
+      back: 'Back',
+      closeLibrary: 'Close library',
+      loadMachineBtn: 'Load machine',
+      uploadMachine: 'Upload Machine',
+      titleField: 'Title',
+      titlePlaceholder: 'Short and descriptive name',
+      authorField: 'Author',
+      authorPlaceholder: 'Your name',
+      descriptionField: 'Description',
+      descriptionPlaceholder: 'Describe what this machine does…',
+      uploadSubmit: 'Upload',
+    },
   },
   settings: {
     title: 'Settings',
