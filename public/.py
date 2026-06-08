@@ -7,7 +7,7 @@
 # | LX(txt)                    | Display LaTeX string inline in Jupyter                       |
 # | MD(txt)                    | Display Markdown string inline in Jupyter                    |
 # | _(text, result)            | Display LaTeX text and number LaTeX result                   |
-# | urlML(file)                | Build GitHub raw URL for JuanUNAL/Machine-Learning repo      |
+# | GHD(file)                  | Build GitHub raw URL for JuanUNAL/Machine-Learning repo      |
 # | clean(t)                   | Erase last t characters from console output                  |
 # | install()                  | Clean up cached library files after installation             |
 # | table(data,stiles,border)  | Print a formatted ASCII table with optional color            |
@@ -149,7 +149,7 @@ def _(texto, resultado=None):
     
     except Exception as e:
         return MD(rf"$\text{{Error mostrando '{texto}'}}$")
-urlML  = lambda file: f"https://raw.githubusercontent.com/JuanUNAL/Machine-Learning/main/{file}"
+GHD = lambda file: f"https://raw.githubusercontent.com/JuanUNAL/drive/main/{file}"
 
 def pt(texto, resultado=None):
     try:
