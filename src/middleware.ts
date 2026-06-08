@@ -1,8 +1,8 @@
+import { defineMiddleware } from 'astro:middleware';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { MiddlewareHandler } from 'astro';
 
-export const onRequest: MiddlewareHandler = ({ request }, next) => {
+export const onRequest = defineMiddleware(({ request }, next) => {
   const url = new URL(request.url);
   if (url.pathname === '/.py') {
     const base = import.meta.env.PROD
