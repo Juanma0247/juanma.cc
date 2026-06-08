@@ -14,4 +14,4 @@ export const onRequest = defineMiddleware(({ request }, next) => {
     });
   }
   return next();
-};
+});
