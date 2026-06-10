@@ -139,28 +139,37 @@ def initJM():
 
 LX     = lambda txt:  display(Math(fr"""{txt}"""))
 MD     = lambda txt:  display(Markdown(fr"""{txt}"""))
-def _(texto, resultado=None):
-    try:
-        if resultado is not None:
-            contenido = rf"$\text{{{texto}}}: {resultado}$"
-        else:
-            contenido = rf"$\text{{{texto}}}$"        
-        return MD(contenido)
-    
-    except Exception as e:
-        return MD(rf"$\text{{Error mostrando '{texto}'}}$")
 GHD = lambda file: f"https://raw.githubusercontent.com/JuanUNAL/drive/main/{file}"
 
-def pt(texto, resultado=None):
+def pt(*args):
     try:
-        if resultado is not None:
-            contenido = rf"$\text{{{texto}}}: {resultado}$"
+        if len(args) == 0:
+            return MD("<br>")
+        elif len(args) == 1:
+            contenido = rf"$\text{{{args[0]}}}$"
+        elif len(args) == 2:
+            contenido = rf"$\text{{{args[0]}}}: {args[1]}$"
         else:
-            contenido = rf"$\text{{{texto}}}$"        
+            parts = " ".join(rf"\text{{{a}}}" for a in args)
+            contenido = f"${parts}$"
         return MD(contenido)
-    
     except Exception as e:
-        return MD(rf"$\text{{Error mostrando '{texto}'}}$")
+        return MD(rf"$\text{{Error}}$")
+
+def _(*args):
+    try:
+        if len(args) == 0:
+            return MD("<br>")
+        elif len(args) == 1:
+            contenido = rf"$\text{{{args[0]}}}$"
+        elif len(args) == 2:
+            contenido = rf"$\text{{{args[0]}}}: {args[1]}$"
+        else:
+            parts = " ".join(rf"\text{{{a}}}" for a in args)
+            contenido = f"${parts}$"
+        return MD(contenido)
+    except Exception as e:
+        return MD(rf"$\text{{Error}}$")
 
 def clean(t=10000):
     """Erase the last t characters printed to the console."""
