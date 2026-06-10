@@ -150,7 +150,7 @@ def pt(*args):
         elif len(args) == 2:
             contenido = rf"$\text{{{args[0]}}}: {args[1]}$"
         else:
-            parts = "".join(rf"\text{{{a}}} " for a in args)
+            parts = "".join(rf"\text{{{a}}}\quad" for a in args)
             contenido = f"${parts}$"
         return MD(contenido)
     except Exception as e:
@@ -165,7 +165,7 @@ def _(*args):
         elif len(args) == 2:
             contenido = rf"$\text{{{args[0]}}}: {args[1]}$"
         else:
-            parts = "".join(rf"\text{{{a}}} " for a in args)
+            parts = "".join(rf"\text{{{a}}}\quad" for a in args)
             contenido = f"${parts}$"
         return MD(contenido)
     except Exception as e:
