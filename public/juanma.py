@@ -7,8 +7,7 @@
 # | LX(txt)                    | Display LaTeX string inline in Jupyter                       |
 # | MD(txt)                    | Display Markdown string inline in Jupyter                    |
 # | _(text, result)            | Display LaTeX text and number LaTeX result                   |
-# | GHD(file)                  | Build GitHub raw URL for JuanUNAL/Machine-Learning repo      |
-# | GHDfiles(path)             | List file names in a JuanUNAL/drive repo folder              |
+# | GHD(path)                  | No path: list files in JuanUNAL/drive repo; else build raw URL|
 # | clean(t)                   | Erase last t characters from console output                  |
 # | install()                  | Clean up cached library files after installation             |
 # | table(data,stiles,border)  | Print a formatted ASCII table with optional color            |
@@ -140,17 +139,19 @@ def initJM():
 
 LX     = lambda txt:  display(Math(fr"""{txt}"""))
 MD     = lambda txt:  display(Markdown(fr"""{txt}"""))
-GHD = lambda file: f"https://raw.githubusercontent.com/JuanUNAL/drive/main/{file}"
 
-def GHDfiles(path=""):
-    """Return a list of file names in the JuanUNAL/drive repo folder (main branch) at the given path."""
-    try:
-        url = f"https://api.github.com/repos/JuanUNAL/drive/contents/{path}"
-        resp = requests.get(url, params={"ref": "main"})
-        resp.raise_for_status()
-        pt(*[item["name"] for item in resp.json() if item["type"] == "file"])
-    except Exception as e:
-        pt(f"Error en GHDfiles: {e}")
+def GHD(file=""):
+    """If path is empty, print the file names in the JuanUNAL/drive repo root (main branch). Otherwise, build the raw URL for that file."""
+    if file == "":
+        try:
+            url = "https://api.github.com/repos/JuanUNAL/drive/contents/"
+            resp = requests.get(url, params={"ref": "main"})
+            resp.raise_for_status()
+            pt(*[item["name"] for item in resp.json() if item["type"] == "file"])
+        except Exception as e:
+            pt(f"Error en GHD: {e}")
+    else:
+        return f"https://raw.githubusercontent.com/JuanUNAL/drive/main/{file}"
 
 def pt(*args):
     try:
