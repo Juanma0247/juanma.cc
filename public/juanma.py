@@ -153,19 +153,36 @@ def GHD(file=""):
     else:
         return f"https://raw.githubusercontent.com/JuanUNAL/drive/main/{file}"
 
+def _escTex(s):
+    """Escape LaTeX special characters so plain text renders literally inside \\text{}."""
+    repl = {
+        "\\": r"\textbackslash{}",
+        "&":  r"\&",
+        "%":  r"\%",
+        "$":  r"\$",
+        "#":  r"\#",
+        "_":  r"\_",
+        "{":  r"\{",
+        "}":  r"\}",
+        "~":  r"\textasciitilde{}",
+        "^":  r"\textasciicircum{}",
+    }
+    return "".join(repl.get(ch, ch) for ch in str(s))
+
+
 def pt(*args):
     try:
         if len(args) == 0:
             return MD("<br>")
         elif len(args) == 1:
-            contenido = rf"$\text{{{args[0]}}}$"
+            contenido = rf"$\text{{{_escTex(args[0])}}}$"
         elif len(args) == 2:
-            contenido = rf"$\text{{{args[0]}}}: {args[1]}$"
+            contenido = rf"$\text{{{_escTex(args[0])}}}: {args[1]}$"
         else:
-            parts = "".join(rf"\text{{{a}}}\quad" for a in args)
+            parts = "".join(rf"\text{{{_escTex(a)}}}\quad" for a in args)
             contenido = f"${parts}$"
         return MD(contenido)
-    except Exception as e:
+    except Exception:
         return MD(rf"$\text{{Error}}$")
 
 def _(*args):
@@ -173,14 +190,14 @@ def _(*args):
         if len(args) == 0:
             return MD("<br>")
         elif len(args) == 1:
-            contenido = rf"$\text{{{args[0]}}}$"
+            contenido = rf"$\text{{{_escTex(args[0])}}}$"
         elif len(args) == 2:
-            contenido = rf"$\text{{{args[0]}}}: {args[1]}$"
+            contenido = rf"$\text{{{_escTex(args[0])}}}: {args[1]}$"
         else:
-            parts = "".join(rf"\text{{{a}}}\quad" for a in args)
+            parts = "".join(rf"\text{{{_escTex(a)}}}\quad" for a in args)
             contenido = f"${parts}$"
         return MD(contenido)
-    except Exception as e:
+    except Exception:
         return MD(rf"$\text{{Error}}$")
 
 def clean(t=10000):
