@@ -9,7 +9,12 @@ export interface Props {
   section?: string
   labels?: string[]
   titleKey?: string
+  description?: string
 }
+
+const SITE_URL = 'https://juanma.cc'
+const DEFAULT_DESCRIPTION =
+  'Portafolio de Juan Manuel Díaz, científico en computación y desarrollador full stack. Proyectos, herramientas interactivas y experimentos de código, matemáticas, hobbies y diseño en constante evolución.'
 
 const {
   title,
@@ -17,10 +22,14 @@ const {
   section = '',
   labels = [],
   titleKey = '',
+  description = DEFAULT_DESCRIPTION,
 } = Astro.props
 
 const resolvedNavTitle = navTitle || title || 'Juanma'
 const pageTitle = title || 'Juanma'
+const ogTitle = title ? `${title} · Juanma` : 'Juan Manuel Díaz — Proyectos & Herramientas'
+const canonicalUrl = new URL(Astro.url.pathname, SITE_URL).href
+const ogImage = `${SITE_URL}/img/og-image.png`
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -28,7 +37,9 @@ const pageTitle = title || 'Juanma'
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title data-i18n={titleKey || undefined}>{pageTitle}</title>
-    <link rel="icon" href="/img/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg" />
+    <link rel="icon" type="image/png" href="/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/img/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <script is:inline>
@@ -93,7 +104,25 @@ const pageTitle = title || 'Juanma'
         }
       })()
     </script>
-    <meta name="description" content="Sitio web oficial de Juan Manuel Diaz Gomez. Descubre mi trabajo, proyectos y contacto." />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Juanma" />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Juan Manuel Díaz — Desarrollador Web" />
+    <meta property="og:locale" content="es_ES" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={ogTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="theme-color" content="#008888" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww" crossorigin="anonymous" />
