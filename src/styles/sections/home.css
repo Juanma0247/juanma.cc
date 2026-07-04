@@ -337,6 +337,23 @@
 .lightbox__close:hover,
 .lightbox__nav:hover {
   color: #fff;
+  opacity: 1;
+}
+
+/* Neutralize the global button :active / :focus states (press animation and
+   teal shadow) so the lightbox controls stay flat and minimal. */
+.lightbox__close:active,
+.lightbox__close:focus-visible,
+.lightbox__nav:active,
+.lightbox__nav:focus-visible {
+  animation: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.lightbox__nav:active,
+.lightbox__nav:focus-visible {
+  transform: translateY(-50%);
 }
 
 .lightbox__close {
