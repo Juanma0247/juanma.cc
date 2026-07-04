@@ -177,6 +177,12 @@ export interface I18n {
     builtCard1Desc: string
     builtCard2Title: string
     builtCard2Desc: string
+    builtCard3Title: string
+    builtCard3Desc: string
+    builtCard4Title: string
+    builtCard4Desc: string
+    builtCard5Title: string
+    builtCard5Desc: string
   }
   contact: {
     intro: string
@@ -412,12 +418,18 @@ export const en: I18n = {
     area4Desc: 'I love probability and statistics, data analysis and machine learning: I model, experiment and visualize results, and handle data with MySQL and Firestore.',
     area5Title: 'Design, UX & multimedia',
     area5Desc: 'I also come from the visual world: graphic design and UX/UI with Illustrator, Photoshop, Adobe XD and InDesign; video editing with Premiere, 3D with Blender, streaming and capture with OBS, and technical writing with LaTeX.',
-    builtTitle: "What I've built",
+    builtTitle: "Projects I've been part of",
     goToSite: 'Go to site',
     builtCard1Title: 'Icfes para disciplinados',
     builtCard1Desc: 'A platform to share study material for the Colombian Saber 11 exam. Access with document: <strong>0123456789</strong> / password: <strong>ABCD</strong>',
     builtCard2Title: 'Catálogo boutique Arcur',
     builtCard2Desc: 'Product catalog for Colombian clothing brand Arcur, with a hidden admin CRUD system.',
+    builtCard3Title: 'UNISMP',
+    builtCard3Desc: 'Web app for a Minecraft SMP community: player profiles, content and social features. A team project built with React, Supabase and Firebase.',
+    builtCard4Title: 'Número Pi',
+    builtCard4Desc: "A site that displays thousands of digits of π — a small mathematical experiment to explore and search within pi's endless decimal expansion.",
+    builtCard5Title: 'El Cóndor',
+    builtCard5Desc: 'Platform for a Colombian real estate company selling land lots in Tolima, with projects, financing options and customer support. A collaborative build.',
   },
   contact: {
     intro: 'If you want to get in touch with me, feel free to reach out through any of the following channels.',
