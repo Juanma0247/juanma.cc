@@ -6,6 +6,68 @@
   height: 100vh;
 }
 
+/* Location chip with a small map preview on hover.
+   Global (not scoped) because the bio is injected via innerHTML by i18n. */
+.geo {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+  color: var(--color-primary);
+  font-family: var(--font-bold);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--color-primary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.geo:hover { border-bottom-style: solid; }
+
+.geo-pin {
+  width: 0.85em;
+  height: 0.85em;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.geo-pop {
+  position: absolute;
+  bottom: calc(100% + 0.6rem);
+  left: 50%;
+  width: 14rem;
+  height: 5rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--color-bg);
+  border: var(--border-width) solid var(--color-primary);
+  box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 0.35rem) scale(0.96);
+  transform-origin: bottom center;
+  transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
+  z-index: 40;
+}
+
+.geo-pop iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 16rem;
+  border: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.geo:hover .geo-pop,
+.geo:focus-visible .geo-pop {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0) scale(1);
+}
+
 .center {
   display: flex;
   justify-content: center;
