@@ -9,7 +9,7 @@ import MainLayout from '../layouts/MainLayout.astro'
       <div class="hero-text">
         <h1 class="hero-name">Juan Manuel <span class="hero-accent">Diaz Gomez</span></h1>
         <p class="hero-tagline" data-i18n="home.tagline">Computer Scientist · Math Lover · UX · Tech MC & Sci-Fi</p>
-        <p class="hero-bio" data-i18n="home.bio">Hi, I'm <strong>Juanma</strong>. I come from Las Mesas, Nariño, and currently live in Manizales, Caldas for my studies. Programming (once committed line by line, now practiced as the distinguished art of vibe coding) has become a way of life for me. I love building all kinds of projects that involve it, and I always will.</p>
+        <p class="hero-bio" data-i18n="home.bio">Hi, I'm <strong>Juanma</strong>. I come from <a class="geo" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=1.4777072123416435,-77.01902130581522" data-map="https://maps.google.com/maps?q=1.4777072123416435,-77.01902130581522&z=13&output=embed"><svg class="geo-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span class="geo-name">Las Mesas, Nariño</span><span class="geo-pop"></span></a> and now live in <a class="geo" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=5.031719771102184,-75.46757314080617" data-map="https://maps.google.com/maps?q=5.031719771102184,-75.46757314080617&z=13&output=embed"><svg class="geo-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span class="geo-name">Manizales, Caldas</span><span class="geo-pop"></span></a>, where I study. For me, coding stopped being something I did line by line and became a way of life: today I enjoy it as the art of <em>vibe coding</em> and I love building all kinds of things. Here you'll find some of my projects, algorithms, games and hobbies — a personal repository that gathers and sums up a good part of my work.</p>
         <div class="quick-access">
           <a href="/projects" class="quick-card">
             <i data-feather="folder"></i>
@@ -126,4 +126,19 @@ import MainLayout from '../layouts/MainLayout.astro'
 
   imgs[0].classList.add('active');
   setTimeout(next, displayMs[0]);
+
+  // Lazy-load the Google Maps minimap only when hovering a location chip.
+  // Delegated on document so it survives i18n re-renders of the bio.
+  document.addEventListener('mouseover', e => {
+    const geo = (e.target as Element).closest<HTMLElement>('.geo');
+    if (!geo) return;
+    const pop = geo.querySelector<HTMLElement>('.geo-pop');
+    if (!pop || pop.dataset.loaded || !geo.dataset.map) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = geo.dataset.map;
+    iframe.loading = 'lazy';
+    iframe.title = geo.querySelector('.geo-name')?.textContent ?? 'Map';
+    pop.appendChild(iframe);
+    pop.dataset.loaded = '1';
+  });
 </script>
