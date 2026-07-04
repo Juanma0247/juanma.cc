@@ -183,6 +183,10 @@ export interface I18n {
     builtCard4Desc: string
     builtCard5Title: string
     builtCard5Desc: string
+    builtCard6Title: string
+    builtCard6Desc: string
+    builtCard7Title: string
+    builtCard7Desc: string
   }
   contact: {
     intro: string
@@ -430,6 +434,10 @@ export const en: I18n = {
     builtCard4Desc: "A site that displays thousands of digits of π — a small mathematical experiment to explore and search within pi's endless decimal expansion.",
     builtCard5Title: 'El Cóndor',
     builtCard5Desc: 'Platform for a Colombian real estate company selling land lots in Tolima, with projects, financing options and customer support. A collaborative build.',
+    builtCard6Title: 'FCEN — UNAL',
+    builtCard6Desc: 'Redesign and ongoing maintenance of the website of the Faculty of Exact and Natural Sciences (Universidad Nacional de Colombia, Manizales).',
+    builtCard7Title: 'Droguerías Prevensur',
+    builtCard7Desc: 'Online pharmacy from Pasto, Colombia: medicines, personal care and health products with home delivery.',
   },
   contact: {
     intro: 'If you want to get in touch with me, feel free to reach out through any of the following channels.',

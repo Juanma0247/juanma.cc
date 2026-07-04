@@ -185,6 +185,10 @@ export const es: I18n = {
     builtCard4Desc: 'Un sitio que muestra miles de dígitos de π: un pequeño experimento matemático para explorar y buscar dentro de la infinita expansión decimal de pi.',
     builtCard5Title: 'El Cóndor',
     builtCard5Desc: 'Plataforma de una empresa inmobiliaria colombiana que vende lotes en el Tolima, con proyectos, opciones de financiación y atención a clientes. Un desarrollo colaborativo.',
+    builtCard6Title: 'FCEN — UNAL',
+    builtCard6Desc: 'Rediseño y mantenimiento continuo del sitio web de la Facultad de Ciencias Exactas y Naturales (Universidad Nacional de Colombia, sede Manizales).',
+    builtCard7Title: 'Droguerías Prevensur',
+    builtCard7Desc: 'Droguería en línea de Pasto, Colombia: medicamentos, cuidado personal y productos de salud con entrega a domicilio.',
   },
   contact: {
     intro: 'Si quieres ponerte en contacto conmigo, no dudes en hacerlo a través de cualquiera de los siguientes canales.',
