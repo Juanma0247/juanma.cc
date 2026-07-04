@@ -1,5 +1,9 @@
 @import './tokens.css';
 
+html {
+  font-size: 110%;
+}
+
 * {
   margin: 0;
   padding: 0;
