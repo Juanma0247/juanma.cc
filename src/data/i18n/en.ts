@@ -160,8 +160,17 @@ export interface I18n {
     quickGames: string
     quickCodes: string
     skillsTitle: string
-    programmingTitle: string
-    designTitle: string
+    skillsIntro: string
+    area1Title: string
+    area1Desc: string
+    area2Title: string
+    area2Desc: string
+    area3Title: string
+    area3Desc: string
+    area4Title: string
+    area4Desc: string
+    area5Title: string
+    area5Desc: string
     builtTitle: string
     goToSite: string
     builtCard1Title: string
@@ -391,9 +400,18 @@ export const en: I18n = {
     quickProjects: 'Projects',
     quickGames: 'Games',
     quickCodes: 'Codes',
-    skillsTitle: 'Skills',
-    programmingTitle: 'Programming',
-    designTitle: 'Design',
+    skillsTitle: 'Areas & skills',
+    skillsIntro: "I'm a computer scientist and full-stack developer. Rather than a wall of logos and percentages, these are the branches I actually work in and the tools I reach for in each.",
+    area1Title: 'Computer Science',
+    area1Desc: "The core of everything I do. I think in algorithms, data structures and complexity, and I'm fascinated by the theory of computation (automata and Turing machines), logic and the discrete math behind it all — a lifelong math lover.",
+    area2Title: 'Full-stack web development',
+    area2Desc: 'I build complete sites and apps, front to back: HTML, CSS and JavaScript for interfaces, Node.js on the server, motion with GSAP and cloud services with Firebase.',
+    area3Title: 'Languages & software',
+    area3Desc: 'I move across paradigms and languages: Java and Kotlin for robust apps, and Python as a Swiss-army knife for scripting, automation and quick prototypes. I version everything with Git.',
+    area4Title: 'Data, math & machine learning',
+    area4Desc: 'I love probability and statistics, data analysis and machine learning: I model, experiment and visualize results, and handle data with MySQL and Firestore.',
+    area5Title: 'Design, UX & multimedia',
+    area5Desc: 'I also come from the visual world: graphic design and UX/UI with Illustrator, Photoshop, Adobe XD and InDesign; video editing with Premiere, 3D with Blender, streaming and capture with OBS, and technical writing with LaTeX.',
     builtTitle: "What I've built",
     goToSite: 'Go to site',
     builtCard1Title: 'Icfes para disciplinados',

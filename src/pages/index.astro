@@ -40,35 +40,29 @@ import MainLayout from '../layouts/MainLayout.astro'
     </section>
 
     <section class="skills-section">
-      <h2 class="section-label" data-i18n="home.skillsTitle">Skills</h2>
-      <div class="skill-group">
-        <p class="skill-group-title" data-i18n="home.programmingTitle">Programming</p>
-        <div class="skills-row">
-          <span class="skill-tag"><img src="/img/languages/java.svg" alt="Java" /><span>Java</span><span class="skill-level">70%</span></span>
-          <span class="skill-tag"><img src="/img/languages/python.svg" alt="Python" /><span>Python</span><span class="skill-level">85%</span></span>
-          <span class="skill-tag"><img src="/img/languages/javascript.svg" alt="JavaScript" /><span>JavaScript</span><span class="skill-level">65%</span></span>
-          <span class="skill-tag"><img src="/img/languages/kotlin.svg" alt="Kotlin" /><span>Kotlin</span><span class="skill-level">80%</span></span>
-          <span class="skill-tag"><img src="/img/html.svg" alt="HTML" /><span>HTML</span><span class="skill-level">95%</span></span>
-          <span class="skill-tag"><img src="/img/css.svg" alt="CSS" /><span>CSS</span><span class="skill-level">85%</span></span>
-          <span class="skill-tag"><img src="/img/firebase.svg" alt="Firebase" /><span>Firebase</span><span class="skill-level">80%</span></span>
-          <span class="skill-tag"><img src="/img/mysql.svg" alt="MySQL" /><span>MySQL</span><span class="skill-level">60%</span></span>
-          <span class="skill-tag"><img src="/img/nodejs.svg" alt="Node.js" /><span>Node.js</span><span class="skill-level">20%</span></span>
-          <span class="skill-tag"><img src="/img/git.svg" alt="Git" /><span>Git</span><span class="skill-level">20%</span></span>
-          <span class="skill-tag"><img src="/img/gsap.svg" alt="GSAP" /><span>GSAP</span><span class="skill-level">60%</span></span>
-          <span class="skill-tag skill-tag--dark"><img src="/img/LaTex.svg" alt="LaTeX" /><span>LaTeX</span><span class="skill-level">60%</span></span>
-        </div>
-      </div>
-      <div class="skill-group">
-        <p class="skill-group-title" data-i18n="home.designTitle">Design</p>
-        <div class="skills-row">
-          <span class="skill-tag"><img src="/img/illustrator.svg" alt="Illustrator" /><span>Illustrator</span><span class="skill-level">80%</span></span>
-          <span class="skill-tag"><img src="/img/photoshop.svg" alt="Photoshop" /><span>Photoshop</span><span class="skill-level">75%</span></span>
-          <span class="skill-tag"><img src="/img/xd.svg" alt="XD" /><span>Adobe XD</span><span class="skill-level">90%</span></span>
-          <span class="skill-tag"><img src="/img/premiere.svg" alt="Premiere" /><span>Premiere</span><span class="skill-level">65%</span></span>
-          <span class="skill-tag"><img src="/img/indesign.svg" alt="InDesign" /><span>InDesign</span><span class="skill-level">75%</span></span>
-          <span class="skill-tag"><img src="/img/blender.svg" alt="Blender" /><span>Blender</span><span class="skill-level">30%</span></span>
-          <span class="skill-tag"><img src="/img/obs.svg" alt="OBS" /><span>OBS</span><span class="skill-level">80%</span></span>
-        </div>
+      <h2 class="section-label" data-i18n="home.skillsTitle">Areas &amp; skills</h2>
+      <p class="skills-intro" data-i18n="home.skillsIntro">I'm a computer scientist and full-stack developer. Rather than a wall of logos, these are the branches I work in and the tools I use in each.</p>
+      <div class="areas-grid">
+        <article class="area">
+          <h3 class="area__title" data-i18n="home.area1Title">Computer Science</h3>
+          <p class="area__desc" data-i18n="home.area1Desc">The core of everything I do. I think in algorithms, data structures and complexity, and I'm fascinated by the theory of computation, logic and discrete math.</p>
+        </article>
+        <article class="area">
+          <h3 class="area__title" data-i18n="home.area2Title">Full-stack web development</h3>
+          <p class="area__desc" data-i18n="home.area2Desc">I build complete sites and apps, front to back: HTML, CSS and JavaScript for interfaces, Node.js on the server, animation with GSAP and cloud services with Firebase.</p>
+        </article>
+        <article class="area">
+          <h3 class="area__title" data-i18n="home.area3Title">Languages &amp; software</h3>
+          <p class="area__desc" data-i18n="home.area3Desc">I move across paradigms and languages: Java and Kotlin for robust apps, and Python as a Swiss-army knife for scripting, automation and quick prototypes. I version my work with Git.</p>
+        </article>
+        <article class="area">
+          <h3 class="area__title" data-i18n="home.area4Title">Data, math &amp; machine learning</h3>
+          <p class="area__desc" data-i18n="home.area4Desc">I love probability and statistics, data analysis and machine learning: I model, experiment and visualize results. I handle data with MySQL and Firestore.</p>
+        </article>
+        <article class="area">
+          <h3 class="area__title" data-i18n="home.area5Title">Design, UX &amp; multimedia</h3>
+          <p class="area__desc" data-i18n="home.area5Desc">I also come from the visual world: graphic design and interfaces with Illustrator, Photoshop, Adobe XD and InDesign; video with Premiere, 3D with Blender, streaming with OBS, and technical documents with LaTeX.</p>
+        </article>
       </div>
     </section>
 
