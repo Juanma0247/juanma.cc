@@ -3,6 +3,11 @@ import MainLayout from '../layouts/MainLayout.astro'
 ---
 
 <MainLayout title="Settings" section="Settings" titleKey="settings.title">
+  <link
+    slot="head"
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400&family=Roboto:wght@400&family=Playfair+Display:wght@400&family=Montserrat:wght@400&family=Fira+Code:wght@400&display=swap"
+  />
   <div class="settings-page">
 
     <div class="settings-page__grid">
@@ -108,12 +113,12 @@ import MainLayout from '../layouts/MainLayout.astro'
         </div>
         <p class="settings-card__desc" data-i18n="settings.font.desc">Choose a global font for the site.</p>
         <select class="settings-font__select" id="settings-font-select">
-          <option value="" data-i18n="settings.font.default">Default</option>
-          <option value="inter">Inter</option>
-          <option value="roboto">Roboto</option>
-          <option value="playfair">Playfair Display</option>
-          <option value="montserrat">Montserrat</option>
-          <option value="fira-code">Fira Code</option>
+          <option value="" data-i18n="settings.font.default" style="font-family: ProductSans;">Default</option>
+          <option value="inter" style="font-family: 'Inter', sans-serif;">Inter</option>
+          <option value="roboto" style="font-family: 'Roboto', sans-serif;">Roboto</option>
+          <option value="playfair" style="font-family: 'Playfair Display', serif;">Playfair Display</option>
+          <option value="montserrat" style="font-family: 'Montserrat', sans-serif;">Montserrat</option>
+          <option value="fira-code" style="font-family: 'Fira Code', monospace;">Fira Code</option>
         </select>
       </section>
 
@@ -452,8 +457,16 @@ import MainLayout from '../layouts/MainLayout.astro'
 
   const fontSelect = document.getElementById('settings-font-select') as HTMLSelectElement
   fontSelect.value = localStorage.getItem('site-font') || ''
+
+  function syncSelectFont() {
+    const opt = fontSelect.options[fontSelect.selectedIndex]
+    fontSelect.style.fontFamily = opt?.style.fontFamily || 'ProductSans'
+  }
+  syncSelectFont()
+
   fontSelect.addEventListener('change', () => {
     applyFont(fontSelect.value)
+    syncSelectFont()
     if (authorizedUser) saveSettings({ font: fontSelect.value || null }).catch(console.error)
   })
 

@@ -6,12 +6,12 @@
 
 .p16-step { margin: 0 1rem; border: .2rem solid var(--color-primary); border-radius: .5rem; box-shadow: .2rem .2rem 0 var(--color-primary); overflow: hidden; animation: p16-slide-in .35s ease forwards; }
 .p16-step-head { display: flex; align-items: center; gap: .6rem; padding: .5rem .8rem; background-color: rgba(0,136,136,.08); border-bottom: 1px solid rgba(0,136,136,.2); }
-.p16-badge { display: inline-flex; align-items: center; justify-content: center; width: 1.6rem; height: 1.6rem; border-radius: .3rem; font-family: ProductSansBold; font-size: .8rem; border: .15rem solid currentColor; flex-shrink: 0; }
+.p16-badge { display: inline-flex; align-items: center; justify-content: center; width: 1.6rem; height: 1.6rem; border-radius: .3rem; font-family: var(--font-bold); font-size: .8rem; border: .15rem solid currentColor; flex-shrink: 0; }
 .p16-badge--rec  { color: #a78bfa; }
 .p16-badge--base { color: #60a5fa; }
 .p16-badge--ok   { color: var(--color-primary); }
-.p16-step-type { font-family: ProductSansBold; font-size: .9rem; color: var(--color-primary); flex: 1; }
-.p16-step-counter { font-family: ProductSans; font-size: .8rem; color: var(--color-muted); }
+.p16-step-type { font-family: var(--font-bold); font-size: .9rem; color: var(--color-primary); flex: 1; }
+.p16-step-counter { font-family: var(--font-ui); font-size: .8rem; color: var(--color-muted); }
 .p16-strings-row { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; padding: .6rem .8rem; }
 .p16-sblock { display: flex; flex-direction: column; align-items: center; gap: .1rem; }
 .p16-sval { font-size: 1.15rem; letter-spacing: .05em; }
@@ -19,7 +19,7 @@
 .p16-cdot { font-family: ComputerModern; font-size: 1.4rem; color: var(--color-primary); align-self: flex-end; margin-bottom: .2rem; }
 .p16-formula-box { margin: .25rem .8rem .5rem; padding: .5rem .8rem; border-left: .2rem solid var(--color-primary); border-radius: 0 .3rem .3rem 0; background-color: rgba(0,136,136,.05); }
 .p16-formula { font-family: ComputerModern; font-size: 1.1rem; color: var(--color-text); letter-spacing: .03em; }
-.p16-step-desc { font-family: ProductSans; font-size: .88rem; color: var(--color-muted); font-style: italic; padding: 0 .8rem .6rem; }
+.p16-step-desc { font-family: var(--font-ui); font-size: .88rem; color: var(--color-muted); font-style: italic; padding: 0 .8rem .6rem; }
 .p16-progress { height: 3px; background-color: rgba(0,136,136,.12); }
 .p16-progress-fill { height: 100%; background-color: var(--color-primary); border-radius: 0 2px 2px 0; transition: width .4s ease; }
 .p16-c-alpha { color: var(--color-primary); font-weight: bold; }
@@ -28,5 +28,5 @@
 .p16-c-a     { color: #f472b6; font-weight: bold; }
 .p16-c-result { color: var(--color-primary); font-family: CascadiaCode; }
 .p16-lambda { color: #94a3b8; font-family: ComputerModern; }
-.p16-hint { font-family: ProductSans; font-size: 1rem; color: var(--color-muted); font-style: italic; margin-left: 1rem; }
-.p16-error { font-family: ProductSans; font-size: 1rem; color: #ef4444; font-style: italic; margin-left: 1rem; }
+.p16-hint { font-family: var(--font-ui); font-size: 1rem; color: var(--color-muted); font-style: italic; margin-left: 1rem; }
+.p16-error { font-family: var(--font-ui); font-size: 1rem; color: #ef4444; font-style: italic; margin-left: 1rem; }

@@ -61,7 +61,7 @@
   color: var(--color-bg);
   padding-left: .5rem;
   padding-right: 5rem;
-  font-family: ProductSansLight;
+  font-family: var(--font-ui);
   font-size: 1rem;
 }
 

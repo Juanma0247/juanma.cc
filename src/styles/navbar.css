@@ -32,7 +32,7 @@
 }
 
 .topbar__title {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 1.4rem;
   line-height: 1.1;
   color: var(--color-text);
@@ -58,7 +58,7 @@
 
 .topbar__label {
   font-size: 0.6rem;
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   color: var(--color-text);
   background: rgba(255, 255, 255, 0.1);
   border-radius: 2rem;
@@ -70,7 +70,7 @@
 
 .topbar__section {
   font-size: 0.65rem;
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   color: var(--color-muted);
   white-space: nowrap;
   flex-shrink: 0;
@@ -110,7 +110,7 @@
 
 .topbar__navitem span {
   font-size: 0.8rem;    
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
 }
 
 .topbar__navitem--active {
@@ -224,7 +224,7 @@
 }
 
 .settings-overlay__title {
-  font-family: ProductSansBold, sans-serif;
+  font-family: var(--font-bold), sans-serif;
   font-size: 1.25rem;
   color: var(--color-text);
   margin: 0;
@@ -291,14 +291,14 @@
 }
 
 .settings-card__head h3 {
-  font-family: ProductSansBold, sans-serif;
+  font-family: var(--font-bold), sans-serif;
   font-size: 0.95rem;
   margin: 0;
   color: var(--color-text);
 }
 
 .settings-card__desc {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.8rem;
   color: var(--color-muted);
   margin: 0;
@@ -309,7 +309,7 @@
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.6rem;
   background: color-mix(in srgb, var(--color-primary) 15%, transparent);
   color: var(--color-primary);
@@ -333,7 +333,7 @@
   padding: 0.35rem 0.7rem;
   border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent);
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.8rem;
   color: var(--color-text);
   cursor: pointer;
@@ -360,7 +360,7 @@
 /* ── Font Select ───────────────────────────────── */
 
 .settings-font__select {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.85rem;
   color: var(--color-muted);
   background: color-mix(in srgb, var(--color-text) 5%, transparent);
@@ -384,7 +384,7 @@
   padding: 0.35rem 1rem;
   border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent);
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.8rem;
   color: var(--color-text);
   cursor: pointer;
@@ -419,7 +419,7 @@
   padding: 0.55rem 1rem;
   border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--color-text) 20%, transparent);
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.85rem;
   color: var(--color-text);
   cursor: pointer;
@@ -460,7 +460,7 @@
 }
 
 .page-user-name {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.8rem;
   color: var(--color-text);
   white-space: nowrap;
@@ -470,7 +470,7 @@
 
 .settings-signout-btn {
   all: unset;
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.72rem;
   color: var(--color-muted);
   cursor: pointer;
@@ -488,13 +488,13 @@
 }
 
 .page-setting-label {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.78rem;
   color: var(--color-muted);
 }
 
 .page-setting-select {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.82rem;
   color: var(--color-text);
   background: color-mix(in srgb, var(--color-text) 5%, transparent);
@@ -513,14 +513,14 @@
 }
 
 .page-auth-error {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.8rem;
   color: #e06060;
   margin: 0;
 }
 
 .page-save-feedback {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.75rem;
   margin: 0;
 }
@@ -573,7 +573,7 @@
 }
 
 .settings-custom__item-name {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.68rem;
   color: var(--color-muted);
 }
@@ -592,13 +592,13 @@
 }
 
 .cp-warning--bad {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.72rem;
   color: #e06060;
 }
 
 .settings-custom__presets-label {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.72rem;
   color: var(--color-muted);
   display: block;
@@ -613,7 +613,7 @@
 
 .settings-custom__preset {
   all: unset;
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.72rem;
   padding: 0.2rem 0.55rem;
   border-radius: var(--radius-sm);
@@ -637,7 +637,7 @@
 .settings-custom__cancel,
 .settings-custom__apply {
   all: unset;
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.8rem;
   padding: 0.35rem 0.9rem;
   border-radius: var(--radius-md);
@@ -667,7 +667,7 @@
 /* ── Color Preview ─────────────────────────────── */
 
 .cp-preview__label {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.68rem;
   color: var(--color-muted);
   margin: 0 0 0.3rem;
@@ -701,14 +701,14 @@
 }
 
 .cp-preview__brand {
-  font-family: ProductSansBold, sans-serif;
+  font-family: var(--font-bold), sans-serif;
   font-size: 0.72rem;
   color: var(--pv-bg);
   margin-right: 0.2rem;
 }
 
 .cp-preview__navlink {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.62rem;
   color: var(--pv-bg);
   opacity: 0.6;
@@ -730,14 +730,14 @@
 }
 
 .cp-preview__title {
-  font-family: ProductSansBold, sans-serif;
+  font-family: var(--font-bold), sans-serif;
   font-size: 0.78rem;
   color: var(--pv-text);
   margin: 0;
 }
 
 .cp-preview__body {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.65rem;
   color: var(--pv-text);
   margin: 0;
@@ -755,7 +755,7 @@
 }
 
 .cp-preview__btn {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.62rem;
   background: var(--pv-primary);
   color: var(--pv-bg);
@@ -764,7 +764,7 @@
 }
 
 .cp-preview__link {
-  font-family: ProductSans, sans-serif;
+  font-family: var(--font-ui), sans-serif;
   font-size: 0.62rem;
   color: var(--pv-primary);
   text-decoration: underline;

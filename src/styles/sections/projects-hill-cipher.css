@@ -16,7 +16,7 @@
 }
 
 .p1Option {
-  font-family: ProductSansBold;
+  font-family: var(--font-bold);
   font-size: 1.2rem;
   cursor: pointer;
   color: var(--color-primary);
@@ -34,7 +34,7 @@
 
 .p1Error {
   color: #ef4444;
-  font-family: ProductSans;
+  font-family: var(--font-ui);
   font-size: .9rem;
   margin-left: 1rem;
 }

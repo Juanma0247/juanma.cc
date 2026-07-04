@@ -42,7 +42,7 @@
 }
 
 .site-title {
-  font-family: ProductSansBold;
+  font-family: var(--font-bold);
   position: absolute;
   right: .5rem;
   top: .5rem;

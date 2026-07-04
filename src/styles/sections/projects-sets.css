@@ -4,12 +4,12 @@
   stroke-width: 2px;
 }
 
-.venn-label text { font-size: 14px; font-family: ProductSansBold; }
+.venn-label text { font-size: 14px; font-family: var(--font-bold); }
 
 .venn-text {
   font-size: 12px;
   text-anchor: middle;
-  font-family: ProductSansBold;
+  font-family: var(--font-bold);
   color: var(--color-primary);
 }
 
