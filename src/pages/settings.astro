@@ -249,9 +249,13 @@ import MainLayout from '../layouts/MainLayout.astro'
 </style>
 
 <script>
-  import { signIn, signOut, onAuthChange, isAuthorized } from '../lib/core/Auth.js'
-  import { getSettings, saveSettings } from '../lib/core/SiteSettings.js'
   import { DESTINATIONS } from '../data/destinations'
+
+  // Cloud/auth (Firebase) loads lazily and in isolation so that a failure to
+  // load it never breaks the local settings. Theme / font / language must work
+  // without signing in and persist in the browser (localStorage).
+  let saveSettings: (s: any) => Promise<any> = async () => {}
+  let getSettings: () => Promise<any> = async () => null
 
   // ── Theme System ─────────────────────────────────────────────────────────────
 
@@ -521,46 +525,63 @@ import MainLayout from '../layouts/MainLayout.astro'
     stateAuthorized.hidden   = state !== 'authorized'
   }
 
-  onAuthChange(async (user: any) => {
-    if (!user) {
-      authorizedUser = false
-      showAuthState('signedout')
-      return
-    }
-    if (!isAuthorized(user.email)) {
-      authorizedUser = false
-      showAuthState('unauthorized')
-      await signOut()
-      return
-    }
-    authorizedUser = true
-    userAvatar.src = user.photoURL || ''
-    userName.textContent = user.displayName || user.email || ''
-    showAuthState('authorized')
-    const settings = await getSettings()
-    if (settings?.defaultLanding) landingSelect.value = settings.defaultLanding
-  })
-
-  document.getElementById('page-signin-btn')!.addEventListener('click', async () => {
-    try { await signIn() } catch (e) { console.error(e) }
-  })
-
-  function handleSignOut() { signOut().catch(console.error) }
-  document.getElementById('page-signout-btn')!.addEventListener('click', handleSignOut)
-  document.getElementById('page-signout-btn-unauth')!.addEventListener('click', handleSignOut)
-
   let saveFeedbackTimer: ReturnType<typeof setTimeout> | null = null
-  landingSelect.addEventListener('change', async () => {
+
+  // Load Firebase auth + cloud settings lazily. If it fails (e.g. offline or a
+  // stale dev bundle), local settings above keep working.
+  ;(async () => {
+    let auth
     try {
-      await saveSettings({ defaultLanding: landingSelect.value })
-      saveFeedback.textContent = getMsg('settings.page.saved')
-      saveFeedback.dataset.state = 'ok'
-    } catch {
-      saveFeedback.textContent = getMsg('settings.page.errorSaving')
-      saveFeedback.dataset.state = 'error'
+      auth = await import('../lib/core/Auth.js')
+      const ss = await import('../lib/core/SiteSettings.js')
+      saveSettings = ss.saveSettings
+      getSettings  = ss.getSettings
+    } catch (e) {
+      console.error('Settings: cloud/auth unavailable, local settings still work:', e)
+      return
     }
-    saveFeedback.hidden = false
-    if (saveFeedbackTimer) clearTimeout(saveFeedbackTimer)
-    saveFeedbackTimer = setTimeout(() => { saveFeedback.hidden = true }, 2500)
-  })
+
+    const { signIn, signOut, onAuthChange, isAuthorized } = auth
+
+    function handleSignOut() { signOut().catch(console.error) }
+    document.getElementById('page-signin-btn')!.addEventListener('click', async () => {
+      try { await signIn() } catch (e) { console.error(e) }
+    })
+    document.getElementById('page-signout-btn')!.addEventListener('click', handleSignOut)
+    document.getElementById('page-signout-btn-unauth')!.addEventListener('click', handleSignOut)
+
+    onAuthChange(async (user: any) => {
+      if (!user) {
+        authorizedUser = false
+        showAuthState('signedout')
+        return
+      }
+      if (!isAuthorized(user.email)) {
+        authorizedUser = false
+        showAuthState('unauthorized')
+        await signOut()
+        return
+      }
+      authorizedUser = true
+      userAvatar.src = user.photoURL || ''
+      userName.textContent = user.displayName || user.email || ''
+      showAuthState('authorized')
+      const settings = await getSettings()
+      if (settings?.defaultLanding) landingSelect.value = settings.defaultLanding
+    })
+
+    landingSelect.addEventListener('change', async () => {
+      try {
+        await saveSettings({ defaultLanding: landingSelect.value })
+        saveFeedback.textContent = getMsg('settings.page.saved')
+        saveFeedback.dataset.state = 'ok'
+      } catch {
+        saveFeedback.textContent = getMsg('settings.page.errorSaving')
+        saveFeedback.dataset.state = 'error'
+      }
+      saveFeedback.hidden = false
+      if (saveFeedbackTimer) clearTimeout(saveFeedbackTimer)
+      saveFeedbackTimer = setTimeout(() => { saveFeedback.hidden = true }, 2500)
+    })
+  })()
 </script>
