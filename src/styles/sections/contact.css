@@ -19,6 +19,7 @@
 }
 
 .social-card {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 0.9rem;
@@ -28,12 +29,8 @@
   background: color-mix(in srgb, var(--color-text) 4%, transparent);
   color: var(--color-text);
   text-decoration: none;
-  cursor: pointer;
-  font: inherit;
-  text-align: left;
   width: 100%;
   min-width: 0;
-  box-shadow: none;
   transition: border-color 160ms, background 160ms, transform 160ms;
 }
 
@@ -42,8 +39,6 @@
   border-color: var(--card-color);
   background: color-mix(in srgb, var(--card-color) 12%, transparent);
   transform: translateY(-2px);
-  box-shadow: none;
-  opacity: 1;
   outline: none;
 }
 
@@ -97,17 +92,5 @@
 
 .social-card:hover .social-card__action {
   color: var(--card-color);
-}
-
-.social-card:not(.social-card--copy):hover .social-card__action {
   transform: translateX(2px);
-}
-
-.social-card--copied {
-  border-color: var(--card-color);
-  background: color-mix(in srgb, var(--card-color) 16%, transparent);
-}
-
-.social-card--copied .social-card__handle {
-  color: var(--card-color);
 }
