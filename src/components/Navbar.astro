@@ -33,7 +33,9 @@ const displayLabels = labels.slice(0, 3)
   <div class="topbar__identity">
     <p class="topbar__title">{navTitle}</p>
     <div class="topbar__meta">
-      <img class="topbar__icon" src={icon} alt="" aria-hidden="true" />
+      {(displayLabels.length > 0 || section) && (
+        <img class="topbar__icon" src={icon} alt="" aria-hidden="true" />
+      )}
       {displayLabels.length > 0 && (
         <span class="topbar__label" id="topbar-label" data-labels={JSON.stringify(displayLabels)}>
           {displayLabels[0]}
