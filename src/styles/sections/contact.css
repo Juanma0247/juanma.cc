@@ -1,45 +1,109 @@
+.contact-page {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 4rem;
+}
+
 .contact-intro {
   color: var(--color-text);
-  font-size: 1.2rem;
-  margin-left: 1rem;
-  margin-bottom: 2rem;
-  margin-top: 1rem;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  margin: 0 0 1.75rem;
 }
 
-.contact-channels {
-  display: flex;
-  margin-left: 2rem;
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem;
 }
 
-.channel-gmail, .channel-whatsapp, .channel-discord {
+.social-card {
   display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+  background: color-mix(in srgb, var(--color-text) 4%, transparent);
+  color: var(--color-text);
+  text-decoration: none;
   cursor: pointer;
+  font: inherit;
+  text-align: left;
+  width: 100%;
+  transition: border-color 160ms, background 160ms, transform 160ms;
 }
 
-.channel-whatsapp, .channel-discord { margin-left: 5rem; }
-
-.discord-info {
-  position: absolute;
-  left: 35rem;
-  top: 5rem;
-  display: none;
+.social-card:hover,
+.social-card:focus-visible {
+  border-color: var(--card-color);
+  background: color-mix(in srgb, var(--card-color) 12%, transparent);
+  transform: translateY(-2px);
+  outline: none;
 }
 
-.discord-icon { cursor: pointer; }
+.social-card__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--card-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 
-@media (max-width: 600px) {
-  .contact-channels {
-    flex-direction: column;
-    margin-left: 1rem;
-    gap: 1.5rem;
-  }
+.social-card__icon img {
+  width: 1.3rem;
+  height: 1.3rem;
+}
 
-  .channel-whatsapp,
-  .channel-discord {
-    margin-left: 0;
-  }
+.social-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1;
+}
 
-  .discord-info {
-    position: static;
-  }
+.social-card__name {
+  font-family: var(--font-bold), sans-serif;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.social-card__handle {
+  font-family: var(--font-ui), sans-serif;
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 160ms;
+}
+
+.social-card__action {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-muted);
+  flex-shrink: 0;
+  transition: color 160ms, transform 160ms;
+}
+
+.social-card:hover .social-card__action {
+  color: var(--card-color);
+}
+
+.social-card:not(.social-card--copy):hover .social-card__action {
+  transform: translateX(2px);
+}
+
+.social-card--copied {
+  border-color: var(--card-color);
+  background: color-mix(in srgb, var(--card-color) 16%, transparent);
+}
+
+.social-card--copied .social-card__handle {
+  color: var(--card-color);
 }

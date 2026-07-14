@@ -440,7 +440,7 @@ export const en: I18n = {
     builtCard7Desc: 'Online pharmacy from Pasto, Colombia: medicines, personal care and health products with home delivery.',
   },
   contact: {
-    intro: 'If you want to get in touch with me, feel free to reach out through any of the following channels.',
+    intro: 'Follow me or reach out through any of my social networks and messaging apps.',
   },
   notFound: {
     message: 'Page not found :/',

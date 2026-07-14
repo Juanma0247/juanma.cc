@@ -1,25 +1,68 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro'
+
+interface SocialLink {
+  id: string
+  name: string
+  handle: string
+  color: string
+  icon: string
+  href?: string
+  external?: boolean
+  copy?: boolean
+}
+
+const whatsappNumber = '573229130427'
+const whatsappMessage = '¡Hola Juan Manuel! Te escribo desde tu página juanma.cc, me gustaría contactarte.'
+const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`
+
+const gmailTo = 'juanmanueldiazgomez247@gmail.com'
+const gmailSubject = 'Contacto desde juanma.cc'
+const gmailBody = 'Hola Juan Manuel,\n\nTe escribo desde tu página juanma.cc.\n\n\nSaludos.'
+const gmailHref = `https://mail.google.com/mail/u/0/?fs=1&to=${encodeURIComponent(gmailTo)}&su=${encodeURIComponent(gmailSubject)}&body=${encodeURIComponent(gmailBody)}&tf=cm`
+
+const links: SocialLink[] = [
+  { id: 'whatsapp', name: 'WhatsApp', handle: '+57 322 913 0427', color: '#25D366', icon: '/img/whatsapp.svg', href: whatsappHref, external: true },
+  { id: 'gmail', name: 'Gmail', handle: gmailTo, color: '#EA4335', icon: '/img/gmail.svg', href: gmailHref, external: true },
+  { id: 'discord', name: 'Discord', handle: 'juanma247', color: '#5865F2', icon: '/img/discord.svg', copy: true },
+  { id: 'facebook', name: 'Facebook', handle: 'juanmanuel.diazgomez.1217', color: '#1877F2', icon: '/img/facebook.svg', href: 'https://www.facebook.com/juanmanuel.diazgomez.1217/', external: true },
+  { id: 'github', name: 'GitHub', handle: '@Juanma0247', color: '#181717', icon: '/img/github.svg', href: 'https://github.com/Juanma0247', external: true },
+  { id: 'linkedin', name: 'LinkedIn', handle: 'juanma247', color: '#0A66C2', icon: '/img/linkedin.svg', href: 'https://www.linkedin.com/in/juanma247/', external: true },
+  { id: 'orcid', name: 'ORCID', handle: '0009-0005-0892-0631', color: '#A6CE39', icon: '/img/orcid.svg', href: 'https://orcid.org/0009-0005-0892-0631', external: true },
+]
 ---
 
 <MainLayout title="Contact">
-  <p class="contact-intro" data-i18n="contact.intro">If you want to get in touch with me, feel free to reach out through any of the following channels.</p>
-  <div class="contact-channels">
-    <div class="channel-gmail">
-      <a href="mailto:juanmanueldiazgomez247@gmail.com">
-        <img class="gmail" src="/img/gmail.svg" alt="Gmail" />
-      </a>
-    </div>
-    <div class="channel-whatsapp">
-      <a href="https://wa.me/573176322001" target="_blank">
-        <img class="whatsApp" src="/img/whatsapp.svg" alt="WhatsApp" />
-      </a>
-    </div>
-    <div class="channel-discord">
-      <img class="discord-icon" src="/img/discord.svg" alt="Discord" />
-      <div class="discord-info">
-        <p>juamdg</p>
-      </div>
+  <div class="contact-page">
+    <p class="contact-intro" data-i18n="contact.intro">Follow me or reach out through any of my social networks and messaging apps.</p>
+
+    <div class="social-grid">
+      {links.map(link => (
+        link.copy ? (
+          <button type="button" class="social-card social-card--copy" data-copy={link.handle} style={`--card-color: ${link.color}`}>
+            <span class="social-card__icon"><img src={link.icon} alt="" aria-hidden="true" /></span>
+            <span class="social-card__body">
+              <span class="social-card__name">{link.name}</span>
+              <span class="social-card__handle" data-role="handle">{link.handle}</span>
+            </span>
+            <svg class="social-card__action" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h5A1.5 1.5 0 0 1 15 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 7 12.5v-9Z" />
+              <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h5a1.5 1.5 0 0 0 1.5-1.5V16h-3.5A2.5 2.5 0 0 1 5 13.5V6h-.5Z" />
+            </svg>
+          </button>
+        ) : (
+          <a class="social-card" href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined} style={`--card-color: ${link.color}`}>
+            <span class="social-card__icon"><img src={link.icon} alt="" aria-hidden="true" /></span>
+            <span class="social-card__body">
+              <span class="social-card__name">{link.name}</span>
+              <span class="social-card__handle">{link.handle}</span>
+            </span>
+            <svg class="social-card__action" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M12.293 4.293a1 1 0 0 1 1.414 0l5 5a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414-1.414L15.586 11H4a1 1 0 1 1 0-2h11.586l-3.293-3.293a1 1 0 0 1 0-1.414Z" clip-rule="evenodd" />
+            </svg>
+          </a>
+        )
+      ))}
     </div>
   </div>
 </MainLayout>
@@ -29,10 +72,32 @@ import MainLayout from '../layouts/MainLayout.astro'
 </style>
 
 <script>
-  const discordIcon = document.querySelector('.discord-icon') as HTMLElement
-  const discordInfo = document.querySelector('.discord-info') as HTMLElement
+  const copyButtons = document.querySelectorAll<HTMLButtonElement>('.social-card--copy')
 
-  discordIcon?.addEventListener('click', () => {
-    discordInfo.style.display = discordInfo.style.display === 'block' ? 'none' : 'block'
+  copyButtons.forEach(btn => {
+    const value = btn.dataset.copy
+    const handleEl = btn.querySelector<HTMLElement>('[data-role="handle"]')
+    if (!value || !handleEl) return
+
+    const originalText = handleEl.textContent ?? ''
+    let resetTimer: ReturnType<typeof setTimeout> | null = null
+
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(value)
+      } catch {
+        return
+      }
+
+      const isEs = document.documentElement.lang === 'es'
+      handleEl.textContent = isEs ? '¡Copiado!' : 'Copied!'
+      btn.classList.add('social-card--copied')
+
+      if (resetTimer) clearTimeout(resetTimer)
+      resetTimer = setTimeout(() => {
+        handleEl.textContent = originalText
+        btn.classList.remove('social-card--copied')
+      }, 1600)
+    })
   })
 </script>
