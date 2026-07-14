@@ -191,7 +191,7 @@ export const es: I18n = {
     builtCard7Desc: 'Droguería en línea de Pasto, Colombia: medicamentos, cuidado personal y productos de salud con entrega a domicilio.',
   },
   contact: {
-    intro: 'Sígueme o escríbeme por cualquiera de mis redes sociales y apps de mensajería.',
+    intro: '¿Hablamos? Elige el canal que más te guste y escríbeme, me encantará leerte.',
   },
   notFound: {
     message: 'Página no encontrada :/',

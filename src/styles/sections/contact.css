@@ -32,6 +32,8 @@
   font: inherit;
   text-align: left;
   width: 100%;
+  min-width: 0;
+  box-shadow: none;
   transition: border-color 160ms, background 160ms, transform 160ms;
 }
 
@@ -40,6 +42,8 @@
   border-color: var(--card-color);
   background: color-mix(in srgb, var(--card-color) 12%, transparent);
   transform: translateY(-2px);
+  box-shadow: none;
+  opacity: 1;
   outline: none;
 }
 
