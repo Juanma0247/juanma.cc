@@ -95,7 +95,7 @@
 [data-size="tall"] .mosaic-card__icon { flex: 1; max-height: 55%; width: 75%; margin: .875rem auto 0; }
 [data-size="tall"] .mosaic-card__icon svg { width: 100%; height: 100%; }
 
-[data-size="sm"] .mosaic-card__icon svg { width: 2.5rem; height: auto; }
+[data-size="sm"] .mosaic-card__icon svg { width: 3.25rem; height: auto; }
 
 /* ── Contenido ── */
 

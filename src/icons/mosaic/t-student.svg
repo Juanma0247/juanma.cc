@@ -1,0 +1,7 @@
+<svg viewBox="0 0 64 48" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round">
+  <g data-anim="true">
+    <path d="M10 42C22 42 24 14 32 14s10 28 22 28" stroke-dasharray="3 4" opacity=".45" stroke-width="2"/>
+    <path d="M4 40C18 36 22 10 32 10s14 26 28 30" fill="color-mix(in oklab, var(--accent) 10%, transparent)"/>
+  </g>
+  <line x1="2" y1="42" x2="62" y2="42" opacity=".4"/>
+</svg>

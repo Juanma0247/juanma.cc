@@ -36,7 +36,7 @@
     "pageTitle": "Regular Expressions",
     "image": "p14.png",
     "order": 14,
-    "size": "sm",
+    "size": "wide",
     "labels": ["Formal Languages", "Automata Theory"]
   },
   {
@@ -146,7 +146,7 @@
     "pageTitle": "Cantor Sets",
     "image": "p3.png",
     "order": 3,
-    "size": "sm",
+    "size": "wide",
     "labels": ["Set Theory", "Fractals", "Topology"]
   },
   {
