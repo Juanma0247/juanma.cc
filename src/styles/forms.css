@@ -473,6 +473,9 @@ input[readonly].is-accent {
 }
 
 .seg-ctrl .seg-opt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 0;
   border: none;
   border-right: var(--border-width) solid var(--primary-15);
@@ -482,6 +485,7 @@ input[readonly].is-accent {
   font-size: .85rem;
   color: var(--color-muted);
   background: transparent;
+  text-decoration: none;
   gap: .3rem;
   white-space: nowrap;
 }

@@ -1,13 +1,46 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro'
-import ProjectCard from '../../components/cards/ProjectCard.astro'
+import Card from '../../components/cards/Card.astro'
 import projects from '../../data/projects.json'
+import tools from '../../data/tools.json'
+import games from '../../data/games.json'
 ---
 
 <MainLayout title="Projects">
-  <div class="cards-grid">
-    {projects.map(p => (
-      <ProjectCard slug={p.slug} title={p.title} image={p.image} />
-    ))}
-  </div>
+  <nav class="section-jump seg-ctrl" aria-label="Jump to section">
+    <a class="seg-opt" href="#projects" data-i18n="sections.projects">Projects</a>
+    <a class="seg-opt" href="#tools" data-i18n="sections.tools">Tools</a>
+    <a class="seg-opt" href="#games" data-i18n="sections.games">Games</a>
+  </nav>
+
+  <section class="index-section" id="projects">
+    <h2 class="index-section__title" data-i18n="sections.projects">Projects</h2>
+    <div class="cards-grid">
+      {projects.map(p => (
+        <Card href={`/projects/${p.slug}`} title={p.title} image={p.image} />
+      ))}
+    </div>
+  </section>
+
+  <section class="index-section" id="tools">
+    <h2 class="index-section__title" data-i18n="sections.tools">Tools</h2>
+    <div class="cards-grid">
+      {tools.map(t => (
+        <Card href={`/tools/${t.slug}`} title={t.title} image={t.image} />
+      ))}
+    </div>
+  </section>
+
+  <section class="index-section" id="games">
+    <h2 class="index-section__title" data-i18n="sections.games">Games</h2>
+    <div class="cards-grid">
+      {games.map(g => (
+        <Card href={`/games/${g.slug}`} title={g.title} image={g.image} />
+      ))}
+    </div>
+  </section>
 </MainLayout>
+
+<style>
+  @import '../../styles/sections/projects-index.css';
+</style>

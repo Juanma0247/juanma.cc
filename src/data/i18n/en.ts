@@ -2,10 +2,8 @@ export interface I18n {
   nav: {
     home: string
     projects: string
-    tools: string
     scripts: string
     contact: string
-    games: string
     settings: string
   }
   sections: {
@@ -253,10 +251,8 @@ export const en: I18n = {
   nav: {
     home: 'Home',
     projects: 'Projects',
-    tools: 'Tools',
     scripts: 'Scripts',
     contact: 'Contact',
-    games: 'Games',
     settings: 'Settings',
   },
   sections: {

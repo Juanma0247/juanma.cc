@@ -6,6 +6,10 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone'
   }),
+  redirects: {
+    '/tools': '/projects#tools',
+    '/games': '/projects#games',
+  },
   vite: {
     server: {
       headers: {

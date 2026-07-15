@@ -7,8 +7,6 @@ export interface Destination {
 export const DESTINATIONS: Destination[] = [
   { label: 'Home',     value: '/',        group: 'Sections' },
   { label: 'Projects', value: '/projects', group: 'Sections' },
-  { label: 'Games',    value: '/games',    group: 'Sections' },
-  { label: 'Tools',    value: '/tools',    group: 'Sections' },
   { label: 'Scripts',  value: '/scripts',  group: 'Sections' },
   { label: 'Contact',  value: '/contact',  group: 'Sections' },
 

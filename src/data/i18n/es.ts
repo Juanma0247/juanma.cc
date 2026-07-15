@@ -4,10 +4,8 @@ export const es: I18n = {
   nav: {
     home: 'Inicio',
     projects: 'Proyectos',
-    tools: 'Herramientas',
     scripts: 'Scripts',
     contact: 'Contacto',
-    games: 'Juegos',
     settings: 'Ajustes',
   },
   sections: {
