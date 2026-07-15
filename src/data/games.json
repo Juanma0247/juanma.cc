@@ -6,6 +6,7 @@
     "pageTitle": "Tic-Tac-Toe",
     "image": "j1.png",
     "order": 1,
+    "size": "sm",
     "labels": ["Strategy", "Board Game", "2 Players"]
   },
   {
@@ -15,6 +16,7 @@
     "pageTitle": "Minesweeper",
     "image": "j3.png",
     "order": 2,
+    "size": "sm",
     "labels": ["Strategy", "Puzzle", "Online"]
   },
   {
@@ -24,6 +26,7 @@
     "pageTitle": "Sudoku",
     "image": "j3.png",
     "order": 3,
+    "size": "tall",
     "labels": ["Logic", "Puzzle", "Numbers"]
   }
 ]

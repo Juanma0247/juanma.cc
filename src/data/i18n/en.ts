@@ -12,6 +12,9 @@ export interface I18n {
     projects: string
     settings: string
   }
+  projectsIndex: {
+    featured: string
+  }
   projects: {
     tm: {
       loadMachineLabel: string
@@ -260,6 +263,9 @@ export const en: I18n = {
     games: 'Games',
     projects: 'Projects',
     settings: 'Settings',
+  },
+  projectsIndex: {
+    featured: 'Featured',
   },
   projects: {
     tm: {

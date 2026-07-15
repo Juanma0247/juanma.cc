@@ -6,6 +6,7 @@
     "pageTitle": "Minecraft Coordinates",
     "image": "h1.png",
     "order": 1,
+    "size": "sm",
     "labels": ["Minecraft", "Coordinates", "Gaming"]
   },
   {
@@ -15,6 +16,7 @@
     "pageTitle": "String Tool",
     "image": "h2.png",
     "order": 2,
+    "size": "wide",
     "labels": ["Strings", "Text", "Utility"]
   }
 ]

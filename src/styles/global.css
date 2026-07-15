@@ -91,41 +91,6 @@
   width: 100%;
 }
 
-.cards-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding-bottom: 2rem;
-  margin-bottom: 2rem;
-}
-
-.card {
-  cursor: pointer;
-  justify-content: center;
-  display: flex;
-  flex-wrap: wrap;
-  margin-left: 2rem;
-  margin-top: 2rem;
-  width: 11.875rem;
-  height: 15.875rem;
-  border-radius: 1.125rem;
-  background: var(--color-bg);
-  border: var(--color-primary) 2px solid;
-}
-
-.card:hover {
-  box-shadow: 3px 3px 0 var(--color-primary), 3px 3px 20px var(--color-muted);
-  transform: translateX(-3px) translateY(-3px);
-}
-
-.card-img {
-  border-radius: 0.9375rem;
-  margin-top: 6px;
-  height: 13rem;
-  width: 11.875rem;
-}
-
 .lang-icon {
   width: 2rem;
   height: 2rem;

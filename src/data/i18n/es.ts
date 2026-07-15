@@ -14,6 +14,9 @@ export const es: I18n = {
     projects: 'Proyectos',
     settings: 'Ajustes',
   },
+  projectsIndex: {
+    featured: 'Destacado',
+  },
   projects: {
     tm: {
       loadMachineLabel: 'Cargar máquina',

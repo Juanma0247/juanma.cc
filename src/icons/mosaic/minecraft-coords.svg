@@ -1,0 +1,7 @@
+<svg viewBox="0 0 64 64" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round">
+  <g data-anim="true">
+    <polygon points="32,8 54,20 32,32 10,20" fill="color-mix(in oklab, var(--accent) 14%, transparent)"/>
+    <polygon points="10,20 32,32 32,56 10,44"/>
+    <polygon points="54,20 32,32 32,56 54,44"/>
+  </g>
+</svg>

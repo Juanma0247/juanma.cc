@@ -6,6 +6,7 @@
     "pageTitle": "Turing Machine Lab",
     "image": "p17.svg",
     "order": 17,
+    "size": "feature",
     "labels": ["Automata Theory", "Computability", "Formal Languages"]
   },
   {
@@ -15,15 +16,17 @@
     "pageTitle": "Recursive Concatenation",
     "image": "p16.png",
     "order": 16,
+    "size": "sm",
     "labels": ["Formal Languages", "Automata Theory"]
   },
   {
     "slug": "sigma-star-enum",
-    "title": "Enum of Σ*",  
+    "title": "Enum of Σ*",
     "navTitle": "Σ* Enumeration",
     "pageTitle": "Σ* Enumeration",
     "image": "p15.png",
     "order": 15,
+    "size": "sm",
     "labels": ["Formal Languages", "Automata Theory", "Enumeration"]
   },
   {
@@ -33,6 +36,7 @@
     "pageTitle": "Regular Expressions",
     "image": "p14.png",
     "order": 14,
+    "size": "sm",
     "labels": ["Formal Languages", "Automata Theory"]
   },
   {
@@ -42,6 +46,7 @@
     "pageTitle": "Cross Matrix",
     "image": "p13.png",
     "order": 13,
+    "size": "sm",
     "labels": ["Linear Algebra", "Matrices"]
   },
   {
@@ -51,6 +56,7 @@
     "pageTitle": "Sorting Algorithms",
     "image": "p12.png",
     "order": 12,
+    "size": "wide",
     "labels": ["Algorithms", "Data Structures"]
   },
   {
@@ -60,6 +66,7 @@
     "pageTitle": "Fractal Geometry",
     "image": "p11.png",
     "order": 11,
+    "size": "tall",
     "labels": ["Fractals", "Geometry", "Visualization"]
   },
   {
@@ -69,6 +76,7 @@
     "pageTitle": "Bernoulli Inequality",
     "image": "p10.png",
     "order": 10,
+    "size": "sm",
     "labels": ["Statistics", "Probability", "Distribution"]
   },
   {
@@ -78,6 +86,7 @@
     "pageTitle": "Chi-Squared Distribution",
     "image": "p9.png",
     "order": 9,
+    "size": "sm",
     "labels": ["Statistics", "Probability", "Distribution"]
   },
   {
@@ -87,6 +96,7 @@
     "pageTitle": "T-Student Distribution",
     "image": "p8.png",
     "order": 8,
+    "size": "sm",
     "labels": ["Statistics", "Probability", "Distribution"]
   },
   {
@@ -96,6 +106,7 @@
     "pageTitle": "Normal Distribution",
     "image": "p7.png",
     "order": 7,
+    "size": "sm",
     "labels": ["Statistics", "Probability", "Distribution"]
   },
   {
@@ -105,6 +116,7 @@
     "pageTitle": "Ruffini Method",
     "image": "p6.png",
     "order": 6,
+    "size": "sm",
     "labels": ["Algebra", "Polynomials"]
   },
   {
@@ -114,6 +126,7 @@
     "pageTitle": "Fractions Calculator",
     "image": "p5.png",
     "order": 5,
+    "size": "sm",
     "labels": ["Arithmetic", "Number Theory"]
   },
   {
@@ -123,6 +136,7 @@
     "pageTitle": "Voice Recorder",
     "image": "p4.png",
     "order": 4,
+    "size": "sm",
     "labels": ["Audio", "Web API"]
   },
   {
@@ -132,6 +146,7 @@
     "pageTitle": "Cantor Sets",
     "image": "p3.png",
     "order": 3,
+    "size": "sm",
     "labels": ["Set Theory", "Fractals", "Topology"]
   },
   {
@@ -141,6 +156,7 @@
     "pageTitle": "Set Operations",
     "image": "p2.png",
     "order": 2,
+    "size": "sm",
     "labels": ["Set Theory", "Logic", "Discrete Math"]
   },
   {
@@ -150,6 +166,7 @@
     "pageTitle": "Hill Cipher",
     "image": "p1.png",
     "order": 1,
+    "size": "wide",
     "labels": ["Cryptography", "Linear Algebra"]
   }
 ]

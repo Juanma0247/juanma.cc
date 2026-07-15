@@ -1,23 +1,166 @@
-.section-jump {
-  position: sticky;
-  top: 3.375rem;
-  z-index: 10;
-  margin: 1rem 0 1.5rem 2rem;
-  background: var(--color-bg);
+.mosaic-grid {
+  --cat-p: var(--color-primary);
+  --cat-t: oklch(from var(--color-primary) l c calc(h + 140));
+  --cat-g: oklch(from var(--color-primary) l c calc(h - 130));
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11.875rem, 1fr));
+  grid-auto-rows: 10.625rem;
+  grid-auto-flow: dense;
+  gap: .875rem;
 }
 
-.index-section {
-  scroll-margin-top: 5.5rem;
+.mosaic-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: 1.125rem;
+  border-radius: var(--radius-lg);
+  border: var(--border-width) solid color-mix(in oklab, var(--accent) 30%, transparent);
+  background-color: color-mix(in oklab, var(--accent) 4%, transparent);
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--accent) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--accent) 8%, transparent) 1px, transparent 1px);
+  background-size: 1.625rem 1.625rem;
+  color: var(--color-text);
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 
-.index-section__title {
+.mosaic-card:hover,
+.mosaic-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 14px 40px -14px color-mix(in oklab, var(--accent) 50%, transparent);
+  outline: none;
+}
+
+/* ── Categorías: acento + textura + forma propias ── */
+
+.mosaic-card[data-cat="p"] { --accent: var(--cat-p); }
+
+.mosaic-card[data-cat="t"] {
+  --accent: var(--cat-t);
+  border-style: dashed;
+  border-radius: var(--radius-md);
+  background-image: repeating-linear-gradient(45deg, color-mix(in oklab, var(--accent) 6%, transparent) 0 1px, transparent 1px .75rem);
+}
+
+.mosaic-card[data-cat="g"] {
+  --accent: var(--cat-g);
+  border-radius: 1.4rem;
+  background-image: radial-gradient(color-mix(in oklab, var(--accent) 12%, transparent) 1.5px, transparent 1.5px);
+  background-size: 1.125rem 1.125rem;
+}
+
+.mosaic-card__dot {
+  position: absolute;
+  top: .875rem;
+  right: .875rem;
+  width: .625rem;
+  height: .625rem;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+[data-cat="t"] .mosaic-card__dot {
+  width: .6875rem;
+  height: .6875rem;
+  clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
+}
+
+[data-cat="g"] .mosaic-card__dot { border-radius: 50%; }
+
+/* ── Tamaños del mosaico ── */
+
+.mosaic-card[data-size="wide"] { grid-column: span 2; }
+.mosaic-card[data-size="tall"] { grid-row: span 2; }
+.mosaic-card[data-size="feature"] { grid-column: span 2; grid-row: span 2; }
+
+[data-size="wide"] {
+  flex-direction: row;
+  align-items: center;
+  gap: 1.125rem;
+}
+
+[data-size="wide"] .mosaic-card__footer { flex: 1; min-width: 0; order: 1; }
+[data-size="wide"] .mosaic-card__icon { flex: none; order: 2; }
+[data-size="wide"] .mosaic-card__icon svg { height: 4.5rem; width: auto; max-width: 8rem; }
+
+[data-size="feature"] .mosaic-card__icon { flex: 1; width: 100%; max-height: 46%; }
+[data-size="feature"] .mosaic-card__icon svg { width: 100%; height: 100%; }
+
+[data-size="tall"] .mosaic-card__icon { flex: 1; max-height: 55%; width: 75%; margin: .875rem auto 0; }
+[data-size="tall"] .mosaic-card__icon svg { width: 100%; height: 100%; }
+
+[data-size="sm"] .mosaic-card__icon svg { width: 2.5rem; height: auto; }
+
+/* ── Contenido ── */
+
+.mosaic-card__icon { display: flex; }
+.mosaic-card__icon svg { display: block; }
+.mosaic-card__icon [data-anim] { transition: transform .35s ease; transform-origin: center; }
+
+.mosaic-card:hover .mosaic-card__icon [data-anim],
+.mosaic-card:focus-visible .mosaic-card__icon [data-anim] { transform: translateY(-3px); }
+
+.mosaic-card__eyebrow {
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  color: var(--accent);
+}
+
+.mosaic-card__footer { display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+
+.mosaic-card__title {
+  margin: 0;
   font-family: var(--font-bold), sans-serif;
-  font-size: 1.2rem;
-  color: var(--color-primary);
-  letter-spacing: 0.04em;
-  margin: 0 0 0 2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+  line-height: 1.15;
+  font-size: 1.1875rem;
 }
 
-.index-section + .index-section {
-  margin-top: 1rem;
+[data-size="feature"] .mosaic-card__title { font-size: clamp(1.5rem, 2.6vw, 2.125rem); }
+[data-size="wide"] .mosaic-card__title,
+[data-size="tall"] .mosaic-card__title { font-size: 1.375rem; }
+
+.mosaic-card__arrow {
+  font-family: var(--font-mono);
+  font-size: .7em;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-.375rem);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.mosaic-card:hover .mosaic-card__arrow,
+.mosaic-card:focus-visible .mosaic-card__arrow { opacity: 1; transform: translateX(0); }
+
+.mosaic-card__tags { display: flex; flex-wrap: wrap; gap: .375rem; }
+
+.mosaic-card__tag {
+  font-family: var(--font-mono);
+  font-size: .6875rem;
+  color: var(--color-muted);
+  border: 1px solid color-mix(in oklab, var(--color-muted) 40%, transparent);
+  border-radius: var(--radius-sm);
+  padding: .1875rem .5rem;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 35rem) {
+  .mosaic-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: minmax(10.625rem, auto); }
+  .mosaic-card[data-size="tall"] { grid-row: span 1; }
+}
+
+@media (max-width: 23.75rem) {
+  .mosaic-grid { grid-template-columns: 1fr; }
+  .mosaic-card[data-size="wide"],
+  .mosaic-card[data-size="feature"] { grid-column: span 1; }
 }
