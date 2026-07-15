@@ -7,7 +7,6 @@ var color = rootStyles.getPropertyValue('--c2').trim()
 class Fractal {
     constructor() {
         this.content = document.getElementById('fractal')
-        this.title = document.getElementById('p11Title')
         this.i1 = document.getElementById('p11i1')
         this.i2 = document.getElementById('p11i2')
         this.i3 = document.getElementById('p11i3')
@@ -284,10 +283,6 @@ class Fractal {
 
     main() {
         this.content.setAttribute("width", window.typeOfUser ? "95vw" : "80vh")
-        window.scrollTo({
-            top: this.title.getBoundingClientRect().top + window.scrollY,
-            behavior: "smooth"
-        })
         ExtText.restrictNI(this.i3, 1, 7, "N")
         this.content.setAttribute("viewBox", `-1 -1 2 2`)
         this.i1.addEventListener("input", () => {
