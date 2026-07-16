@@ -2,9 +2,18 @@ class RecursiveConcat {
   constructor() {
     this.inputAlpha   = document.getElementById("p16iAlpha")
     this.inputBeta    = document.getElementById("p16iBeta")
-    this.result       = document.getElementById("p16r1")
+    this.stage        = document.getElementById("p16r1")
+    this.controls     = document.getElementById("p16controls")
+    this.btnPrev      = document.getElementById("p16prev")
+    this.btnNext      = document.getElementById("p16next")
+    this.btnPlay      = document.getElementById("p16play")
+    this.dots         = document.getElementById("p16dots")
+
     this.previewTimer = null
+    this.autoTimer    = null
+    this.AUTO_MS      = 3000
     this.steps        = []
+    this.current      = 0
   }
 
   buildSteps(alpha, beta) {
@@ -96,7 +105,7 @@ class RecursiveConcat {
     ].filter(Boolean)
 
     return `
-      <article class="p16-step ${isResult ? "p16-step--result" : ""} ${isBase ? "p16-step--base" : ""}" style="animation-delay:${(index * 0.05).toFixed(2)}s">
+      <article class="p16-step ${isResult ? "p16-step--result" : ""} ${isBase ? "p16-step--base" : ""}">
 
         <div class="p16-step-head">
           <span class="p16-badge ${isResult ? "p16-badge--ok" : isBase ? "p16-badge--base" : "p16-badge--rec"}">${isResult ? "✓" : isBase ? "B" : "R"}</span>
@@ -140,26 +149,82 @@ class RecursiveConcat {
     `
   }
 
+  renderDots() {
+    if (!this.dots) return
+    this.dots.innerHTML = this.steps.map((_, i) =>
+      `<button type="button" class="cc-dot ${i === this.current ? "is-active" : ""}" data-i="${i}" aria-label="Step ${i + 1}"></button>`
+    ).join("")
+  }
+
   render() {
     const total = this.steps.length
-    this.result.innerHTML = this.steps.map((s, i) => this.renderStep(s, i, total)).join("")
+    if (total === 0) return
+    if (this.current >= total) this.current = 0
+
+    this.stage.innerHTML = this.renderStep(this.steps[this.current], this.current, total)
+    this.renderDots()
+
+    const many = total > 1
+    if (this.controls) this.controls.hidden = !many
+    if (this.dots)     this.dots.hidden = !many
+    if (!many) this.stopAuto()
   }
+
+  goTo(i) {
+    const total = this.steps.length
+    if (total === 0) return
+    this.current = ((i % total) + total) % total
+    this.render()
+  }
+  next() { this.goTo(this.current + 1) }
+  prev() { this.goTo(this.current - 1) }
+
+  updatePlayButton() {
+    if (!this.btnPlay) return
+    const playing = !!this.autoTimer
+    this.btnPlay.classList.toggle("is-playing", playing)
+    this.btnPlay.setAttribute("aria-pressed", playing ? "true" : "false")
+    const icon  = this.btnPlay.querySelector(".cc-play-icon")
+    const label = this.btnPlay.querySelector(".cc-play-label")
+    if (icon)  icon.textContent  = playing ? "❚❚" : "▶"
+    if (label) label.textContent = playing ? "Pause" : "Auto"
+  }
+  startAuto() {
+    this.stopAuto()
+    if (this.steps.length <= 1) return
+    this.autoTimer = setInterval(() => this.next(), this.AUTO_MS)
+    this.updatePlayButton()
+  }
+  stopAuto() {
+    if (this.autoTimer) { clearInterval(this.autoTimer); this.autoTimer = null }
+    this.updatePlayButton()
+  }
+  toggleAuto() { this.autoTimer ? this.stopAuto() : this.startAuto() }
 
   buildResult() {
     const alpha = (this.inputAlpha?.value ?? "").trim()
     const beta  = (this.inputBeta?.value  ?? "").trim()
 
     if (!beta && !alpha) {
-      this.result.innerHTML = `<p class="p16-hint">Enter α and β to see the recursive breakdown.</p>`
+      this.stopAuto()
+      this.steps = []
+      this.stage.innerHTML = `<p class="p16-hint">Enter α and β to see the recursive breakdown.</p>`
+      if (this.controls) this.controls.hidden = true
+      if (this.dots) this.dots.hidden = true
       return
     }
 
     if (/[^a-zA-Z0-9]/.test(alpha) || /[^a-zA-Z0-9]/.test(beta)) {
-      this.result.innerHTML = `<p class="p16-error">Only letters and digits are allowed.</p>`
+      this.stopAuto()
+      this.steps = []
+      this.stage.innerHTML = `<p class="p16-error">Only letters and digits are allowed.</p>`
+      if (this.controls) this.controls.hidden = true
+      if (this.dots) this.dots.hidden = true
       return
     }
 
     this.steps = this.buildSteps(alpha, beta)
+    this.current = 0
     this.render()
   }
 
@@ -179,6 +244,24 @@ class RecursiveConcat {
     }
     if (this.inputAlpha) sanitize(this.inputAlpha)
     if (this.inputBeta)  sanitize(this.inputBeta)
+
+    this.btnPrev?.addEventListener("click", () => { this.stopAuto(); this.prev() })
+    this.btnNext?.addEventListener("click", () => { this.stopAuto(); this.next() })
+    this.btnPlay?.addEventListener("click", () => this.toggleAuto())
+    this.dots?.addEventListener("click", (e) => {
+      const b = e.target.closest(".cc-dot")
+      if (!b) return
+      this.stopAuto()
+      this.goTo(parseInt(b.dataset.i, 10))
+    })
+
+    document.addEventListener("keydown", (e) => {
+      const tag = e.target?.tagName
+      if (tag === "INPUT" || tag === "TEXTAREA") return
+      if (e.key === "ArrowRight")     { this.stopAuto(); this.next(); e.preventDefault() }
+      else if (e.key === "ArrowLeft") { this.stopAuto(); this.prev(); e.preventDefault() }
+    })
+
     this.buildResult()
   }
 }
