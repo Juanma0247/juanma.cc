@@ -17,7 +17,9 @@ const { project } = Astro.props
 <MainLayout title={project.name} navTitle={project.name} section="Projects">
   <article class="built-detail">
     <a class="built-back" href="/projects">
-      <span aria-hidden="true">←</span>
+      <span class="built-back__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      </span>
       <span data-lang="en">Projects</span><span data-lang="es">Proyectos</span>
     </a>
 

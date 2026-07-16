@@ -15,14 +15,44 @@ html[lang="es"] [data-lang="en"] { display: none; }
 .built-back {
   display: inline-flex;
   align-items: center;
-  gap: .4rem;
-  font-family: var(--font-mono);
-  font-size: .9rem;
+  gap: .45rem;
+  padding: .35rem .85rem .35rem .5rem;
+  font-family: var(--font-bold);
+  font-size: .85rem;
   color: var(--color-muted);
+  background: var(--primary-05);
+  border: var(--border-width) solid color-mix(in oklab, var(--color-muted) 28%, transparent);
+  border-radius: 100rem;
   margin-bottom: 1.5rem;
-  transition: color var(--transition);
+  transition: color var(--transition), border-color var(--transition), background var(--transition), box-shadow var(--transition);
 }
-.built-back:hover { color: var(--color-primary); }
+
+.built-back:hover,
+.built-back:focus-visible {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: var(--primary-10);
+  box-shadow: var(--shadow-primary);
+  outline: none;
+}
+
+.built-back__icon {
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--color-primary) 12%, transparent);
+  transition: transform var(--transition), background var(--transition);
+}
+
+.built-back:hover .built-back__icon,
+.built-back:focus-visible .built-back__icon {
+  transform: translateX(-.15rem);
+  background: color-mix(in oklab, var(--color-primary) 22%, transparent);
+}
+
+.built-back__icon svg { width: .9rem; height: .9rem; display: block; }
 
 /* ── Hero ───────────────────────────────────────────────────── */
 
