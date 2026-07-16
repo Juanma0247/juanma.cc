@@ -3,6 +3,7 @@ import { Code } from 'astro:components'
 import MainLayout from '../../../layouts/MainLayout.astro'
 import Bi from '../../../components/Bi.astro'
 import { built } from '../../../data/built'
+import { cld } from '../../../lib/core/cld'
 
 export function getStaticPaths() {
   return built.map(project => ({
@@ -34,7 +35,7 @@ function snippetFor(name: string): string {
 
     <header class="built-hero">
       <div class="built-hero__head">
-        <img class="built-hero__logo" src={project.logo} alt={`${project.name} logo`} />
+        <img class="built-hero__logo" src={cld(project.logo)} alt={`${project.name} logo`} />
         <div class="built-hero__meta">
           <h1 class="built-hero__name">{project.name}</h1>
           <div class="built-hero__chips">
@@ -60,7 +61,7 @@ function snippetFor(name: string): string {
 
     {project.hero && (
       <figure class="built-shot built-shot--hero">
-        <img src={project.hero} alt={project.name} loading="lazy" />
+        <img src={cld(project.hero)} alt={project.name} loading="lazy" />
       </figure>
     )}
 
@@ -94,7 +95,7 @@ function snippetFor(name: string): string {
             <h3 class="built-highlight__title"><Bi t={h.title} /></h3>
             {h.kind === 'shot' ? (
               <figure class="built-shot">
-                <img src={h.img} alt="" loading="lazy" />
+                <img src={cld(h.img)} alt="" loading="lazy" />
               </figure>
             ) : (
               <div class="built-codewrap">

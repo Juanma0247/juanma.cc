@@ -1,5 +1,20 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro'
+import { cld } from '../lib/core/cld'
+
+const portraits = [
+  'juanma_campo.jpg',
+  'juanma_cascada_escondida.jpg',
+  'juanma_cascada_rapel.jpg',
+  'juanma_cascada_romeral.jpg',
+  'juanma_mountaind.jpeg',
+  'juanma_river.jpg',
+  'juanma_rocas.jpg',
+  'juanma_ruiz_background.jpg',
+  'juanma_ruiz_road.jpg',
+  'juanma_ruiz_somg.jpg',
+  'juanma_sobre_arbol.jpg',
+]
 ---
 
 <MainLayout title="" navTitle="juanma.cc">
@@ -25,18 +40,8 @@ import MainLayout from '../layouts/MainLayout.astro'
           </a>
         </div>
       </div>
-      <div class="hero-portrait-reel">                               
-        <img src="/img/juanma/juanma_campo.jpg" alt="Juan Manuel" />
-        <img src="/img/juanma/juanma_cascada_escondida.jpg" alt="Juan Manuel" />
-        <img src="/img/juanma/juanma_cascada_rapel.jpg" alt="Juan Manuel" />
-        <img src="/img/juanma/juanma_cascada_romeral.jpg" alt="Juan Manuel" />
-        <img src="/img/juanma/juanma_mountaind.jpeg" alt="Juan Manuel" />
-        <img src="/img/juanma/juanma_river.jpg" alt="Juan Manuel" />     
-        <img src="/img/juanma/juanma_rocas.jpg" alt="Juan Manuel" />   
-        <img src="/img/juanma/juanma_ruiz_background.jpg" alt="Juan Manuel" />
-        <img src="/img/juanma/juanma_ruiz_road.jpg" alt="Juan Manuel" />        
-        <img src="/img/juanma/juanma_ruiz_somg.jpg" alt="Juan Manuel" />         
-        <img src="/img/juanma/juanma_sobre_arbol.jpg" alt="Juan Manuel" />
+      <div class="hero-portrait-reel">
+        {portraits.map(p => <img src={cld(`/img/juanma/${p}`)} alt="Juan Manuel" />)}
       </div>
     </section>
 

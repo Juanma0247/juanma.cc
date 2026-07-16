@@ -7,6 +7,16 @@ env:
     availability:
       - RUNTIME
 
+  # Cloudinary — only the (public) cloud name is needed to DELIVER images.
+  # Set it to your cloud name to serve /img/* from Cloudinary's CDN instead of
+  # the app host. Leave empty to keep serving images locally.
+  # The API key/secret are NOT needed here (they only sign uploads locally).
+  - variable: PUBLIC_CLOUDINARY_CLOUD_NAME
+    value: ""
+    availability:
+      - BUILD
+      - RUNTIME
+
   - variable: PUBLIC_FIREBASE_API_KEY
     value: AIzaSyBCMl-YozLCGBm3q3R0RYuXw3bt1T1qb64
     availability:

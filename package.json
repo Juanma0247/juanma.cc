@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "start": "node dist/server/entry.mjs"
+    "start": "node dist/server/entry.mjs",
+    "cloudinary:upload": "node scripts/upload-cloudinary.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^8.3.0",
@@ -15,6 +16,7 @@
     "firebase-admin": "^12.0.0"
   },
   "devDependencies": {
+    "cloudinary": "^2.10.0",
     "typescript": "^5.0.0"
   },
   "engines": {

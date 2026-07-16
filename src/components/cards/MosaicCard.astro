@@ -1,4 +1,6 @@
 ---
+import { cld } from '../../lib/core/cld'
+
 interface Props {
   href: string
   title: string
@@ -18,7 +20,7 @@ const visibleLabels = size === 'sm' ? labels.slice(0, 2) : labels
   {size === 'feature' && category === 'p' && <span class="mosaic-card__eyebrow" data-i18n="projectsIndex.featured">Featured</span>}
   {size === 'feature' && category === 'b' && <span class="mosaic-card__eyebrow"><span data-lang="en">Flagship</span><span data-lang="es">Destacado</span></span>}
   {iconSrc
-    ? <span class="mosaic-card__icon mosaic-card__icon--img"><img src={iconSrc} alt="" loading="lazy" /></span>
+    ? <span class="mosaic-card__icon mosaic-card__icon--img"><img src={cld(iconSrc)} alt="" loading="lazy" /></span>
     : <span class="mosaic-card__icon" set:html={icon} />}
   <div class="mosaic-card__footer">
     <h2 class="mosaic-card__title">{title} <span class="mosaic-card__arrow" aria-hidden="true">→</span></h2>
