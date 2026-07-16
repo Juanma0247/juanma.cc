@@ -1,25 +1,36 @@
-﻿---
+---
 import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
 <ProjectLayout slug="recursive-concat">
-  <div id="p16container">
-    <h1 class="p16title subtitulo">Recursive Concatenation</h1>
-  </div>
-  <div class="p16inputsCont">
-    <div class="field">
-      <input id="p16iAlpha" autocomplete="off" required="" value="a" placeholder=" ">
-      <label class="field-label">String α (prefix)</label>
+  <div class="cc-page">
+    <header class="cc-header">
+      <h1 class="cc-title">Recursive Concatenation</h1>
+      <p class="cc-sub">See how <b>α · β</b> is built one character at a time, peeling <b>β</b> down to the base case.</p>
+    </header>
+
+    <div class="cc-inputs">
+      <div class="field">
+        <input id="p16iAlpha" autocomplete="off" required value="a" placeholder=" ">
+        <label class="field-label">String α (prefix)</label>
+      </div>
+      <div class="field">
+        <input id="p16iBeta" autocomplete="off" required value="bcde" placeholder=" ">
+        <label class="field-label">String β (to concatenate)</label>
+      </div>
     </div>
-    <div class="field">
-      <input id="p16iBeta" autocomplete="off" required="" value="bcde" placeholder=" ">
-      <label class="field-label">String β (to concatenate)</label>
+
+    <div class="cc-key">
+      <span class="cc-key-item"><span class="cc-sw cc-c-alpha"></span>α · prefix</span>
+      <span class="cc-key-item"><span class="cc-sw cc-c-gamma"></span>γ · remaining</span>
+      <span class="cc-key-item"><span class="cc-sw cc-c-a"></span>last character</span>
     </div>
+
+    <div id="p16r1" class="cc-steps"></div>
   </div>
-  <div id="p16r1"></div>
   <div class="space-bottom"></div>
 </ProjectLayout>
-<style>@import '../../styles/sections/projects.css';
-  @import '../../styles/sections/projects-concat.css';</style>
+<style>@import '../../styles/sections/projects.css';</style>
+<style is:global>@import '../../styles/sections/projects-concat.css';</style>
 <script type="module" is:inline>
   import RecursiveConcat from '/js/lib/RecursiveConcat.js'
   const p = new RecursiveConcat(); p.starter?.(); p.main()

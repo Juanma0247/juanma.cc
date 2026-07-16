@@ -4,10 +4,7 @@ class RecursiveConcat {
     this.inputBeta    = document.getElementById("p16iBeta")
     this.result       = document.getElementById("p16r1")
     this.previewTimer = null
-    this.stepInterval = null
-    this.STEP_MS      = 8000
     this.steps        = []
-    this.currentStep  = 0
   }
 
   buildSteps(alpha, beta) {
@@ -21,7 +18,7 @@ class RecursiveConcat {
         gamma:  null,
         a:      null,
         result: alpha || "λ",
-        desc:   `Base case: β = λ, so α·β = α`,
+        desc:   "Base case: β = λ, so α·β = α",
       })
       return steps
     }
@@ -44,7 +41,7 @@ class RecursiveConcat {
           : `β = γ·'${a}' → recursive step: α·β = α·(γ${a}) = (α·γ)${a}`,
       })
 
-      current = gamma === "λ" ? "" : gamma
+      current = gamma
     }
 
     steps.push({
@@ -62,13 +59,13 @@ class RecursiveConcat {
 
   colorString(str, step) {
     if (!str || str === "λ") return `<span class="p16-lambda">λ</span>`
-    const aLen     = step.alpha.length
-    const gLen     = (step.gamma && step.gamma !== "λ") ? step.gamma.length : 0
+    const aLen = step.alpha.length
+    const gLen = (step.gamma && step.gamma !== "λ") ? step.gamma.length : 0
 
     return str.split("").map((ch, i) => {
-      if (i < aLen)                        return `<span class="p16-c-alpha">${ch}</span>`
-      if (i < aLen + gLen)                 return `<span class="p16-c-gamma">${ch}</span>`
-      if (step.a && i === aLen + gLen)     return `<span class="p16-c-a">${ch}</span>`
+      if (i < aLen)                    return `<span class="p16-c-alpha">${ch}</span>`
+      if (i < aLen + gLen)             return `<span class="p16-c-gamma">${ch}</span>`
+      if (step.a && i === aLen + gLen) return `<span class="p16-c-a">${ch}</span>`
       return `<span class="p16-c-rest">${ch}</span>`
     }).join("")
   }
@@ -93,27 +90,17 @@ class RecursiveConcat {
 
     const legend = [
       { cls: "p16-c-alpha", label: `α = "${step.alpha || "λ"}"` },
-      step.gamma !== null
-        ? { cls: "p16-c-gamma", label: `γ = "${step.gamma}"` }
-        : null,
-      step.a !== null
-        ? { cls: "p16-c-a", label: `a = '${step.a}'` }
-        : null,
+      step.gamma !== null ? { cls: "p16-c-gamma", label: `γ = "${step.gamma}"` } : null,
+      step.a !== null     ? { cls: "p16-c-a",     label: `a = '${step.a}'` }     : null,
       { cls: "p16-c-beta", label: `β = "${step.beta || "λ"}"` },
     ].filter(Boolean)
 
-    const pct = Math.round(((index + 1) / total) * 100)
-
     return `
-      <div class="p16-step p16-step--enter ${isResult ? "p16-step--result" : ""} ${isBase ? "p16-step--base" : ""}">
+      <article class="p16-step ${isResult ? "p16-step--result" : ""} ${isBase ? "p16-step--base" : ""}" style="animation-delay:${(index * 0.05).toFixed(2)}s">
 
         <div class="p16-step-head">
-          <span class="p16-badge ${isResult ? "p16-badge--ok" : isBase ? "p16-badge--base" : "p16-badge--rec"}">
-            ${isResult ? "✓" : isBase ? "B" : "R"}
-          </span>
-          <span class="p16-step-type">
-            ${isResult ? "Final result" : isBase ? "Base case" : "Recursive step"}
-          </span>
+          <span class="p16-badge ${isResult ? "p16-badge--ok" : isBase ? "p16-badge--base" : "p16-badge--rec"}">${isResult ? "✓" : isBase ? "B" : "R"}</span>
+          <span class="p16-step-type">${isResult ? "Final result" : isBase ? "Base case" : "Recursive step"}</span>
           <span class="p16-step-counter">${index + 1} / ${total}</span>
         </div>
 
@@ -129,17 +116,17 @@ class RecursiveConcat {
         <div class="p16-strings-row">
           <div class="p16-sblock">
             <span class="p16-slabel">α</span>
-            <span class="p16-sval p16-sval--mono">${this.colorString(step.alpha || "λ", step)}</span>
+            <span class="p16-sval">${this.colorString(step.alpha || "λ", step)}</span>
           </div>
           <span class="p16-cdot">·</span>
           <div class="p16-sblock">
             <span class="p16-slabel">β</span>
-            <span class="p16-sval p16-sval--mono">${this.colorString(step.beta || "λ", step)}</span>
+            <span class="p16-sval">${this.colorString(step.beta || "λ", step)}</span>
           </div>
           <span class="p16-arrow">→</span>
           <div class="p16-sblock p16-sblock--res">
             <span class="p16-slabel">result</span>
-            <span class="p16-sval p16-sval--mono">${this.colorString(step.result || "λ", step)}</span>
+            <span class="p16-sval">${this.colorString(step.result || "λ", step)}</span>
           </div>
         </div>
 
@@ -149,34 +136,16 @@ class RecursiveConcat {
 
         <p class="p16-step-desc">${step.desc}</p>
 
-        <div class="p16-progress">
-          <div class="p16-progress-fill" style="width:${pct}%"></div>
-        </div>
-
-      </div>
+      </article>
     `
   }
 
-  renderCurrent() {
-    const step = this.steps[this.currentStep]
-    if (!step) return
-    this.result.innerHTML = this.renderStep(step, this.currentStep, this.steps.length)
-  }
-
-  startAnimation() {
-    clearInterval(this.stepInterval)
-    if (this.steps.length === 0) return
-    this.currentStep = 0
-    this.renderCurrent()
-    this.stepInterval = setInterval(() => {
-      this.currentStep = (this.currentStep + 1) % this.steps.length
-      this.renderCurrent()
-    }, this.STEP_MS)
+  render() {
+    const total = this.steps.length
+    this.result.innerHTML = this.steps.map((s, i) => this.renderStep(s, i, total)).join("")
   }
 
   buildResult() {
-    clearInterval(this.stepInterval)
-
     const alpha = (this.inputAlpha?.value ?? "").trim()
     const beta  = (this.inputBeta?.value  ?? "").trim()
 
@@ -191,12 +160,12 @@ class RecursiveConcat {
     }
 
     this.steps = this.buildSteps(alpha, beta)
-    this.startAnimation()
+    this.render()
   }
 
   schedulePreview() {
     clearTimeout(this.previewTimer)
-    this.previewTimer = setTimeout(() => this.buildResult(), 400)
+    this.previewTimer = setTimeout(() => this.buildResult(), 300)
   }
 
   main() {
