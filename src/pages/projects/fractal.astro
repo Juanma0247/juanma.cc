@@ -36,8 +36,8 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   </div>
   <div class="space-bottom"></div>
 </ProjectLayout>
-<style>@import '../../styles/sections/projects.css';
-  @import '../../styles/sections/projects-fractal.css';</style>
+<style>@import '../../styles/sections/projects.css';</style>
+<style is:global>@import '../../styles/sections/projects-fractal.css';</style>
 <script type="module" is:inline>
   import Fractal from '/js/lib/Fractal.js'
   const p = new Fractal(); p.starter?.(); p.main()
