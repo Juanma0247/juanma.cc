@@ -50,7 +50,7 @@ export const built: BuiltProject[] = [
     size: 'wide',
     tags: ['Vanilla JS', 'GSAP', 'Firebase'],
     role: { en: 'Sole author', es: 'Autor único' },
-    year: '2023',
+    year: '2025',
     what: {
       en: 'A private study library for the Colombian Saber 11 (Icfes) exam. Students log in and browse hundreds of practice documents organized by subject — maths, reading, science, social studies and English — with live search, previews, downloads and a curated toolbox of external resources.',
       es: 'Una biblioteca de estudio privada para el examen Saber 11 (Icfes). Los estudiantes inician sesión y navegan cientos de documentos de práctica organizados por materia — matemáticas, lectura, ciencias, sociales e inglés — con búsqueda en vivo, vista previa, descargas y una caja de herramientas curada con recursos externos.',
@@ -97,7 +97,7 @@ export const built: BuiltProject[] = [
     size: 'sm',
     tags: ['React', 'Supabase', 'TS'],
     role: { en: 'Team developer', es: 'Desarrollador en equipo' },
-    year: '2024',
+    year: '2026',
     what: {
       en: 'A companion web app for a Minecraft SMP community: a home hub around the server with player profiles and rankings, community farms, lore and memorable moments, clans, battles and businesses — everything the SMP needs in one place.',
       es: 'Una app web complementaria para la comunidad de un servidor SMP de Minecraft: un centro alrededor del servidor con perfiles y rankings de jugadores, granjas de la comunidad, lore y momentos memorables, clanes, batallas y negocios — todo lo que el SMP necesita en un solo lugar.',
@@ -153,7 +153,7 @@ export const built: BuiltProject[] = [
     size: 'sm',
     tags: ['Vanilla JS', 'Firebase'],
     role: { en: 'Sole author', es: 'Autor único' },
-    year: '2023',
+    year: '2025',
     what: {
       en: 'A small mathematical experiment that renders millions of decimal digits of π so you can wander through its endless expansion.',
       es: 'Un pequeño experimento matemático que muestra millones de dígitos decimales de π para pasear por su expansión infinita.',
@@ -191,7 +191,7 @@ export const built: BuiltProject[] = [
     size: 'feature',
     tags: ['Node.js', 'Express', 'Supabase', 'Cloudinary'],
     role: { en: 'Lead developer · tech-stack lead', es: 'Desarrollador principal · líder del stack' },
-    year: '2024',
+    year: '2026',
     what: {
       en: 'A real-estate management system (ERP) for a Colombian company that sells land lots in Tolima. Beyond the public site, an internal operations centre runs the whole business: projects and lots on an interactive map, buyers and sales, installments, commissions, invoices, expenses, approvals, legal follow-up, backups, consolidated reports and role-based permissions.',
       es: 'Un sistema de gestión inmobiliaria (ERP) para una empresa colombiana que vende lotes en el Tolima. Más allá del sitio público, un centro de operación interno maneja todo el negocio: proyectos y lotes en un mapa interactivo, compradores y ventas, cuotas, comisiones, facturas, gastos, aprobaciones, seguimiento jurídico, respaldos, reportes consolidados y permisos por rol.',
@@ -257,7 +257,7 @@ export const built: BuiltProject[] = [
     size: 'wide',
     tags: ['Next.js', 'TypeScript', 'Firebase', 'PDFKit'],
     role: { en: 'Full-stack developer', es: 'Desarrollador full-stack' },
-    year: '2025',
+    year: '2026',
     what: {
       en: 'The website of the Faculty of Exact and Natural Sciences (UNAL, Manizales). Two fronts: the continuous redesign and maintenance of public sections — events, professors, academic programmes, conference microsites — and an internal admin I built to edit all that content and to generate official certificates.',
       es: 'El sitio de la Facultad de Ciencias Exactas y Naturales (UNAL, Manizales). Dos frentes: el rediseño y mantenimiento continuo de secciones públicas — eventos, profesores, programas académicos, micrositios de congresos — y un panel interno que construí para editar todo ese contenido y generar certificados oficiales.',
@@ -306,14 +306,14 @@ export const built: BuiltProject[] = [
     size: 'sm',
     tags: ['Full-stack', 'UI Design', 'E-commerce'],
     role: { en: 'Full-stack developer', es: 'Desarrollador full-stack' },
-    year: '2021',
+    year: '2023',
     what: {
       en: 'An online pharmacy from Pasto, Colombia: medicines, personal care and health products with categories, promotions and home delivery.',
       es: 'Una droguería en línea de Pasto, Colombia: medicamentos, cuidado personal y productos de salud con categorías, promociones y entrega a domicilio.',
     },
     participation: {
-      en: 'I worked as a full-stack developer on the store, taking on several design and restructuring tasks. It was about four years ago, so I no longer keep the repository — but the site is still live and running.',
-      es: 'Trabajé como desarrollador full-stack en la tienda, asumiendo varias tareas de diseño y reestructuración. Fue hace unos cuatro años, así que ya no conservo el repositorio — pero el sitio sigue en línea y funcionando.',
+      en: 'I worked as a full-stack developer on the store, taking on several design and restructuring tasks. It was a few years ago, so I no longer keep the repository — but the site is still live and running.',
+      es: 'Trabajé como desarrollador full-stack en la tienda, asumiendo varias tareas de diseño y reestructuración. Fue hace unos años, así que ya no conservo el repositorio — pero el sitio sigue en línea y funcionando.',
     },
     challenge: {
       en: 'Retail e-commerce lives or dies on clarity: a shopper must find a product and trust the store in seconds. The work leaned on the design side — organising the catalogue, the category navigation and the promotions, and restructuring layout so the storefront reads cleanly and converts.',
@@ -344,7 +344,7 @@ export const built: BuiltProject[] = [
     size: 'sm',
     tags: ['Vanilla JS', 'Firebase', 'CRUD engine'],
     role: { en: 'Sole author', es: 'Autor único' },
-    year: '2022',
+    year: '2024',
     what: {
       en: 'A product catalog for the Colombian clothing brand Arcur. Two apps: a customer-facing storefront and a hidden admin with a full CRUD to manage products, prices and offers.',
       es: 'Un catálogo de productos para la marca de ropa colombiana Arcur. Dos aplicaciones: una vista de tienda para el cliente y un panel de administración oculto con un CRUD completo para gestionar productos, precios y ofertas.',
@@ -377,15 +377,11 @@ export const built: BuiltProject[] = [
     slug: 'ludix',
     name: 'Ludix',
     logo: '/img/built/ludix.svg',
-    url: 'https://app.ludix.co/',
-    urlNote: {
-      en: 'The public domain has since expired.',
-      es: 'El dominio público ya expiró.',
-    },
+    url: 'http://ludixunal.com/',
     size: 'sm',
     tags: ['Next.js', 'FastAPI', 'WebGL', 'AI'],
     role: { en: 'Consultant · debugger · occasional dev', es: 'Consultor · depurador · desarrollador ocasional' },
-    year: '2025',
+    year: '2026',
     what: {
       en: 'A learning platform with courses, quizzes and a built-in "Mentor AI" chat. A Next.js front-end talks to a FastAPI back-end, with rich math rendering and an animated WebGL background.',
       es: 'Una plataforma de aprendizaje con cursos, quizzes y un chat "Mentor AI" integrado. Un front-end en Next.js habla con un back-end en FastAPI, con renderizado matemático y un fondo animado en WebGL.',
