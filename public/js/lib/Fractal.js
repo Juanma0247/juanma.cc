@@ -2,7 +2,7 @@ import ExtText from '/js/core/ExtText.js'
 
 const pi = Math.PI
 const rootStyles = getComputedStyle(document.documentElement)
-var color = rootStyles.getPropertyValue('--c2').trim()
+var color = rootStyles.getPropertyValue('--color-text').trim() || '#000000'
 
 class Fractal {
     constructor() {

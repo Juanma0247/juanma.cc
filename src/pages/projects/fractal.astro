@@ -3,32 +3,36 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
 <ProjectLayout slug="fractal">
   <div class="p11Content">
-    <svg id="fractal"></svg>
-    <div>
-      <div class="p11inputs">
-        <div class="field p11InputGroup">
-          <input id="p11i1" required="" type="number" min="1" step="1" value="6" placeholder=" ">
-          <label class="field-label">\(\text&#123;\textbf&#123;n&#125;&#125;\)</label>
-        </div>
-        <div class="field p11InputGroup">
-          <input id="p11i2" required="" type="number" min="0" step="1" value="3" placeholder=" ">
-          <label class="field-label">\(\text&#123;\textbf&#123;a&#125;&#125;\)</label>
-        </div>
-        <div class="field p11InputGroup">
-          <input id="p11i3" required="" type="number" placeholder=" ">
-          <label class="field-label">\(\text&#123;\textbf&#123;Depth&#125;&#125;\)</label>
-        </div>
+    <div class="p11Layout">
+      <div class="p11FigureCard">
+        <svg id="fractal"></svg>
       </div>
-      <div class="p11buttons">
-        <button id="p11b1" class="p11Button">Documentation</button>
-        <button id="p11b2" class="p11Button">Download SVG</button>
-      </div>
-      <div id="p11ResArea"></div>
+      <aside class="p11Panel">
+        <div class="p11inputs">
+          <div class="field p11InputGroup">
+            <input id="p11i1" required="" type="number" min="1" step="1" value="6" placeholder=" ">
+            <label class="field-label">\(\text&#123;\textbf&#123;n&#125;&#125;\)</label>
+          </div>
+          <div class="field p11InputGroup">
+            <input id="p11i2" required="" type="number" min="0" step="1" value="3" placeholder=" ">
+            <label class="field-label">\(\text&#123;\textbf&#123;a&#125;&#125;\)</label>
+          </div>
+          <div class="field p11InputGroup">
+            <input id="p11i3" required="" type="number" placeholder=" ">
+            <label class="field-label">\(\text&#123;\textbf&#123;Depth&#125;&#125;\)</label>
+          </div>
+        </div>
+        <div class="p11buttons">
+          <button id="p11b1" class="p11Button">Documentation</button>
+          <button id="p11b2" class="p11Button">Download SVG</button>
+        </div>
+        <div id="p11ResArea"></div>
+      </aside>
     </div>
-    <div class="p11AreaSection">
+    <section class="p11AreaSection">
       <h3>Area Calculation A(N)</h3>
       <div id="p11AreaCalc" class="p11AreaCalc"></div>
-    </div>
+    </section>
   </div>
   <div class="space-bottom"></div>
 </ProjectLayout>

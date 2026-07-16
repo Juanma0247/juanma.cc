@@ -1,37 +1,138 @@
 #p11Title { margin-top: 1rem; }
-.p11Content { display: flex; flex-wrap: wrap; padding: 1rem; }
-#fractal { background-color: transparent; }
-.p11InputGroup { margin-top: 1rem; }
-.p11inputs { width: max-content; display: flex; flex-wrap: wrap; height: max-content; }
-.p11buttons { width: max-content; display: flex; height: max-content; margin-top: 1rem; }
-.p11Button { margin-right: 1rem; width: max-content; }
-.p11Ref {
-  display: inline-block;
-  margin-left: 1rem;
-  margin-top: 1.6rem;
-  padding: .3rem .6rem;
-  color: var(--color-primary);
-  border-radius: .3rem;
-  width: min-content;
-  height: min-content;
+
+.p11Content {
+  padding: 1.5rem;
+  max-width: 72rem;
+  margin: 0 auto;
 }
-.p11Ref:hover { color: var(--color-text); }
+
+.p11Layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 20rem);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* ── Figure ─────────────────────────────────────────────── */
+
+.p11FigureCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  aspect-ratio: 1 / 1;
+}
+
+#fractal {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  overflow: visible;
+}
+
+/* ── Control panel ──────────────────────────────────────── */
+
+.p11Panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+.p11inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+.p11InputGroup { margin: 0; }
+.p11InputGroup,
+.p11InputGroup .number-wrap { width: 100%; }
+
+.p11buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+.p11Button { flex: 1 1 auto; }
+
+#p11ResArea {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--color-text);
+}
+
+#p11ResArea:empty { display: none; }
+
+#p11ResArea .step { margin: 0; }
+
+/* ── Area calculation section ───────────────────────────── */
 
 .p11AreaSection {
   width: 100%;
   margin-top: 2rem;
-  padding: 1rem;
-  border-radius: .5rem;
-  font-size: 1.4rem;
+}
+
+.p11AreaSection h3 {
+  margin-left: 0;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
 }
 
 .p11AreaCalc {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   background-color: transparent;
-  padding: 1.5rem;
-  border-radius: .3rem;
-  line-height: 2.5;
+}
+
+.p11AreaCalc .step {
+  padding: 1rem 1.25rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-left: .25rem solid var(--color-primary);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
   overflow-x: auto;
 }
 
-#p11i1, #p11i2, #p11i13 { width: 9rem; }
-#p11ResArea { margin-top: 5rem; margin-left: 3rem; font-size: 1.4rem; }
+.p11AreaCalc .step .label {
+  margin-bottom: .6rem;
+  font-family: var(--font-bold);
+  font-size: 1rem;
+  color: var(--color-primary);
+}
+
+.p11AreaCalc .step .katex,
+#p11ResArea .katex {
+  color: var(--color-text);
+  font-size: 1.2rem;
+}
+
+#p11ResArea .step {
+  padding: 1rem 1.25rem;
+  background: var(--primary-10);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+#p11ResArea .step .label {
+  margin-bottom: .5rem;
+  font-family: var(--font-bold);
+  color: var(--color-primary);
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+
+@media (max-width: 48rem) {
+  .p11Layout { grid-template-columns: 1fr; }
+  .p11Content { padding: 1rem; }
+}
