@@ -1,5 +1,4 @@
 ---
-import { Code } from 'astro:components'
 import MainLayout from '../../../layouts/MainLayout.astro'
 import Bi from '../../../components/Bi.astro'
 import { built } from '../../../data/built'
@@ -13,17 +12,6 @@ export function getStaticPaths() {
 }
 
 const { project } = Astro.props
-
-const snippets = import.meta.glob('../../../data/built-snippets/*', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-}) as Record<string, string>
-
-function snippetFor(name: string): string {
-  const match = Object.entries(snippets).find(([path]) => path.endsWith(`/${name}`))
-  return match ? match[1].replace(/\s+$/, '') : ''
-}
 ---
 
 <MainLayout title={project.name} navTitle={project.name} section="Projects">
@@ -76,6 +64,11 @@ function snippetFor(name: string): string {
     </section>
 
     <section class="built-section">
+      <h2><span data-lang="en">The challenge</span><span data-lang="es">El reto</span></h2>
+      <Bi class="built-prose" as="p" t={project.challenge} />
+    </section>
+
+    <section class="built-section">
       <h2><span data-lang="en">Tech behind it</span><span data-lang="es">Tecnologías detrás</span></h2>
       <ul class="built-stack">
         {project.stack.map(item => (
@@ -87,30 +80,22 @@ function snippetFor(name: string): string {
       </ul>
     </section>
 
-    <section class="built-section">
-      <h2><span data-lang="en">Highlights</span><span data-lang="es">Lo más llamativo</span></h2>
-      <div class="built-highlights">
-        {project.highlights.map(h => (
-          <article class="built-highlight">
-            <h3 class="built-highlight__title"><Bi t={h.title} /></h3>
-            {h.kind === 'shot' ? (
+    {project.highlights.length > 0 && (
+      <section class="built-section">
+        <h2><span data-lang="en">Highlights</span><span data-lang="es">Lo más llamativo</span></h2>
+        <div class="built-highlights">
+          {project.highlights.map(h => (
+            <article class="built-highlight">
+              <h3 class="built-highlight__title"><Bi t={h.title} /></h3>
               <figure class="built-shot">
                 <img src={cld(h.img)} alt="" loading="lazy" />
               </figure>
-            ) : (
-              <div class="built-codewrap">
-                <div class="built-codewrap__bar">
-                  <span class="built-codewrap__dots" aria-hidden="true"></span>
-                  <span class="built-codewrap__file">{h.file}</span>
-                </div>
-                <Code code={snippetFor(h.snippet)} lang={h.lang as any} theme="github-dark" />
-              </div>
-            )}
-            <Bi class="built-prose built-highlight__desc" as="p" t={h.desc} />
-          </article>
-        ))}
-      </div>
-    </section>
+              <Bi class="built-prose built-highlight__desc" as="p" t={h.desc} />
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
   </article>
   <div class="space-bottom"></div>
 </MainLayout>

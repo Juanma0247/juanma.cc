@@ -181,51 +181,6 @@ html[data-theme="dark"] .built-hero__logo.is-mono { filter: none; }
 
 .built-highlight__desc { font-size: 1rem; color: var(--color-muted); }
 
-/* ── Code blocks ────────────────────────────────────────────── */
-
-.built-codewrap {
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: var(--border-width) solid color-mix(in oklab, var(--color-primary) 30%, transparent);
-}
-
-.built-codewrap__bar {
-  display: flex;
-  align-items: center;
-  gap: .7rem;
-  padding: .55rem .9rem;
-  background: #0d1117;
-  border-bottom: 1px solid #30363d;
-}
-
-.built-codewrap__dots {
-  position: relative;
-  width: .7rem;
-  height: .7rem;
-  border-radius: 50%;
-  background: #ff5f56;
-  box-shadow: 1.1rem 0 0 #ffbd2e, 2.2rem 0 0 #27c93f;
-  flex-shrink: 0;
-  margin-right: 1.5rem;
-}
-
-.built-codewrap__file {
-  font-family: var(--font-mono);
-  font-size: .78rem;
-  color: #8b949e;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.built-codewrap .astro-code {
-  margin: 0;
-  padding: 1rem 1.1rem;
-  overflow-x: auto;
-  font-size: .85rem;
-  line-height: 1.55;
-}
-
 /* ── Responsive ─────────────────────────────────────────────── */
 
 @media (max-width: 40rem) {
