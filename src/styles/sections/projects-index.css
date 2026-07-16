@@ -2,6 +2,7 @@
   --cat-p: var(--color-primary);
   --cat-t: oklch(from var(--color-primary) l c calc(h + 140));
   --cat-g: oklch(from var(--color-primary) l c calc(h - 130));
+  --cat-b: oklch(from var(--color-primary) l c calc(h + 55));
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11.875rem, 1fr));
   grid-auto-rows: 10.625rem;
@@ -54,6 +55,31 @@
   background-image: radial-gradient(color-mix(in oklab, var(--accent) 12%, transparent) 1.5px, transparent 1.5px);
   background-size: 1.125rem 1.125rem;
 }
+
+.mosaic-card[data-cat="b"] {
+  --accent: var(--cat-b);
+  border-radius: var(--radius-lg);
+  background-image:
+    linear-gradient(135deg, color-mix(in oklab, var(--accent) 10%, transparent) 0 40%, transparent 40%),
+    linear-gradient(color-mix(in oklab, var(--accent) 7%, transparent) 1px, transparent 1px);
+  background-size: auto, 1.625rem 1.625rem;
+}
+
+[data-cat="b"] .mosaic-card__dot { border-radius: 50%; box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 25%, transparent); }
+
+/* Image logos on built cards */
+.mosaic-card__icon--img { align-items: center; justify-content: center; }
+.mosaic-card__icon--img img { object-fit: contain; display: block; }
+[data-size="sm"] .mosaic-card__icon--img img { width: 3rem; height: 3rem; }
+[data-size="wide"] .mosaic-card__icon--img img { height: 4rem; width: auto; max-width: 7rem; }
+[data-size="tall"] .mosaic-card__icon--img img { width: auto; max-width: 80%; max-height: 8rem; margin: .5rem auto 0; }
+[data-size="feature"] .mosaic-card__icon--img { flex: 1; max-height: 50%; }
+[data-size="feature"] .mosaic-card__icon--img img { height: 100%; max-height: 7rem; width: auto; max-width: 100%; }
+
+/* Bilingual eyebrow toggle (built feature cards) */
+.mosaic-card__eyebrow [data-lang="es"] { display: none; }
+html[lang="es"] .mosaic-card__eyebrow [data-lang="es"] { display: inline; }
+html[lang="es"] .mosaic-card__eyebrow [data-lang="en"] { display: none; }
 
 .mosaic-card__dot {
   position: absolute;

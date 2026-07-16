@@ -1,0 +1,228 @@
+/* ── Bilingual toggle (driven by <html lang>) ───────────────── */
+
+[data-lang="es"] { display: none; }
+html[lang="es"] [data-lang="es"] { display: revert; }
+html[lang="es"] [data-lang="en"] { display: none; }
+
+/* ── Layout ─────────────────────────────────────────────────── */
+
+.built-detail {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 2rem;
+}
+
+.built-back {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-family: var(--font-mono);
+  font-size: .9rem;
+  color: var(--color-muted);
+  margin-bottom: 1.5rem;
+  transition: color var(--transition);
+}
+.built-back:hover { color: var(--color-primary); }
+
+/* ── Hero ───────────────────────────────────────────────────── */
+
+.built-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding-bottom: 1.5rem;
+  border-bottom: var(--border-width) solid color-mix(in oklab, var(--color-muted) 35%, transparent);
+}
+
+.built-hero__head { display: flex; align-items: center; gap: 1.1rem; min-width: 0; }
+
+.built-hero__logo {
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  background: var(--primary-05);
+  border: var(--border-width) solid color-mix(in oklab, var(--color-primary) 25%, transparent);
+  padding: .5rem;
+  flex-shrink: 0;
+}
+
+.built-hero__meta { display: flex; flex-direction: column; gap: .55rem; min-width: 0; }
+
+.built-hero__name {
+  margin: 0;
+  font-family: var(--font-bold);
+  color: var(--color-text);
+  font-size: clamp(1.6rem, 4vw, 2.3rem);
+  line-height: 1.1;
+}
+
+.built-hero__chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+.built-chip {
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  padding: .2rem .6rem;
+  border-radius: 100rem;
+}
+.built-chip--role { color: var(--color-bg); background: var(--color-primary); }
+.built-chip--year {
+  color: var(--color-muted);
+  border: 1px solid color-mix(in oklab, var(--color-muted) 45%, transparent);
+}
+
+.built-hero__tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+
+.built-tag {
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  color: var(--color-muted);
+  border: 1px solid color-mix(in oklab, var(--color-muted) 40%, transparent);
+  border-radius: var(--radius-sm);
+  padding: .15rem .5rem;
+}
+
+.built-hero__cta { display: flex; flex-direction: column; align-items: flex-start; gap: .4rem; }
+
+.built-visit {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-family: var(--font-bold);
+  font-size: .9rem;
+  color: var(--color-primary);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: .45rem .9rem;
+  box-shadow: var(--shadow-primary);
+  transition: opacity var(--transition), transform var(--transition);
+}
+.built-visit:hover { opacity: .85; }
+.built-visit svg { width: 1rem; height: 1rem; }
+
+.built-note { font-family: var(--font-mono); font-size: .72rem; color: var(--color-muted); }
+
+/* ── Sections ───────────────────────────────────────────────── */
+
+.built-section { margin-top: 2.25rem; }
+
+.built-section > h2 {
+  margin: 0 0 .9rem;
+  font-family: var(--font-bold);
+  color: var(--color-primary);
+  font-size: 1.35rem;
+  text-align: left;
+}
+
+.built-prose {
+  font-family: var(--font-ui);
+  color: var(--color-text);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  max-width: 52rem;
+}
+
+/* ── Screenshots ────────────────────────────────────────────── */
+
+.built-shot {
+  margin: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: var(--border-width) solid color-mix(in oklab, var(--color-muted) 30%, transparent);
+  background: var(--primary-05);
+  line-height: 0;
+}
+.built-shot img { width: 100%; height: auto; display: block; }
+.built-shot--hero { margin-top: 1.75rem; box-shadow: 0 1.2rem 3rem -1.5rem color-mix(in oklab, var(--color-primary) 55%, transparent); }
+
+/* ── Tech stack ─────────────────────────────────────────────── */
+
+.built-stack {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: .75rem;
+}
+
+.built-stack__item {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  padding: .8rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--primary-05);
+  border: var(--border-width) solid color-mix(in oklab, var(--color-muted) 25%, transparent);
+  border-left: .2rem solid var(--color-primary);
+}
+.built-stack__name { font-family: var(--font-bold); color: var(--color-text); font-size: .98rem; }
+.built-stack__note { font-family: var(--font-ui); color: var(--color-muted); font-size: .85rem; line-height: 1.4; }
+
+/* ── Highlights ─────────────────────────────────────────────── */
+
+.built-highlights { display: flex; flex-direction: column; gap: 2rem; }
+
+.built-highlight { display: flex; flex-direction: column; gap: .85rem; }
+
+.built-highlight__title {
+  margin: 0;
+  font-family: var(--font-bold);
+  color: var(--color-text);
+  font-size: 1.1rem;
+}
+
+.built-highlight__desc { font-size: 1rem; color: var(--color-muted); }
+
+/* ── Code blocks ────────────────────────────────────────────── */
+
+.built-codewrap {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: var(--border-width) solid color-mix(in oklab, var(--color-primary) 30%, transparent);
+}
+
+.built-codewrap__bar {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .55rem .9rem;
+  background: #0d1117;
+  border-bottom: 1px solid #30363d;
+}
+
+.built-codewrap__dots {
+  position: relative;
+  width: .7rem;
+  height: .7rem;
+  border-radius: 50%;
+  background: #ff5f56;
+  box-shadow: 1.1rem 0 0 #ffbd2e, 2.2rem 0 0 #27c93f;
+  flex-shrink: 0;
+  margin-right: 1.5rem;
+}
+
+.built-codewrap__file {
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  color: #8b949e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.built-codewrap .astro-code {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: .85rem;
+  line-height: 1.55;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+
+@media (max-width: 40rem) {
+  .built-hero { align-items: flex-start; }
+  .built-hero__logo { width: 3.5rem; height: 3.5rem; }
+  .built-detail { padding: 1rem 1rem 2rem; }
+}

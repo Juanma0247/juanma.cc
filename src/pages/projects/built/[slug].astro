@@ -1,0 +1,119 @@
+---
+import { Code } from 'astro:components'
+import MainLayout from '../../../layouts/MainLayout.astro'
+import Bi from '../../../components/Bi.astro'
+import { built } from '../../../data/built'
+
+export function getStaticPaths() {
+  return built.map(project => ({
+    params: { slug: project.slug },
+    props: { project },
+  }))
+}
+
+const { project } = Astro.props
+
+const snippets = import.meta.glob('../../../data/built-snippets/*', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>
+
+function snippetFor(name: string): string {
+  const match = Object.entries(snippets).find(([path]) => path.endsWith(`/${name}`))
+  return match ? match[1].replace(/\s+$/, '') : ''
+}
+---
+
+<MainLayout title={project.name} navTitle={project.name} section="Projects">
+  <article class="built-detail">
+    <a class="built-back" href="/projects">
+      <span aria-hidden="true">←</span>
+      <span data-lang="en">Projects</span><span data-lang="es">Proyectos</span>
+    </a>
+
+    <header class="built-hero">
+      <div class="built-hero__head">
+        <img class="built-hero__logo" src={project.logo} alt={`${project.name} logo`} />
+        <div class="built-hero__meta">
+          <h1 class="built-hero__name">{project.name}</h1>
+          <div class="built-hero__chips">
+            <Bi class="built-chip built-chip--role" t={project.role} />
+            <span class="built-chip built-chip--year">{project.year}</span>
+          </div>
+          <div class="built-hero__tags">
+            {project.tags.map(tag => <span class="built-tag">{tag}</span>)}
+          </div>
+        </div>
+      </div>
+
+      {project.url && (
+        <div class="built-hero__cta">
+          <a class="built-visit" href={project.url} target="_blank" rel="noopener">
+            <i data-feather="external-link"></i>
+            <span data-lang="en">Go to site</span><span data-lang="es">Ir al sitio</span>
+          </a>
+          {project.urlNote && <Bi class="built-note" t={project.urlNote} />}
+        </div>
+      )}
+    </header>
+
+    {project.hero && (
+      <figure class="built-shot built-shot--hero">
+        <img src={project.hero} alt={project.name} loading="lazy" />
+      </figure>
+    )}
+
+    <section class="built-section">
+      <h2><span data-lang="en">What it is</span><span data-lang="es">Qué es</span></h2>
+      <Bi class="built-prose" as="p" t={project.what} />
+    </section>
+
+    <section class="built-section">
+      <h2><span data-lang="en">My part</span><span data-lang="es">Mi participación</span></h2>
+      <Bi class="built-prose" as="p" t={project.participation} />
+    </section>
+
+    <section class="built-section">
+      <h2><span data-lang="en">Tech behind it</span><span data-lang="es">Tecnologías detrás</span></h2>
+      <ul class="built-stack">
+        {project.stack.map(item => (
+          <li class="built-stack__item">
+            <span class="built-stack__name">{item.name}</span>
+            <Bi class="built-stack__note" t={item.note} />
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="built-section">
+      <h2><span data-lang="en">Highlights</span><span data-lang="es">Lo más llamativo</span></h2>
+      <div class="built-highlights">
+        {project.highlights.map(h => (
+          <article class="built-highlight">
+            <h3 class="built-highlight__title"><Bi t={h.title} /></h3>
+            {h.kind === 'shot' ? (
+              <figure class="built-shot">
+                <img src={h.img} alt="" loading="lazy" />
+              </figure>
+            ) : (
+              <div class="built-codewrap">
+                <div class="built-codewrap__bar">
+                  <span class="built-codewrap__dots" aria-hidden="true"></span>
+                  <span class="built-codewrap__file">{h.file}</span>
+                </div>
+                <Code code={snippetFor(h.snippet)} lang={h.lang as any} theme="github-dark" />
+              </div>
+            )}
+            <Bi class="built-prose built-highlight__desc" as="p" t={h.desc} />
+          </article>
+        ))}
+      </div>
+    </section>
+  </article>
+  <div class="space-bottom"></div>
+</MainLayout>
+
+<style is:global>
+  @import '../../../styles/sections/built-detail.css';
+</style>

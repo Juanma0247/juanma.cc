@@ -1,0 +1,10 @@
+---
+interface Props {
+  t: { en: string; es: string }
+  as?: keyof HTMLElementTagNameMap
+  class?: string
+}
+const { t, as = 'span', class: className } = Astro.props
+const Tag = as
+---
+<Tag class:list={['bi', className]}><span data-lang="en">{t.en}</span><span data-lang="es">{t.es}</span></Tag>

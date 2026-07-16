@@ -4,6 +4,7 @@ import MosaicCard from '../../components/cards/MosaicCard.astro'
 import projects from '../../data/projects.json'
 import tools from '../../data/tools.json'
 import games from '../../data/games.json'
+import { built, type BuiltSize } from '../../data/built'
 
 const iconModules = import.meta.glob('../../icons/mosaic/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>
 
@@ -12,10 +13,21 @@ function iconFor(slug: string): string {
   return match ? match[1] : iconModules['../../icons/mosaic/_placeholder.svg']
 }
 
-const items = [
-  ...projects.map(p => ({ slug: p.slug, title: p.title, labels: p.labels, size: p.size, href: `/projects/${p.slug}`, category: 'p' as const })),
-  ...tools.map(t => ({ slug: t.slug, title: t.title, labels: t.labels, size: t.size, href: `/tools/${t.slug}`, category: 't' as const })),
-  ...games.map(g => ({ slug: g.slug, title: g.title, labels: g.labels, size: g.size, href: `/games/${g.slug}`, category: 'g' as const })),
+interface Item {
+  title: string
+  labels: string[]
+  size: BuiltSize
+  href: string
+  category: 'p' | 't' | 'g' | 'b'
+  icon?: string
+  iconSrc?: string
+}
+
+const items: Item[] = [
+  ...built.map(b => ({ title: b.name, labels: b.tags, size: b.size, href: `/projects/built/${b.slug}`, category: 'b' as const, iconSrc: b.logo })),
+  ...projects.map(p => ({ title: p.title, labels: p.labels, size: p.size as BuiltSize, href: `/projects/${p.slug}`, category: 'p' as const, icon: iconFor(p.slug) })),
+  ...tools.map(t => ({ title: t.title, labels: t.labels, size: t.size as BuiltSize, href: `/tools/${t.slug}`, category: 't' as const, icon: iconFor(t.slug) })),
+  ...games.map(g => ({ title: g.title, labels: g.labels, size: g.size as BuiltSize, href: `/games/${g.slug}`, category: 'g' as const, icon: iconFor(g.slug) })),
 ]
 ---
 
@@ -28,7 +40,8 @@ const items = [
         labels={item.labels}
         category={item.category}
         size={item.size}
-        icon={iconFor(item.slug)}
+        icon={item.icon}
+        iconSrc={item.iconSrc}
       />
     ))}
   </div>

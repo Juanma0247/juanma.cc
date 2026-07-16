@@ -3,19 +3,23 @@ interface Props {
   href: string
   title: string
   labels: string[]
-  category: 'p' | 't' | 'g'
+  category: 'p' | 't' | 'g' | 'b'
   size: 'sm' | 'wide' | 'tall' | 'feature'
-  icon: string
+  icon?: string
+  iconSrc?: string
 }
 
-const { href, title, labels, category, size, icon } = Astro.props
+const { href, title, labels, category, size, icon, iconSrc } = Astro.props
 const visibleLabels = size === 'sm' ? labels.slice(0, 2) : labels
 ---
 
 <a href={href} class="mosaic-card" data-cat={category} data-size={size}>
   <span class="mosaic-card__dot" aria-hidden="true"></span>
-  {size === 'feature' && <span class="mosaic-card__eyebrow" data-i18n="projectsIndex.featured">Featured</span>}
-  <span class="mosaic-card__icon" set:html={icon} />
+  {size === 'feature' && category === 'p' && <span class="mosaic-card__eyebrow" data-i18n="projectsIndex.featured">Featured</span>}
+  {size === 'feature' && category === 'b' && <span class="mosaic-card__eyebrow"><span data-lang="en">Flagship</span><span data-lang="es">Destacado</span></span>}
+  {iconSrc
+    ? <span class="mosaic-card__icon mosaic-card__icon--img"><img src={iconSrc} alt="" loading="lazy" /></span>
+    : <span class="mosaic-card__icon" set:html={icon} />}
   <div class="mosaic-card__footer">
     <h2 class="mosaic-card__title">{title} <span class="mosaic-card__arrow" aria-hidden="true">→</span></h2>
     <div class="mosaic-card__tags">
