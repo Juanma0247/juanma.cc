@@ -151,9 +151,10 @@ class RecursiveConcat {
 
   renderDots() {
     if (!this.dots) return
-    this.dots.innerHTML = this.steps.map((_, i) =>
-      `<button type="button" class="cc-dot ${i === this.current ? "is-active" : ""}" data-i="${i}" aria-label="Step ${i + 1}"></button>`
-    ).join("")
+    this.dots.innerHTML = this.steps.map((_, i) => {
+      const active = i === this.current
+      return `<button type="button" class="cc-step-btn${active ? " is-active" : ""}" data-i="${i}" aria-label="Go to step ${i + 1}"${active ? ' aria-current="step"' : ""}>${i + 1}</button>`
+    }).join("")
   }
 
   render() {
@@ -249,7 +250,7 @@ class RecursiveConcat {
     this.btnNext?.addEventListener("click", () => { this.stopAuto(); this.next() })
     this.btnPlay?.addEventListener("click", () => this.toggleAuto())
     this.dots?.addEventListener("click", (e) => {
-      const b = e.target.closest(".cc-dot")
+      const b = e.target.closest(".cc-step-btn")
       if (!b) return
       this.stopAuto()
       this.goTo(parseInt(b.dataset.i, 10))

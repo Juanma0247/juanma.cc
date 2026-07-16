@@ -28,20 +28,22 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
     <div id="p16r1" class="cc-stage"></div>
 
     <div class="cc-controls" id="p16controls" hidden>
-      <button type="button" class="cc-btn cc-btn--nav" id="p16prev" aria-label="Previous step">
-        <span aria-hidden="true">←</span>
-      </button>
-      <button type="button" class="cc-btn cc-btn--play" id="p16play" aria-pressed="false">
+      <div class="cc-nav">
+        <button type="button" class="cc-arrow" id="p16prev" aria-label="Previous step">
+          <span aria-hidden="true">←</span>
+        </button>
+        <div class="cc-steps-rail" id="p16dots"></div>
+        <button type="button" class="cc-arrow" id="p16next" aria-label="Next step">
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+      <button type="button" class="cc-auto" id="p16play" aria-pressed="false">
         <span class="cc-play-icon" aria-hidden="true">▶</span>
         <span class="cc-play-label">Auto</span>
       </button>
-      <button type="button" class="cc-btn cc-btn--nav" id="p16next" aria-label="Next step">
-        <span aria-hidden="true">→</span>
-      </button>
     </div>
-    <div class="cc-dots" id="p16dots" hidden></div>
 
-    <p class="cc-hint-keys">Use the buttons, the arrow keys ← → or the dots to move between steps.</p>
+    <p class="cc-hint-keys">Move with the buttons, the ← → arrow keys, or the numbered steps.</p>
   </div>
   <div class="space-bottom"></div>
 </ProjectLayout>
