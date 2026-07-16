@@ -2,6 +2,7 @@
 import Navbar from '../components/Navbar.astro'
 import { en } from '../data/i18n/en'
 import { es } from '../data/i18n/es'
+import { cld } from '../lib/core/cld'
 
 export interface Props {
   title?: string
@@ -29,7 +30,10 @@ const resolvedNavTitle = navTitle || title || 'Juanma'
 const pageTitle = title || 'Juanma'
 const ogTitle = title ? `${title} · Juanma` : 'Juan Manuel Díaz — Proyectos & Herramientas'
 const canonicalUrl = new URL(Astro.url.pathname, SITE_URL).href
-const ogImage = `${SITE_URL}/img/og-image.png`
+// Social crawlers need an absolute URL: use the Cloudinary URL when configured,
+// otherwise fall back to the absolute local path.
+const ogResolved = cld('/img/og-image.png')
+const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogResolved}`
 ---
 <!DOCTYPE html>
 <html lang="en">

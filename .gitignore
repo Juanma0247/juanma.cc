@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .env
+.env.example
 .firebase/
 .astro/
 *.log
@@ -8,3 +9,13 @@ dist/
 Thumbs.db
 # Local Chrome debug profile (temporary)
 .cdp-profile/
+
+# Raster images (pixel maps) are served from Cloudinary — see src/lib/core/cld.ts.
+# SVGs stay versioned (tiny, and some are referenced from shipped public/js).
+public/img/**/*.png
+public/img/**/*.jpg
+public/img/**/*.jpeg
+public/img/**/*.gif
+public/img/**/*.webp
+public/img/**/*.avif
+public/img/**/*.ico

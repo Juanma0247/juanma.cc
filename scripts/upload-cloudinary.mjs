@@ -1,10 +1,12 @@
-// Uploads local images to Cloudinary so they are served from its CDN instead
-// of the app host. Idempotent: re-running overwrites the same public_id.
+// Uploads local RASTER images (png/jpg/…) to Cloudinary so they are served from
+// its CDN instead of the app host. SVGs are skipped on purpose — they are tiny
+// and some are referenced from shipped JS. Idempotent: re-running overwrites the
+// same public_id.
 //
 // Usage:
-//   node scripts/upload-cloudinary.mjs                 # uploads public/img/built
+//   node scripts/upload-cloudinary.mjs                 # uploads all of public/img
 //   node scripts/upload-cloudinary.mjs img/juanma      # uploads a subtree
-//   node scripts/upload-cloudinary.mjs img             # uploads everything
+//   node scripts/upload-cloudinary.mjs img/built       # uploads a subtree
 //
 // Requires (local only, never deployed):
 //   CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
@@ -39,8 +41,8 @@ if (!CLOUD || !KEY || !SECRET) {
 
 cloudinary.config({ cloud_name: CLOUD, api_key: KEY, api_secret: SECRET, secure: true })
 
-const IMG_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.ico', '.avif'])
-const target = path.join(root, 'public', process.argv[2] ?? 'img/built')
+const IMG_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico', '.avif'])
+const target = path.join(root, 'public', process.argv[2] ?? 'img')
 const imgRoot = path.join(root, 'public', 'img')
 
 async function* walk(dir) {
