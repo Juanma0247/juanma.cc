@@ -49,6 +49,13 @@ html[lang="es"] [data-lang="en"] { display: none; }
   flex-shrink: 0;
 }
 
+/* Monochrome (white) logo: white by default (dark theme), black on light. */
+.built-hero__logo.is-mono { filter: invert(1); }
+html[data-theme="dark"] .built-hero__logo.is-mono { filter: none; }
+@media (prefers-color-scheme: dark) {
+  html[data-theme="system"] .built-hero__logo.is-mono { filter: none; }
+}
+
 .built-hero__meta { display: flex; flex-direction: column; gap: .55rem; min-width: 0; }
 
 .built-hero__name {

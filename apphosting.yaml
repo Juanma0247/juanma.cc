@@ -12,7 +12,7 @@ env:
   # the app host. Leave empty to keep serving images locally.
   # The API key/secret are NOT needed here (they only sign uploads locally).
   - variable: PUBLIC_CLOUDINARY_CLOUD_NAME
-    value: ""
+    value: "ob0lpyht"
     availability:
       - BUILD
       - RUNTIME

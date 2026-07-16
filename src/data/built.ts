@@ -18,6 +18,8 @@ export interface BuiltProject {
   slug: string
   name: string
   logo: string
+  /** Monochrome (white) logo — tinted to the theme text color (black on light). */
+  mono?: boolean
   hero?: string
   url?: string
   urlNote?: LangText
@@ -231,7 +233,8 @@ export const built: BuiltProject[] = [
   {
     slug: 'fcen',
     name: 'FCEN — UNAL',
-    logo: '/img/built/fcen.ico',
+    logo: '/img/built/fcen.svg',
+    mono: true,
     hero: '/img/built/shots/fcen.png',
     url: 'https://fcen.unal.edu.co/',
     size: 'wide',
@@ -280,7 +283,7 @@ export const built: BuiltProject[] = [
   {
     slug: 'prevensur',
     name: 'Droguerías Prevensur',
-    logo: '/img/built/prevensur.png',
+    logo: '/img/built/prevensur.svg',
     hero: '/img/built/shots/prevensur.png',
     url: 'https://drogueriasprevensur.com/',
     size: 'sm',

@@ -76,6 +76,14 @@
 [data-size="feature"] .mosaic-card__icon--img { flex: 1; max-height: 50%; }
 [data-size="feature"] .mosaic-card__icon--img img { height: 100%; max-height: 7rem; width: auto; max-width: 100%; }
 
+/* Monochrome (white) logos: tint to the theme. White by default (dark), black
+   on light. */
+.mosaic-card__icon--img img.is-mono { filter: invert(1); }
+html[data-theme="dark"] .mosaic-card__icon--img img.is-mono { filter: none; }
+@media (prefers-color-scheme: dark) {
+  html[data-theme="system"] .mosaic-card__icon--img img.is-mono { filter: none; }
+}
+
 /* Bilingual eyebrow toggle (built feature cards) */
 .mosaic-card__eyebrow [data-lang="es"] { display: none; }
 html[lang="es"] .mosaic-card__eyebrow [data-lang="es"] { display: inline; }

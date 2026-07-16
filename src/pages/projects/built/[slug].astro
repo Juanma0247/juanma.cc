@@ -35,7 +35,7 @@ function snippetFor(name: string): string {
 
     <header class="built-hero">
       <div class="built-hero__head">
-        <img class="built-hero__logo" src={cld(project.logo)} alt={`${project.name} logo`} />
+        <img class:list={['built-hero__logo', { 'is-mono': project.mono }]} src={cld(project.logo)} alt={`${project.name} logo`} />
         <div class="built-hero__meta">
           <h1 class="built-hero__name">{project.name}</h1>
           <div class="built-hero__chips">
