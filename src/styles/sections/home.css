@@ -38,7 +38,7 @@
 .hero-bio {
   font-size: 1rem;
   line-height: 1.8;
-  max-width: 36rem;
+  text-align: justify;
   margin-bottom: 2.5rem;
 }
 

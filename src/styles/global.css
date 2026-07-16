@@ -26,21 +26,6 @@
 /* Plain inline link (no popover) — allows wrapping for longer labels. */
 .geo--plain { white-space: normal; }
 
-/* Popover variant that shows a logo instead of a map minimap. */
-.geo-pop--logo {
-  display: grid;
-  place-items: center;
-  padding: 0.6rem 1.4rem;
-  background: var(--color-bg);
-}
-
-.geo-pop--logo img {
-  width: auto;
-  height: 3rem;
-  max-width: 100%;
-  object-fit: contain;
-}
-
 .geo-pin {
   width: 0.85em;
   height: 0.85em;
