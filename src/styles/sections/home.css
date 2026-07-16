@@ -28,7 +28,7 @@
 .hero-accent { color: var(--color-primary); }
 
 .hero-tagline {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: var(--color-muted);
   letter-spacing: 0.07em;
   text-transform: uppercase;
