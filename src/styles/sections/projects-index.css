@@ -8,6 +8,7 @@
   grid-auto-rows: 10.625rem;
   grid-auto-flow: dense;
   gap: .875rem;
+  padding: 0 .875rem .875rem;
 }
 
 .mosaic-card {
