@@ -30,13 +30,13 @@ const portraits = [
             <i data-feather="folder"></i>
             <span data-i18n="home.quickProjects">Projects</span>
           </a>
-          <a href="/projects#games" class="quick-card">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" class="icon-games"><path d="M155.85-220q-31.46 0-49.12-21.46-17.65-21.46-12.81-56.08l47.24-328.07q6.84-47.24 43.53-80.81Q221.39-740 269-740h423q47.23 0 83.92 33.58 36.69 33.57 43.92 80.81l46.24 328.07q4.84 34.62-12.81 56.08Q835.61-220 804.54-220q-18.77 0-31.69-5.77-12.93-5.77-22.39-15.23L644.15-347.31h-328.3L209.54-241q-9.46 9.46-22.39 15.23-12.92 5.77-31.3 5.77Zm17.23-49.77L296-392.69h368l122.92 122.92q4.23 3.85 16.85 7.85 9.38 0 14.27-8.23 4.88-8.24 3.27-17.62l-46.85-330.92q-5-33.08-29.11-54.5-24.12-21.42-53.35-21.42H268q-29.23 0-53.35 21.42-24.11 21.42-28.73 54.5l-47.23 330.92q-1.61 9.38 3.27 17.62 4.89 8.23 14.66 8.23 6.23 0 16.46-7.85Zm546.84-184.92q10.85-10.85 10.85-25.31 0-14.46-10.85-25.31-10.84-10.84-25.31-10.84-14.46 0-25.3 10.84-10.85 10.85-10.85 25.31 0 14.46 10.85 25.31 10.84 10.84 25.3 10.84 14.47 0 25.31-10.84ZM636.27-582q11.04-10.85 11.04-25.31 0-14.46-11.04-25.3-11.04-10.85-25.31-10.85t-25.11 10.85Q575-621.77 575-607.31T585.85-582q10.84 10.85 25.11 10.85T636.27-582ZM308.85-450h40.38v-73.46h73.85v-40.39h-73.85v-73.84h-40.38v73.84h-73.46v40.39h73.46V-450ZM480-478.38Z"/></svg>
-            <span data-i18n="home.quickGames">Games</span>
-          </a>
           <a href="/scripts" class="quick-card">
             <i data-feather="code"></i>
             <span data-i18n="home.quickCodes">Codes</span>
+          </a>
+          <a href="/contact" class="quick-card">
+            <i data-feather="message-circle"></i>
+            <span data-i18n="nav.contact">Contact</span>
           </a>
         </div>
       </div>
@@ -177,18 +177,24 @@ const portraits = [
     touchStartX = null;
   });
 
-  // Lazy-load the Google Maps minimap only when hovering a location chip.
-  // Delegated on document so it survives i18n re-renders of the bio.
-  document.addEventListener('mouseover', e => {
-    const geo = (e.target as Element).closest<HTMLElement>('.geo');
-    if (!geo) return;
-    const pop = geo.querySelector<HTMLElement>('.geo-pop');
-    if (!pop || pop.dataset.loaded || !geo.dataset.map) return;
-    const iframe = document.createElement('iframe');
-    iframe.src = geo.dataset.map;
-    iframe.loading = 'lazy';
-    iframe.title = geo.querySelector('.geo-name')?.textContent ?? 'Map';
-    pop.appendChild(iframe);
-    pop.dataset.loaded = '1';
-  });
+  // Preload the Google Maps minimaps as soon as the page loads, so the popover
+  // shows instantly on hover instead of loading the iframe on demand.
+  function preloadGeoMaps() {
+    document.querySelectorAll<HTMLElement>('.geo').forEach(geo => {
+      const pop = geo.querySelector<HTMLElement>('.geo-pop');
+      if (!pop || pop.dataset.loaded || !geo.dataset.map) return;
+      const iframe = document.createElement('iframe');
+      iframe.src = geo.dataset.map;
+      iframe.loading = 'eager';
+      iframe.title = geo.querySelector('.geo-name')?.textContent ?? 'Map';
+      pop.appendChild(iframe);
+      pop.dataset.loaded = '1';
+    });
+  }
+
+  // The bio (with the .geo chips) is re-rendered by i18n on language change,
+  // which wipes the preloaded iframes — re-run the preload after each change.
+  const heroBio = document.querySelector('.hero-bio');
+  if (heroBio) new MutationObserver(() => preloadGeoMaps()).observe(heroBio, { childList: true, subtree: true });
+  preloadGeoMaps();
 </script>
