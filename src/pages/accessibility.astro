@@ -2,7 +2,7 @@
 import MainLayout from '../layouts/MainLayout.astro'
 ---
 
-<MainLayout title="Settings" section="Settings" titleKey="settings.title">
+<MainLayout title="Accessibility" section="Accessibility" titleKey="settings.title">
   <link
     slot="head"
     rel="stylesheet"
@@ -145,18 +145,18 @@ import MainLayout from '../layouts/MainLayout.astro'
         </div>
       </section>
 
-      <!-- Account (save preferences) -->
-      <section class="settings-card settings-card--auth" id="settings-account">
-        <div class="settings-card__head">
-          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z"/>
-          </svg>
-          <h3 data-i18n="settings.account.title">Save your preferences</h3>
-        </div>
-        <p class="settings-card__desc" data-i18n="settings.account.desc">Sign in with Google to keep your settings on your account, even if you clear your browsing history.</p>
+    </div>
 
-        <div id="account-state-signedout">
-          <button class="settings-google-btn" id="account-signin-btn">
+    <div class="settings-reset">
+      <button class="settings-reset-btn" id="settings-reset" data-i18n="settings.reset">Reset to default</button>
+      <span class="settings-reset__hint" data-i18n="settings.resetHint">Restores system defaults and stops applying the site's global settings.</span>
+    </div>
+
+    <div class="settings-account" id="settings-account">
+      <div class="settings-account__bar">
+        <div class="settings-account__state" id="account-state-signedout">
+          <span class="settings-account__prompt" data-i18n="settings.account.prompt">Sign in to save your settings to your account</span>
+          <button class="settings-account__signin" id="account-signin-btn">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09Z"/>
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23Z"/>
@@ -166,33 +166,29 @@ import MainLayout from '../layouts/MainLayout.astro'
             <span data-i18n="settings.account.signIn">Sign in with Google</span>
           </button>
         </div>
-
-        <div id="account-state-signedin" hidden>
-          <div class="page-user-row">
-            <img class="page-user-avatar" id="account-avatar" src="" alt="" />
-            <div class="page-user-info">
-              <span class="page-user-name" id="account-name"></span>
-              <button class="settings-signout-btn" id="account-signout-btn">
-                <span data-i18n="settings.account.signOut">Sign out</span>
-              </button>
-            </div>
-          </div>
-          <p class="settings-card__desc" data-i18n="settings.account.saved">Your preferences are saved to your account.</p>
+        <div class="settings-account__state" id="account-state-signedin" hidden>
+          <img class="settings-account__avatar" id="account-avatar" src="" alt="" />
+          <span class="settings-account__name" id="account-name"></span>
+          <span class="settings-account__sep">·</span>
+          <button class="settings-account__signout" id="account-signout-btn" data-i18n="settings.account.signOut">Sign out</button>
         </div>
-      </section>
-
-    </div>
-
-    <div class="settings-reset">
-      <button class="settings-reset-btn" id="settings-reset" data-i18n="settings.reset">Reset to default</button>
-      <span class="settings-reset__hint" data-i18n="settings.resetHint">Restores system defaults and stops applying the site's global settings.</span>
-    </div>
-
-    <div class="settings-storage-note">
-      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/>
-      </svg>
-      <span data-i18n="settings.storageNote"></span>
+        <button
+          class="settings-account__info"
+          id="account-info-btn"
+          aria-label="More info"
+          title="More info"
+          data-i18n-aria-label="settings.account.infoLabel"
+          data-i18n-title="settings.account.infoLabel"
+        >
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+      <div class="settings-account__panel" id="account-info-panel" hidden>
+        <p data-i18n="settings.account.desc">Sign in with Google to keep your settings on your account, even if you clear your browsing history.</p>
+        <p data-i18n="settings.storageNote"></p>
+      </div>
     </div>
   </div>
 </MainLayout>
@@ -281,25 +277,114 @@ import MainLayout from '../layouts/MainLayout.astro'
     color: var(--color-muted);
   }
 
-  .settings-storage-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.4rem;
-    margin-top: 1rem;
-    font-family: ProductSans, sans-serif;
-    font-size: 0.72rem;
-    color: var(--color-muted);
-    line-height: 1.5;
-    max-width: 48rem;
+  .settings-account {
+    margin-top: 1.25rem;
+    font-family: var(--font-ui), sans-serif;
   }
 
-  .settings-storage-note svg {
+  .settings-account__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .settings-account__state {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .settings-account__prompt {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  .settings-account__signin {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--color-text);
+    border: 1px solid color-mix(in srgb, var(--color-text) 18%, transparent);
+    border-radius: var(--radius-md);
+    padding: 0.25rem 0.6rem;
+    cursor: pointer;
+    transition: border-color 160ms, background 160ms;
+  }
+
+  .settings-account__signin:hover {
+    border-color: var(--color-primary);
+    background: var(--primary-05);
+  }
+
+  .settings-account__signin svg {
     width: 0.85rem;
     height: 0.85rem;
     flex-shrink: 0;
-    margin-top: 0.12rem;
-    color: var(--color-primary);
-    opacity: 0.75;
+  }
+
+  .settings-account__avatar {
+    width: 1.3rem;
+    height: 1.3rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .settings-account__name {
+    font-size: 0.75rem;
+    color: var(--color-text);
+  }
+
+  .settings-account__sep { color: var(--color-muted); }
+
+  .settings-account__signout {
+    all: unset;
+    font-size: 0.72rem;
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: color 160ms;
+  }
+
+  .settings-account__signout:hover { color: #e06060; }
+
+  .settings-account__info {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.2rem;
+    height: 1.2rem;
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: color 160ms;
+  }
+
+  .settings-account__info:hover { color: var(--color-primary); }
+
+  .settings-account__info svg {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .settings-account__panel {
+    margin-top: 0.6rem;
+    max-width: 48rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--color-text) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .settings-account__panel p {
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+    margin: 0;
   }
 
   @media (max-width: 52rem) {
@@ -577,6 +662,10 @@ import MainLayout from '../layouts/MainLayout.astro'
   const accSignedin  = document.getElementById('account-state-signedin')  as HTMLElement
   const accAvatar    = document.getElementById('account-avatar')          as HTMLImageElement
   const accName      = document.getElementById('account-name')            as HTMLElement
+
+  const infoBtn   = document.getElementById('account-info-btn')   as HTMLButtonElement
+  const infoPanel = document.getElementById('account-info-panel') as HTMLElement
+  infoBtn.addEventListener('click', () => { infoPanel.hidden = !infoPanel.hidden })
 
   ;(async () => {
     let auth: any

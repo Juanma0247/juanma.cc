@@ -13,6 +13,7 @@ export const es: I18n = {
     games: 'Juegos',
     projects: 'Proyectos',
     settings: 'Ajustes',
+    accessibility: 'Accesibilidad',
     space: 'Space',
   },
   projectsIndex: {
@@ -105,7 +106,7 @@ export const es: I18n = {
     },
   },
   settings: {
-    title: 'Ajustes',
+    title: 'Accesibilidad',
     closeLabel: 'Cerrar ajustes',
     theme: {
       title: 'Tema',
@@ -158,6 +159,8 @@ export const es: I18n = {
     account: {
       title: 'Guarda tus preferencias',
       desc: 'Inicia sesión con Google para conservar tus ajustes en tu cuenta, aunque borres el historial de navegación.',
+      prompt: 'Inicia sesión para guardar los ajustes en tu cuenta',
+      infoLabel: 'Más información',
       signIn: 'Iniciar sesión con Google',
       signOut: 'Cerrar sesión',
       saved: 'Tus preferencias se guardan en tu cuenta.',

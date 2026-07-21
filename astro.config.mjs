@@ -9,6 +9,7 @@ export default defineConfig({
   redirects: {
     '/tools': '/projects#tools',
     '/games': '/projects#games',
+    '/settings': '/accessibility',
   },
   vite: {
     server: {

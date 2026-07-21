@@ -71,7 +71,66 @@ import MainLayout from '../layouts/MainLayout.astro'
             <option value="system" data-i18n="settings.theme.system">System</option>
             <option value="light" data-i18n="settings.theme.light">Light</option>
             <option value="dark" data-i18n="settings.theme.dark">Dark</option>
+            <option value="customizable" data-i18n="settings.theme.custom">Custom</option>
           </select>
+        </div>
+
+        <div class="settings-theme__custom" id="web-theme-custom" hidden>
+          <div class="settings-custom__warnings" id="web-cp-warnings"></div>
+          <div class="settings-custom__colors">
+            <label class="settings-custom__item">
+              <input type="color" id="web-cp-primary" value="#008888" />
+              <span class="settings-custom__item-name" data-i18n="settings.theme.colorPrimary">Primary</span>
+              <span class="settings-custom__hex" id="web-cp-primary-hex">#008888</span>
+            </label>
+            <label class="settings-custom__item">
+              <input type="color" id="web-cp-text" value="#000000" />
+              <span class="settings-custom__item-name" data-i18n="settings.theme.colorText">Text</span>
+              <span class="settings-custom__hex" id="web-cp-text-hex">#000000</span>
+            </label>
+            <label class="settings-custom__item">
+              <input type="color" id="web-cp-bg" value="#ffffff" />
+              <span class="settings-custom__item-name" data-i18n="settings.theme.colorBg">Background</span>
+              <span class="settings-custom__hex" id="web-cp-bg-hex">#ffffff</span>
+            </label>
+            <label class="settings-custom__item">
+              <input type="color" id="web-cp-muted" value="#888888" />
+              <span class="settings-custom__item-name" data-i18n="settings.theme.colorMuted">Muted</span>
+              <span class="settings-custom__hex" id="web-cp-muted-hex">#888888</span>
+            </label>
+          </div>
+          <div class="cp-preview" id="web-cp-preview">
+            <p class="cp-preview__label" data-i18n="settings.theme.previewLabel">Preview</p>
+            <div class="cp-preview__page">
+              <div class="cp-preview__topbar">
+                <span class="cp-preview__brand">Juanma</span>
+                <span class="cp-preview__navlink">Home</span>
+                <span class="cp-preview__navlink cp-preview__navlink--active">About</span>
+                <span class="cp-preview__navlink">Projects</span>
+              </div>
+              <div class="cp-preview__content">
+                <h4 class="cp-preview__title" data-i18n="settings.theme.previewSection">Section title</h4>
+                <p class="cp-preview__body">
+                  <span data-i18n="settings.theme.previewBody">Body text content.</span>
+                  <span class="cp-preview__muted" data-i18n="settings.theme.previewMuted">Secondary info.</span>
+                </p>
+                <div class="cp-preview__row">
+                  <span class="cp-preview__btn">Button</span>
+                  <span class="cp-preview__link">Link</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="settings-custom__presets">
+            <span class="settings-custom__presets-label">Presets</span>
+            <div class="settings-custom__presets-list">
+              <button class="settings-custom__preset" data-preset="grayscale" data-i18n="settings.theme.presets.grayscale">Grayscale</button>
+              <button class="settings-custom__preset" data-preset="pastels" data-i18n="settings.theme.presets.pastels">Pastels</button>
+              <button class="settings-custom__preset" data-preset="warm" data-i18n="settings.theme.presets.warm">Warm</button>
+              <button class="settings-custom__preset" data-preset="vintage" data-i18n="settings.theme.presets.vintage">Vintage</button>
+              <button class="settings-custom__preset" data-preset="neon" data-i18n="settings.theme.presets.neon">Neon</button>
+            </div>
+          </div>
         </div>
         <div class="space-field">
           <label class="page-setting-label" for="web-font" data-i18n="space.web.font">Font</label>
@@ -264,9 +323,91 @@ import MainLayout from '../layouts/MainLayout.astro'
   const webTimer  = document.getElementById('web-status-timer') as HTMLElement
   let webTimerId: ReturnType<typeof setInterval> | null = null
 
+  // ── Custom color picker (broadcast a custom theme, like accessibility) ──────────
+
+  const CP_DEFAULTS = { primary: '#008888', text: '#000000', bg: '#ffffff', muted: '#888888' }
+  const CP_PRESETS: Record<string, typeof CP_DEFAULTS> = {
+    grayscale: { primary: '#555555', text: '#111111', bg: '#f5f5f5', muted: '#888888' },
+    pastels:   { primary: '#6b9fae', text: '#2c4a52', bg: '#f0fafc', muted: '#8fb0bc' },
+    warm:      { primary: '#c07840', text: '#2a1a00', bg: '#fdf4e8', muted: '#a07850' },
+    vintage:   { primary: '#8b6914', text: '#2c1a00', bg: '#f5ecd7', muted: '#9a8050' },
+    neon:      { primary: '#00ff88', text: '#ccffee', bg: '#001a0e', muted: '#00bb66' },
+  }
+
+  function relativeLuminance(hex: string): number {
+    const n = parseInt(hex.replace('#', ''), 16)
+    return [((n >> 16) & 255), ((n >> 8) & 255), (n & 255)]
+      .map(c => { const s = c / 255; return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4) })
+      .reduce((acc, c, i) => acc + c * [0.2126, 0.7152, 0.0722][i], 0)
+  }
+  function contrastRatio(a: string, b: string): number {
+    const la = relativeLuminance(a), lb = relativeLuminance(b)
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05)
+  }
+
+  const cpPanel   = document.getElementById('web-theme-custom') as HTMLElement
+  const cpPrimary = document.getElementById('web-cp-primary') as HTMLInputElement
+  const cpText    = document.getElementById('web-cp-text')    as HTMLInputElement
+  const cpBg      = document.getElementById('web-cp-bg')      as HTMLInputElement
+  const cpMuted   = document.getElementById('web-cp-muted')   as HTMLInputElement
+  const cpWarn    = document.getElementById('web-cp-warnings') as HTMLElement
+  const cpPreview = document.getElementById('web-cp-preview')  as HTMLElement
+  const hexPrimary = document.getElementById('web-cp-primary-hex') as HTMLElement
+  const hexText    = document.getElementById('web-cp-text-hex')    as HTMLElement
+  const hexBg      = document.getElementById('web-cp-bg-hex')      as HTMLElement
+  const hexMuted   = document.getElementById('web-cp-muted-hex')   as HTMLElement
+
+  function syncCpPicker() {
+    hexPrimary.textContent = cpPrimary.value
+    hexText.textContent    = cpText.value
+    hexBg.textContent      = cpBg.value
+    hexMuted.textContent   = cpMuted.value
+    cpPreview.style.setProperty('--pv-primary', cpPrimary.value)
+    cpPreview.style.setProperty('--pv-text',    cpText.value)
+    cpPreview.style.setProperty('--pv-bg',      cpBg.value)
+    cpPreview.style.setProperty('--pv-muted',   cpMuted.value)
+    const checks = [
+      { msg: getMsg('settings.theme.warnTextBg'),      a: cpText.value,    b: cpBg.value,      min: 4.5 },
+      { msg: getMsg('settings.theme.warnPrimaryBg'),   a: cpPrimary.value, b: cpBg.value,      min: 3.0 },
+      { msg: getMsg('settings.theme.warnTextPrimary'), a: cpText.value,    b: cpPrimary.value, min: 4.5 },
+    ]
+    cpWarn.innerHTML = checks
+      .filter(({ a, b, min }) => contrastRatio(a, b) < min)
+      .map(({ msg }) => `<span class="cp-warning--bad">⚠ ${msg}</span>`).join('')
+  }
+
+  function loadCpPicker(colors: typeof CP_DEFAULTS) {
+    cpPrimary.value = colors.primary
+    cpText.value    = colors.text
+    cpBg.value      = colors.bg
+    cpMuted.value   = colors.muted
+    syncCpPicker()
+  }
+
+  function toggleCpPanel() {
+    cpPanel.hidden = webTheme.value !== 'customizable'
+  }
+
+  webTheme.addEventListener('change', () => {
+    toggleCpPanel()
+    if (webTheme.value === 'customizable') loadCpPicker(CP_DEFAULTS)
+  })
+  ;[cpPrimary, cpText, cpBg, cpMuted].forEach(el => el.addEventListener('input', syncCpPicker))
+  document.querySelectorAll<HTMLButtonElement>('#web-theme-custom .settings-custom__preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = CP_PRESETS[btn.dataset.preset!]
+      if (p) loadCpPicker(p)
+    })
+  })
+
   document.getElementById('web-apply')!.addEventListener('click', async () => {
     const fields: Record<string, any> = {}
-    if (webTheme.value) fields.theme = webTheme.value
+    if (webTheme.value === 'customizable') {
+      fields.theme = 'customizable'
+      fields.customColors = { primary: cpPrimary.value, text: cpText.value, bg: cpBg.value, muted: cpMuted.value }
+    } else if (webTheme.value) {
+      fields.theme = webTheme.value
+    }
     if (webFont.value)  fields.font  = webFont.value === '__default' ? '' : webFont.value
     if (webLang.value)  fields.lang  = webLang.value
     try {
@@ -303,6 +444,8 @@ import MainLayout from '../layouts/MainLayout.astro'
       const appliedAt = web.broadcast.appliedAt
       const b = web.broadcast
       webTheme.value = b.theme ?? ''
+      if (b.theme === 'customizable' && b.customColors) loadCpPicker(b.customColors)
+      toggleCpPanel()
       webFont.value  = b.font === '' ? '__default' : (b.font ?? '')
       webLang.value  = b.lang ?? ''
       const tick = () => {

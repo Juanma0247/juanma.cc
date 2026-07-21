@@ -13,7 +13,7 @@ const SECTIONS: Destination[] = [
   { label: 'Projects', value: '/projects', group: 'Sections' },
   { label: 'Scripts',  value: '/scripts',  group: 'Sections' },
   { label: 'Contact',  value: '/contact',  group: 'Sections' },
-  { label: 'Settings', value: '/settings', group: 'Sections' },
+  { label: 'Accessibility', value: '/accessibility', group: 'Sections' },
 ]
 
 // Interactive projects — derived from projects.json so new ones appear automatically.

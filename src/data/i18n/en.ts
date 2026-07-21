@@ -11,6 +11,7 @@ export interface I18n {
     games: string
     projects: string
     settings: string
+    accessibility: string
     space: string
   }
   projectsIndex: {
@@ -156,6 +157,8 @@ export interface I18n {
     account: {
       title: string
       desc: string
+      prompt: string
+      infoLabel: string
       signIn: string
       signOut: string
       saved: string
@@ -307,6 +310,7 @@ export const en: I18n = {
     games: 'Games',
     projects: 'Projects',
     settings: 'Settings',
+    accessibility: 'Accessibility',
     space: 'Space',
   },
   projectsIndex: {
@@ -399,7 +403,7 @@ export const en: I18n = {
     },
   },
   settings: {
-    title: 'Settings',
+    title: 'Accessibility',
     closeLabel: 'Close settings',
     theme: {
       title: 'Theme',
@@ -452,6 +456,8 @@ export const en: I18n = {
     account: {
       title: 'Save your preferences',
       desc: 'Sign in with Google to keep your settings on your account, even if you clear your browsing history.',
+      prompt: 'Sign in to save your settings to your account',
+      infoLabel: 'More info',
       signIn: 'Sign in with Google',
       signOut: 'Sign out',
       saved: 'Your preferences are saved to your account.',
