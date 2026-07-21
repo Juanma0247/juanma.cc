@@ -5,6 +5,9 @@ import TuringMachine from '/js/lib/TuringMachine.js'
 const COLLECTION = 'turing-machines'
 let   _db        = null
 
+const tr = (key, fallback) =>
+  typeof window !== 'undefined' && window.i18nGet ? window.i18nGet(`pd.tm.${key}`, fallback) : fallback
+
 export function initDB(config) {
   const app = getApps().length ? getApps()[0] : initializeApp(config)
   _db = getFirestore(app)
@@ -74,7 +77,7 @@ async function saveMachine(id, data) {
     await setDoc(doc(collection(_db, COLLECTION), id), data)
     return true
   } catch (e) {
-    alert(`Error uploading: ${e.message}`)
+    alert(`${tr('errUploading', 'Error uploading:')} ${e.message}`)
     return false
   }
 }
@@ -88,27 +91,27 @@ export function validateMachine(data) {
   const K       = data.states || []
   const I       = data.trans  || {}
 
-  if (!String(data.title       || '').trim()) errors.push('El título es obligatorio.')
-  if (!String(data.description || '').trim()) errors.push('La descripción es obligatoria.')
-  if (!String(data.author      || '').trim()) errors.push('El autor es obligatorio.')
+  if (!String(data.title       || '').trim()) errors.push(tr('valTitle', 'The title is required.'))
+  if (!String(data.description || '').trim()) errors.push(tr('valDesc', 'The description is required.'))
+  if (!String(data.author      || '').trim()) errors.push(tr('valAuthor', 'The author is required.'))
 
   if (rawAlph.length === 0) {
-    errors.push('El alfabeto Σ debe tener al menos un símbolo.')
+    errors.push(tr('valAlphMin', 'The alphabet Σ must have at least one symbol.'))
   } else {
     rawAlph.forEach(s => {
-      if (s.length !== 1) errors.push(`El símbolo "${s}" debe ser un único carácter.`)
+      if (s.length !== 1) errors.push(tr('valSymSingle', 'The symbol "{s}" must be a single character.').replaceAll('{s}', s))
     })
-    if (new Set(rawAlph).size !== rawAlph.length) errors.push('El alfabeto Σ tiene símbolos duplicados.')
+    if (new Set(rawAlph).size !== rawAlph.length) errors.push(tr('valAlphDup', 'The alphabet Σ has duplicate symbols.'))
   }
 
   if (K.length === 0) {
-    errors.push('El conjunto de estados K debe tener al menos un estado.')
+    errors.push(tr('valStatesMin', 'The set of states K must have at least one state.'))
   } else {
-    if (new Set(K).size !== K.length) errors.push('El conjunto de estados K tiene entradas duplicadas.')
+    if (new Set(K).size !== K.length) errors.push(tr('valStatesDup', 'The set of states K has duplicate entries.'))
   }
 
   if (K.length > 0 && !K.includes(data.initState)) {
-    errors.push(`El estado inicial "${data.initState}" no pertenece a K = {${K.join(', ')}}.`)
+    errors.push(tr('valInitState', 'The initial state "{s}" does not belong to K = {K}.').replaceAll('{s}', data.initState).replaceAll('{K}', K.join(', ')))
   }
 
   if (data.tape) {
@@ -116,23 +119,23 @@ export function validateMachine(data) {
       .filter(c => c !== '#' && c !== '_')
       .filter(c => !rawAlph.includes(c))
     if (invalid.length) {
-      errors.push(`La cinta contiene símbolos fuera de Σ ∪ {#}: ${[...new Set(invalid)].join(' ')}`)
+      errors.push(tr('valTapeInvalid', 'The tape contains symbols outside Σ ∪ {#}: {syms}').replaceAll('{syms}', [...new Set(invalid)].join(' ')))
     }
   }
 
   if (Object.keys(I).length === 0) {
-    errors.push('I debe tener al menos una instrucción (la función de transición no puede estar vacía).')
+    errors.push(tr('valIMin', 'I must have at least one instruction (the transition function cannot be empty).'))
   }
 
   Object.entries(I).forEach(([key, val]) => {
     const parts = key.split(',')
     if (parts.length !== 2) {
-      errors.push(`Clave de transición malformada: "${key}" — se esperaba "estado,símbolo".`)
+      errors.push(tr('valTransMalformed', 'Malformed transition key: "{key}" — expected "state,symbol".').replaceAll('{key}', key))
       return
     }
     const [fromState, readSym] = parts
-    if (!K.includes(fromState))    errors.push(`Transición "${key}": el estado "${fromState}" ∉ K.`)
-    if (!allSym.includes(readSym)) errors.push(`Transición "${key}": el símbolo "${readSym}" ∉ Σ ∪ {#}.`)
+    if (!K.includes(fromState))    errors.push(tr('valTransState', 'Transition "{key}": state "{s}" ∉ K.').replaceAll('{key}', key).replaceAll('{s}', fromState))
+    if (!allSym.includes(readSym)) errors.push(tr('valTransSym', 'Transition "{key}": symbol "{s}" ∉ Σ ∪ {#}.').replaceAll('{key}', key).replaceAll('{s}', readSym))
 
     const str = String(val).trim()
 
@@ -140,18 +143,18 @@ export function validateMachine(data) {
     const cm = str.match(/^(.)(R|L)(@[a-z0-9-]+(?::q\d+)?)$/i)
     if (cm) {
       const [, write] = cm
-      if (!allSym.includes(write)) errors.push(`Instrucción "${key}": escribe "${write}" ∉ Σ ∪ {#}.`)
+      if (!allSym.includes(write)) errors.push(tr('valInstrWrite', 'Instruction "{key}": writes "{s}" ∉ Σ ∪ {#}.').replaceAll('{key}', key).replaceAll('{s}', write))
       return   // el estado destino (@machine-id) no se valida contra K
     }
 
     // Instrucción regular
     const m = str.match(/^(.)(R|L)(\w+)$/i)
     if (!m) {
-      errors.push(`Instrucción "${key}" → "${val}": formato inválido. Se espera ⟨símbolo⟩⟨R|L⟩⟨estado⟩ (ej. 1Rq0, #Lq2) o llamada a sub-máquina (ej. 1R@copy-unary:q2).`)
+      errors.push(tr('valInstrFormat', 'Instruction "{key}" → "{val}": invalid format. Expected ⟨symbol⟩⟨R|L⟩⟨state⟩ (e.g. 1Rq0, #Lq2) or a sub-machine call (e.g. 1R@copy-unary:q2).').replaceAll('{key}', key).replaceAll('{val}', val))
     } else {
       const [, write, , next] = m
-      if (!allSym.includes(write))         errors.push(`Instrucción "${key}": escribe "${write}" ∉ Σ ∪ {#}.`)
-      if (!K.includes(next.toLowerCase())) errors.push(`Instrucción "${key}": estado siguiente "${next}" ∉ K.`)
+      if (!allSym.includes(write))         errors.push(tr('valInstrWrite', 'Instruction "{key}": writes "{s}" ∉ Σ ∪ {#}.').replaceAll('{key}', key).replaceAll('{s}', write))
+      if (!K.includes(next.toLowerCase())) errors.push(tr('valInstrNext', 'Instruction "{key}": next state "{s}" ∉ K.').replaceAll('{key}', key).replaceAll('{s}', next))
     }
   })
 
@@ -180,11 +183,11 @@ function buildCard(id, doc) {
   const info = document.createElement('div')
   info.className = 'tm-lib-card-info'
   const idBadge = doc.machineId
-    ? `<span class="tm-lib-card-id" title="ID para llamadas: @${esc(doc.machineId)}">@${esc(doc.machineId)}</span>`
+    ? `<span class="tm-lib-card-id" title="${tr('idForCalls', 'ID for calls:')} @${esc(doc.machineId)}">@${esc(doc.machineId)}</span>`
     : ''
   info.innerHTML = `
     <span class="tm-lib-card-title">${esc(doc.title)}</span>
-    <span class="tm-lib-card-author">by ${esc(doc.author || 'Unknown')}</span>
+    <span class="tm-lib-card-author">${tr('by', 'by')} ${esc(doc.author || tr('unknown', 'Unknown'))}</span>
     ${idBadge}
   `
 
@@ -241,7 +244,7 @@ export class TMGallery {
 
   async _load() {
     if (!this.grid) return
-    this.grid.innerHTML = '<div class="tm-lib-status">Cargando…</div>'
+    this.grid.innerHTML = `<div class="tm-lib-status">${tr('loading', 'Loading…')}</div>`
     const docs = await fetchMachines()
     this._renderGrid(docs)
   }
@@ -250,7 +253,7 @@ export class TMGallery {
     if (!this.grid) return
     const entries = Object.entries(docs)
     if (entries.length === 0) {
-      this.grid.innerHTML = '<div class="tm-lib-status">Aún no hay máquinas en la librería. ¡Sé el primero en subir una!</div>'
+      this.grid.innerHTML = `<div class="tm-lib-status">${tr('emptyLibrary', 'No machines in the library yet. Be the first to upload one!')}</div>`
       return
     }
     this.grid.innerHTML = ''
@@ -280,19 +283,19 @@ export class TMGallery {
     const btnLoad  = this.detail.querySelector('.tm-lib-detail-load')
 
     if (titleEl)  titleEl.textContent  = data.title || ''
-    if (authorEl) authorEl.textContent = `by ${data.author || 'Unknown'}`
+    if (authorEl) authorEl.textContent = `${tr('by', 'by')} ${data.author || tr('unknown', 'Unknown')}`
     if (descEl)   descEl.textContent   = data.description || ''
 
     const idRowEl = this.detail.querySelector('.tm-lib-detail-id')
     if (idRowEl) {
       if (data.machineId) {
         idRowEl.style.display = ''
-        idRowEl.innerHTML = `ID para llamadas: <code class="tm-lib-detail-id-code">@${esc(data.machineId)}</code>
-          <button class="tm-lib-id-copy-btn" data-id="@${esc(data.machineId)}">Copiar</button>`
+        idRowEl.innerHTML = `${tr('idForCalls', 'ID for calls:')} <code class="tm-lib-detail-id-code">@${esc(data.machineId)}</code>
+          <button class="tm-lib-id-copy-btn" data-id="@${esc(data.machineId)}">${tr('copy', 'Copy')}</button>`
         idRowEl.querySelector('.tm-lib-id-copy-btn')?.addEventListener('click', function () {
           navigator.clipboard.writeText(this.dataset.id).then(() => {
-            this.textContent = '✓ Copiado'
-            setTimeout(() => { this.textContent = 'Copiar' }, 2000)
+            this.textContent = tr('copied', '✓ Copied')
+            setTimeout(() => { this.textContent = tr('copy', 'Copy') }, 2000)
           }).catch(() => {})
         })
       } else {
@@ -363,7 +366,7 @@ export class TMUpload {
 
     if (this.errEl) this.errEl.innerHTML = ''
     const btn = this.form.querySelector('button[type="submit"]')
-    if (btn) { btn.disabled = true; btn.textContent = 'Subiendo…' }
+    if (btn) { btn.disabled = true; btn.textContent = tr('uploading', 'Uploading…') }
 
     // Generar machineId único a partir del título
     const baseId    = generateMachineId(title)
@@ -372,7 +375,7 @@ export class TMUpload {
     const id = `tm_${Date.now()}_${Math.random().toString(36).slice(2,6)}`
     const ok = await saveMachine(id, { ...data, machineId })
 
-    if (btn) { btn.disabled = false; btn.textContent = 'Subir' }
+    if (btn) { btn.disabled = false; btn.textContent = tr('upload', 'Upload') }
 
     if (ok) {
       this.tm._loadedTitle       = title
@@ -388,16 +391,16 @@ export class TMUpload {
     const id = esc(machineId)
     this.errEl.innerHTML = `
       <li class="tm-up-success">
-        ¡Máquina subida exitosamente!<br>
-        <strong>ID para llamadas:</strong>
+        ${tr('uploadSuccess', 'Machine uploaded successfully!')}<br>
+        <strong>${tr('idForCalls', 'ID for calls:')}</strong>
         <code class="tm-up-machine-id">@${id}</code>
-        <button class="tm-up-copy-id" data-copy="@${id}">Copiar</button>
+        <button class="tm-up-copy-id" data-copy="@${id}">${tr('copy', 'Copy')}</button>
       </li>
     `
     this.errEl.querySelector('.tm-up-copy-id')?.addEventListener('click', function () {
       navigator.clipboard.writeText(this.dataset.copy).then(() => {
-        this.textContent = '✓ Copiado'
-        setTimeout(() => { this.textContent = 'Copiar' }, 2000)
+        this.textContent = tr('copied', '✓ Copied')
+        setTimeout(() => { this.textContent = tr('copy', 'Copy') }, 2000)
       }).catch(() => {})
     })
   }

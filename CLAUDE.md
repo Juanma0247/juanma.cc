@@ -12,6 +12,21 @@ Sitio personal / portafolio de Juan Manuel Díaz. Astro (`output: 'hybrid'`) con
 - Los **proyectos interactivos** (`src/data/projects.json`) y los **proyectos de desarrollo** (`src/data/built.ts`) se derivan automáticamente; al añadir uno nuevo ahí, aparece solo en los selectores.
 - Al crear una **nueva sección de nivel superior** (una página nueva en `src/pages/…`) o un nuevo **juego/herramienta**, hay que añadir su ruta a `destinations.ts` (arrays `SECTIONS`, `GAMES` o `TOOLS`) para que quede disponible como destino.
 
+## Internacionalización (i18n) — soporte obligatorio de traducción
+
+El sitio es **bilingüe (español e inglés)**. El idioma se resuelve con prioridad **web > usuario > sistema** y se aplica en el cliente.
+
+**Cada vez que se añada o modifique un texto visible para el usuario, hay que darle soporte de traducción en ambos idiomas.** No dejar cadenas "quemadas" en un solo idioma.
+
+Cómo funciona:
+
+- **Diccionarios:** `src/data/i18n/en.ts` (define la interfaz `I18n`) y `src/data/i18n/es.ts`. Toda clave nueva debe existir en **los dos** archivos. El contenido dinámico de los proyectos/juegos/herramientas vive bajo el espacio `pd` (project dynamic).
+- **HTML estático (`.astro`):** marcar el elemento con `data-i18n="ruta.a.la.clave"` (o `data-i18n-placeholder`, `data-i18n-title`, `data-i18n-aria-label`). El texto por defecto en el HTML debe ser el **inglés** (idioma base del render). `applyLang` en `src/layouts/MainLayout.astro` lo intercambia; si el valor contiene `<`, usa `innerHTML`.
+- **Contenido generado por JS** (`public/js/lib/*.js`): usar el puente global `window.i18nGet('clave', 'fallback en inglés')`. Definir un helper local `const t = (k, f) => window.i18nGet ? window.i18nGet('pd.<proyecto>.' + k, f) : f`. Para re-traducir al vuelo, escuchar `window.addEventListener('langchanged', …)` y volver a renderizar la parte afectada.
+- **Tarjetas del mosaico y navbar:** los títulos usan `cardTitles.<slug>` y las etiquetas/tags usan `tags.<clave>` (la clave se genera con `tagKey()` de `src/data/i18n/keys.ts`). Al añadir un proyecto/juego/herramienta nuevo, agregar su título en `cardTitles` y sus tags en `tags` (en ambos idiomas).
+- **LaTeX:** no traducir la notación matemática. Para prosa/etiquetas que contienen `\(…\)`, `applyLang` dispara un re-render global de KaTeX en `langchanged`, así que sí se pueden traducir (guardar el LaTeX completo en el diccionario, con `\\` escapado en el `.ts`).
+- **Excepciones que se dejan sin traducir a propósito:** nombres propios y términos técnicos (React, Firebase, Turing Machine…), identificadores de código, y el prompt para IA de `TMPrompt.js` (se mantiene en inglés por convención).
+
 ## Política de commit y push
 
 Hacer `git commit` y `git push` (a la rama principal) en estos momentos:

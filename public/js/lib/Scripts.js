@@ -1,5 +1,8 @@
+const t = (key, fallback) =>
+  typeof window !== 'undefined' && window.i18nGet ? window.i18nGet(`pd.scripts.${key}`, fallback) : fallback
+
 class Scripts {
-  addCode(container, name, code, language) {
+  addCode(container, name, code, language, key) {
     const div = document.createElement('div')
     div.classList.add('codigo')
 
@@ -12,7 +15,8 @@ class Scripts {
     titleRow.style.alignItems = 'center'
 
     const h3 = document.createElement('h3')
-    h3.textContent = name
+    h3.textContent = key ? t(key, name) : name
+    if (key) { h3.dataset.scriptKey = key; h3.dataset.scriptFallback = name }
     h3.style.cursor = 'pointer'
 
     const ico = document.createElement('img')
@@ -53,7 +57,13 @@ class Scripts {
   }
 
   main(container) {
-    const a = (name, code, lang) => this.addCode(container, name, code, lang)
+    const a = (name, code, lang, key) => this.addCode(container, name, code, lang, key)
+
+    window.addEventListener('langchanged', () => {
+      container.querySelectorAll('h3[data-script-key]').forEach(h3 => {
+        h3.textContent = t(h3.dataset.scriptKey, h3.dataset.scriptFallback)
+      })
+    })
 
     a('numeroANombre', `millones = [
   ('sextillónes',   1000000000000000000),
@@ -156,7 +166,7 @@ def tab(a, b):
 
 tab(1, 4)
 print()
-tab(5, 9)`, 'language-python')
+tab(5, 9)`, 'language-python', 'tablasMultiplicar')
 
     a('Triángulo numérico', `n = int(input("Ingrese el número: "))
 for f in range(1, n+1):
@@ -169,7 +179,7 @@ for f in range(1, n+1):
     for _ in range(n-f): print(" ", end=(""))
   for a in range(1, f+1): print(a, end=(""))
   for d in range(f-1, 0, -1): print(d, end=(""))
-  print()`, 'language-python')
+  print()`, 'language-python', 'trianguloNumerico')
 
     a('Máxima suma de subvector contiguo', `x = [31, -41, 59, 26, -53, 58, 97, -93, -23, 84]
 n = len(x)
@@ -177,7 +187,7 @@ sum, res, ma = 0, 0, 0
 for i in range(n):
   ma = max(ma + x[i], 0)
   res = max(res, ma)
-print(res)`, 'language-python')
+print(res)`, 'language-python', 'maxSubarray')
 
     a('Hilo bajo bloques de gravedad', `local gravity_blocks = {
     blocks.sand, blocks.red_sand, blocks.gravel, blocks.anvil,
@@ -202,11 +212,11 @@ end
 
 if put_here(getBlock(x, y, z), getBlock(x, y + 1, z)) then
     return blocks.tripwire
-end`, 'language-lua')
+end`, 'language-lua', 'gravityThread')
 
     a('Ajedrez tridimensional', `if getBlock(x,y,z) == blocks.obsidian and (x + y + z) % 2 == 0 then
     setBlock(x,y,z, blocks.air)
-end`, 'language-lua')
+end`, 'language-lua', 'chess3d')
 
     a('Construir edificio', `local config = {
     width = 10, length = 10, height = 5, n_floors = 1,
@@ -258,10 +268,10 @@ function buildBuilding()
         end
     end
 end
-buildBuilding()`, 'language-lua')
+buildBuilding()`, 'language-lua', 'buildBuilding')
 
-    a('Espada Golpeo 255', `/give @s netherite_sword[enchantments={"minecraft:smite":255}]`, 'language-minecraft')
-    a('Espada Filo 255',   `/give @s netherite_sword[enchantments={"minecraft:sharpness":255}]`, 'language-minecraft')
+    a('Espada Golpeo 255', `/give @s netherite_sword[enchantments={"minecraft:smite":255}]`, 'language-minecraft', 'swordSmite')
+    a('Espada Filo 255',   `/give @s netherite_sword[enchantments={"minecraft:sharpness":255}]`, 'language-minecraft', 'swordSharpness')
 
     const spacer = document.createElement('div')
     spacer.classList.add('buttonSpace')

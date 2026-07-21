@@ -601,6 +601,159 @@ export const en: I18n = {
     chiSquared: {
       degreesOfFreedom: '\\(\\text{Degrees of freedom}\\)',
     },
+    scripts: {
+      tablasMultiplicar: 'Multiplication tables',
+      trianguloNumerico: 'Numeric triangle',
+      maxSubarray: 'Maximum contiguous subarray sum',
+      gravityThread: 'Thread under gravity blocks',
+      chess3d: 'Three-dimensional chess',
+      buildBuilding: 'Build a building',
+      swordSmite: 'Smite 255 sword',
+      swordSharpness: 'Sharpness 255 sword',
+    },
+    tm: {
+      statusIdle: 'Waiting',
+      statusRunning: 'Running…',
+      statusHalted: 'Halted',
+      statusLoop: '∞ Loop / step limit',
+      reads: 'reads',
+      writes: 'writes',
+      moves: 'moves',
+      dirRight: 'Right →',
+      dirLeft: '← Left',
+      goesTo: 'goes to',
+      invokes: 'invokes',
+      resumesAt: ', resumes at',
+      noResume: ' (no resume)',
+      finalCombHalts: 'final combination, the machine halts',
+      stepUndone: '← step undone',
+      tapeLabel: 'Tape',
+      stepBackAvail: 'Step back (←) — {n} step{s} available',
+      stepBackNone: 'Step back (←) — no steps to undo',
+      invalidFile: 'Invalid file. Expected a Turing Machine JSON.',
+      theoryTableTitle: 'Instructions & Final Combinations',
+      theoryTableHtml: `
+<h4>Turing Machine</h4>
+<div class="tm-def">
+  A <em>Turing machine</em> T over Σ is a triple
+  <em>T = (K, q₀, I)</em> where K is a finite set of states,
+  q₀ ∈ K is the initial state, and I is a partial function
+  <em>I : K × (Σ ∪ {#}) → (Σ ∪ {#}) × {R, L} × K</em>.
+</div>
+<h4>Instruction</h4>
+<div class="tm-def">
+  An <em>instruction</em> is a quintuple
+  <em>(qᵢ, s, t, D, qⱼ)</em> such that:<br>
+  · qᵢ, qⱼ ∈ K &nbsp;(states)<br>
+  · s, t ∈ Σ ∪ {#} &nbsp;(symbols)<br>
+  · D ∈ {R, L} &nbsp;(direction)<br>
+  · I(qᵢ, s) = (t, D, qⱼ)
+</div>
+<h4>Final combination</h4>
+<div class="tm-def">
+  A pair <em>(qᵢ, s)</em> is a <em>final combination</em>
+  if it does not appear at the start of any instruction.
+  The machine <em>halts</em> when it reads s in state qᵢ.
+</div>
+<p class="tm-ref">De Castro Korgi §6.1 · slides §1–5</p>`,
+      theoryExecutionTitle: 'Instantaneous Configuration & Step',
+      theoryExecutionHtml: `
+<h4>Instantaneous configuration</h4>
+<div class="tm-def">
+  Expression <em>a₁…aᵢ₋₁ q aᵢ…aₙ</em>: the control unit
+  is in state <em>q</em> scanning symbol <em>aᵢ</em>.
+  Cells outside the range hold the blank #.
+</div>
+<h4>Computational step ⊢</h4>
+<div class="tm-def">
+  If <em>I(q, s) = (p, b, R)</em>:&nbsp; <em>…qsa… ⊢ …bpa…</em><br>
+  If <em>I(q, s) = (p, b, L)</em>:&nbsp; <em>…cqs… ⊢ …pcb…</em>
+</div>
+<h4>Accepted language</h4>
+<div class="tm-def">
+  <em>L(M) = &#123; w ∈ Σ* : q₀w ⊢* w₁pw₂, p ∈ F &#125;</em><br>
+  The machine accepts w if it halts in a final state.
+</div>
+<h4>Infinite loop</h4>
+<div class="tm-def">
+  If the same configuration repeats, the machine never halts.
+  The simulator detects this automatically.
+</div>
+<p class="tm-ref">De Castro Korgi §6.1 · slides §6–16</p>`,
+      theoryDiagramTitle: 'State Diagram',
+      theoryDiagramHtml: `
+<h4>Transition diagram</h4>
+<div class="tm-def">
+  The diagram is a <em>labeled digraph</em>:<br>
+  · Nodes = states q ∈ K<br>
+  · Arrows = instructions labeled <em>s|tD</em><br>
+  &nbsp;&nbsp;(read s, write t, move D)
+</div>
+<h4>Conventions</h4>
+<div class="tm-def">
+  · Initial state: incoming arrow ►<br>
+  · Active state: highlighted in real time<br>
+  · Self-loop: circular arrow on the same cell<br>
+  · Opposite arcs: curves on opposite sides
+</div>
+<p class="tm-ref">De Castro Korgi §6.1 · slides §6</p>`,
+      theoryHistoryTitle: 'Configuration History & Accepted Language',
+      theoryHistoryHtml: `
+<h4>Configuration history</h4>
+<div class="tm-def">
+  Each row shows the instantaneous configuration <em>u q v</em>
+  at that step. The highlighted cell is the head position.
+</div>
+<h4>Recursively enumerable (RE)</h4>
+<div class="tm-def">
+  A language L is <em>RE</em> if there is a TM M such that L(M) = L.
+  L is <em>recursive</em> if, in addition, M halts on every input.
+</div>
+<h4>Loops and undecidability</h4>
+<div class="tm-def">
+  If the same configuration repeats, the TM never halts.
+  The <em>halting problem</em> (does M halt on input w?)
+  is <em>undecidable</em> — no general algorithm exists.
+</div>
+<p class="tm-ref">De Castro Korgi §7.5–§7.6</p>`,
+      exCountOnes: 'Count ones — book example (slides §2)',
+      exParity: 'Parity checker — q0=even, q1=odd (halts at end)',
+      exUnaryAdd: 'Unary addition  111+11=11111  (slides §22)',
+      exAddOneDecimal: 'Add 1 in decimal  2397→2398  (slides §31)',
+      exBinaryIncrement: 'Binary increment  1011→1100',
+      exSwapBits: 'Swap 0↔1 (complement bits)',
+      exBusyBeaver2: 'Busy Beaver 2 — writes 4 ones in 6 steps',
+      exBusyBeaver3: 'Busy Beaver 3 — writes 6 ones in 21 steps',
+      exBlank: '— Blank machine (start from scratch) —',
+      loading: 'Loading…',
+      emptyLibrary: 'No machines in the library yet. Be the first to upload one!',
+      by: 'by',
+      unknown: 'Unknown',
+      idForCalls: 'ID for calls:',
+      copy: 'Copy',
+      copied: '✓ Copied',
+      uploading: 'Uploading…',
+      upload: 'Upload',
+      errUploading: 'Error uploading:',
+      uploadSuccess: 'Machine uploaded successfully!',
+      valTitle: 'The title is required.',
+      valDesc: 'The description is required.',
+      valAuthor: 'The author is required.',
+      valAlphMin: 'The alphabet Σ must have at least one symbol.',
+      valSymSingle: 'The symbol "{s}" must be a single character.',
+      valAlphDup: 'The alphabet Σ has duplicate symbols.',
+      valStatesMin: 'The set of states K must have at least one state.',
+      valStatesDup: 'The set of states K has duplicate entries.',
+      valInitState: 'The initial state "{s}" does not belong to K = {K}.',
+      valTapeInvalid: 'The tape contains symbols outside Σ ∪ {#}: {syms}',
+      valIMin: 'I must have at least one instruction (the transition function cannot be empty).',
+      valTransMalformed: 'Malformed transition key: "{key}" — expected "state,symbol".',
+      valTransState: 'Transition "{key}": state "{s}" ∉ K.',
+      valTransSym: 'Transition "{key}": symbol "{s}" ∉ Σ ∪ {#}.',
+      valInstrWrite: 'Instruction "{key}": writes "{s}" ∉ Σ ∪ {#}.',
+      valInstrFormat: 'Instruction "{key}" → "{val}": invalid format. Expected ⟨symbol⟩⟨R|L⟩⟨state⟩ (e.g. 1Rq0, #Lq2) or a sub-machine call (e.g. 1R@copy-unary:q2).',
+      valInstrNext: 'Instruction "{key}": next state "{s}" ∉ K.',
+    },
   },
   projects: {
     tm: {

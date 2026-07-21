@@ -22,6 +22,17 @@
 //  +   Backward step (undo) with full state stack
 // ══════════════════════════════════════════════════════════════════
 
+const tr = (key, fallback) =>
+  typeof window !== 'undefined' && window.i18nGet ? window.i18nGet(`pd.tm.${key}`, fallback) : fallback
+
+// Example key → i18n key (labels are localized; the machine data is not).
+const EX_LABEL_KEYS = {
+  'count-ones': 'exCountOnes', 'parity': 'exParity', 'unary-add': 'exUnaryAdd',
+  'add-one-decimal': 'exAddOneDecimal', 'binary-increment': 'exBinaryIncrement',
+  'swap-bits': 'exSwapBits', 'busy-beaver-2': 'exBusyBeaver2',
+  'busy-beaver-3': 'exBusyBeaver3', 'blank': 'exBlank',
+}
+
 class TuringMachine {
 
   // ── Constructor ───────────────────────────────────────────────
@@ -159,7 +170,7 @@ class TuringMachine {
       this.renderUI()
       this._schedDiagram()
       if (this.elLastInst) {
-        this.elLastInst.innerHTML = `<span class="tm-li-state">${this.curState}</span> lee <span class="tm-li-sym">${sym === '#' ? '_' : sym}</span> — <strong>combinación final, la máquina se detiene</strong>`
+        this.elLastInst.innerHTML = `<span class="tm-li-state">${this.curState}</span> ${tr('reads', 'reads')} <span class="tm-li-sym">${sym === '#' ? '_' : sym}</span> — <strong>${tr('finalCombHalts', 'final combination, the machine halts')}</strong>`
       }
       return false
     }
@@ -255,7 +266,7 @@ class TuringMachine {
     this.seenCfgs = new Set()
     if (this.history.length > 0) this.history.shift()
     if (this.status === 'halted' || this.status === 'loop') this.setStatus('idle')
-    if (this.elLastInst) this.elLastInst.textContent = '← paso deshecho'
+    if (this.elLastInst) this.elLastInst.textContent = tr('stepUndone', '← step undone')
     this.renderTape()
     this.renderTapeOutput()
     this.renderHistory()
@@ -281,7 +292,7 @@ class TuringMachine {
     if (!this.elLastInst) return
     const rs = sym  === '#' ? '_' : sym
     const ws = inst.write === '#' ? '_' : inst.write
-    const dr = inst.dir === 'R' ? 'Derecha →' : '← Izquierda'
+    const dr = inst.dir === 'R' ? tr('dirRight', 'Right →') : tr('dirLeft', '← Left')
 
     let nextHtml
     if (inst.next.startsWith('@')) {
@@ -290,18 +301,18 @@ class TuringMachine {
       const callId   = colonIdx >= 0 ? callStr.slice(0, colonIdx) : callStr
       const resume   = colonIdx >= 0 ? callStr.slice(colonIdx + 1) : null
       const resumePart = resume
-        ? `, reanuda en <span class="tm-li-state">${resume}</span>`
-        : ' (sin reanudar)'
-      nextHtml = `invoca <span class="tm-li-call">@${callId}</span>${resumePart}`
+        ? `${tr('resumesAt', ', resumes at')} <span class="tm-li-state">${resume}</span>`
+        : tr('noResume', ' (no resume)')
+      nextHtml = `${tr('invokes', 'invokes')} <span class="tm-li-call">@${callId}</span>${resumePart}`
     } else {
-      nextHtml = `va a <span class="tm-li-state">${inst.next}</span>`
+      nextHtml = `${tr('goesTo', 'goes to')} <span class="tm-li-state">${inst.next}</span>`
     }
 
     this.elLastInst.innerHTML =
-      `<span class="tm-li-state">${state}</span> lee ` +
+      `<span class="tm-li-state">${state}</span> ${tr('reads', 'reads')} ` +
       `<span class="tm-li-sym">${rs}</span> → ` +
-      `escribe <span class="tm-li-sym">${ws}</span>, ` +
-      `mueve ${dr}, ${nextHtml}`
+      `${tr('writes', 'writes')} <span class="tm-li-sym">${ws}</span>, ` +
+      `${tr('moves', 'moves')} ${dr}, ${nextHtml}`
   }
 
   // ── Execution control ─────────────────────────────────────────
@@ -576,7 +587,7 @@ class TuringMachine {
     }
     const rangeLabel = min === max ? `pos ${min}` : `pos ${min}…${max}`
     el.className = 'tm-tape-output tm-out-active'
-    el.innerHTML = `<span class="tm-out-label">Tape (${rangeLabel}):</span><span class="tm-out-content">${parts.join(' ')}</span>`
+    el.innerHTML = `<span class="tm-out-label">${tr('tapeLabel', 'Tape')} (${rangeLabel}):</span><span class="tm-out-content">${parts.join(' ')}</span>`
   }
 
   // ── Configuration history ─────────────────────────────────────
@@ -614,10 +625,10 @@ class TuringMachine {
   setStatus(type) {
     this.status = type
     const map = {
-      idle:    ['En espera',              ''],
-      running: ['Ejecutando…',            'tm-s-run'],
-      halted:  ['Detenida',               'tm-s-halt'],
-      loop:    ['∞ Bucle / límite pasos', 'tm-s-loop'],
+      idle:    [tr('statusIdle', 'Waiting'),          ''],
+      running: [tr('statusRunning', 'Running…'),       'tm-s-run'],
+      halted:  [tr('statusHalted', 'Halted'),          'tm-s-halt'],
+      loop:    [tr('statusLoop', '∞ Loop / step limit'), 'tm-s-loop'],
     }
     const [text, cls] = map[type] ?? map.idle
     this.elStatus.textContent = text
@@ -636,8 +647,8 @@ class TuringMachine {
     if (this.elBtnBack) {
       this.elBtnBack.disabled = !canBack
       this.elBtnBack.title    = canBack
-        ? `Step back (←) — ${n} step${n > 1 ? 's' : ''} available`
-        : 'Step back (←) — no steps to undo'
+        ? tr('stepBackAvail', 'Step back (←) — {n} step{s} available').replaceAll('{n}', n).replaceAll('{s}', n > 1 ? 's' : '')
+        : tr('stepBackNone', 'Step back (←) — no steps to undo')
     }
     const elBadge = document.getElementById('tm-back-count')
     if (elBadge) elBadge.textContent = n > 0 ? `(${n})` : ''
@@ -691,105 +702,17 @@ class TuringMachine {
 
   get _theory() {
     return {
-      table: {
-        title: 'Instructions & Final Combinations',
-        html: `
-<h4>Máquina de Turing</h4>
-<div class="tm-def">
-  Una <em>máquina de Turing</em> T sobre Σ es una tripla
-  <em>T = (K, q₀, I)</em> donde K es un conjunto finito de estados,
-  q₀ ∈ K es el estado inicial, e I es una función parcial
-  <em>I : K × (Σ ∪ {#}) → (Σ ∪ {#}) × {R, L} × K</em>.
-</div>
-<h4>Instrucción</h4>
-<div class="tm-def">
-  Una <em>instrucción</em> es una quíntupla
-  <em>(qᵢ, s, t, D, qⱼ)</em> tal que:<br>
-  · qᵢ, qⱼ ∈ K &nbsp;(estados)<br>
-  · s, t ∈ Σ ∪ {#} &nbsp;(símbolos)<br>
-  · D ∈ {R, L} &nbsp;(dirección)<br>
-  · I(qᵢ, s) = (t, D, qⱼ)
-</div>
-<h4>Combinación final</h4>
-<div class="tm-def">
-  Una pareja <em>(qᵢ, s)</em> es una <em>combinación final</em>
-  si no aparece al comienzo de ninguna instrucción.
-  La máquina <em>se detiene</em> al leer s en estado qᵢ.
-</div>
-<p class="tm-ref">De Castro Korgi §6.1 · slides §1–5</p>`
-      },
-      execution: {
-        title: 'Instantaneous Configuration & Step',
-        html: `
-<h4>Configuración instantánea</h4>
-<div class="tm-def">
-  Expresión <em>a₁…aᵢ₋₁ q aᵢ…aₙ</em>: la unidad de control
-  está en estado <em>q</em> escaneando el símbolo <em>aᵢ</em>.
-  Las celdas fuera del rango contienen el blanco #.
-</div>
-<h4>Paso computacional ⊢</h4>
-<div class="tm-def">
-  Si <em>I(q, s) = (p, b, R)</em>:&nbsp; <em>…qsa… ⊢ …bpa…</em><br>
-  Si <em>I(q, s) = (p, b, L)</em>:&nbsp; <em>…cqs… ⊢ …pcb…</em>
-</div>
-<h4>Lenguaje aceptado</h4>
-<div class="tm-def">
-  <em>L(M) = &#123; w ∈ Σ* : q₀w ⊢* w₁pw₂, p ∈ F &#125;</em><br>
-  La máquina acepta w si se detiene en un estado final.
-</div>
-<h4>Bucle infinito</h4>
-<div class="tm-def">
-  Si la misma configuración se repite, la máquina no se detiene.
-  El simulador detecta esto automáticamente.
-</div>
-<p class="tm-ref">De Castro Korgi §6.1 · slides §6–16</p>`
-      },
-      diagram: {
-        title: 'State Diagram',
-        html: `
-<h4>Diagrama de transiciones</h4>
-<div class="tm-def">
-  El diagrama es un <em>digrafo etiquetado</em>:<br>
-  · Nodos = estados q ∈ K<br>
-  · Flechas = instrucciones con etiqueta <em>s|tD</em><br>
-  &nbsp;&nbsp;(lee s, escribe t, mueve D)
-</div>
-<h4>Convenciones</h4>
-<div class="tm-def">
-  · Estado inicial: flecha de entrada ►<br>
-  · Estado activo: resaltado en tiempo real<br>
-  · Auto-bucle: flecha circular misma celda<br>
-  · Arcos opuestos: curvas en lados contrarios
-</div>
-<p class="tm-ref">De Castro Korgi §6.1 · slides §6</p>`
-      },
-      history: {
-        title: 'Configuration History & Accepted Language',
-        html: `
-<h4>Historial de configuraciones</h4>
-<div class="tm-def">
-  Cada fila muestra la configuración instantánea <em>u q v</em>
-  en ese paso. La celda resaltada es la posición del cabezal.
-</div>
-<h4>Recursivamente enumerable (RE)</h4>
-<div class="tm-def">
-  Un lenguaje L es <em>RE</em> si existe una MT M tal que L(M) = L.
-  L es <em>recursivo</em> si además M se detiene con toda entrada.
-</div>
-<h4>Bucles y no-decidibilidad</h4>
-<div class="tm-def">
-  Si la misma configuración se repite, la MT no se detiene nunca.
-  El <em>problema de la parada</em> (¿se detiene M con entrada w?)
-  es <em>indecidible</em> — no existe ningún algoritmo general.
-</div>
-<p class="tm-ref">De Castro Korgi §7.5–§7.6</p>`
-      }
+      table:     { title: tr('theoryTableTitle', 'Instructions & Final Combinations'),        html: tr('theoryTableHtml', '') },
+      execution: { title: tr('theoryExecutionTitle', 'Instantaneous Configuration & Step'),    html: tr('theoryExecutionHtml', '') },
+      diagram:   { title: tr('theoryDiagramTitle', 'State Diagram'),                            html: tr('theoryDiagramHtml', '') },
+      history:   { title: tr('theoryHistoryTitle', 'Configuration History & Accepted Language'), html: tr('theoryHistoryHtml', '') },
     }
   }
 
   showTheory(key) {
     const t = this._theory[key]
     if (!t || !this.elTheoryPanel) return
+    this._theoryKey = key
     this.elTheoryTitle.textContent = t.title
     this.elTheoryBody.innerHTML    = t.html
     if (window.renderMathInElement) window.renderMathInElement(this.elTheoryBody, { throwOnError: false })
@@ -840,7 +763,7 @@ class TuringMachine {
           if (el) el.value = d.maxSteps
         }
       } catch {
-        alert('Invalid file. Expected a Turing Machine JSON.')
+        alert(tr('invalidFile', 'Invalid file. Expected a Turing Machine JSON.'))
       }
     }
     r.readAsText(file)
@@ -1952,12 +1875,27 @@ class TuringMachine {
 
     // Examples
     if (this.elExamples) {
-      this.elExamples.innerHTML = Object.entries(this.EXAMPLES)
-        .map(([k, e]) => `<option value="${k}">${e.label}</option>`).join('')
+      const renderExamples = () => {
+        const cur = this.elExamples.value
+        this.elExamples.innerHTML = Object.entries(this.EXAMPLES)
+          .map(([k, e]) => `<option value="${k}">${tr(EX_LABEL_KEYS[k] || '', e.label)}</option>`).join('')
+        this.elExamples.value = cur
+      }
+      renderExamples()
+      window.addEventListener('langchanged', renderExamples)
       this.elExamples.addEventListener('change', e => {
         if (e.target.value) this.loadExample(e.target.value)
       })
     }
+
+    // Re-apply language-dependent runtime text on a language change.
+    window.addEventListener('langchanged', () => {
+      this.setStatus(this.status)
+      this.renderUI()
+      if (this.elTheoryPanel?.classList.contains('tm-open') && this._theoryKey) {
+        this.showTheory(this._theoryKey)
+      }
+    })
 
     // Execution buttons
     this.elBtnPlay?.addEventListener('click',  () => this.play())

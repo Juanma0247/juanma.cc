@@ -264,6 +264,159 @@ export const es: I18n = {
     chiSquared: {
       degreesOfFreedom: '\\(\\text{Grados de libertad}\\)',
     },
+    scripts: {
+      tablasMultiplicar: 'Tablas de multiplicar',
+      trianguloNumerico: 'Triángulo numérico',
+      maxSubarray: 'Máxima suma de subvector contiguo',
+      gravityThread: 'Hilo bajo bloques de gravedad',
+      chess3d: 'Ajedrez tridimensional',
+      buildBuilding: 'Construir edificio',
+      swordSmite: 'Espada Golpeo 255',
+      swordSharpness: 'Espada Filo 255',
+    },
+    tm: {
+      statusIdle: 'En espera',
+      statusRunning: 'Ejecutando…',
+      statusHalted: 'Detenida',
+      statusLoop: '∞ Bucle / límite pasos',
+      reads: 'lee',
+      writes: 'escribe',
+      moves: 'mueve',
+      dirRight: 'Derecha →',
+      dirLeft: '← Izquierda',
+      goesTo: 'va a',
+      invokes: 'invoca',
+      resumesAt: ', reanuda en',
+      noResume: ' (sin reanudar)',
+      finalCombHalts: 'combinación final, la máquina se detiene',
+      stepUndone: '← paso deshecho',
+      tapeLabel: 'Cinta',
+      stepBackAvail: 'Paso atrás (←) — {n} paso{s} disponibles',
+      stepBackNone: 'Paso atrás (←) — no hay pasos para deshacer',
+      invalidFile: 'Archivo inválido. Se esperaba un JSON de máquina de Turing.',
+      theoryTableTitle: 'Instrucciones y combinaciones finales',
+      theoryTableHtml: `
+<h4>Máquina de Turing</h4>
+<div class="tm-def">
+  Una <em>máquina de Turing</em> T sobre Σ es una tripla
+  <em>T = (K, q₀, I)</em> donde K es un conjunto finito de estados,
+  q₀ ∈ K es el estado inicial, e I es una función parcial
+  <em>I : K × (Σ ∪ {#}) → (Σ ∪ {#}) × {R, L} × K</em>.
+</div>
+<h4>Instrucción</h4>
+<div class="tm-def">
+  Una <em>instrucción</em> es una quíntupla
+  <em>(qᵢ, s, t, D, qⱼ)</em> tal que:<br>
+  · qᵢ, qⱼ ∈ K &nbsp;(estados)<br>
+  · s, t ∈ Σ ∪ {#} &nbsp;(símbolos)<br>
+  · D ∈ {R, L} &nbsp;(dirección)<br>
+  · I(qᵢ, s) = (t, D, qⱼ)
+</div>
+<h4>Combinación final</h4>
+<div class="tm-def">
+  Una pareja <em>(qᵢ, s)</em> es una <em>combinación final</em>
+  si no aparece al comienzo de ninguna instrucción.
+  La máquina <em>se detiene</em> al leer s en estado qᵢ.
+</div>
+<p class="tm-ref">De Castro Korgi §6.1 · slides §1–5</p>`,
+      theoryExecutionTitle: 'Configuración instantánea y paso',
+      theoryExecutionHtml: `
+<h4>Configuración instantánea</h4>
+<div class="tm-def">
+  Expresión <em>a₁…aᵢ₋₁ q aᵢ…aₙ</em>: la unidad de control
+  está en estado <em>q</em> escaneando el símbolo <em>aᵢ</em>.
+  Las celdas fuera del rango contienen el blanco #.
+</div>
+<h4>Paso computacional ⊢</h4>
+<div class="tm-def">
+  Si <em>I(q, s) = (p, b, R)</em>:&nbsp; <em>…qsa… ⊢ …bpa…</em><br>
+  Si <em>I(q, s) = (p, b, L)</em>:&nbsp; <em>…cqs… ⊢ …pcb…</em>
+</div>
+<h4>Lenguaje aceptado</h4>
+<div class="tm-def">
+  <em>L(M) = &#123; w ∈ Σ* : q₀w ⊢* w₁pw₂, p ∈ F &#125;</em><br>
+  La máquina acepta w si se detiene en un estado final.
+</div>
+<h4>Bucle infinito</h4>
+<div class="tm-def">
+  Si la misma configuración se repite, la máquina no se detiene.
+  El simulador detecta esto automáticamente.
+</div>
+<p class="tm-ref">De Castro Korgi §6.1 · slides §6–16</p>`,
+      theoryDiagramTitle: 'Diagrama de estados',
+      theoryDiagramHtml: `
+<h4>Diagrama de transiciones</h4>
+<div class="tm-def">
+  El diagrama es un <em>digrafo etiquetado</em>:<br>
+  · Nodos = estados q ∈ K<br>
+  · Flechas = instrucciones con etiqueta <em>s|tD</em><br>
+  &nbsp;&nbsp;(lee s, escribe t, mueve D)
+</div>
+<h4>Convenciones</h4>
+<div class="tm-def">
+  · Estado inicial: flecha de entrada ►<br>
+  · Estado activo: resaltado en tiempo real<br>
+  · Auto-bucle: flecha circular misma celda<br>
+  · Arcos opuestos: curvas en lados contrarios
+</div>
+<p class="tm-ref">De Castro Korgi §6.1 · slides §6</p>`,
+      theoryHistoryTitle: 'Historial de configuraciones y lenguaje aceptado',
+      theoryHistoryHtml: `
+<h4>Historial de configuraciones</h4>
+<div class="tm-def">
+  Cada fila muestra la configuración instantánea <em>u q v</em>
+  en ese paso. La celda resaltada es la posición del cabezal.
+</div>
+<h4>Recursivamente enumerable (RE)</h4>
+<div class="tm-def">
+  Un lenguaje L es <em>RE</em> si existe una MT M tal que L(M) = L.
+  L es <em>recursivo</em> si además M se detiene con toda entrada.
+</div>
+<h4>Bucles y no-decidibilidad</h4>
+<div class="tm-def">
+  Si la misma configuración se repite, la MT no se detiene nunca.
+  El <em>problema de la parada</em> (¿se detiene M con entrada w?)
+  es <em>indecidible</em> — no existe ningún algoritmo general.
+</div>
+<p class="tm-ref">De Castro Korgi §7.5–§7.6</p>`,
+      exCountOnes: 'Contar unos — ejemplo del libro (diapositivas §2)',
+      exParity: 'Verificador de paridad — q0=par, q1=impar (se detiene al final)',
+      exUnaryAdd: 'Suma unaria  111+11=11111  (diapositivas §22)',
+      exAddOneDecimal: 'Sumar 1 en decimal  2397→2398  (diapositivas §31)',
+      exBinaryIncrement: 'Incremento binario  1011→1100',
+      exSwapBits: 'Intercambiar 0↔1 (complemento de bits)',
+      exBusyBeaver2: 'Castor afanoso 2 — escribe 4 unos en 6 pasos',
+      exBusyBeaver3: 'Castor afanoso 3 — escribe 6 unos en 21 pasos',
+      exBlank: '— Máquina en blanco (empezar de cero) —',
+      loading: 'Cargando…',
+      emptyLibrary: 'Aún no hay máquinas en la librería. ¡Sé el primero en subir una!',
+      by: 'por',
+      unknown: 'Desconocido',
+      idForCalls: 'ID para llamadas:',
+      copy: 'Copiar',
+      copied: '✓ Copiado',
+      uploading: 'Subiendo…',
+      upload: 'Subir',
+      errUploading: 'Error al subir:',
+      uploadSuccess: '¡Máquina subida exitosamente!',
+      valTitle: 'El título es obligatorio.',
+      valDesc: 'La descripción es obligatoria.',
+      valAuthor: 'El autor es obligatorio.',
+      valAlphMin: 'El alfabeto Σ debe tener al menos un símbolo.',
+      valSymSingle: 'El símbolo "{s}" debe ser un único carácter.',
+      valAlphDup: 'El alfabeto Σ tiene símbolos duplicados.',
+      valStatesMin: 'El conjunto de estados K debe tener al menos un estado.',
+      valStatesDup: 'El conjunto de estados K tiene entradas duplicadas.',
+      valInitState: 'El estado inicial "{s}" no pertenece a K = {K}.',
+      valTapeInvalid: 'La cinta contiene símbolos fuera de Σ ∪ {#}: {syms}',
+      valIMin: 'I debe tener al menos una instrucción (la función de transición no puede estar vacía).',
+      valTransMalformed: 'Clave de transición malformada: "{key}" — se esperaba "estado,símbolo".',
+      valTransState: 'Transición "{key}": el estado "{s}" ∉ K.',
+      valTransSym: 'Transición "{key}": el símbolo "{s}" ∉ Σ ∪ {#}.',
+      valInstrWrite: 'Instrucción "{key}": escribe "{s}" ∉ Σ ∪ {#}.',
+      valInstrFormat: 'Instrucción "{key}" → "{val}": formato inválido. Se espera ⟨símbolo⟩⟨R|L⟩⟨estado⟩ (ej. 1Rq0, #Lq2) o llamada a sub-máquina (ej. 1R@copy-unary:q2).',
+      valInstrNext: 'Instrucción "{key}": estado siguiente "{s}" ∉ K.',
+    },
   },
   projects: {
     tm: {
