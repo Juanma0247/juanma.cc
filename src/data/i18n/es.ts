@@ -193,7 +193,9 @@ export const es: I18n = {
     },
   },
   kiosk: {
-    restricted: 'Restricción por ajustes de la web.',
+    restricted: 'Se aplicó una restricción por los ajustes de la web y no puedes salir de esta página.',
+    remaining: 'Tiempo restante',
+    gotIt: 'Entendido',
   },
   home: {
     tagline: 'Científico Computacional · Apasionado de las Matemáticas · Diseñador UX/UI · Desarrollador Full Stack · Senderista/Maratonista · Técnico Experimentado en Minecraft',

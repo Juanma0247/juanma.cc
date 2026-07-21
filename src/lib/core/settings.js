@@ -228,8 +228,11 @@ export function fmtCountdown(ms) {
   return h > 0 ? `${h}:${pad(m)}:${pad(ss)}` : `${pad(m)}:${pad(ss)}`
 }
 
-let lockTimer = null
 let lockGuardsInstalled = false
+let lockAppliedAt = null
+let lockMsgs = { text: '', remaining: '', ok: '' }
+let lockReleaseTimer = null
+let popupTimer = null
 
 function lockClickGuard(e) {
   const a = e.target.closest && e.target.closest('a[href]')
@@ -238,11 +241,11 @@ function lockClickGuard(e) {
   if (url.origin === location.origin && url.pathname === location.pathname) return
   e.preventDefault()
   e.stopPropagation()
-  flashLockBanner()
+  showLockPopup()
 }
 function lockPopGuard() {
   history.pushState(null, '', location.href)
-  flashLockBanner()
+  showLockPopup()
 }
 function lockBeforeUnload(e) { e.preventDefault(); e.returnValue = '' }
 
@@ -263,47 +266,53 @@ function removeLockGuards() {
   window.removeEventListener('beforeunload', lockBeforeUnload)
 }
 
-function flashLockBanner() {
-  const el = document.getElementById('kiosk-lock')
-  if (!el) return
-  el.classList.remove('kiosk-lock--flash')
-  void el.offsetWidth
-  el.classList.add('kiosk-lock--flash')
-}
-
-function showLockBanner(appliedAt, message) {
+// The page looks normal while locked; the restriction is only surfaced as a
+// popup when the user actually tries to navigate away.
+function showLockPopup() {
+  if (lockAppliedAt == null) return
   let el = document.getElementById('kiosk-lock')
   if (!el) {
     el = document.createElement('div')
     el.id = 'kiosk-lock'
     el.innerHTML =
-      '<span class="kiosk-lock__msg"></span><span class="kiosk-lock__timer"></span>'
+      '<div class="kiosk-lock__card" role="alertdialog" aria-modal="true">' +
+        '<p class="kiosk-lock__msg"></p>' +
+        '<p class="kiosk-lock__timer"></p>' +
+        '<button class="kiosk-lock__ok" type="button"></button>' +
+      '</div>'
     document.body.appendChild(el)
+    el.addEventListener('click', ev => { if (ev.target === el) hideLockPopup() })
+    el.querySelector('.kiosk-lock__ok').addEventListener('click', hideLockPopup)
   }
-  el.querySelector('.kiosk-lock__msg').textContent = message
+  el.querySelector('.kiosk-lock__msg').textContent = lockMsgs.text
+  el.querySelector('.kiosk-lock__ok').textContent = lockMsgs.ok
   const timerEl = el.querySelector('.kiosk-lock__timer')
-  if (lockTimer) clearInterval(lockTimer)
+  el.classList.add('kiosk-lock--open')
+  if (popupTimer) clearInterval(popupTimer)
   const tick = () => {
-    const remaining = appliedAt + LOCK_TTL - Date.now()
-    timerEl.textContent = fmtCountdown(remaining)
-    if (remaining <= 0) {
-      // TTL elapsed: free the user even if no new snapshot arrives.
-      removeLockGuards()
-      hideLockBanner()
-    }
+    const remaining = lockAppliedAt + LOCK_TTL - Date.now()
+    timerEl.textContent = lockMsgs.remaining + ' · ' + fmtCountdown(remaining)
+    if (remaining <= 0) releaseLock()
   }
   tick()
-  lockTimer = setInterval(tick, 1000)
+  popupTimer = setInterval(tick, 1000)
 }
 
-function hideLockBanner() {
-  if (lockTimer) { clearInterval(lockTimer); lockTimer = null }
-  document.getElementById('kiosk-lock')?.remove()
+function hideLockPopup() {
+  if (popupTimer) { clearInterval(popupTimer); popupTimer = null }
+  document.getElementById('kiosk-lock')?.classList.remove('kiosk-lock--open')
 }
 
-// Enforce (or release) the kiosk lock. `message` is the localized restriction text.
+function releaseLock() {
+  removeLockGuards()
+  hideLockPopup()
+  if (lockReleaseTimer) { clearTimeout(lockReleaseTimer); lockReleaseTimer = null }
+  lockAppliedAt = null
+}
+
+// Enforce (or release) the kiosk lock. `msgs` = { text, remaining, ok } (localized).
 // Returns true when a redirect was triggered (caller should stop further work).
-export function applyKiosk(web, message) {
+export function applyKiosk(web, msgs) {
   const path = web && web.lock && web.lock.path
   const active = lockActive(web) && !isAdminCached() && !!path
   if (active) {
@@ -311,11 +320,14 @@ export function applyKiosk(web, message) {
       location.replace(path)
       return true
     }
+    lockAppliedAt = web.lock.appliedAt
+    lockMsgs = msgs
     installLockGuards()
-    showLockBanner(web.lock.appliedAt, message)
+    // Auto-release when the TTL elapses, even if the user never tries to leave.
+    if (lockReleaseTimer) clearTimeout(lockReleaseTimer)
+    lockReleaseTimer = setTimeout(releaseLock, Math.max(0, web.lock.appliedAt + LOCK_TTL - Date.now()))
   } else {
-    removeLockGuards()
-    hideLockBanner()
+    releaseLock()
   }
   return false
 }

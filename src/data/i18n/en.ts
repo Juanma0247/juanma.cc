@@ -192,6 +192,8 @@ export interface I18n {
   }
   kiosk: {
     restricted: string
+    remaining: string
+    gotIt: string
   }
   home: {
     tagline: string
@@ -485,7 +487,9 @@ export const en: I18n = {
     },
   },
   kiosk: {
-    restricted: 'Restricted by site settings.',
+    restricted: 'A restriction was applied by the site settings and you cannot leave this page.',
+    remaining: 'Time remaining',
+    gotIt: 'Got it',
   },
   home: {
     tagline: 'Computer Scientist · Math Enthusiast · UX/UI Designer · Full-Stack Developer · Hiker/Marathoner · Seasoned Minecraft Technician',

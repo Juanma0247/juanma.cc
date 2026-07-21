@@ -219,44 +219,70 @@
   }
 }
 
-/* ── Kiosk Lock Banner ─────────────────────────── */
+/* ── Kiosk Lock Popup ──────────────────────────── */
 
 #kiosk-lock {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+  inset: 0;
   z-index: 3000;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  padding: 0.55rem 1rem;
-  background: #b3261e;
-  color: #fff;
-  font-family: var(--font-ui), sans-serif;
-  font-size: 0.82rem;
-  text-align: center;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
-#kiosk-lock .kiosk-lock__timer {
+#kiosk-lock.kiosk-lock--open {
+  display: flex;
+}
+
+.kiosk-lock__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 22rem;
+  padding: 1.75rem;
+  text-align: center;
+  background: var(--color-bg);
+  border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 44px rgba(0, 0, 0, 0.45);
+}
+
+.kiosk-lock__msg {
+  margin: 0;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.kiosk-lock__timer {
+  margin: 0;
   font-family: JetBrainsMono, monospace;
   font-weight: bold;
-  background: rgba(255, 255, 255, 0.18);
-  border-radius: 2rem;
-  padding: 0.1rem 0.55rem;
-  flex-shrink: 0;
+  font-size: 1.05rem;
+  color: #b3261e;
 }
 
-.kiosk-lock--flash {
-  animation: kiosk-flash 0.4s ease;
+.kiosk-lock__ok {
+  all: unset;
+  padding: 0.45rem 1.4rem;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: #fff;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: opacity 160ms;
 }
 
-@keyframes kiosk-flash {
-  0%, 100% { transform: translateY(0); }
-  25%      { transform: translateY(0.15rem); background: #d13a30; }
-  60%      { transform: translateY(0); }
+.kiosk-lock__ok:hover {
+  opacity: 0.85;
 }
 
 /* ── Settings Overlay ──────────────────────────── */

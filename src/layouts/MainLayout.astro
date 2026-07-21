@@ -256,15 +256,20 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
       setTimeout(hideLoader, 6000)
 
       // ── Real-time web settings + kiosk lock ─────────────────────────────────
-      function lockMessage(): string {
+      function lockMessages() {
         const lang = localStorage.getItem('site-lang') || S.detectSystemLang()
         const t = (window as any).__i18n?.[lang] ?? (window as any).__i18n?.en
-        return t?.kiosk?.restricted ?? 'Restricted by site settings'
+        const k = t?.kiosk ?? {}
+        return {
+          text:      k.restricted ?? 'Restricted by site settings.',
+          remaining: k.remaining ?? 'Time remaining',
+          ok:        k.gotIt ?? 'OK',
+        }
       }
 
       let lastWeb: any = S.readWeb()
       function refresh() {
-        if (S.applyKiosk(lastWeb, lockMessage())) return
+        if (S.applyKiosk(lastWeb, lockMessages())) return
         S.reapply()
       }
       refresh()
