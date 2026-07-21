@@ -317,6 +317,9 @@ export function applyKiosk(web, msgs) {
   const active = lockActive(web) && !isAdminCached() && !!path
   if (active) {
     if (location.pathname !== path) {
+      // Our own redirect (e.g. the lock moved to another page) must not trigger
+      // the browser's "leave site?" prompt — that dialog is only for the user.
+      removeLockGuards()
       location.replace(path)
       return true
     }
