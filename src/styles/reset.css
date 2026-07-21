@@ -11,6 +11,11 @@ html {
   font-family: var(--font-ui);
 }
 
+/* The `hidden` attribute must always win over component `display` rules. */
+[hidden] {
+  display: none !important;
+}
+
 ::-webkit-scrollbar {
   width: 0;
   height: 0;

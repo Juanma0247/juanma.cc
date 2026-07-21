@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app'
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged } from 'firebase/auth'
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth'
 
 export const AUTHORIZED_EMAILS = [
   'juanmanueldiazgomez247@gmail.com',
@@ -18,6 +18,9 @@ const firebaseConfig = {
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig)
 const auth = getAuth(app)
 const provider = new GoogleAuthProvider()
+
+// Keep the session in the browser (survives reloads and tab restarts).
+setPersistence(auth, browserLocalPersistence).catch(() => {})
 
 export function isAuthorized(email) {
   return AUTHORIZED_EMAILS.includes(email ?? '')
