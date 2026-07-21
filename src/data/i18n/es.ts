@@ -196,7 +196,7 @@ export const es: I18n = {
     },
   },
   kiosk: {
-    restricted: 'El sitio web aplicó una restricción por lo que no puedes salir de esta página dentro de este sitio web.',
+    restricted: 'El sitio activó una restricción temporal, así que por ahora te quedas en esta página.',
     remaining: 'Tiempo restante',
     gotIt: 'Entendido',
   },

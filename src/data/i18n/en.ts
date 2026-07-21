@@ -493,7 +493,7 @@ export const en: I18n = {
     },
   },
   kiosk: {
-    restricted: 'The site applied a restriction, so you cannot leave this page within this website.',
+    restricted: 'The site turned on a temporary restriction, so for now you stay on this page.',
     remaining: 'Time remaining',
     gotIt: 'Got it',
   },
