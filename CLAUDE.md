@@ -6,6 +6,12 @@ Sitio personal / portafolio de Juan Manuel Díaz. Astro (`output: 'hybrid'`) con
 
 - **Firebase App Hosting** ya está conectado y escucha los `push` al repositorio: cada push a la rama principal se despliega automáticamente a `juanma.cc`. No hay que ejecutar comandos de deploy manuales.
 
+## Páginas y destinos (landing / restringir a una página)
+
+- La lista de páginas que alimenta los selectores **"Página de inicio predeterminada"** y **"Restringir a una página"** (modo kiosco) vive en `src/data/destinations.ts`.
+- Los **proyectos interactivos** (`src/data/projects.json`) y los **proyectos de desarrollo** (`src/data/built.ts`) se derivan automáticamente; al añadir uno nuevo ahí, aparece solo en los selectores.
+- Al crear una **nueva sección de nivel superior** (una página nueva en `src/pages/…`) o un nuevo **juego/herramienta**, hay que añadir su ruta a `destinations.ts` (arrays `SECTIONS`, `GAMES` o `TOOLS`) para que quede disponible como destino.
+
 ## Política de commit y push
 
 Hacer `git commit` y `git push` (a la rama principal) en estos momentos:

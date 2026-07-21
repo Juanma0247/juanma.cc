@@ -576,6 +576,20 @@
   outline: none;
 }
 
+/* The native dropdown ignores the control's colors, so set them on the items
+   themselves — otherwise optgroup labels are white-on-white in dark theme. */
+.page-setting-select option {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.page-setting-select optgroup {
+  background: var(--color-bg);
+  color: var(--color-primary);
+  font-family: var(--font-ui), sans-serif;
+  font-weight: bold;
+}
+
 .page-auth-error {
   font-family: var(--font-ui), sans-serif;
   font-size: 0.8rem;
