@@ -7,17 +7,24 @@
     "image": "p17.svg",
     "order": 17,
     "size": "feature",
-    "labels": ["Automata Theory", "Computability", "Formal Languages"]
+    "labels": [
+      "Automata Theory",
+      "Computability",
+      "Formal Languages"
+    ]
   },
   {
     "slug": "recursive-concat",
-    "title": "Concat. Recur.",
+    "title": "Recursive Concat.",
     "navTitle": "Recursive Concat.",
     "pageTitle": "Recursive Concatenation",
     "image": "p16.png",
     "order": 16,
     "size": "sm",
-    "labels": ["Formal Languages", "Automata Theory"]
+    "labels": [
+      "Formal Languages",
+      "Automata Theory"
+    ]
   },
   {
     "slug": "sigma-star-enum",
@@ -27,27 +34,37 @@
     "image": "p15.png",
     "order": 15,
     "size": "sm",
-    "labels": ["Formal Languages", "Automata Theory", "Enumeration"]
+    "labels": [
+      "Formal Languages",
+      "Automata Theory",
+      "Enumeration"
+    ]
   },
   {
     "slug": "regular-expressions",
-    "title": "Expresiones R.",
+    "title": "Regular Expr.",
     "navTitle": "Regular Expressions",
     "pageTitle": "Regular Expressions",
     "image": "p14.png",
     "order": 14,
     "size": "wide",
-    "labels": ["Formal Languages", "Automata Theory"]
+    "labels": [
+      "Formal Languages",
+      "Automata Theory"
+    ]
   },
   {
     "slug": "cross-matrix",
-    "title": "Cross matrix",
+    "title": "Cross Matrix",
     "navTitle": "Cross Matrix",
     "pageTitle": "Cross Matrix",
     "image": "p13.png",
     "order": 13,
     "size": "sm",
-    "labels": ["Linear Algebra", "Matrices"]
+    "labels": [
+      "Linear Algebra",
+      "Matrices"
+    ]
   },
   {
     "slug": "sorting",
@@ -57,7 +74,10 @@
     "image": "p12.png",
     "order": 12,
     "size": "wide",
-    "labels": ["Algorithms", "Data Structures"]
+    "labels": [
+      "Algorithms",
+      "Data Structures"
+    ]
   },
   {
     "slug": "fractal",
@@ -67,7 +87,11 @@
     "image": "p11.png",
     "order": 11,
     "size": "tall",
-    "labels": ["Fractals", "Geometry", "Visualization"]
+    "labels": [
+      "Fractals",
+      "Geometry",
+      "Visualization"
+    ]
   },
   {
     "slug": "bernoulli",
@@ -77,37 +101,53 @@
     "image": "p10.png",
     "order": 10,
     "size": "sm",
-    "labels": ["Statistics", "Probability", "Distribution"]
+    "labels": [
+      "Statistics",
+      "Probability",
+      "Distribution"
+    ]
   },
   {
     "slug": "chi-squared",
-    "title": "F.D. χ²",
+    "title": "χ² Dist.",
     "navTitle": "Chi-Squared",
     "pageTitle": "Chi-Squared Distribution",
     "image": "p9.png",
     "order": 9,
     "size": "sm",
-    "labels": ["Statistics", "Probability", "Distribution"]
+    "labels": [
+      "Statistics",
+      "Probability",
+      "Distribution"
+    ]
   },
   {
     "slug": "t-student",
-    "title": "F.D. T-Student",
+    "title": "T-Student Dist.",
     "navTitle": "T-Student",
     "pageTitle": "T-Student Distribution",
     "image": "p8.png",
     "order": 8,
     "size": "sm",
-    "labels": ["Statistics", "Probability", "Distribution"]
+    "labels": [
+      "Statistics",
+      "Probability",
+      "Distribution"
+    ]
   },
   {
     "slug": "normal-distribution",
-    "title": "F.D. Normal",
+    "title": "Normal Dist.",
     "navTitle": "Normal Dist.",
     "pageTitle": "Normal Distribution",
     "image": "p7.png",
     "order": 7,
     "size": "sm",
-    "labels": ["Statistics", "Probability", "Distribution"]
+    "labels": [
+      "Statistics",
+      "Probability",
+      "Distribution"
+    ]
   },
   {
     "slug": "ruffini",
@@ -117,7 +157,10 @@
     "image": "p6.png",
     "order": 6,
     "size": "sm",
-    "labels": ["Algebra", "Polynomials"]
+    "labels": [
+      "Algebra",
+      "Polynomials"
+    ]
   },
   {
     "slug": "fractions",
@@ -127,7 +170,10 @@
     "image": "p5.png",
     "order": 5,
     "size": "sm",
-    "labels": ["Arithmetic", "Number Theory"]
+    "labels": [
+      "Arithmetic",
+      "Number Theory"
+    ]
   },
   {
     "slug": "voice",
@@ -137,17 +183,24 @@
     "image": "p4.png",
     "order": 4,
     "size": "sm",
-    "labels": ["Audio", "Web API"]
+    "labels": [
+      "Audio",
+      "Web API"
+    ]
   },
   {
     "slug": "cantor-sets",
-    "title": "S.E. Cantor",
+    "title": "Cantor Sets",
     "navTitle": "Cantor Sets",
     "pageTitle": "Cantor Sets",
     "image": "p3.png",
     "order": 3,
     "size": "wide",
-    "labels": ["Set Theory", "Fractals", "Topology"]
+    "labels": [
+      "Set Theory",
+      "Fractals",
+      "Topology"
+    ]
   },
   {
     "slug": "sets",
@@ -157,16 +210,23 @@
     "image": "p2.png",
     "order": 2,
     "size": "sm",
-    "labels": ["Set Theory", "Logic", "Discrete Math"]
+    "labels": [
+      "Set Theory",
+      "Logic",
+      "Discrete Math"
+    ]
   },
   {
     "slug": "hill-cipher",
-    "title": "Cifrado Hill",
+    "title": "Hill Cipher",
     "navTitle": "Hill Cipher",
     "pageTitle": "Hill Cipher",
     "image": "p1.png",
     "order": 1,
     "size": "wide",
-    "labels": ["Cryptography", "Linear Algebra"]
+    "labels": [
+      "Cryptography",
+      "Linear Algebra"
+    ]
   }
 ]

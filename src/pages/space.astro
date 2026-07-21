@@ -104,9 +104,9 @@ import MainLayout from '../layouts/MainLayout.astro'
             <div class="cp-preview__page">
               <div class="cp-preview__topbar">
                 <span class="cp-preview__brand">Juanma</span>
-                <span class="cp-preview__navlink">Home</span>
-                <span class="cp-preview__navlink cp-preview__navlink--active">About</span>
-                <span class="cp-preview__navlink">Projects</span>
+                <span class="cp-preview__navlink" data-i18n="settings.theme.previewNavHome">Home</span>
+                <span class="cp-preview__navlink cp-preview__navlink--active" data-i18n="settings.theme.previewNavAbout">About</span>
+                <span class="cp-preview__navlink" data-i18n="settings.theme.previewNavProjects">Projects</span>
               </div>
               <div class="cp-preview__content">
                 <h4 class="cp-preview__title" data-i18n="settings.theme.previewSection">Section title</h4>
@@ -115,14 +115,14 @@ import MainLayout from '../layouts/MainLayout.astro'
                   <span class="cp-preview__muted" data-i18n="settings.theme.previewMuted">Secondary info.</span>
                 </p>
                 <div class="cp-preview__row">
-                  <span class="cp-preview__btn">Button</span>
-                  <span class="cp-preview__link">Link</span>
+                  <span class="cp-preview__btn" data-i18n="settings.theme.previewBtn">Button</span>
+                  <span class="cp-preview__link" data-i18n="settings.theme.previewLink">Link</span>
                 </div>
               </div>
             </div>
           </div>
           <div class="settings-custom__presets">
-            <span class="settings-custom__presets-label">Presets</span>
+            <span class="settings-custom__presets-label" data-i18n="settings.theme.presetsLabel">Presets</span>
             <div class="settings-custom__presets-list">
               <button class="settings-custom__preset" data-preset="grayscale" data-i18n="settings.theme.presets.grayscale">Grayscale</button>
               <button class="settings-custom__preset" data-preset="pastels" data-i18n="settings.theme.presets.pastels">Pastels</button>

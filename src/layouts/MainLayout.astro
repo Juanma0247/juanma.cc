@@ -177,6 +177,7 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
       section={section}
       labels={labels}
       titleHref={titleHref}
+      titleKey={titleKey}
     />
 
     <main class="contenedor">
@@ -341,10 +342,21 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
 
           if (persist) localStorage.setItem(LANG_KEY, lang)
           document.documentElement.lang = lang
+          window.__lang = lang
+          window.dispatchEvent(new CustomEvent('langchanged', { detail: lang }))
         }
 
         window.__i18n = TRANSLATIONS
         window.applyLang = applyLang
+
+        // Bridge for runtime-generated content (project/game/tool JS). Resolves a
+        // dotted key against the current language, falling back to a supplied
+        // default (usually the English source string) so nothing ever breaks.
+        window.i18nGet = (key, fallback) => {
+          const l = window.__lang || 'en'
+          const val = get(TRANSLATIONS[l] ?? TRANSLATIONS.en, key)
+          return val == null ? (fallback != null ? fallback : key) : val
+        }
 
         // Effective language: web (3) > user (2) > system (1). Do not persist,
         // so a resolved value never overwrites the user's own choice.

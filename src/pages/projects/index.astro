@@ -15,6 +15,7 @@ function iconFor(slug: string): string {
 
 interface Item {
   title: string
+  titleKey?: string
   labels: string[]
   size: BuiltSize
   href: string
@@ -26,18 +27,19 @@ interface Item {
 
 const items: Item[] = [
   ...built.map(b => ({ title: b.name, labels: b.tags, size: b.size, href: `/projects/built/${b.slug}`, category: 'b' as const, iconSrc: b.logo, mono: b.mono })),
-  ...projects.map(p => ({ title: p.title, labels: p.labels, size: p.size as BuiltSize, href: `/projects/${p.slug}`, category: 'p' as const, icon: iconFor(p.slug) })),
-  ...tools.map(t => ({ title: t.title, labels: t.labels, size: t.size as BuiltSize, href: `/tools/${t.slug}`, category: 't' as const, icon: iconFor(t.slug) })),
-  ...games.map(g => ({ title: g.title, labels: g.labels, size: g.size as BuiltSize, href: `/games/${g.slug}`, category: 'g' as const, icon: iconFor(g.slug) })),
+  ...projects.map(p => ({ title: p.title, titleKey: `cardTitles.${p.slug}`, labels: p.labels, size: p.size as BuiltSize, href: `/projects/${p.slug}`, category: 'p' as const, icon: iconFor(p.slug) })),
+  ...tools.map(t => ({ title: t.title, titleKey: `cardTitles.${t.slug}`, labels: t.labels, size: t.size as BuiltSize, href: `/tools/${t.slug}`, category: 't' as const, icon: iconFor(t.slug) })),
+  ...games.map(g => ({ title: g.title, titleKey: `cardTitles.${g.slug}`, labels: g.labels, size: g.size as BuiltSize, href: `/games/${g.slug}`, category: 'g' as const, icon: iconFor(g.slug) })),
 ]
 ---
 
-<MainLayout title="Projects">
+<MainLayout title="Projects" titleKey="sections.projects">
   <div class="mosaic-grid">
     {items.map(item => (
       <MosaicCard
         href={item.href}
         title={item.title}
+        titleKey={item.titleKey}
         labels={item.labels}
         category={item.category}
         size={item.size}

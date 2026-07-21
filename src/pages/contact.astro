@@ -4,6 +4,7 @@ import MainLayout from '../layouts/MainLayout.astro'
 interface SocialLink {
   id: string
   name: string
+  nameKey?: string
   handle: string
   color: string
   icon: string
@@ -28,11 +29,11 @@ const links: SocialLink[] = [
   { id: 'github', name: 'GitHub', handle: '@Juanma0247', color: '#181717', icon: '/img/github.svg', href: 'https://github.com/Juanma0247' },
   { id: 'linkedin', name: 'LinkedIn', handle: 'juanma247', color: '#0A66C2', icon: '/img/linkedin.svg', href: 'https://www.linkedin.com/in/juanma247/' },
   { id: 'orcid', name: 'ORCID', handle: '0009-0005-0892-0631', color: '#A6CE39', icon: '/img/orcid.svg', href: 'https://orcid.org/0009-0005-0892-0631' },
-  { id: 'vcard', name: 'Guardar contacto', handle: 'Juan Diaz · +57 322 913 0427', color: 'var(--color-primary)', icon: '/img/contact-card.svg', href: '/contact/juan-manuel-diaz.vcf', download: 'Juan-Diaz.vcf' },
+  { id: 'vcard', name: 'Save contact', nameKey: 'contact.saveContact', handle: 'Juan Diaz · +57 322 913 0427', color: 'var(--color-primary)', icon: '/img/contact-card.svg', href: '/contact/juan-manuel-diaz.vcf', download: 'Juan-Diaz.vcf' },
 ]
 ---
 
-<MainLayout title="Contact">
+<MainLayout title="Contact" titleKey="nav.contact">
   <div class="contact-page">
     <p class="contact-intro" data-i18n="contact.intro">Let's talk! Pick whichever channel feels right and send me a message — I'd love to hear from you.</p>
 
@@ -48,7 +49,7 @@ const links: SocialLink[] = [
         >
           <span class="social-card__icon"><img src={link.icon} alt="" aria-hidden="true" /></span>
           <span class="social-card__body">
-            <span class="social-card__name">{link.name}</span>
+            <span class="social-card__name" data-i18n={link.nameKey || undefined}>{link.name}</span>
             <span class="social-card__handle">{link.handle}</span>
           </span>
           {link.download ? (

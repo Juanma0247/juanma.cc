@@ -1,6 +1,7 @@
 ---
 import { SECTIONS } from '../data/nav'
 import type { NavSection } from '../data/nav'
+import { tagKey } from '../data/i18n/keys'
 
 interface Props {
   navTitle?: string
@@ -8,6 +9,7 @@ interface Props {
   labels?: string[]
   icon?: string
   titleHref?: string
+  titleKey?: string
 }
 
 const {
@@ -16,6 +18,7 @@ const {
   labels = [],
   icon = '/img/favicon.svg',
   titleHref = '',
+  titleKey = '',
 } = Astro.props
 
 const pathname = Astro.url.pathname
@@ -29,18 +32,23 @@ const activeSection = getActiveSection(SECTIONS, pathname)
 const displayLabels = labels.slice(0, 3)
 ---
 
-<nav id="topbar" class="topbar" aria-label="Main navigation">
+<nav id="topbar" class="topbar" aria-label="Main navigation" data-i18n-aria-label="a11y.mainNav">
 
   <div class="topbar__identity">
     {titleHref
-      ? <a class="topbar__title topbar__title--link" href={titleHref}>{navTitle}</a>
-      : <p class="topbar__title">{navTitle}</p>}
+      ? <a class="topbar__title topbar__title--link" href={titleHref} data-i18n={titleKey || undefined}>{navTitle}</a>
+      : <p class="topbar__title" data-i18n={titleKey || undefined}>{navTitle}</p>}
     <div class="topbar__meta">
       {(displayLabels.length > 0 || section) && (
         <img class="topbar__icon" src={icon} alt="" aria-hidden="true" />
       )}
       {displayLabels.length > 0 && (
-        <span class="topbar__label" id="topbar-label" data-labels={JSON.stringify(displayLabels)}>
+        <span
+          class="topbar__label"
+          id="topbar-label"
+          data-labels={JSON.stringify(displayLabels)}
+          data-label-keys={JSON.stringify(displayLabels.map(l => `tags.${tagKey(l)}`))}
+        >
           {displayLabels[0]}
         </span>
       )}
@@ -48,7 +56,7 @@ const displayLabels = labels.slice(0, 3)
     </div>
   </div>
 
-  <button class="topbar__menu-toggle" id="topbar-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+  <button class="topbar__menu-toggle" id="topbar-menu-toggle" aria-label="Toggle menu" aria-expanded="false" data-i18n-aria-label="a11y.toggleMenu">
     <svg class="topbar__menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <circle cx="12" cy="5" r="1.9" />
       <circle cx="12" cy="12" r="1.9" />
@@ -75,17 +83,27 @@ const displayLabels = labels.slice(0, 3)
   const labelEl = document.getElementById('topbar-label') as HTMLElement | null
   if (labelEl) {
     const allLabels: string[] = JSON.parse(labelEl.dataset.labels || '[]')
+    const labelKeys: string[] = JSON.parse(labelEl.dataset.labelKeys || '[]')
+    // Resolve each rotating label against the current language, falling back to
+    // the English source when a tag has no translation.
+    const resolve = (i: number) => {
+      const get = (window as any).i18nGet
+      return get ? get(labelKeys[i], allLabels[i]) : allLabels[i]
+    }
+    let idx = 0
+    const paint = () => { labelEl.textContent = resolve(idx) }
+    paint()
     if (allLabels.length > 1) {
-      let idx = 0
       setInterval(() => {
         labelEl.style.opacity = '0'
         setTimeout(() => {
           idx = (idx + 1) % allLabels.length
-          labelEl.textContent = allLabels[idx]
+          paint()
           labelEl.style.opacity = '1'
         }, 300)
       }, 2500)
     }
+    window.addEventListener('langchanged', paint)
   }
 
   const toggleBtn = document.getElementById('topbar-menu-toggle') as HTMLButtonElement | null

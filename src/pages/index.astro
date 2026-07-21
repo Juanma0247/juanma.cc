@@ -86,13 +86,13 @@ const portraits = [
 
   </div>
 
-  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image gallery">
-    <button class="lightbox__close" id="lb-close" aria-label="Close">&times;</button>
-    <button class="lightbox__nav lightbox__nav--prev" id="lb-prev" aria-label="Previous">&#8249;</button>
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image gallery" data-i18n-aria-label="a11y.imageGallery">
+    <button class="lightbox__close" id="lb-close" aria-label="Close" data-i18n-aria-label="a11y.close">&times;</button>
+    <button class="lightbox__nav lightbox__nav--prev" id="lb-prev" aria-label="Previous" data-i18n-aria-label="a11y.previous">&#8249;</button>
     <div class="lightbox__stage">
       <img class="lightbox__img" id="lb-img" src="" alt="Juan Manuel" />
     </div>
-    <button class="lightbox__nav lightbox__nav--next" id="lb-next" aria-label="Next">&#8250;</button>
+    <button class="lightbox__nav lightbox__nav--next" id="lb-next" aria-label="Next" data-i18n-aria-label="a11y.next">&#8250;</button>
     <div class="lightbox__counter" id="lb-counter"></div>
   </div>
 </MainLayout>

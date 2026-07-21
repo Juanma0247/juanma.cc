@@ -17,6 +17,8 @@ export interface I18n {
   projectsIndex: {
     featured: string
   }
+  tags: Record<string, string>
+  cardTitles: Record<string, string>
   projects: {
     tm: {
       loadMachineLabel: string
@@ -121,6 +123,12 @@ export interface I18n {
       previewSection: string
       previewBody: string
       previewMuted: string
+      previewNavHome: string
+      previewNavAbout: string
+      previewNavProjects: string
+      previewBtn: string
+      previewLink: string
+      presetsLabel: string
       presets: {
         grayscale: string
         pastels: string
@@ -238,6 +246,15 @@ export interface I18n {
   }
   contact: {
     intro: string
+    saveContact: string
+  }
+  a11y: {
+    mainNav: string
+    toggleMenu: string
+    close: string
+    previous: string
+    next: string
+    imageGallery: string
   }
   notFound: {
     message: string
@@ -315,6 +332,69 @@ export const en: I18n = {
   },
   projectsIndex: {
     featured: 'Featured',
+  },
+  tags: {
+    automatatheory: 'Automata Theory',
+    computability: 'Computability',
+    formallanguages: 'Formal Languages',
+    enumeration: 'Enumeration',
+    linearalgebra: 'Linear Algebra',
+    matrices: 'Matrices',
+    algorithms: 'Algorithms',
+    datastructures: 'Data Structures',
+    fractals: 'Fractals',
+    geometry: 'Geometry',
+    visualization: 'Visualization',
+    statistics: 'Statistics',
+    probability: 'Probability',
+    distribution: 'Distribution',
+    algebra: 'Algebra',
+    polynomials: 'Polynomials',
+    arithmetic: 'Arithmetic',
+    numbertheory: 'Number Theory',
+    audio: 'Audio',
+    webapi: 'Web API',
+    settheory: 'Set Theory',
+    topology: 'Topology',
+    logic: 'Logic',
+    discretemath: 'Discrete Math',
+    cryptography: 'Cryptography',
+    strategy: 'Strategy',
+    boardgame: 'Board Game',
+    '2players': '2 Players',
+    puzzle: 'Puzzle',
+    online: 'Online',
+    numbers: 'Numbers',
+    minecraft: 'Minecraft',
+    coordinates: 'Coordinates',
+    gaming: 'Gaming',
+    strings: 'Strings',
+    text: 'Text',
+    utility: 'Utility',
+  },
+  cardTitles: {
+    'turing-machine': 'Turing Machine',
+    'recursive-concat': 'Recursive Concat.',
+    'sigma-star-enum': 'Enum of Σ*',
+    'regular-expressions': 'Regular Expr.',
+    'cross-matrix': 'Cross Matrix',
+    sorting: 'Sorting',
+    fractal: 'Fractal',
+    bernoulli: 'Bernoulli',
+    'chi-squared': 'χ² Dist.',
+    't-student': 'T-Student Dist.',
+    'normal-distribution': 'Normal Dist.',
+    ruffini: 'Ruffini',
+    fractions: 'Fractions',
+    voice: 'Voice',
+    'cantor-sets': 'Cantor Sets',
+    sets: 'Sets',
+    'hill-cipher': 'Hill Cipher',
+    'tic-tac-toe': 'Tic-Tac-Toe',
+    minesweeper: 'Minesweeper',
+    sudoku: 'Sudoku',
+    'minecraft-coords': 'Minecraft Coords',
+    'string-tool': 'String Tool',
   },
   projects: {
     tm: {
@@ -420,6 +500,12 @@ export const en: I18n = {
       previewSection: 'Section title',
       previewBody: 'Body text content.',
       previewMuted: 'Secondary info.',
+      previewNavHome: 'Home',
+      previewNavAbout: 'About',
+      previewNavProjects: 'Projects',
+      previewBtn: 'Button',
+      previewLink: 'Link',
+      presetsLabel: 'Presets',
       presets: {
         grayscale: 'Grayscale',
         pastels: 'Pastels',
@@ -537,6 +623,15 @@ export const en: I18n = {
   },
   contact: {
     intro: "Let's talk! Pick whichever channel feels right and send me a message — I'd love to hear from you.",
+    saveContact: 'Save contact',
+  },
+  a11y: {
+    mainNav: 'Main navigation',
+    toggleMenu: 'Toggle menu',
+    close: 'Close',
+    previous: 'Previous',
+    next: 'Next',
+    imageGallery: 'Image gallery',
   },
   notFound: {
     message: 'Page not found :/',
