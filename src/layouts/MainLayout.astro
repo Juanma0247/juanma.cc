@@ -49,6 +49,20 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <script is:inline>
       ;(function () {
+        // Kiosk redirect before paint (web lock, 1h TTL). Authorized accounts exempt.
+        try {
+          var web = JSON.parse(localStorage.getItem('site-web') || 'null')
+          if (!web || !web.lock || !web.lock.appliedAt || !web.lock.path) return
+          var active = (Date.now() - web.lock.appliedAt < 60 * 60 * 1000)
+            && localStorage.getItem('site-is-admin') !== '1'
+          if (active && window.location.pathname !== web.lock.path) {
+            window.location.replace(web.lock.path)
+          }
+        } catch (e) {}
+      })()
+    </script>
+    <script is:inline>
+      ;(function () {
         var path = window.location.pathname
         if (path !== '/') localStorage.setItem('site-last-page', path)
 
@@ -70,25 +84,8 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
     </script>
     <script is:inline>
       ;(function () {
-        var t = localStorage.getItem('site-theme') || 'light'
-        if (t === 'seted') {
-          t = 'customizable'
-          localStorage.setItem('site-theme', 'customizable')
-        }
-        document.documentElement.dataset.theme = t
-        if (t === 'customizable') {
-          try {
-            var c = JSON.parse(localStorage.getItem('site-theme-custom') || 'null')
-            if (c) {
-              var r = document.documentElement
-              r.style.setProperty('--color-primary', c.primary)
-              r.style.setProperty('--color-text',    c.text)
-              r.style.setProperty('--color-bg',      c.bg)
-              r.style.setProperty('--color-muted',   c.muted)
-            }
-          } catch (e) {}
-        }
-
+        // Effective settings before paint, under priority web (3) > user (2) > system (1).
+        function parse(s) { try { return JSON.parse(s) } catch (e) { return null } }
         var FONT_MAP = {
           inter:      { stack: "'Inter', sans-serif",        url: 'Inter:wght@400;700' },
           roboto:     { stack: "'Roboto', sans-serif",       url: 'Roboto:wght@400;700' },
@@ -96,16 +93,39 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
           montserrat: { stack: "'Montserrat', sans-serif",   url: 'Montserrat:wght@400;700' },
           'fira-code':{ stack: "'Fira Code', monospace",     url: 'Fira+Code:wght@400;700' },
         }
-        var f = localStorage.getItem('site-font')
-        if (f && FONT_MAP[f]) {
+        var web = parse(localStorage.getItem('site-web'))
+        var b = null
+        if (web && web.broadcast && web.broadcast.appliedAt &&
+            Date.now() - web.broadcast.appliedAt < 4 * 60 * 60 * 1000 &&
+            String(web.broadcast.appliedAt) !== localStorage.getItem('site-web-optout')) {
+          b = web.broadcast
+        }
+        var r = document.documentElement
+
+        var userTheme = localStorage.getItem('site-theme')
+        if (userTheme === 'seted') { userTheme = 'customizable'; localStorage.setItem('site-theme', 'customizable') }
+        var theme = (b && b.theme != null) ? b.theme : (userTheme || 'system')
+        r.dataset.theme = theme
+        if (theme === 'customizable') {
+          var c = (b && b.theme === 'customizable' && b.customColors)
+            ? b.customColors : parse(localStorage.getItem('site-theme-custom'))
+          if (c) {
+            r.style.setProperty('--color-primary', c.primary)
+            r.style.setProperty('--color-text',    c.text)
+            r.style.setProperty('--color-bg',      c.bg)
+            r.style.setProperty('--color-muted',   c.muted)
+          }
+        }
+
+        var font = (b && b.font != null) ? b.font : localStorage.getItem('site-font')
+        if (font && FONT_MAP[font]) {
           var lnk = document.createElement('link')
           lnk.id   = 'gfont-link'
           lnk.rel  = 'stylesheet'
-          lnk.href = 'https://fonts.googleapis.com/css2?family=' + FONT_MAP[f].url + '&display=swap'
+          lnk.href = 'https://fonts.googleapis.com/css2?family=' + FONT_MAP[font].url + '&display=swap'
           document.head.appendChild(lnk)
-          var root = document.documentElement
-          root.style.setProperty('--font-ui',   FONT_MAP[f].stack)
-          root.style.setProperty('--font-bold', FONT_MAP[f].stack)
+          r.style.setProperty('--font-ui',   FONT_MAP[font].stack)
+          r.style.setProperty('--font-bold', FONT_MAP[font].stack)
         }
       })()
     </script>
@@ -168,8 +188,8 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
     </script>
 
     <script>
-      import { getSettings, LANDING_CACHE_KEY } from '../lib/core/SiteSettings.js'
       import Background from '../lib/core/Background.js'
+      import * as S from '../lib/core/settings.js'
 
       Background.main()
       // @ts-ignore
@@ -222,104 +242,63 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
         },
       }
 
-      const FONT_MAP: Record<string, { stack: string; url: string }> = {
-        inter:       { stack: "'Inter', sans-serif",        url: 'Inter:wght@400;700' },
-        roboto:      { stack: "'Roboto', sans-serif",       url: 'Roboto:wght@400;700' },
-        playfair:    { stack: "'Playfair Display', serif",  url: 'Playfair+Display:wght@400;700' },
-        montserrat:  { stack: "'Montserrat', sans-serif",   url: 'Montserrat:wght@400;700' },
-        'fira-code': { stack: "'Fira Code', monospace",     url: 'Fira+Code:wght@400;700' },
-      }
-
-      // Users who have site-theme in localStorage have already been initialized.
-      // Their settings are applied instantly from localStorage (no Firestore wait needed).
-      const hasExplicitTheme = !!localStorage.getItem('site-theme')
-
+      // Effective settings were already applied synchronously before paint, so the
+      // loader can be revealed quickly; the web listener refines in real time.
       function hideLoader() {
         ;(window as any).PageLoader?.hide()
       }
 
-      if (hasExplicitTheme) {
-        // Apply localStorage settings (already done by inline script before paint).
-        // Hide loader after minimum delay so the transition doesn't feel jarring.
-        const MIN_MS = 350
-        const start  = Date.now()
-        const quickHide = () => setTimeout(hideLoader, Math.max(0, MIN_MS - (Date.now() - start)))
-        if (document.readyState === 'complete') quickHide()
-        else window.addEventListener('load', quickHide, { once: true })
+      const MIN_MS = 350
+      const start  = Date.now()
+      const quickHide = () => setTimeout(hideLoader, Math.max(0, MIN_MS - (Date.now() - start)))
+      if (document.readyState === 'complete') quickHide()
+      else window.addEventListener('load', quickHide, { once: true })
+      setTimeout(hideLoader, 6000)
+
+      // ── Real-time web settings + kiosk lock ─────────────────────────────────
+      function lockMessage(): string {
+        const lang = localStorage.getItem('site-lang') || S.detectSystemLang()
+        const t = (window as any).__i18n?.[lang] ?? (window as any).__i18n?.en
+        return t?.kiosk?.restricted ?? 'Restricted by site settings'
       }
 
-      // Absolute fallback: always hide after 6s no matter what
-      const fallback = setTimeout(hideLoader, 6000)
+      let lastWeb: any = S.readWeb()
+      function refresh() {
+        if (S.applyKiosk(lastWeb, lockMessage())) return
+        S.reapply()
+      }
+      refresh()
+      S.listenWeb((web: any) => { lastWeb = web; refresh() })
 
-      getSettings().then(s => {
-        clearTimeout(fallback)
-
-        if (!s) {
-          if (!hasExplicitTheme) hideLoader()
-          return
-        }
-
-        // Keep landing cache up to date
-        if (s.defaultLanding !== undefined) {
-          localStorage.setItem(LANDING_CACHE_KEY, s.defaultLanding)
-        }
-
-        // New users: apply all settings from Firestore before revealing the page
-        if (!hasExplicitTheme) {
-          if (s.theme) {
-            document.documentElement.dataset.theme = s.theme
-            localStorage.setItem('site-theme', s.theme)
-            if (s.theme === 'customizable' && s.customColors) {
-              const c = s.customColors
-              localStorage.setItem('site-theme-custom', JSON.stringify(c))
-              const root = document.documentElement
-              root.style.setProperty('--color-primary', c.primary)
-              root.style.setProperty('--color-text',    c.text)
-              root.style.setProperty('--color-bg',      c.bg)
-              root.style.setProperty('--color-muted',   c.muted)
+      // ── Auth: admin flag, per-account settings, last-page sync ───────────────
+      ;(async () => {
+        try {
+          const auth = await import('../lib/core/Auth.js')
+          auth.onAuthChange(async (user: any) => {
+            if (!user) {
+              localStorage.removeItem(S.LS.admin)
+              refresh()
+              return
             }
-          }
-
-          if (s.font) {
-            const fm = FONT_MAP[s.font]
-            if (fm) {
-              localStorage.setItem('site-font', s.font)
-              document.documentElement.style.setProperty('--font-ui',   fm.stack)
-              document.documentElement.style.setProperty('--font-bold', fm.stack)
-              let lnk = document.getElementById('gfont-link') as HTMLLinkElement | null
-              const href = `https://fonts.googleapis.com/css2?family=${fm.url}&display=swap`
-              if (!lnk) {
-                lnk = document.createElement('link')
-                lnk.id  = 'gfont-link'
-                lnk.rel = 'stylesheet'
-                document.head.appendChild(lnk)
+            if (auth.isAuthorized(user.email)) localStorage.setItem(S.LS.admin, '1')
+            else localStorage.removeItem(S.LS.admin)
+            try {
+              const us: any = await S.getUserSettings(user.uid)
+              if (us) {
+                if (us.theme)        localStorage.setItem(S.LS.theme, us.theme)
+                if (us.customColors) localStorage.setItem(S.LS.custom, JSON.stringify(us.customColors))
+                if (us.font)         localStorage.setItem(S.LS.font, us.font)
+                if (us.lang)         localStorage.setItem(S.LS.lang, us.lang)
               }
-              if (lnk.href !== href) lnk.href = href
-            }
-          }
-
-          if (s.lang) {
-            ;(window as any).applyLang?.(s.lang)
-          }
-
-          // Landing redirect for new users who had no cached value
-          if (
-            s.defaultLanding &&
-            s.defaultLanding !== '/' &&
-            window.location.pathname === '/' &&
-            !sessionStorage.getItem('landing-done')
-          ) {
-            sessionStorage.setItem('landing-done', '1')
-            window.location.replace(s.defaultLanding)
-            return
-          }
-
-          hideLoader()
+            } catch (e) {}
+            refresh()
+            const lp = localStorage.getItem(S.LS.lastPage)
+            if (lp) S.saveUserSettings(user.uid, { lastPage: lp }).catch(() => {})
+          })
+        } catch (e) {
+          console.error('MainLayout: auth unavailable', e)
         }
-      }).catch(() => {
-        clearTimeout(fallback)
-        if (!hasExplicitTheme) hideLoader()
-      })
+      })()
     </script>
 
     <script is:inline define:vars={{ i18nEn: en, i18nEs: es }}>
@@ -329,7 +308,7 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
 
         const get = (obj, path) => path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj)
 
-        const applyLang = (lang) => {
+        const applyLang = (lang, persist = true) => {
           const t = TRANSLATIONS[lang] ?? TRANSLATIONS.en
 
           document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -355,14 +334,27 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
             if (val != null) el.setAttribute('aria-label', val)
           })
 
-          localStorage.setItem(LANG_KEY, lang)
+          if (persist) localStorage.setItem(LANG_KEY, lang)
           document.documentElement.lang = lang
         }
 
         window.__i18n = TRANSLATIONS
         window.applyLang = applyLang
 
-        applyLang(localStorage.getItem(LANG_KEY) ?? 'en')
+        // Effective language: web (3) > user (2) > system (1). Do not persist,
+        // so a resolved value never overwrites the user's own choice.
+        function parse(s) { try { return JSON.parse(s) } catch (e) { return null } }
+        var web = parse(localStorage.getItem('site-web'))
+        var b = null
+        if (web && web.broadcast && web.broadcast.appliedAt &&
+            Date.now() - web.broadcast.appliedAt < 4 * 60 * 60 * 1000 &&
+            String(web.broadcast.appliedAt) !== localStorage.getItem('site-web-optout')) {
+          b = web.broadcast
+        }
+        var userLang = localStorage.getItem(LANG_KEY)
+        var sys = (navigator.language || 'en').toLowerCase().indexOf('es') === 0 ? 'es' : 'en'
+        var lang = (b && b.lang != null) ? b.lang : (userLang || sys)
+        applyLang(lang, false)
       })()
     </script>
   </body>

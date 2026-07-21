@@ -153,11 +153,45 @@ export interface I18n {
       saved: string
       errorSaving: string
     }
+    account: {
+      title: string
+      desc: string
+      signIn: string
+      signOut: string
+      saved: string
+    }
+    web: {
+      active: string
+    }
+    reset: string
+    resetHint: string
     storageNote: string
   }
   space: {
     title: string
     intro: string
+    web: {
+      title: string
+      desc: string
+      theme: string
+      font: string
+      lang: string
+      none: string
+      apply: string
+      remove: string
+      active: string
+    }
+    kiosk: {
+      title: string
+      desc: string
+      destination: string
+      activate: string
+      release: string
+      active: string
+    }
+  }
+  kiosk: {
+    restricted: string
   }
   home: {
     tagline: string
@@ -413,11 +447,45 @@ export const en: I18n = {
       saved: 'Saved!',
       errorSaving: 'Error saving',
     },
-    storageNote: 'Settings are stored in your browser and persist between visits. They may be lost if you clear your browsing data or site history. If signed in, your preferences are also saved as global site defaults.',
+    account: {
+      title: 'Save your preferences',
+      desc: 'Sign in with Google to keep your settings on your account, even if you clear your browsing history.',
+      signIn: 'Sign in with Google',
+      signOut: 'Sign out',
+      saved: 'Your preferences are saved to your account.',
+    },
+    web: {
+      active: 'The site is applying global settings.',
+    },
+    reset: 'Reset to default',
+    resetHint: "Restores system defaults and stops applying the site's global settings.",
+    storageNote: 'Settings are stored in your browser and persist between visits. They may be lost if you clear your browsing data or site history. Sign in to keep them on your account.',
   },
   space: {
     title: 'Space',
     intro: 'Your personal area — private data and tools. Requires an authorized account.',
+    web: {
+      title: 'Web variables (live)',
+      desc: 'Applied in real time to everyone on the site for 4 hours.',
+      theme: 'Theme',
+      font: 'Font',
+      lang: 'Language',
+      none: '— No change',
+      apply: 'Apply to the web',
+      remove: 'Remove',
+      active: 'Applying to everyone',
+    },
+    kiosk: {
+      title: 'Restrict to a page',
+      desc: 'Sends every visitor to one page and blocks navigation for 1 hour. You (authorized) are exempt.',
+      destination: 'Destination page',
+      activate: 'Restrict now',
+      release: 'Release',
+      active: 'Restriction active',
+    },
+  },
+  kiosk: {
+    restricted: 'Restricted by site settings.',
   },
   home: {
     tagline: 'Computer Scientist · Math Enthusiast · UX/UI Designer · Full-Stack Developer · Hiker/Marathoner · Seasoned Minecraft Technician',

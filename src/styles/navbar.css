@@ -219,6 +219,46 @@
   }
 }
 
+/* ── Kiosk Lock Banner ─────────────────────────── */
+
+#kiosk-lock {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.55rem 1rem;
+  background: #b3261e;
+  color: #fff;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 0.82rem;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+#kiosk-lock .kiosk-lock__timer {
+  font-family: JetBrainsMono, monospace;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 2rem;
+  padding: 0.1rem 0.55rem;
+  flex-shrink: 0;
+}
+
+.kiosk-lock--flash {
+  animation: kiosk-flash 0.4s ease;
+}
+
+@keyframes kiosk-flash {
+  0%, 100% { transform: translateY(0); }
+  25%      { transform: translateY(0.15rem); background: #d13a30; }
+  60%      { transform: translateY(0); }
+}
+
 /* ── Settings Overlay ──────────────────────────── */
 
 .settings-overlay {

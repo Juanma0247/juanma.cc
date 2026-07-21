@@ -7,7 +7,7 @@ import MainLayout from '../layouts/MainLayout.astro'
 
     <div class="space-page__grid">
 
-      <!-- Page Settings -->
+      <!-- Page Settings (auth) -->
       <section class="settings-card settings-card--auth" id="settings-page">
         <div class="settings-card__head">
           <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -54,29 +54,154 @@ import MainLayout from '../layouts/MainLayout.astro'
         </div>
       </section>
 
+      <!-- Web variables (broadcast, authorized only) -->
+      <section class="settings-card" id="space-web" hidden>
+        <div class="settings-card__head">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M4.5 2A2.5 2.5 0 0 0 2 4.5v11A2.5 2.5 0 0 0 4.5 18h11a2.5 2.5 0 0 0 2.5-2.5v-11A2.5 2.5 0 0 0 15.5 2h-11ZM10 5a5 5 0 0 0-5 5 .75.75 0 0 0 1.5 0A3.5 3.5 0 0 1 10 6.5a.75.75 0 0 0 0-1.5Z" clip-rule="evenodd"/>
+          </svg>
+          <h3 data-i18n="space.web.title">Web variables (live)</h3>
+        </div>
+        <p class="settings-card__desc" data-i18n="space.web.desc">Applied in real time to everyone on the site for 4 hours.</p>
+
+        <div class="space-field">
+          <label class="page-setting-label" for="web-theme" data-i18n="space.web.theme">Theme</label>
+          <select class="page-setting-select" id="web-theme">
+            <option value="" data-i18n="space.web.none">— No change</option>
+            <option value="system" data-i18n="settings.theme.system">System</option>
+            <option value="light" data-i18n="settings.theme.light">Light</option>
+            <option value="dark" data-i18n="settings.theme.dark">Dark</option>
+          </select>
+        </div>
+        <div class="space-field">
+          <label class="page-setting-label" for="web-font" data-i18n="space.web.font">Font</label>
+          <select class="page-setting-select" id="web-font">
+            <option value="" data-i18n="space.web.none">— No change</option>
+            <option value="__default" data-i18n="settings.font.default">Default</option>
+            <option value="inter">Inter</option>
+            <option value="roboto">Roboto</option>
+            <option value="playfair">Playfair Display</option>
+            <option value="montserrat">Montserrat</option>
+            <option value="fira-code">Fira Code</option>
+          </select>
+        </div>
+        <div class="space-field">
+          <label class="page-setting-label" for="web-lang" data-i18n="space.web.lang">Language</label>
+          <select class="page-setting-select" id="web-lang">
+            <option value="" data-i18n="space.web.none">— No change</option>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
+        </div>
+
+        <div class="space-status" id="web-status" hidden>
+          <span class="space-status__dot"></span>
+          <span data-i18n="space.web.active">Applying to everyone</span>
+          <span class="space-status__timer" id="web-status-timer"></span>
+        </div>
+
+        <div class="settings-custom__actions">
+          <button class="settings-custom__cancel" id="web-clear" data-i18n="space.web.remove">Remove</button>
+          <button class="settings-custom__apply" id="web-apply" data-i18n="space.web.apply">Apply to the web</button>
+        </div>
+      </section>
+
+      <!-- Kiosk lock (authorized only) -->
+      <section class="settings-card" id="space-kiosk" hidden>
+        <div class="settings-card__head">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z" clip-rule="evenodd"/>
+          </svg>
+          <h3 data-i18n="space.kiosk.title">Restrict to a page</h3>
+        </div>
+        <p class="settings-card__desc" data-i18n="space.kiosk.desc">Sends every visitor to one page and blocks navigation for 1 hour. You (authorized) are exempt.</p>
+
+        <div class="space-field">
+          <label class="page-setting-label" for="kiosk-dest" data-i18n="space.kiosk.destination">Destination page</label>
+          <select class="page-setting-select" id="kiosk-dest"></select>
+        </div>
+
+        <div class="space-status space-status--warn" id="kiosk-status" hidden>
+          <span class="space-status__dot"></span>
+          <span data-i18n="space.kiosk.active">Restriction active</span>
+          <span class="space-status__timer" id="kiosk-status-timer"></span>
+        </div>
+
+        <div class="settings-custom__actions">
+          <button class="settings-custom__cancel" id="kiosk-release" data-i18n="space.kiosk.release">Release</button>
+          <button class="settings-custom__apply" id="kiosk-activate" data-i18n="space.kiosk.activate">Restrict now</button>
+        </div>
+      </section>
+
     </div>
   </div>
 </MainLayout>
 
 <style>
   .space-page {
-    max-width: 48rem;
+    max-width: 60rem;
     margin: 0 auto;
     padding: 2rem 1.5rem 4rem;
   }
 
   .space-page__grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.25rem;
+    align-content: start;
+  }
+
+  .space-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .space-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-ui), sans-serif;
+    font-size: 0.78rem;
+    color: var(--color-text);
+  }
+
+  .space-status__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--color-primary);
+    flex-shrink: 0;
+  }
+
+  .space-status--warn .space-status__dot { background: #b3261e; }
+
+  .space-status__timer {
+    font-family: JetBrainsMono, monospace;
+    font-weight: bold;
+    color: var(--color-primary);
+    background: var(--primary-15);
+    border-radius: 2rem;
+    padding: 0.1rem 0.55rem;
+    margin-left: auto;
+  }
+
+  .space-status--warn .space-status__timer {
+    color: #b3261e;
+    background: color-mix(in srgb, #b3261e 15%, transparent);
+  }
+
+  @media (max-width: 40rem) {
+    .space-page__grid { grid-template-columns: 1fr; }
   }
 </style>
 
 <script>
   import { DESTINATIONS } from '../data/destinations'
+  import * as S from '../lib/core/settings.js'
 
   function getMsg(key: string): string {
-    const lang = localStorage.getItem('site-lang') || 'en'
+    const lang = localStorage.getItem('site-lang') || S.detectSystemLang()
     const t = (window as any).__i18n?.[lang] ?? (window as any).__i18n?.en
     return key.split('.').reduce((o: any, k: string) => o?.[k], t) ?? key
   }
@@ -89,37 +214,129 @@ import MainLayout from '../layouts/MainLayout.astro'
   const landingSelect     = document.getElementById('page-default-landing')    as HTMLSelectElement
   const saveFeedback      = document.getElementById('page-save-feedback')      as HTMLElement
 
-  const groups: Record<string, HTMLOptGroupElement> = {}
-  for (const dest of DESTINATIONS) {
-    if (!groups[dest.group]) {
-      const og = document.createElement('optgroup')
-      og.label = dest.group
-      groups[dest.group] = og
-      landingSelect.appendChild(og)
+  const adminCards = [
+    document.getElementById('space-web')   as HTMLElement,
+    document.getElementById('space-kiosk') as HTMLElement,
+  ]
+
+  // Populate destination selects (landing + kiosk) from the shared list.
+  function fillDestinations(select: HTMLSelectElement) {
+    const groups: Record<string, HTMLOptGroupElement> = {}
+    for (const dest of DESTINATIONS) {
+      if (!groups[dest.group]) {
+        const og = document.createElement('optgroup')
+        og.label = dest.group
+        groups[dest.group] = og
+        select.appendChild(og)
+      }
+      const opt = document.createElement('option')
+      opt.value = dest.value
+      opt.textContent = dest.label
+      groups[dest.group].appendChild(opt)
     }
-    const opt = document.createElement('option')
-    opt.value = dest.value
-    opt.textContent = dest.label
-    groups[dest.group].appendChild(opt)
   }
+  const kioskDest = document.getElementById('kiosk-dest') as HTMLSelectElement
+  fillDestinations(landingSelect)
+  fillDestinations(kioskDest)
 
   function showAuthState(state: 'signedout' | 'unauthorized' | 'authorized') {
     stateSignedout.hidden    = state !== 'signedout'
     stateUnauthorized.hidden = state !== 'unauthorized'
     stateAuthorized.hidden   = state !== 'authorized'
+    adminCards.forEach(c => { c.hidden = state !== 'authorized' })
   }
 
   let saveFeedbackTimer: ReturnType<typeof setTimeout> | null = null
+  function flashFeedback(ok: boolean) {
+    saveFeedback.textContent = getMsg(ok ? 'settings.page.saved' : 'settings.page.errorSaving')
+    saveFeedback.dataset.state = ok ? 'ok' : 'error'
+    saveFeedback.hidden = false
+    if (saveFeedbackTimer) clearTimeout(saveFeedbackTimer)
+    saveFeedbackTimer = setTimeout(() => { saveFeedback.hidden = true }, 2500)
+  }
 
-  // Load Firebase auth + cloud settings lazily. If it fails (offline or a stale
-  // dev bundle), the page still renders — only cloud features are unavailable.
+  // ── Web broadcast controls ────────────────────────────────────────────────────
+
+  const webTheme  = document.getElementById('web-theme') as HTMLSelectElement
+  const webFont   = document.getElementById('web-font')  as HTMLSelectElement
+  const webLang   = document.getElementById('web-lang')  as HTMLSelectElement
+  const webStatus = document.getElementById('web-status') as HTMLElement
+  const webTimer  = document.getElementById('web-status-timer') as HTMLElement
+  let webTimerId: ReturnType<typeof setInterval> | null = null
+
+  document.getElementById('web-apply')!.addEventListener('click', async () => {
+    const fields: Record<string, any> = {}
+    if (webTheme.value) fields.theme = webTheme.value
+    if (webFont.value)  fields.font  = webFont.value === '__default' ? '' : webFont.value
+    if (webLang.value)  fields.lang  = webLang.value
+    try {
+      if (Object.keys(fields).length === 0) await S.clearBroadcast()
+      else await S.saveBroadcast(fields)
+    } catch { /* rules / offline */ }
+  })
+
+  document.getElementById('web-clear')!.addEventListener('click', () => {
+    S.clearBroadcast().catch(() => {})
+  })
+
+  // ── Kiosk controls ────────────────────────────────────────────────────────────
+
+  const kioskStatus = document.getElementById('kiosk-status') as HTMLElement
+  const kioskTimer  = document.getElementById('kiosk-status-timer') as HTMLElement
+  let kioskTimerId: ReturnType<typeof setInterval> | null = null
+
+  document.getElementById('kiosk-activate')!.addEventListener('click', () => {
+    S.saveLock(kioskDest.value).catch(() => {})
+  })
+  document.getElementById('kiosk-release')!.addEventListener('click', () => {
+    S.clearLock().catch(() => {})
+  })
+
+  // ── Live status / countdowns ──────────────────────────────────────────────────
+
+  function renderWeb(web: any) {
+    // Broadcast status + countdown
+    const bActive = S.broadcastActive(web)
+    webStatus.hidden = !bActive
+    if (webTimerId) { clearInterval(webTimerId); webTimerId = null }
+    if (bActive) {
+      const appliedAt = web.broadcast.appliedAt
+      const b = web.broadcast
+      webTheme.value = b.theme ?? ''
+      webFont.value  = b.font === '' ? '__default' : (b.font ?? '')
+      webLang.value  = b.lang ?? ''
+      const tick = () => {
+        const remaining = appliedAt + S.BROADCAST_TTL - Date.now()
+        webTimer.textContent = S.fmtCountdown(remaining)
+        if (remaining <= 0 && webTimerId) { clearInterval(webTimerId); webTimerId = null; webStatus.hidden = true }
+      }
+      tick(); webTimerId = setInterval(tick, 1000)
+    }
+
+    // Kiosk status + countdown
+    const lActive = S.lockActive(web)
+    kioskStatus.hidden = !lActive
+    if (kioskTimerId) { clearInterval(kioskTimerId); kioskTimerId = null }
+    if (lActive) {
+      if (web.lock.path) kioskDest.value = web.lock.path
+      const appliedAt = web.lock.appliedAt
+      const tick = () => {
+        const remaining = appliedAt + S.LOCK_TTL - Date.now()
+        kioskTimer.textContent = S.fmtCountdown(remaining)
+        if (remaining <= 0 && kioskTimerId) { clearInterval(kioskTimerId); kioskTimerId = null; kioskStatus.hidden = true }
+      }
+      tick(); kioskTimerId = setInterval(tick, 1000)
+    }
+
+    if (web && web.defaultLanding) landingSelect.value = web.defaultLanding
+  }
+
+  // ── Auth + wiring ─────────────────────────────────────────────────────────────
+
   ;(async () => {
-    let auth, saveSettings, getSettings
+    let auth: any
     try {
       auth = await import('../lib/core/Auth.js')
-      const ss = await import('../lib/core/SiteSettings.js')
-      saveSettings = ss.saveSettings
-      getSettings  = ss.getSettings
     } catch (e) {
       console.error('Space: cloud/auth unavailable:', e)
       return
@@ -128,17 +345,14 @@ import MainLayout from '../layouts/MainLayout.astro'
     const { signIn, signOut, onAuthChange, isAuthorized } = auth
 
     function handleSignOut() { signOut().catch(console.error) }
-    document.getElementById('page-signin-btn')!.addEventListener('click', async () => {
-      try { await signIn() } catch (e) { console.error(e) }
+    document.getElementById('page-signin-btn')!.addEventListener('click', () => {
+      signIn().catch(console.error)
     })
     document.getElementById('page-signout-btn')!.addEventListener('click', handleSignOut)
     document.getElementById('page-signout-btn-unauth')!.addEventListener('click', handleSignOut)
 
     onAuthChange(async (user: any) => {
-      if (!user) {
-        showAuthState('signedout')
-        return
-      }
+      if (!user) { showAuthState('signedout'); return }
       if (!isAuthorized(user.email)) {
         showAuthState('unauthorized')
         await signOut()
@@ -147,22 +361,16 @@ import MainLayout from '../layouts/MainLayout.astro'
       userAvatar.src = user.photoURL || ''
       userName.textContent = user.displayName || user.email || ''
       showAuthState('authorized')
-      const settings = await getSettings()
-      if (settings?.defaultLanding) landingSelect.value = settings.defaultLanding
+      const web = await S.getWeb()
+      renderWeb(web)
     })
 
     landingSelect.addEventListener('change', async () => {
-      try {
-        await saveSettings({ defaultLanding: landingSelect.value })
-        saveFeedback.textContent = getMsg('settings.page.saved')
-        saveFeedback.dataset.state = 'ok'
-      } catch {
-        saveFeedback.textContent = getMsg('settings.page.errorSaving')
-        saveFeedback.dataset.state = 'error'
-      }
-      saveFeedback.hidden = false
-      if (saveFeedbackTimer) clearTimeout(saveFeedbackTimer)
-      saveFeedbackTimer = setTimeout(() => { saveFeedback.hidden = true }, 2500)
+      try { await S.saveLanding(landingSelect.value); flashFeedback(true) }
+      catch { flashFeedback(false) }
     })
+
+    // Keep statuses live for the admin while the page is open.
+    S.listenWeb((web: any) => renderWeb(web))
   })()
 </script>

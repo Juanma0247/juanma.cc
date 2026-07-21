@@ -1,0 +1,43 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthorized() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'juanmanueldiazgomez247@gmail.com',
+          'judiazgom@unal.edu.co'
+        ];
+    }
+
+    // Global site variables (theme/font/lang broadcast, kiosk lock, default landing).
+    // Anyone can read; only authorized accounts can write.
+    match /settings/web {
+      allow read: if true;
+      allow write: if isAuthorized();
+    }
+
+    // Legacy global settings document (kept for backward compatibility).
+    match /settings/page {
+      allow read: if true;
+      allow write: if isAuthorized();
+    }
+
+    // Per-account preferences: each user may read and write only their own doc.
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Turing Machine library.
+    match /turing-machines/{doc} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Everything else denied by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
