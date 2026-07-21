@@ -7,6 +7,7 @@ interface Props {
   section?: string
   labels?: string[]
   icon?: string
+  titleHref?: string
 }
 
 const {
@@ -14,6 +15,7 @@ const {
   section = '',
   labels = [],
   icon = '/img/favicon.svg',
+  titleHref = '',
 } = Astro.props
 
 const pathname = Astro.url.pathname
@@ -24,14 +26,15 @@ function getActiveSection(sections: NavSection[], path: string): NavSection | un
 }
 
 const activeSection = getActiveSection(SECTIONS, pathname)
-const isSettings = pathname === '/settings'
 const displayLabels = labels.slice(0, 3)
 ---
 
 <nav id="topbar" class="topbar" aria-label="Main navigation">
 
   <div class="topbar__identity">
-    <p class="topbar__title">{navTitle}</p>
+    {titleHref
+      ? <a class="topbar__title topbar__title--link" href={titleHref}>{navTitle}</a>
+      : <p class="topbar__title">{navTitle}</p>}
     <div class="topbar__meta">
       {(displayLabels.length > 0 || section) && (
         <img class="topbar__icon" src={icon} alt="" aria-hidden="true" />
@@ -64,14 +67,6 @@ const displayLabels = labels.slice(0, 3)
         <span data-i18n={`nav.${s.id}`}>{s.label}</span>
       </a>
     ))}
-    <a
-      href="/settings"
-      class={`topbar__navitem${isSettings ? ' topbar__navitem--active' : ''}`}
-      aria-current={isSettings ? 'page' : undefined}
-    >
-      <i data-feather="settings"></i>
-      <span data-i18n="nav.settings">Settings</span>
-    </a>
   </div>
 
 </nav>

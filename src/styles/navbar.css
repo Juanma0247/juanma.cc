@@ -40,6 +40,16 @@
   margin: 0;
 }
 
+.topbar__title--link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 160ms;
+}
+
+.topbar__title--link:hover {
+  color: var(--color-primary);
+}
+
 .topbar__meta {
   display: flex;
   align-items: center;
@@ -206,6 +216,48 @@
   .topbar__navitem {
     width: 100%;
     padding: 0.5rem 0.75rem;
+  }
+}
+
+/* ── Accessibility Floating Button ─────────────── */
+
+.a11y-fab {
+  position: fixed;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
+  color: var(--color-primary);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity 160ms, transform 160ms, box-shadow 160ms;
+}
+
+.a11y-fab:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
+}
+
+.a11y-fab svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+@media (max-width: 580px) {
+  .a11y-fab {
+    width: 2.5rem;
+    height: 2.5rem;
+    right: 0.85rem;
+    bottom: 0.85rem;
   }
 }
 

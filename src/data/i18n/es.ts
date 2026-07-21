@@ -13,6 +13,7 @@ export const es: I18n = {
     games: 'Juegos',
     projects: 'Proyectos',
     settings: 'Ajustes',
+    space: 'Space',
   },
   projectsIndex: {
     featured: 'Destacado',
@@ -156,8 +157,13 @@ export const es: I18n = {
     },
     storageNote: 'Los ajustes se almacenan en tu navegador y persisten entre visitas. Pueden perderse si borras los datos de navegación o el historial del sitio. Si inicias sesión, tus preferencias también se guardan como valores globales del sitio.',
   },
+  space: {
+    title: 'Space',
+    intro: 'Tu área personal — datos y herramientas privadas. Requiere una cuenta autorizada.',
+  },
   home: {
     tagline: 'Científico Computacional · Apasionado de las Matemáticas · Diseñador UX/UI · Desarrollador Full Stack · Senderista/Maratonista · Técnico Experimentado en Minecraft',
+    accessibility: 'Accesibilidad',
     bio: `Hola, soy <strong>Juanma</strong>. Vengo de <a class="geo" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=1.4777072123416435,-77.01902130581522" data-map="https://maps.google.com/maps?q=1.4777072123416435,-77.01902130581522&z=13&output=embed"><svg class="geo-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span class="geo-name">Las Mesas, Nariño</span><span class="geo-pop"></span></a> y hoy vivo en <a class="geo" target="_blank" rel="noopener" href="https://maps.app.goo.gl/YkSYszNc6iNqPaTS6" data-map="https://maps.google.com/maps?q=5.068173,-75.517339&z=13&output=embed"><svg class="geo-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span class="geo-name">Manizales, Caldas</span><span class="geo-pop"></span></a>, donde estudio. Soy graduado del <a class="geo geo--plain" target="_blank" rel="noopener" href="https://betowa.sena.edu.co/oferta/analisis-y-desarrollo-de-software?search=Analisis+y+dise%C3%B1o+de&programId=136456&modality=V&level=6"><span class="geo-name">SENA</span></a> en Análisis y Diseño de Sistemas de Información y hoy estudio <a class="geo geo--plain" target="_blank" rel="noopener" href="https://fcen.unal.edu.co/index.php?id=509">Ciencias de la Computación</a> en la <a class="geo" target="_blank" rel="noopener" href="https://www.google.com/maps/place/Universidad+Nacional+de+Colombia+Sede+Manizales+-+Campus+La+Nubia/@5.0290382,-75.4724777,281m/data=!3m1!1e3!4m6!3m5!1s0x8e4765af7f225e41:0x668b66fb520b8cd3!8m2!3d5.0290643!4d-75.4728384!16s%2Fg%2F1tfgf8vx?entry=ttu" data-map="https://maps.google.com/maps?q=5.0290643,-75.4728384&z=16&output=embed"><svg class="geo-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span class="geo-name">UNAL sede Manizales</span><span class="geo-pop"></span></a>. Llevo seis años en el desarrollo de software y últimamente ampliando mi red de conocimientos con ciencias de la computación; me encanta mantenerme a la vanguardia. Trabajo aplicando el método científico a la ingeniería de software: entender bien el problema, adquirir los conocimientos y herramientas adecuados, diseñar soluciones correctas, reproducibles y duraderas, y luego lanzarlas mejorando con retroalimentación constante. Aquí encontrarás un repositorio personal que reúne y resume parte de mi trabajo.`,
     quickProjects: 'Proyectos',
     quickGames: 'Juegos',

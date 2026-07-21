@@ -11,6 +11,7 @@ export interface I18n {
     games: string
     projects: string
     settings: string
+    space: string
   }
   projectsIndex: {
     featured: string
@@ -154,8 +155,13 @@ export interface I18n {
     }
     storageNote: string
   }
+  space: {
+    title: string
+    intro: string
+  }
   home: {
     tagline: string
+    accessibility: string
     bio: string
     quickProjects: string
     quickGames: string
@@ -265,6 +271,7 @@ export const en: I18n = {
     games: 'Games',
     projects: 'Projects',
     settings: 'Settings',
+    space: 'Space',
   },
   projectsIndex: {
     featured: 'Featured',
@@ -408,8 +415,13 @@ export const en: I18n = {
     },
     storageNote: 'Settings are stored in your browser and persist between visits. They may be lost if you clear your browsing data or site history. If signed in, your preferences are also saved as global site defaults.',
   },
+  space: {
+    title: 'Space',
+    intro: 'Your personal area — private data and tools. Requires an authorized account.',
+  },
   home: {
     tagline: 'Computer Scientist · Math Enthusiast · UX/UI Designer · Full-Stack Developer · Hiker/Marathoner · Seasoned Minecraft Technician',
+    accessibility: 'Accessibility',
     bio: `Hi, I'm <strong>Juanma</strong>. I come from <a class="geo" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=1.4777072123416435,-77.01902130581522" data-map="https://maps.google.com/maps?q=1.4777072123416435,-77.01902130581522&z=13&output=embed"><svg class="geo-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span class="geo-name">Las Mesas, Nariño</span><span class="geo-pop"></span></a> and now live in <a class="geo" target="_blank" rel="noopener" href="https://maps.app.goo.gl/YkSYszNc6iNqPaTS6" data-map="https://maps.google.com/maps?q=5.068173,-75.517339&z=13&output=embed"><svg class="geo-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span class="geo-name">Manizales, Caldas</span><span class="geo-pop"></span></a>, where I study. I'm a <a class="geo geo--plain" target="_blank" rel="noopener" href="https://betowa.sena.edu.co/oferta/analisis-y-desarrollo-de-software?search=Analisis+y+dise%C3%B1o+de&programId=136456&modality=V&level=6"><span class="geo-name">SENA</span></a> graduate in Information Systems Analysis and Design, and I'm now studying <a class="geo geo--plain" target="_blank" rel="noopener" href="https://fcen.unal.edu.co/index.php?id=509">Computer Science</a> at <a class="geo" target="_blank" rel="noopener" href="https://www.google.com/maps/place/Universidad+Nacional+de+Colombia+Sede+Manizales+-+Campus+La+Nubia/@5.0290382,-75.4724777,281m/data=!3m1!1e3!4m6!3m5!1s0x8e4765af7f225e41:0x668b66fb520b8cd3!8m2!3d5.0290643!4d-75.4728384!16s%2Fg%2F1tfgf8vx?entry=ttu" data-map="https://maps.google.com/maps?q=5.0290643,-75.4728384&z=16&output=embed"><svg class="geo-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span class="geo-name">UNAL Manizales</span><span class="geo-pop"></span></a>. I've spent six years in software development, and lately I've been broadening my knowledge with computer science — I love staying on the cutting edge. My way of working applies the scientific method to software engineering: really understand the problem, acquire the right knowledge and tools, design correct, reproducible and lasting solutions, then ship them, improving with constant feedback. Here you'll find a personal repository that gathers and sums up part of my work.`,
     quickProjects: 'Projects',
     quickGames: 'Games',
