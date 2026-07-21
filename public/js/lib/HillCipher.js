@@ -1,6 +1,9 @@
 import ExtText from '/js/core/ExtText.js'
 import math from 'https://cdn.jsdelivr.net/npm/mathjs@12.4.3/+esm'
 
+const t = (key, fallback) =>
+  typeof window !== 'undefined' && window.i18nGet ? window.i18nGet(`pd.hillCipher.${key}`, fallback) : fallback
+
 class HillCipher {
   constructor() {
     this.i1  = document.getElementById('p1i1')
@@ -252,7 +255,7 @@ class HillCipher {
     const cipher = this.matricesAMensaje(mpmM, chars)
     const det   = this.determinanteSarrus(auxMC)
 
-    if (det === 0) { this.e1.style.display = 'block'; this.e1.textContent = 'Determinant = 0'; return }
+    if (det === 0) { this.e1.style.display = 'block'; this.e1.textContent = t('detZero', 'Determinant = 0'); return }
 
     const inv = this.matrizInversa(auxMC)
     const invFrac = this.matizAFraciones(inv)
@@ -276,7 +279,7 @@ class HillCipher {
       this.crearLtxMCIPorMatrices(invMod, cipherMats, mpmCI, mpmCIM, n, mod)
     } else {
       this.e1.style.display = 'block'
-      this.e1.textContent = 'No modular inverse'
+      this.e1.textContent = t('noInverse', 'No modular inverse')
     }
   }
 }

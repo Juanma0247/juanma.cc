@@ -5,6 +5,9 @@ import { getFirestore, collection, getDocs, setDoc, doc } from 'https://www.gsta
 const DEFAULT_H = 10
 const DEFAULT_W = 24
 
+const t = (key, fallback) =>
+  typeof window !== 'undefined' && window.i18nGet ? window.i18nGet(`games.minesweeper.${key}`, fallback) : fallback
+
 async function setDocument(id, fields, col, db) {
   try {
     await setDoc(doc(collection(db, col), id), fields)
@@ -71,14 +74,14 @@ class Minesweeper {
   }
 
   async addGamer(db) {
-    if (!this.ngi1.value) { alert('Please enter a name'); return }
-    if (this.ngi2.value.length !== 4) { alert('Code must be exactly 4 digits'); return }
+    if (!this.ngi1.value) { alert(t('msgEnterName', 'Please enter a name')); return }
+    if (this.ngi2.value.length !== 4) { alert(t('msgCode4', 'Code must be exactly 4 digits')); return }
     const rnd = () => Math.floor(Math.random() * 10)
     const initials = this.ngi1.value.split(' ').map(n => n[0].toUpperCase()).join('')
     const password = initials + this.ngi2.value
     this.ngi2.value = `${rnd()}${rnd()}${rnd()}${rnd()}`
     if (this.documents[password]) {
-      alert('User already exists')
+      alert(t('msgUserExists', 'User already exists'))
       this.ngi2.value = `${rnd()}${rnd()}${rnd()}${rnd()}`
       return
     }
@@ -86,7 +89,7 @@ class Minesweeper {
       password, name: this.ngi1.value, game: '', time: 0, score: 0,
     }, 'juanma_co_minesweeper_gamers', db)
     if (res) {
-      alert(`Save your player ID: ${password}`)
+      alert(`${t('msgSavedId', 'Save your player ID:')} ${password}`)
       this.grid.style.display = 'block'
       this.options.style.display = 'block'
       this.statistics.style.display = 'block'
@@ -98,7 +101,7 @@ class Minesweeper {
   }
 
   loadMessage() {
-    const messages = [
+    const fallback = [
       'You can do it, ', 'Go for victory, ', 'Believe in yourself, ',
       'Make history today, ', "It's your day, ", 'Have fun, ',
       'Make it count, ', 'Play with passion, ', 'Make it incredible, ',
@@ -107,6 +110,7 @@ class Minesweeper {
       'Make it epic, ', "You'll achieve it, ", 'Break records, ',
       'Keep moving forward, ', 'Success awaits you, ',
     ]
+    const messages = t('encouragements', fallback)
     const m = Math.floor(Math.random() * messages.length)
     this.t1.textContent = `${messages[m]}${this.documents[this.i3.value]['name'].split(' ')[0]}`
   }
@@ -130,28 +134,32 @@ class Minesweeper {
       this.options.style.display = 'none'
       this.statistics.style.display = 'none'
       this.newGamer.style.display = 'block'
-      this.t1.textContent = 'Register'
+      this.t1.textContent = t('register', 'Register')
     })
 
     this.ngb1.addEventListener('click', () => this.addGamer(db))
 
+    // Track mode via a flag rather than the (translated) button label.
+    this.b2.dataset.mode = 'load'
     this.b2.addEventListener('click', async () => {
-      if (this.b2.textContent.toLowerCase() === 'load') {
-        if (!this.documents[this.i3.value]) { alert('User not found'); return }
+      if (this.b2.dataset.mode === 'load') {
+        if (!this.documents[this.i3.value]) { alert(t('msgUserNotFound', 'User not found')); return }
         try {
           const data = JSON.parse(this.documents[this.i3.value]['game'])
           const h = data.length
           const w = data[0].length
           this.id = this.i3.value
-          this.b2.textContent = 'SAVE GAME'
+          this.b2.dataset.mode = 'save'
+          this.b2.textContent = t('saveGame', 'SAVE GAME')
           this.loadMessage()
           this.game = this.createGame(h, w, data, this.documents[this.i3.value]['time'], this.documents[this.i3.value]['score'])
         } catch {
           this.id = this.i3.value
-          this.b2.textContent = 'SAVE GAME'
+          this.b2.dataset.mode = 'save'
+          this.b2.textContent = t('saveGame', 'SAVE GAME')
           this.game = this.createGame(DEFAULT_H, DEFAULT_W)
           this.loadMessage()
-          alert('Player has no saved game')
+          alert(t('msgNoSavedGame', 'Player has no saved game'))
         }
       } else {
         const res = await setDocument(this.id, {
@@ -161,18 +169,18 @@ class Minesweeper {
           password: this.documents[this.i3.value]['password'],
           name: this.documents[this.i3.value]['name'],
         }, 'juanma_co_minesweeper_gamers', db)
-        if (res) alert('Game saved successfully')
+        if (res) alert(t('msgGameSaved', 'Game saved successfully'))
       }
     })
 
-    this.i3.addEventListener('input', () => { this.b2.textContent = 'Load' })
+    this.i3.addEventListener('input', () => { this.b2.dataset.mode = 'load'; this.b2.textContent = t('load', 'Load') })
 
     this.b1.addEventListener('click', () => {
       this.createGame(
         this.i1.value ? parseInt(this.i1.value) : DEFAULT_H,
         this.i2.value ? parseInt(this.i2.value) : DEFAULT_W
       )
-      try { this.loadMessage() } catch { this.t1.textContent = 'Minesweeper' }
+      try { this.loadMessage() } catch { this.t1.textContent = t('subtitle', 'Minesweeper') }
     })
   }
 }

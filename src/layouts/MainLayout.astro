@@ -349,6 +349,12 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
         window.__i18n = TRANSLATIONS
         window.applyLang = applyLang
 
+        // Static content that embeds LaTeX (data-i18n prose/labels) is swapped as
+        // raw text on a language change; re-run KaTeX so it renders again.
+        window.addEventListener('langchanged', function () {
+          if (window.renderMathInElement) window.renderMathInElement(document.body)
+        })
+
         // Bridge for runtime-generated content (project/game/tool JS). Resolves a
         // dotted key against the current language, falling back to a supplied
         // default (usually the English source string) so nothing ever breaks.

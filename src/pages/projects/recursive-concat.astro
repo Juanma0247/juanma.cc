@@ -4,36 +4,36 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
 <ProjectLayout slug="recursive-concat">
   <div class="cc-page">
     <header class="cc-header">
-      <h1 class="cc-title">Recursive Concatenation</h1>
-      <p class="cc-sub">See how <b>α · β</b> is built one character at a time, peeling <b>β</b> down to the base case.</p>
+      <h1 class="cc-title" data-i18n="pd.recursiveConcat.title">Recursive Concatenation</h1>
+      <p class="cc-sub" data-i18n="pd.recursiveConcat.sub">See how <b>α · β</b> is built one character at a time, peeling <b>β</b> down to the base case.</p>
     </header>
 
     <div class="cc-inputs">
       <div class="field">
         <input id="p16iAlpha" autocomplete="off" required value="a" placeholder=" ">
-        <label class="field-label">String α (prefix)</label>
+        <label class="field-label" data-i18n="pd.recursiveConcat.labelAlpha">String α (prefix)</label>
       </div>
       <div class="field">
         <input id="p16iBeta" autocomplete="off" required value="bcde" placeholder=" ">
-        <label class="field-label">String β (to concatenate)</label>
+        <label class="field-label" data-i18n="pd.recursiveConcat.labelBeta">String β (to concatenate)</label>
       </div>
     </div>
 
     <div class="cc-key">
-      <span class="cc-key-item"><span class="cc-sw cc-c-alpha"></span>α · prefix</span>
-      <span class="cc-key-item"><span class="cc-sw cc-c-gamma"></span>γ · remaining</span>
-      <span class="cc-key-item"><span class="cc-sw cc-c-a"></span>last character</span>
+      <span class="cc-key-item"><span class="cc-sw cc-c-alpha"></span><span data-i18n="pd.recursiveConcat.keyPrefix">α · prefix</span></span>
+      <span class="cc-key-item"><span class="cc-sw cc-c-gamma"></span><span data-i18n="pd.recursiveConcat.keyRemaining">γ · remaining</span></span>
+      <span class="cc-key-item"><span class="cc-sw cc-c-a"></span><span data-i18n="pd.recursiveConcat.keyLast">last character</span></span>
     </div>
 
     <div id="p16r1" class="cc-stage"></div>
 
     <div class="cc-controls" id="p16controls" hidden>
       <div class="cc-nav">
-        <button type="button" class="cc-arrow" id="p16prev" aria-label="Previous step">
+        <button type="button" class="cc-arrow" id="p16prev" aria-label="Previous step" data-i18n-aria-label="pd.recursiveConcat.prevStep">
           <span aria-hidden="true">←</span>
         </button>
         <div class="cc-steps-rail" id="p16dots"></div>
-        <button type="button" class="cc-arrow" id="p16next" aria-label="Next step">
+        <button type="button" class="cc-arrow" id="p16next" aria-label="Next step" data-i18n-aria-label="pd.recursiveConcat.nextStep">
           <span aria-hidden="true">→</span>
         </button>
       </div>
@@ -43,7 +43,7 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
       </button>
     </div>
 
-    <p class="cc-hint-keys">Move with the buttons, the ← → arrow keys, or the numbered steps.</p>
+    <p class="cc-hint-keys" data-i18n="pd.recursiveConcat.hintKeys">Move with the buttons, the ← → arrow keys, or the numbered steps.</p>
   </div>
   <div class="space-bottom"></div>
 </ProjectLayout>

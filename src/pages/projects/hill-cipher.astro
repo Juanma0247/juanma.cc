@@ -5,42 +5,42 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
 <ProjectLayout slug="hill-cipher">
   <div class="field">
     <input id="p1i1" required type="text" placeholder=" " />
-    <label class="field-label">Alphabet</label>
+    <label class="field-label" data-i18n="pd.hillCipher.alphabet">Alphabet</label>
   </div>
   <div class="field">
     <input id="p1i2" required type="text" placeholder=" " />
-    <label class="field-label">Key text</label>
+    <label class="field-label" data-i18n="pd.hillCipher.keyText">Key text</label>
     <p class="p1Error" id="p1e1"></p>
   </div>
   <div class="field">
     <input id="p1i3" required type="text" placeholder=" " />
-    <label class="field-label">Text to encrypt or decrypt</label>
+    <label class="field-label" data-i18n="pd.hillCipher.textToProcess">Text to encrypt or decrypt</label>
   </div>
 
   <div class="center">
-    <p class="p1result-label">Encrypted text</p>
+    <p class="p1result-label" data-i18n="pd.hillCipher.encryptedText">Encrypted text</p>
     <input class="result" id="p1r1" placeholder="..." />
   </div>
   <div class="center">
-    <p class="p1result-label">Decrypted text</p>
+    <p class="p1result-label" data-i18n="pd.hillCipher.decryptedText">Decrypted text</p>
     <input class="result" id="p1r2" placeholder="..." />
   </div>
 
   <div class="p1ContOptions">
-    <h2 id="p1Introduction" class="p1Option">Introduction</h2>
-    <h2 id="p1Instructions" class="p1Option">Instructions</h2>
-    <h2 id="p1Process" class="p1Option">Process</h2>
+    <h2 id="p1Introduction" class="p1Option" data-i18n="pd.hillCipher.introduction">Introduction</h2>
+    <h2 id="p1Instructions" class="p1Option" data-i18n="pd.hillCipher.instructions">Instructions</h2>
+    <h2 id="p1Process" class="p1Option" data-i18n="pd.hillCipher.process">Process</h2>
   </div>
 
   <div id="p1ContIntroduction" style="display: none;">
-    <p class="p1Descripcion">
+    <p class="p1Descripcion" data-i18n="pd.hillCipher.introDesc">
       The Hill cipher is a cryptographic method developed by mathematician Lester S. Hill in 1929.
       It is based on linear algebra and uses matrices to transform blocks of plaintext into ciphertext.
     </p>
   </div>
 
   <div id="p1ContInstructions" style="display: none;">
-    <p class="p1Descripcion">
+    <p class="p1Descripcion" data-i18n="pd.hillCipher.instrDesc">
       1. Define your alphabet in the first field.<br />
       2. Enter a key text (at least 4 characters). The matrix size is derived from the square root of its length.<br />
       3. Enter the text you want to encrypt or decrypt.<br />
@@ -49,17 +49,17 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   </div>
 
   <div id="p1ContProcess" style="display: none;">
-    <h3 class="latex">Character table</h3>
+    <h3 class="latex" data-i18n="pd.hillCipher.charTable">Character table</h3>
     <div id="p1TablaDeCaracteres" class="latex"></div>
-    <h3 class="latex">Cipher matrix (MC)</h3>
+    <h3 class="latex" data-i18n="pd.hillCipher.cipherMatrix">Cipher matrix (MC)</h3>
     <div id="p1MatrizDeCifrado" class="latex"></div>
-    <h3 class="latex">Message matrices</h3>
+    <h3 class="latex" data-i18n="pd.hillCipher.messageMatrices">Message matrices</h3>
     <div id="p1Matries" class="latex"></div>
-    <h3 class="latex">MC × Matrices</h3>
+    <h3 class="latex" data-i18n="pd.hillCipher.mcMatrices">MC × Matrices</h3>
     <div id="p1MCPorMatrices" class="latex"></div>
-    <h3 class="latex">MC inverse</h3>
+    <h3 class="latex" data-i18n="pd.hillCipher.mcInverse">MC inverse</h3>
     <div id="p1MCInversa" class="latex"></div>
-    <h3 class="latex">MC⁻¹ × Matrices</h3>
+    <h3 class="latex" data-i18n="pd.hillCipher.mcInvMatrices">MC⁻¹ × Matrices</h3>
     <div id="p1MCIPorMatrices" class="latex"></div>
   </div>
 

@@ -1,3 +1,6 @@
+const t = (key, fallback) =>
+  typeof window !== "undefined" && window.i18nGet ? window.i18nGet(`pd.recursiveConcat.${key}`, fallback) : fallback
+
 class RecursiveConcat {
   constructor() {
     this.inputAlpha   = document.getElementById("p16iAlpha")
@@ -27,7 +30,7 @@ class RecursiveConcat {
         gamma:  null,
         a:      null,
         result: alpha || "λ",
-        desc:   "Base case: β = λ, so α·β = α",
+        desc:   t("descBase", "Base case: β = λ, so α·β = α"),
       })
       return steps
     }
@@ -46,8 +49,8 @@ class RecursiveConcat {
         a,
         result: alpha + current,
         desc:   gamma.length === 0
-          ? `γ = λ → base case reached: α·λ = α, then '${a}' is appended`
-          : `β = γ·'${a}' → recursive step: α·β = α·(γ${a}) = (α·γ)${a}`,
+          ? t("descBaseReached", "γ = λ → base case reached: α·λ = α, then '{a}' is appended").replaceAll("{a}", a)
+          : t("descRecursive", "β = γ·'{a}' → recursive step: α·β = α·(γ{a}) = (α·γ){a}").replaceAll("{a}", a),
       })
 
       current = gamma
@@ -60,7 +63,7 @@ class RecursiveConcat {
       gamma:  null,
       a:      null,
       result: alpha + beta,
-      desc:   `Full concatenation: α·β = "${alpha + beta || "λ"}"`,
+      desc:   t("descFull", 'Full concatenation: α·β = "{r}"').replaceAll("{r}", alpha + beta || "λ"),
     })
 
     return steps
@@ -109,7 +112,7 @@ class RecursiveConcat {
 
         <div class="p16-step-head">
           <span class="p16-badge ${isResult ? "p16-badge--ok" : isBase ? "p16-badge--base" : "p16-badge--rec"}">${isResult ? "✓" : isBase ? "B" : "R"}</span>
-          <span class="p16-step-type">${isResult ? "Final result" : isBase ? "Base case" : "Recursive step"}</span>
+          <span class="p16-step-type">${isResult ? t("finalResult", "Final result") : isBase ? t("baseCase", "Base case") : t("recursiveStep", "Recursive step")}</span>
           <span class="p16-step-counter">${index + 1} / ${total}</span>
         </div>
 
@@ -134,7 +137,7 @@ class RecursiveConcat {
           </div>
           <span class="p16-arrow">→</span>
           <div class="p16-sblock p16-sblock--res">
-            <span class="p16-slabel">result</span>
+            <span class="p16-slabel">${t("resultLabel", "result")}</span>
             <span class="p16-sval">${this.colorString(step.result || "λ", step)}</span>
           </div>
         </div>
@@ -153,7 +156,7 @@ class RecursiveConcat {
     if (!this.dots) return
     this.dots.innerHTML = this.steps.map((_, i) => {
       const active = i === this.current
-      return `<button type="button" class="cc-step-btn${active ? " is-active" : ""}" data-i="${i}" aria-label="Go to step ${i + 1}"${active ? ' aria-current="step"' : ""}>${i + 1}</button>`
+      return `<button type="button" class="cc-step-btn${active ? " is-active" : ""}" data-i="${i}" aria-label="${t("goToStep", "Go to step")} ${i + 1}"${active ? ' aria-current="step"' : ""}>${i + 1}</button>`
     }).join("")
   }
 
@@ -188,7 +191,7 @@ class RecursiveConcat {
     const icon  = this.btnPlay.querySelector(".cc-play-icon")
     const label = this.btnPlay.querySelector(".cc-play-label")
     if (icon)  icon.textContent  = playing ? "❚❚" : "▶"
-    if (label) label.textContent = playing ? "Pause" : "Auto"
+    if (label) label.textContent = playing ? t("pause", "Pause") : t("auto", "Auto")
   }
   startAuto() {
     this.stopAuto()
@@ -209,7 +212,7 @@ class RecursiveConcat {
     if (!beta && !alpha) {
       this.stopAuto()
       this.steps = []
-      this.stage.innerHTML = `<p class="p16-hint">Enter α and β to see the recursive breakdown.</p>`
+      this.stage.innerHTML = `<p class="p16-hint">${t("hintEnter", "Enter α and β to see the recursive breakdown.")}</p>`
       if (this.controls) this.controls.hidden = true
       if (this.dots) this.dots.hidden = true
       return
@@ -218,7 +221,7 @@ class RecursiveConcat {
     if (/[^a-zA-Z0-9]/.test(alpha) || /[^a-zA-Z0-9]/.test(beta)) {
       this.stopAuto()
       this.steps = []
-      this.stage.innerHTML = `<p class="p16-error">Only letters and digits are allowed.</p>`
+      this.stage.innerHTML = `<p class="p16-error">${t("errOnlyLetters", "Only letters and digits are allowed.")}</p>`
       if (this.controls) this.controls.hidden = true
       if (this.dots) this.dots.hidden = true
       return
@@ -264,6 +267,7 @@ class RecursiveConcat {
     })
 
     this.buildResult()
+    window.addEventListener("langchanged", () => { this.buildResult(); this.updatePlayButton() })
   }
 }
 

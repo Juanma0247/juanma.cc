@@ -1,3 +1,6 @@
+const t = (key, fallback) =>
+  typeof window !== "undefined" && window.i18nGet ? window.i18nGet(`pd.regex.${key}`, fallback) : fallback
+
 class RegularExpressions {
   constructor() {
     this.input           = document.getElementById("p14i1")
@@ -46,7 +49,7 @@ class RegularExpressions {
         const div = document.createElement("div")
         div.className    = "field p14alpha-group"
         div.dataset.letter = l
-        div.innerHTML    = `<input id="p14alpha_${l}" autocomplete="off" required="" value="" placeholder=" "><label class="field-label">Alphabet for ${l}</label>`
+        div.innerHTML    = `<input id="p14alpha_${l}" autocomplete="off" required="" value="" placeholder=" "><label class="field-label">${t("alphabetFor", "Alphabet for")} ${l}</label>`
         this.extraContainer.appendChild(div)
         document.getElementById(`p14alpha_${l}`)
           .addEventListener("input", () => this.schedulePreview())
@@ -210,7 +213,7 @@ class RegularExpressions {
       const ch = node.value
       if (ch >= "A" && ch <= "Z") {
         const syms = this.getExtraAlphaValue(ch)
-        return `<span class="p14-symbol p14-upper" title="Custom alphabet: ${syms.join(", ")}">${ch}</span>`
+        return `<span class="p14-symbol p14-upper" title="${t("customAlphabet", "Custom alphabet:")} ${syms.join(", ")}">${ch}</span>`
       }
       return `<span class="p14-symbol">${ch}</span>`
     }
@@ -282,7 +285,7 @@ class RegularExpressions {
     this.lastBatch = []
 
     if (!expr.trim()) {
-      this.result.innerHTML = `<p class="p14-hint">Write a regular expression.</p>`
+      this.result.innerHTML = `<p class="p14-hint">${t("writeExpr", "Write a regular expression.")}</p>`
       return
     }
 
@@ -295,7 +298,7 @@ class RegularExpressions {
       tokens = this.insertConcat(tokens)
       ast    = this.parse(tokens)
     } catch (e) {
-      this.result.innerHTML = `<p class="p14-error">Error parsing the expression.</p>`
+      this.result.innerHTML = `<p class="p14-error">${t("parseError", "Error parsing the expression.")}</p>`
       return
     }
 
@@ -312,11 +315,11 @@ class RegularExpressions {
 
     this.result.innerHTML = `
       <div class="p14-section">
-        <p class="p14-label">Expression structure:</p>
+        <p class="p14-label">${t("exprStructure", "Expression structure:")}</p>
         <p class="p14-struct">${structHTML}</p>
       </div>
       <div class="p14-section">
-        <p class="p14-label">Generated strings:</p>
+        <p class="p14-label">${t("generatedStrings", "Generated strings:")}</p>
         <div class="p14-strings"></div>
       </div>
     `
@@ -338,6 +341,7 @@ class RegularExpressions {
       this.schedulePreview()
     })
     this.buildResult(this.input.value)
+    window.addEventListener("langchanged", () => this.buildResult(this.input.value))
   }
 }
 

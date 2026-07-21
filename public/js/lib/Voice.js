@@ -11,6 +11,9 @@ const firebaseConfig = {
     measurementId: "G-QHCNLD7HVS"
 }
 
+const t = (key, fallback) =>
+    typeof window !== "undefined" && window.i18nGet ? window.i18nGet(`pd.voice.${key}`, fallback) : fallback
+
 class Voice {
     constructor() {
         this.i1 = document.getElementById("p4i1")
@@ -30,7 +33,7 @@ class Voice {
             )
             return urls
         } catch (error) {
-            alert("Error listing audios: " + error)
+            alert(t("errListing", "Error listing audios:") + " " + error)
         }
     }
 
@@ -41,9 +44,10 @@ class Voice {
         savedAudios.appendChild(audio)
         const playButton = document.createElement("button")
         playButton.className = "audioReproButton"
-        playButton.textContent = `Play ${name}`
+        playButton.dataset.audioName = name
+        playButton.textContent = `${t("play", "Play")} ${name}`
         playButton.addEventListener("click", () => {
-            audio.play().then().catch(err => alert("Error: " + err))
+            audio.play().then().catch(err => alert(t("error", "Error:") + " " + err))
         })
         savedAudios.appendChild(playButton)
     }
@@ -56,7 +60,7 @@ class Voice {
                 audioElement.play()
             })
             .catch(function(error) {
-                alert('Microphone denied: ' + error)
+                alert(t('micDenied', 'Microphone denied:') + ' ' + error)
             })
 
         let mediaRecorder
@@ -100,7 +104,13 @@ class Voice {
                     })
                 })
             }).catch((error) => {
-                alert("Error: " + error)
+                alert(t("error", "Error:") + " " + error)
+            })
+        })
+
+        window.addEventListener("langchanged", () => {
+            document.querySelectorAll(".audioReproButton").forEach(btn => {
+                btn.textContent = `${t("play", "Play")} ${btn.dataset.audioName || ""}`.trim()
             })
         })
 

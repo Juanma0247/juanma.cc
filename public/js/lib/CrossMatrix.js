@@ -17,6 +17,23 @@ const c2rgb = hexToRgb(c2)
 const c3rgb = hexToRgb(c3)
 const crrgb = hexToRgb("#ff0000")
 
+const t = (key, fallback) =>
+  typeof window !== "undefined" && window.i18nGet ? window.i18nGet(`pd.crossMatrix.${key}`, fallback) : fallback
+
+// Preset display name → translation key (only the label is localized; func/latex stay).
+const PRESET_KEYS = {
+  "Turbulent": "presetTurbulent", "Waves": "presetWaves", "Mountain": "presetMountain",
+  "Ripples": "presetRipples", "Valley": "presetValley", "Spiral": "presetSpiral",
+  "Paraboloid": "presetParaboloid", "Saddle": "presetSaddle", "Undulating": "presetUndulating",
+  "Inclined Plane": "presetInclinedPlane", "Chess": "presetChess", "Steps": "presetSteps",
+  "mountain": "presetMountainLc",
+}
+const presetName = (name) => t(PRESET_KEYS[name] || "", name)
+const presetLatex = (latex) =>
+  latex === "\\text{Mountains with random peaks}"
+    ? `\\text{${t("presetMountainsRandom", "Mountains with random peaks")}}`
+    : latex
+
 class CrossMatrix {
     constructor() {
         this.p13StartRow = document.getElementById('p13StartRow')
@@ -242,11 +259,11 @@ class CrossMatrix {
                 this.matrix = this.generateMountainMatrix(x_range, y_range, funcStr)
             } else {
                 if (x_range.length !== 2 || y_range.length !== 2) {
-                    alert('Ranges must have the format "x1 x2" and "y1 y2"')
+                    alert(t('errRangeFormat', 'Ranges must have the format "x1 x2" and "y1 y2"'))
                     return
                 }
                 if (!funcStr) {
-                    alert('You must enter a function')
+                    alert(t('errNoFunction', 'You must enter a function'))
                     return
                 }
                 this.matrix = this.matrixFromFunction(funcStr, x_range, y_range)
@@ -261,7 +278,7 @@ class CrossMatrix {
                 this.p5Instance.redraw()
             }
         } catch (error) {
-            alert('Error generating matrix: ' + error.message)
+            alert(t('errGenerating', 'Error generating matrix:') + ' ' + error.message)
             console.error(error)
         }
     }
@@ -273,7 +290,7 @@ class CrossMatrix {
             presetElement.className = 'p13prefunc'
             const x_range = preset.x_range.trim().split(/\s+/).map(Number)
             const y_range = preset.y_range.trim().split(/\s+/).map(Number)
-            presetElement.innerHTML = `\\(\\text{${preset.name}}\\qquad ${preset.latex}\\newline\\qquad x \\in [${x_range[0]}, ${x_range[1]}] \\qquad y \\in [${y_range[0]}, ${y_range[1]}]\\)`
+            presetElement.innerHTML = `\\(\\text{${presetName(preset.name)}}\\qquad ${presetLatex(preset.latex)}\\newline\\qquad x \\in [${x_range[0]}, ${x_range[1]}] \\qquad y \\in [${y_range[0]}, ${y_range[1]}]\\)`
             presetElement.addEventListener('click', () => {
                 this.applyPreset(preset)
                 this.presets.style.display = 'none'
@@ -553,6 +570,7 @@ class CrossMatrix {
         this.setupEventListeners()
         this.updatePathSet()
         this.renderPresets()
+        window.addEventListener("langchanged", () => this.renderPresets())
         const sketch = this.createSketch()
         this.p5Instance = new p5(sketch)
     }

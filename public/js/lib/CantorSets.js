@@ -1,5 +1,8 @@
 import ExtText from '/js/core/ExtText.js'
 
+const t = (key, fallback) =>
+  typeof window !== "undefined" && window.i18nGet ? window.i18nGet(`pd.cantor.${key}`, fallback) : fallback
+
 class CantorSets {
     constructor() {
         this.ggb = null
@@ -83,7 +86,9 @@ class CantorSets {
         const p4 = document.getElementById("p3Prosessp4")
         ExtText.tex(`f(p,q)=\\frac{(p+q)(p+q+1)}{2} + q`, p2)
         ExtText.tex(`f(${x},${y})=\\frac{(${x}+${y})(${x}+${y}+1)}{2} + ${y} = \\frac{${(parseInt(x) + parseInt(y)) * (parseInt(x) + parseInt(y) + 1)}}{2} + ${y} = \\textcolor{red}{\\text{${this.CPTG(x, y)}}}`, p4)
-        document.getElementById("p3Prosessp5").innerHTML = `Therefore, the position for point ${x} and ${y} will be <a style="color: red">${this.CPTG(x, y)}.</a>`
+        this._lastXY = { x, y }
+        document.getElementById("p3Prosessp5").innerHTML = t("resultLine", 'Therefore, the position for point {x} and {y} will be <a style="color: red">{n}.</a>')
+            .replaceAll("{x}", x).replaceAll("{y}", y).replaceAll("{n}", this.CPTG(x, y))
     }
 
     execute(x, y) {
@@ -134,6 +139,10 @@ class CantorSets {
 
         this.b1.addEventListener("click", () => {
             tryPerSecond(this.i1.value, this.i2.value)
+        })
+
+        window.addEventListener("langchanged", () => {
+            if (this._lastXY) this.makeProcces(this._lastXY.x, this._lastXY.y)
         })
 
         if (window.typeOfUser) {

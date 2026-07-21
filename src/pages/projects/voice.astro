@@ -5,16 +5,16 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   <div class="center voice-row">
     <div class="field">
       <input id="p4i1" required="" type="text" class="voice-name-input" placeholder=" ">
-      <label class="field-label">Audio name</label>
+      <label class="field-label" data-i18n="pd.voice.audioName">Audio name</label>
     </div>
     <audio class="voice-preview" id="audioPreview" controls></audio>
   </div>
   <div class="center voice-row">
-    <button id="startRecording">Start Recording</button>
-    <button id="stopRecording" disabled>Stop Recording</button>
-    <button id="uploadAudio" disabled>Upload Audio</button>
+    <button id="startRecording" data-i18n="pd.voice.startRecording">Start Recording</button>
+    <button id="stopRecording" disabled data-i18n="pd.voice.stopRecording">Stop Recording</button>
+    <button id="uploadAudio" disabled data-i18n="pd.voice.uploadAudio">Upload Audio</button>
   </div>
-  <p class="voice-saved-title">Saved audio</p>
+  <p class="voice-saved-title" data-i18n="pd.voice.savedAudio">Saved audio</p>
   <div id="audiosGuardados" class="center"></div>
   <div class="space-bottom"></div>
 </ProjectLayout>

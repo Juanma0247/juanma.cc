@@ -1,5 +1,8 @@
 import ExtText from '/js/core/ExtText.js'
 
+const t = (key, fallback) =>
+  typeof window !== 'undefined' && window.i18nGet ? window.i18nGet(`games.minesweeper.${key}`, fallback) : fallback
+
 class MinesweeperBoard {
   constructor(heightBoard, widthBoard, data, seconds, score) {
     this.widthBoard = widthBoard
@@ -38,7 +41,7 @@ class MinesweeperBoard {
     this.setStatistics(this.seconds)
     this.block(this.gridElement)
     this.gridElement.classList.add('j3GridLose')
-    this.t1.textContent = '¡Ka-Boom!'
+    this.t1.textContent = t('kaboom', '¡Ka-Boom!')
     this.t1.style.color = '#ff3939'
     ;[this.sp1, this.sp2, this.sp3, this.sp4].forEach(s => (s.style.color = '#ff3939'))
     this.grid.forEach(i => {
@@ -60,7 +63,7 @@ class MinesweeperBoard {
     clearInterval(this.time)
     this.setStatistics(this.seconds)
     this.gridElement.classList.add('j3GridWin')
-    this.t1.textContent = 'Board clear!'
+    this.t1.textContent = t('boardClear', 'Board clear!')
     this.t1.style.color = '#39ff39'
     ;[this.sp1, this.sp2, this.sp3, this.sp4].forEach(s => (s.style.color = '#39ff39'))
     this.grid.forEach(i => {
@@ -269,10 +272,10 @@ class MinesweeperBoard {
     this.gridElement.innerHTML = ''
     this.gridElement.classList.remove('j3GridLose', 'j3GridWin')
     this.t1.style.color = 'var(--c1)'
-    this.sp1.textContent = 'Time: 00s'
-    this.sp2.textContent = 'Percentage: 0%'
-    this.sp3.textContent = 'Mines: 0'
-    this.sp4.textContent = 'Score: 0'
+    this.sp1.textContent = `${t('statTime', 'Time')}: 00s`
+    this.sp2.textContent = `${t('statPercentage', 'Percentage')}: 0%`
+    this.sp3.textContent = `${t('statMines', 'Mines')}: 0`
+    this.sp4.textContent = `${t('statScore', 'Score')}: 0`
     ;[this.sp1, this.sp2, this.sp3, this.sp4].forEach(s => (s.style.color = 'var(--c1)'))
     this.deleteGame()
   }
@@ -298,10 +301,10 @@ class MinesweeperBoard {
 
   setStatistics(seconds) {
     const p = this.calcPercent()
-    this.sp1.textContent = `Time: ${this.formTime(seconds)}`
-    this.sp2.textContent = `Percentage: ${p}%`
-    this.sp3.textContent = `Mines: ${this.numberOfMines}`
-    this.sp4.textContent = `Score: ${this.calcScore(seconds, p)}`
+    this.sp1.textContent = `${t('statTime', 'Time')}: ${this.formTime(seconds)}`
+    this.sp2.textContent = `${t('statPercentage', 'Percentage')}: ${p}%`
+    this.sp3.textContent = `${t('statMines', 'Mines')}: ${this.numberOfMines}`
+    this.sp4.textContent = `${t('statScore', 'Score')}: ${this.calcScore(seconds, p)}`
     this.score += this.calcScore(seconds, p)
   }
 

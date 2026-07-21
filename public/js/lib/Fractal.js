@@ -4,6 +4,9 @@ const pi = Math.PI
 const rootStyles = getComputedStyle(document.documentElement)
 var color = rootStyles.getPropertyValue('--color-text').trim() || '#000000'
 
+const t = (key, fallback) =>
+  typeof window !== 'undefined' && window.i18nGet ? window.i18nGet(`pd.fractal.${key}`, fallback) : fallback
+
 class Fractal {
     constructor() {
         this.content = document.getElementById('fractal')
@@ -59,7 +62,7 @@ class Fractal {
 
         const calc = this.calculateArea(1, n, a)
         const step0 = ExtText.createElement("div", "step", this.areaCalc)
-        step0.innerHTML = '<div class="label">General formula:</div>'
+        step0.innerHTML = `<div class="label">${t('generalFormula', 'General formula:')}</div>`
 
         ExtText.addTexToElement(
             `A(r,n,a) =
@@ -81,7 +84,7 @@ class Fractal {
 
         const step1 = document.createElement("div")
         step1.className = "step"
-        step1.innerHTML = `<div class="label">Step 1: Substitute values n = ${n}, a = ${a}</div>`
+        step1.innerHTML = `<div class="label">${t('step1', 'Step 1: Substitute values n = {n}, a = {a}').replaceAll('{n}', n).replaceAll('{a}', a)}</div>`
         this.areaCalc.appendChild(step1)
         ExtText.addTexToElement(
             `A(r,${n},${a}) =
@@ -103,7 +106,7 @@ class Fractal {
 
         const step2 = document.createElement("div")
         step2.className = "step"
-        step2.innerHTML = `<div class="label">Step 2: Calculate \\(\\sin\\left(\\dfrac{\\pi}{${n}}\\right)\\)</div>`
+        step2.innerHTML = `<div class="label">${t('step2', 'Step 2: Calculate')} \\(\\sin\\left(\\dfrac{\\pi}{${n}}\\right)\\)</div>`
         this.areaCalc.appendChild(step2)
         ExtText.addTexToElement(
             `\\sin\\left(\\dfrac{\\pi}{${n}}\\right) = ${calc.sinValFrac}`,
@@ -113,7 +116,7 @@ class Fractal {
 
         const step3 = document.createElement("div")
         step3.className = "step"
-        step3.innerHTML = '<div class="label">Step 3: Calculate the bracket term</div>'
+        step3.innerHTML = `<div class="label">${t('step3', 'Step 3: Calculate the bracket term')}</div>`
         this.areaCalc.appendChild(step3)
         ExtText.addTexToElement(
             `\\left[ \\frac{1}{${n}} \\left( \\frac{1 + ${calc.sinValFrac}}{${calc.sinValFrac}} \\right)^2 - 1 \\right] = ${calc.bracketTermFrac}`,
@@ -123,7 +126,7 @@ class Fractal {
 
         const step4 = document.createElement("div")
         step4.className = "step"
-        step4.innerHTML = '<div class="label">Step 4: Calculate the final fraction</div>'
+        step4.innerHTML = `<div class="label">${t('step4', 'Step 4: Calculate the final fraction')}</div>`
         this.areaCalc.appendChild(step4)
         ExtText.addTexToElement(
             `\\left( \\frac{${a} \\left(${calc.sinValFrac}\\right)^2}{\\left(1 + ${calc.sinValFrac}\\right)^2 - ${a} \\left(${calc.sinValFrac}\\right)^2} \\right) = ${calc.fractionTermFrac}`,
@@ -133,7 +136,7 @@ class Fractal {
 
         const step5 = document.createElement("div")
         step5.className = "step"
-        step5.innerHTML = '<div class="label">Step 5: Calculate the total product</div>'
+        step5.innerHTML = `<div class="label">${t('step5', 'Step 5: Calculate the total product')}</div>`
         this.areaCalc.appendChild(step5)
         ExtText.addTexToElement(
             `A = \\pi r^2 \\times ${calc.bracketTermFrac} \\times ${calc.fractionTermFrac} = ${calc.areaFrac}\\, \\pi r^2`,
@@ -143,7 +146,7 @@ class Fractal {
 
         const stepFinal = document.createElement("div")
         stepFinal.className = "step"
-        stepFinal.innerHTML = '<div class="label">Total area:</div>'
+        stepFinal.innerHTML = `<div class="label">${t('totalArea', 'Total area:')}</div>`
         this.resArea.appendChild(stepFinal)
         ExtText.addTexToElement(
             `\\boxed{A(r,${n},${a}) = ${calc.areaFrac}\\, \\pi r^2 \\approx ${(parseFloat(calc.area)).toFixed(3)}\\, \\pi r^2}`,
@@ -309,6 +312,8 @@ class Fractal {
         this.b2.addEventListener("click", () => {
             this.downloadSVG(this.content, `f(${this.n},${this.a}) - depth ${this.i3.value}.svg`)
         })
+
+        window.addEventListener("langchanged", () => this.displayAreaCalculation(this.n, this.a))
     }
 }
 

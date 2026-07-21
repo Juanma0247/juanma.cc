@@ -1,3 +1,6 @@
+const t = (key, fallback) =>
+  typeof window !== 'undefined' && window.i18nGet ? window.i18nGet(`games.tictactoe.${key}`, fallback) : fallback
+
 class TicTacToe {
   constructor() {
     this.t1 = document.getElementById('j1t1')
@@ -104,9 +107,9 @@ class TicTacToe {
       const data = this.generarData()
       const full = data.every(row => !row.includes(0))
       if (full && winner == 0) {
-        this.t1.textContent = 'Draw!'
+        this.t1.textContent = t('draw', 'Draw!')
       } else if (winner != 0) {
-        this.t1.textContent = winner == 1 ? 'O wins!' : 'X wins!'
+        this.t1.textContent = winner == 1 ? t('oWins', 'O wins!') : t('xWins', 'X wins!')
       }
     })
   }
@@ -115,7 +118,8 @@ class TicTacToe {
     const div = document.createElement('div')
     div.classList.add('divElementCheck')
     this.label.classList.add('labelForElementCheck')
-    this.label.textContent = 'vs PC'
+    this.label.textContent = t('vsPc', 'vs PC')
+    window.addEventListener('langchanged', () => { this.label.textContent = t('vsPc', 'vs PC') })
     const checkboxContainer = document.createElement('label')
     checkboxContainer.classList.add('checkboxContainer')
     this.checkbox.setAttribute('type', 'checkbox')
@@ -134,7 +138,7 @@ class TicTacToe {
 
     this.b1.addEventListener('click', () => {
       for (let i = 1; i <= 9; i++) document.getElementById(`j1i${i}`).value = ''
-      this.t1.textContent = 'Tic-Tac-Toe'
+      this.t1.textContent = t('title', 'Tic-Tac-Toe')
       this.auxTurn.textContent = '0'
     })
 

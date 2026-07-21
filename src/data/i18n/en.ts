@@ -19,6 +19,9 @@ export interface I18n {
   }
   tags: Record<string, string>
   cardTitles: Record<string, string>
+  // Dynamic text rendered by the interactive project/tool JS (public/js/lib).
+  // Keyed by project; values may be strings or string arrays.
+  pd: Record<string, Record<string, string | string[]>>
   projects: {
     tm: {
       loadMachineLabel: string
@@ -292,6 +295,11 @@ export interface I18n {
     tictactoe: {
       subtitle: string
       restart: string
+      vsPc: string
+      draw: string
+      oWins: string
+      xWins: string
+      title: string
     }
     minesweeper: {
       subtitle: string
@@ -307,6 +315,21 @@ export interface I18n {
       score: string
       name: string
       digitCode: string
+      saveGame: string
+      statTime: string
+      statPercentage: string
+      statMines: string
+      statScore: string
+      kaboom: string
+      boardClear: string
+      msgEnterName: string
+      msgCode4: string
+      msgUserExists: string
+      msgSavedId: string
+      msgUserNotFound: string
+      msgNoSavedGame: string
+      msgGameSaved: string
+      encouragements: string[]
     }
     sudoku: {
       subtitle: string
@@ -395,6 +418,189 @@ export const en: I18n = {
     sudoku: 'Sudoku',
     'minecraft-coords': 'Minecraft Coords',
     'string-tool': 'String Tool',
+  },
+  pd: {
+    regex: {
+      title: 'Regular Expressions',
+      exprLabel: 'Regular Expression',
+      resultLabel: 'Result:',
+      alphabetFor: 'Alphabet for',
+      customAlphabet: 'Custom alphabet:',
+      writeExpr: 'Write a regular expression.',
+      parseError: 'Error parsing the expression.',
+      exprStructure: 'Expression structure:',
+      generatedStrings: 'Generated strings:',
+    },
+    sets: {
+      title: 'Sets',
+      setA: 'Set A',
+      setB: 'Set B',
+      optRndmNum: '\\text{Rndm Num}',
+      optRndmNumSet: '\\text{\\{Rndm Num\\}}',
+      optRndmAlpha: '\\text{Rndm Alpha}',
+      optRndmAlphaSet: '\\text{\\{Rndm Alpha\\}}',
+      optVenn: '\\text{Venn Diagram}',
+    },
+    recursiveConcat: {
+      title: 'Recursive Concatenation',
+      sub: 'See how <b>α · β</b> is built one character at a time, peeling <b>β</b> down to the base case.',
+      labelAlpha: 'String α (prefix)',
+      labelBeta: 'String β (to concatenate)',
+      keyPrefix: 'α · prefix',
+      keyRemaining: 'γ · remaining',
+      keyLast: 'last character',
+      auto: 'Auto',
+      pause: 'Pause',
+      hintKeys: 'Move with the buttons, the ← → arrow keys, or the numbered steps.',
+      prevStep: 'Previous step',
+      nextStep: 'Next step',
+      goToStep: 'Go to step',
+      finalResult: 'Final result',
+      baseCase: 'Base case',
+      recursiveStep: 'Recursive step',
+      resultLabel: 'result',
+      descBase: 'Base case: β = λ, so α·β = α',
+      descBaseReached: "γ = λ → base case reached: α·λ = α, then '{a}' is appended",
+      descRecursive: "β = γ·'{a}' → recursive step: α·β = α·(γ{a}) = (α·γ){a}",
+      descFull: 'Full concatenation: α·β = "{r}"',
+      hintEnter: 'Enter α and β to see the recursive breakdown.',
+      errOnlyLetters: 'Only letters and digits are allowed.',
+    },
+    sigmaStar: {
+      title: 'Enumeration of Σ*',
+      alphabetLabel: 'Alphabet Σ (symbols separated by spaces)',
+      hintDefineAlphabet: 'Define the alphabet Σ first.',
+      hintEmptyAlphabet: 'The alphabet cannot be empty.',
+      hintEnterN: 'a natural number n',
+      hintEnterAlpha: 'a string α',
+      enterWord: 'Enter',
+      hintNonNeg: 'Enter a non-negative integer.',
+      labelNumberN: 'Number n ∈ ℕ',
+      labelStringAlpha: 'String α ∈ Σ*',
+      enterToSeeNum: 'a number',
+      enterToSeeStr: 'a string',
+      enterToSeeSuffix: 'to see the process.',
+      optN2S: 'ℕ → Σ*  (number to string)',
+      optS2N: 'Σ* → ℕ  (string to number)',
+      queryLabel: 'Number n ∈ ℕ',
+      hBlock: 'Block',
+      hRange: 'Index range',
+      hFirst: 'First strings',
+      sizeOne: '1 string',
+      sizeMany: 'strings',
+      lblResult: 'Result',
+      lblInput: 'Input',
+      lblError: 'Error',
+      caseSigma1: 'Case |Σ| = 1',
+      detailRepeated: 'The string is the only symbol repeated {n} times.',
+      step1FindK: 'Step 1 — find k(n)',
+      step2PosBlock: 'Step 2 — position within block',
+      step3EmptyString: 'Step 3 — empty string',
+      detailEmptyLambda: 'The only string of length 0 is the empty string λ',
+      step3Convert: 'Step 3 — convert p={p} to base {q} with {k} digit{s}',
+      step4ApplySigma: 'Step 4 — apply σ',
+      symbolNotInSigma: 'Symbol "{ch}" does not belong to alphabet Σ',
+      caseSingle: 'With a single symbol, the index is simply the length.',
+      step1Length: 'Step 1 — length k',
+      detailStringLength: 'The string has length {k}',
+      step2EmptyString: 'Step 2 — empty string',
+      detailEmptyIdx0: 'The empty string always has index 0',
+      blocksOfSigma: 'Blocks of Σ*',
+      step2BlockStart: 'Step 2 — block start s(k)',
+      detailBlockStart: 'The block of strings of length {k} starts at index {sk}',
+      step3LexPos: 'Step 3 — lexicographic position p(α)',
+      step4FinalIdx: 'Step 4 — final index',
+    },
+    crossMatrix: {
+      title: 'Cross Matrix',
+      startLabel: 'Start:',
+      presetFunctions: 'Preset functions',
+      totalCost: 'Total cost:',
+      errRangeFormat: 'Ranges must have the format "x1 x2" and "y1 y2"',
+      errNoFunction: 'You must enter a function',
+      errGenerating: 'Error generating matrix:',
+      presetTurbulent: 'Turbulent',
+      presetWaves: 'Waves',
+      presetMountain: 'Mountain',
+      presetRipples: 'Ripples',
+      presetValley: 'Valley',
+      presetSpiral: 'Spiral',
+      presetParaboloid: 'Paraboloid',
+      presetSaddle: 'Saddle',
+      presetUndulating: 'Undulating',
+      presetInclinedPlane: 'Inclined Plane',
+      presetChess: 'Chess',
+      presetSteps: 'Steps',
+      presetMountainLc: 'mountain',
+      presetMountainsRandom: 'Mountains with random peaks',
+    },
+    sorting: {
+      size: 'Size',
+      delay: 'Delay',
+    },
+    fractal: {
+      doc: 'Documentation',
+      downloadSvg: 'Download SVG',
+      areaCalc: 'Area Calculation A(N)',
+      depth: '\\(\\text{\\textbf{Depth}}\\)',
+      generalFormula: 'General formula:',
+      step1: 'Step 1: Substitute values n = {n}, a = {a}',
+      step2: 'Step 2: Calculate',
+      step3: 'Step 3: Calculate the bracket term',
+      step4: 'Step 4: Calculate the final fraction',
+      step5: 'Step 5: Calculate the total product',
+      totalArea: 'Total area:',
+    },
+    hillCipher: {
+      alphabet: 'Alphabet',
+      keyText: 'Key text',
+      textToProcess: 'Text to encrypt or decrypt',
+      encryptedText: 'Encrypted text',
+      decryptedText: 'Decrypted text',
+      introduction: 'Introduction',
+      instructions: 'Instructions',
+      process: 'Process',
+      introDesc: 'The Hill cipher is a cryptographic method developed by mathematician Lester S. Hill in 1929. It is based on linear algebra and uses matrices to transform blocks of plaintext into ciphertext.',
+      instrDesc: '1. Define your alphabet in the first field.<br />2. Enter a key text (at least 4 characters). The matrix size is derived from the square root of its length.<br />3. Enter the text you want to encrypt or decrypt.<br />4. The results appear automatically.',
+      charTable: 'Character table',
+      cipherMatrix: 'Cipher matrix (MC)',
+      messageMatrices: 'Message matrices',
+      mcMatrices: 'MC × Matrices',
+      mcInverse: 'MC inverse',
+      mcInvMatrices: 'MC⁻¹ × Matrices',
+      detZero: 'Determinant = 0',
+      noInverse: 'No modular inverse',
+    },
+    cantor: {
+      generate: 'Generate',
+      presentation: 'Presentation',
+      p1: "\\(f\\) represents Cantor's pairing function for a \\(\\mathbb{Q^{+}}\\) of the form \\(\\frac{p}{q}\\)",
+      p3: 'Substituting \\(p\\) and \\(q\\) into \\(f\\) we get',
+      para1: 'The pairing sequence starts at point \\((0,0)\\) and traverses all points on the Cartesian plane in a zigzag pattern until reaching the indicated coordinate.',
+      para2: 'Note that to handle any value \\(p \\in \\mathbb{Z}\\), another function should be applied that maps to \\(2p\\) if \\(p\\geq 0\\), otherwise to \\(-2p - 1\\). This is applied to \\(p\\) since it can take the sign of the fraction.',
+      para3: 'In set theory, this sequence is used to prove that \\(\\mathbb{Q}\\) has the same cardinality as \\(\\mathbb{N}\\).',
+      resultLine: 'Therefore, the position for point {x} and {y} will be <a style="color: red">{n}.</a>',
+    },
+    voice: {
+      audioName: 'Audio name',
+      startRecording: 'Start Recording',
+      stopRecording: 'Stop Recording',
+      uploadAudio: 'Upload Audio',
+      savedAudio: 'Saved audio',
+      play: 'Play',
+      errListing: 'Error listing audios:',
+      micDenied: 'Microphone denied:',
+      error: 'Error:',
+    },
+    ruffini: {
+      coefficients: 'Coefficients',
+      polynomial: 'Polynomial:',
+      process: 'Process:',
+      result: 'Result:',
+    },
+    chiSquared: {
+      degreesOfFreedom: '\\(\\text{Degrees of freedom}\\)',
+    },
   },
   projects: {
     tm: {
@@ -669,6 +875,11 @@ export const en: I18n = {
     tictactoe: {
       subtitle: 'Tic-Tac-Toe',
       restart: 'Restart',
+      vsPc: 'vs PC',
+      draw: 'Draw!',
+      oWins: 'O wins!',
+      xWins: 'X wins!',
+      title: 'Tic-Tac-Toe',
     },
     minesweeper: {
       subtitle: 'Minesweeper',
@@ -684,6 +895,29 @@ export const en: I18n = {
       score: 'Score: 0',
       name: 'Name',
       digitCode: '4-digit code',
+      saveGame: 'SAVE GAME',
+      statTime: 'Time',
+      statPercentage: 'Percentage',
+      statMines: 'Mines',
+      statScore: 'Score',
+      kaboom: '¡Ka-Boom!',
+      boardClear: 'Board clear!',
+      msgEnterName: 'Please enter a name',
+      msgCode4: 'Code must be exactly 4 digits',
+      msgUserExists: 'User already exists',
+      msgSavedId: 'Save your player ID:',
+      msgUserNotFound: 'User not found',
+      msgNoSavedGame: 'Player has no saved game',
+      msgGameSaved: 'Game saved successfully',
+      encouragements: [
+        'You can do it, ', 'Go for victory, ', 'Believe in yourself, ',
+        'Make history today, ', "It's your day, ", 'Have fun, ',
+        'Make it count, ', 'Play with passion, ', 'Make it incredible, ',
+        'Stay focused, ', 'Play for fun, ', "You'll surprise us, ",
+        "You're unstoppable, ", "You're pure energy, ", 'Never give up, ',
+        'Make it epic, ', "You'll achieve it, ", 'Break records, ',
+        'Keep moving forward, ', 'Success awaits you, ',
+      ],
     },
     sudoku: {
       subtitle: 'Sudoku',

@@ -1,3 +1,6 @@
+const t = (key, fallback) =>
+  typeof window !== "undefined" && window.i18nGet ? window.i18nGet(`pd.sigmaStar.${key}`, fallback) : fallback
+
 class SigmaStarEnum {
   constructor() {
     this.alphabetInput   = document.getElementById("p15alphabet")
@@ -75,7 +78,7 @@ class SigmaStarEnum {
         <div class="p15-brow ${r.isActive ? "p15-brow--active" : ""}">
           <div class="p15-bcell p15-bcell--k">
             <span class="p15-bk-label">k=${r.k}</span>
-            <span class="p15-bsize">${r.count === 1 ? "1 string" : `${r.count === Infinity ? "∞" : r.count} strings`}</span>
+            <span class="p15-bsize">${r.count === 1 ? t("sizeOne", "1 string") : `${r.count === Infinity ? "∞" : r.count} ${t("sizeMany", "strings")}`}</span>
           </div>
           <div class="p15-bcell p15-bcell--range">${rangeStr}${r.nLabel ? `<span class="p15-n-pin">← ${r.nLabel}</span>` : ""}</div>
           <div class="p15-bcell p15-bcell--examples">${exStr}</div>
@@ -85,9 +88,9 @@ class SigmaStarEnum {
     return `
       <div class="p15-block-strip">
         <div class="p15-bheader">
-          <span>Block</span>
-          <span>Index range</span>
-          <span>First strings</span>
+          <span>${t("hBlock", "Block")}</span>
+          <span>${t("hRange", "Index range")}</span>
+          <span>${t("hFirst", "First strings")}</span>
         </div>
         ${strips}
         <div class="p15-brow p15-brow--dots">
@@ -119,51 +122,51 @@ class SigmaStarEnum {
     const symbols = digits.map(d => sigma[d])
     const result  = symbols.join("")
 
-    steps.push({ label: "Result", value: result || "λ", highlight: true })
-    steps.push({ label: "Input",  value: `n = ${n},  |Σ| = ${q},  Σ = {${sigma.join(", ")}}` })
+    steps.push({ label: t("lblResult", "Result"), value: result || "λ", highlight: true })
+    steps.push({ label: t("lblInput", "Input"),  value: `n = ${n},  |Σ| = ${q},  Σ = {${sigma.join(", ")}}` })
 
     if (q === 1) {
       steps.push({
-        label:  "Case |Σ| = 1",
+        label:  t("caseSigma1", "Case |Σ| = 1"),
         value:  `s(k) = k  →  k(n) = n = ${n}`,
-        detail: `The string is the only symbol repeated ${n} times.`
+        detail: t("detailRepeated", "The string is the only symbol repeated {n} times.").replaceAll("{n}", n)
       })
       const r = n === 0 ? "λ" : sigma[0].repeat(n)
-      steps.push({ label: "Result", value: r, highlight: true })
+      steps.push({ label: t("lblResult", "Result"), value: r, highlight: true })
       return { result: r, steps }
     }
 
     steps.push({
-      label:  "Step 1 — find k(n)",
+      label:  t("step1FindK", "Step 1 — find k(n)"),
       value:  `k(n) = ⌊ log_${q}(n·(${q}−1) + 1) ⌋ = ⌊ log_${q}(${n * (q - 1) + 1}) ⌋ = ${k}`,
       detail: `Verification: s( ${k} ) = ${sk} ≤ ${n} < ${sk1} = s( ${k + 1} )  ✓`,
       blockStrip: this.renderBlockStrip(sigma, k, n)
     })
 
     steps.push({
-      label:  "Step 2 — position within block",
+      label:  t("step2PosBlock", "Step 2 — position within block"),
       value:  `p(n) = n − s(k) = ${n} − ${sk} = ${p}`,
       detail: `Block k=${k} has ${q}^${k} = ${Math.pow(q, k)} strings (indices ${sk}…${sk1 - 1})`
     })
 
     if (k === 0) {
       steps.push({
-        label:  "Step 3 — empty string",
+        label:  t("step3EmptyString", "Step 3 — empty string"),
         value:  `k = 0  →  f(${n}) = λ`,
-        detail: "The only string of length 0 is the empty string λ"
+        detail: t("detailEmptyLambda", "The only string of length 0 is the empty string λ")
       })
-      steps.push({ label: "Result", value: "λ", highlight: true })
+      steps.push({ label: t("lblResult", "Result"), value: "λ", highlight: true })
       return { result: "λ", steps }
     }
 
     steps.push({
-      label:  `Step 3 — convert p=${p} to base ${q} with ${k} digit${k > 1 ? "s" : ""}`,
+      label:  t("step3Convert", "Step 3 — convert p={p} to base {q} with {k} digit{s}").replaceAll("{p}", p).replaceAll("{q}", q).replaceAll("{k}", k).replaceAll("{s}", k > 1 ? "s" : ""),
       value:  digitSteps.join("\n"),
       detail: `Representation: [${digits.join(", ")}]`
     })
 
     steps.push({
-      label: "Step 4 — apply σ",
+      label: t("step4ApplySigma", "Step 4 — apply σ"),
       value: `f(${n}) = ${symbols.map((s, i) => `σ(${digits[i]})="${s}"`).join(" · ")} = "${result}"`
     })
 
@@ -190,16 +193,16 @@ class SigmaStarEnum {
     }
     const n = sk + p
 
-    steps.push({ label: "Result", value: String(n), highlight: true })
-    steps.push({ label: "Input",  value: `α = "${isLambda ? "λ" : str}",  |Σ| = ${q},  Σ = {${sigma.join(", ")}}` })
+    steps.push({ label: t("lblResult", "Result"), value: String(n), highlight: true })
+    steps.push({ label: t("lblInput", "Input"),  value: `α = "${isLambda ? "λ" : str}",  |Σ| = ${q},  Σ = {${sigma.join(", ")}}` })
 
     for (const ch of str) {
       if (!sigma.includes(ch)) {
         return {
           result: null,
           steps: [...steps, {
-            label: "Error",
-            value: `Symbol "${ch}" does not belong to alphabet Σ`,
+            label: t("lblError", "Error"),
+            value: t("symbolNotInSigma", 'Symbol "{ch}" does not belong to alphabet Σ').replaceAll("{ch}", ch),
             error: true
           }]
         }
@@ -208,53 +211,53 @@ class SigmaStarEnum {
 
     if (q === 1) {
       steps.push({
-        label:  "Case |Σ| = 1",
+        label:  t("caseSigma1", "Case |Σ| = 1"),
         value:  `f⁻¹(α) = length(α) = ${k}`,
-        detail: "With a single symbol, the index is simply the length."
+        detail: t("caseSingle", "With a single symbol, the index is simply the length.")
       })
-      steps.push({ label: "Result", value: String(k), highlight: true })
+      steps.push({ label: t("lblResult", "Result"), value: String(k), highlight: true })
       return { result: k, steps }
     }
 
     steps.push({
-      label:  "Step 1 — length k",
+      label:  t("step1Length", "Step 1 — length k"),
       value:  `k = |α| = ${k}`,
-      detail: `The string has length ${k}`
+      detail: t("detailStringLength", "The string has length {k}").replaceAll("{k}", k)
     })
 
     if (k === 0) {
       steps.push({
-        label:  "Step 2 — empty string",
+        label:  t("step2EmptyString", "Step 2 — empty string"),
         value:  `α = λ  →  f⁻¹(λ) = 0`,
-        detail: "The empty string always has index 0"
+        detail: t("detailEmptyIdx0", "The empty string always has index 0")
       })
       steps.push({
-        label:       "Blocks of Σ*",
+        label:       t("blocksOfSigma", "Blocks of Σ*"),
         value:       "",
         blockStrip:  this.renderBlockStrip(sigma, 0, 0),
         noNum:       true
       })
-      steps.push({ label: "Result", value: "0", highlight: true })
+      steps.push({ label: t("lblResult", "Result"), value: "0", highlight: true })
       return { result: 0, steps }
     }
 
     if (q > 1) {
       steps.push({
-        label:  "Step 2 — block start s(k)",
+        label:  t("step2BlockStart", "Step 2 — block start s(k)"),
         value:  `s(${k}) = (${q}^${k} − 1) / (${q} − 1) = (${Math.pow(q, k)} − 1) / ${q - 1} = ${sk}`,
-        detail: `The block of strings of length ${k} starts at index ${sk}`,
+        detail: t("detailBlockStart", "The block of strings of length {k} starts at index {sk}").replaceAll("{k}", k).replaceAll("{sk}", sk),
         blockStrip: this.renderBlockStrip(sigma, k, n)
       })
     }
 
     steps.push({
-      label:  "Step 3 — lexicographic position p(α)",
+      label:  t("step3LexPos", "Step 3 — lexicographic position p(α)"),
       value:  digitSteps.join("\n"),
       detail: `p = ${p}  (interpreting the string as a number in base ${q})`
     })
 
     steps.push({
-      label: "Step 4 — final index",
+      label: t("step4FinalIdx", "Step 4 — final index"),
       value: `f⁻¹(α) = s(${k}) + p(α) = ${sk} + ${p} = ${n}`
     })
 
@@ -310,16 +313,17 @@ class SigmaStarEnum {
     const query = this.queryInput.value.trim()
 
     if (!raw.trim()) {
-      this.resultContainer.innerHTML = `<p class="p15-hint">Define the alphabet Σ first.</p>`
+      this.resultContainer.innerHTML = `<p class="p15-hint">${t("hintDefineAlphabet", "Define the alphabet Σ first.")}</p>`
       return
     }
     const sigma = this.parseAlphabet(raw)
     if (sigma.length === 0) {
-      this.resultContainer.innerHTML = `<p class="p15-hint">The alphabet cannot be empty.</p>`
+      this.resultContainer.innerHTML = `<p class="p15-hint">${t("hintEmptyAlphabet", "The alphabet cannot be empty.")}</p>`
       return
     }
     if (!query) {
-      this.resultContainer.innerHTML = `<p class="p15-hint">Enter ${mode === "n2s" ? "a natural number n" : "a string α"}.</p>`
+      const what = mode === "n2s" ? t("hintEnterN", "a natural number n") : t("hintEnterAlpha", "a string α")
+      this.resultContainer.innerHTML = `<p class="p15-hint">${t("enterWord", "Enter")} ${what}.</p>`
       return
     }
 
@@ -327,7 +331,7 @@ class SigmaStarEnum {
     if (mode === "n2s") {
       const n = parseInt(query, 10)
       if (isNaN(n) || n < 0) {
-        this.resultContainer.innerHTML = `<p class="p15-hint">Enter a non-negative integer.</p>`
+        this.resultContainer.innerHTML = `<p class="p15-hint">${t("hintNonNeg", "Enter a non-negative integer.")}</p>`
         return
       }
       data = this.nToString(n, sigma)
@@ -341,8 +345,9 @@ class SigmaStarEnum {
   updatePlaceholder() {
     const mode = this.modeSelect.value
     const lbl  = document.getElementById("p15queryLabel")
-    if (lbl) lbl.textContent = mode === "n2s" ? "Number n ∈ ℕ" : "String α ∈ Σ*"
-    this.resultContainer.innerHTML = `<p class="p15-hint">Enter ${mode === "n2s" ? "a number" : "a string"} to see the process.</p>`
+    if (lbl) lbl.textContent = mode === "n2s" ? t("labelNumberN", "Number n ∈ ℕ") : t("labelStringAlpha", "String α ∈ Σ*")
+    const what = mode === "n2s" ? t("enterToSeeNum", "a number") : t("enterToSeeStr", "a string")
+    this.resultContainer.innerHTML = `<p class="p15-hint">${t("enterWord", "Enter")} ${what} ${t("enterToSeeSuffix", "to see the process.")}</p>`
   }
 
   main() {
@@ -350,6 +355,10 @@ class SigmaStarEnum {
     this.modeSelect.addEventListener("change",  () => this.updatePlaceholder())
     this.queryInput.addEventListener("input",   () => this.buildResult())
     this.updatePlaceholder()
+    window.addEventListener("langchanged", () => {
+      const q = this.queryInput.value.trim()
+      if (q) this.buildResult(); else this.updatePlaceholder()
+    })
   }
 }
 

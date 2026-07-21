@@ -1,5 +1,8 @@
 import ExtText from '/js/core/ExtText.js'
 
+const t = (key, fallback) =>
+  typeof window !== "undefined" && window.i18nGet ? window.i18nGet(`pd.sets.${key}`, fallback) : fallback
+
 class Venn {
     constructor(a, b) {
         this.a = this.setToList(a)
@@ -518,22 +521,21 @@ class Sets {
     }
 
     createOptions() {
-        document.getElementById(`p2Options1`).innerHTML = ""
-        document.getElementById(`p2Options2`).innerHTML = ""
+        for (let n = 0; n <= 4; n++) document.getElementById(`p2Options${n}`).innerHTML = ""
 
-        this.makeTopOption("\\text{Rndm Num}", (n, a) => {
+        this.makeTopOption(t("optRndmNum", "\\text{Rndm Num}"), (n, a) => {
             return this.numericRandomSet(n, a)
         }, 0, [6, 100])
 
-        this.makeTopOption("\\text{\\{Rndm Num\\}}", (t, n, a) => {
-            return this.collectNumeric(t, n, a)
+        this.makeTopOption(t("optRndmNumSet", "\\text{\\{Rndm Num\\}}"), (t_, n, a) => {
+            return this.collectNumeric(t_, n, a)
         }, 0, [3, 3, 100])
 
-        this.makeTopOption("\\text{Rndm Alpha}", (n) => {
+        this.makeTopOption(t("optRndmAlpha", "\\text{Rndm Alpha}"), (n) => {
             return this.alphabetRandomSet(n)
         }, 0, [6])
 
-        this.makeTopOption("\\text{\\{Rndm Alpha\\}}", (n, a) => {
+        this.makeTopOption(t("optRndmAlphaSet", "\\text{\\{Rndm Alpha\\}}"), (n, a) => {
             return this.collectAlphabetic(n, a)
         }, 0, [2, 5])
 
@@ -594,7 +596,7 @@ class Sets {
             return this.partsOf(this.getB())
         }, 3)
 
-        this.makeOption("\\text{Venn Diagram}", () => {
+        this.makeOption(t("optVenn", "\\text{Venn Diagram}"), () => {
             const veen = new Venn(this.getA(), this.getB())
             veen.draw()
             return ""
@@ -606,6 +608,7 @@ class Sets {
         this.i1.value = "{0,1,2,3,4}"
         this.i2.value = "{3,4,5,6,7}"
         this.createOptions()
+        window.addEventListener("langchanged", () => this.createOptions())
 
         document.getElementById("p2bchange").addEventListener("click", () => {
             let a = this.i1.value
