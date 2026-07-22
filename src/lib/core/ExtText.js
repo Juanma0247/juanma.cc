@@ -68,7 +68,7 @@ class ExtText {
   }
 
   static linkButton(button, url) {
-    button.addEventListener('click', () => { window.open(url, '_blank') })
+    button.addEventListener('click', () => { window.open(url, '_blank', 'noopener') })
   }
 }
 
