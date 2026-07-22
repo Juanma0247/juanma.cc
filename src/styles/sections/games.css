@@ -1,5 +1,13 @@
 /* ── Tic-Tac-Toe ──────────────────────────────────────────── */
 
+.ttt-status {
+  text-align: center;
+  font-family: var(--font-bold);
+  font-size: 1.4rem;
+  color: var(--color-primary);
+  margin: 0.5rem 0 1rem;
+}
+
 .ttt-board { display: flex; justify-content: center; }
 
 .ttt-cell {
@@ -88,6 +96,13 @@
 .auxIconSVG { width: 1.5rem; height: 1.5rem; }
 
 .mine-stat { color: var(--color-primary); opacity: .8; }
+
+.mine-title {
+  font-family: var(--font-bold);
+  font-size: 1.4rem;
+  color: var(--color-primary);
+  margin: 1rem 1rem 0;
+}
 
 .mine-options {
   display: flex;

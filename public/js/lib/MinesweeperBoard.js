@@ -7,7 +7,7 @@ class MinesweeperBoard {
   constructor(heightBoard, widthBoard, data, seconds, score) {
     this.widthBoard = widthBoard
     this.heightBoard = heightBoard
-    this.gridElement = document.querySelector('.j3Grid')
+    this.gridElement = document.querySelector('.mine-grid')
     this.t1 = document.getElementById('j3t1')
     this.grid = Array.from({ length: heightBoard }, () =>
       Array.from({ length: widthBoard }, () => 0)
@@ -271,12 +271,12 @@ class MinesweeperBoard {
   restart() {
     this.gridElement.innerHTML = ''
     this.gridElement.classList.remove('j3GridLose', 'j3GridWin')
-    this.t1.style.color = 'var(--c1)'
+    this.t1.style.color = ''
     this.sp1.textContent = `${t('statTime', 'Time')}: 00s`
     this.sp2.textContent = `${t('statPercentage', 'Percentage')}: 0%`
     this.sp3.textContent = `${t('statMines', 'Mines')}: 0`
     this.sp4.textContent = `${t('statScore', 'Score')}: 0`
-    ;[this.sp1, this.sp2, this.sp3, this.sp4].forEach(s => (s.style.color = 'var(--c1)'))
+    ;[this.sp1, this.sp2, this.sp3, this.sp4].forEach(s => (s.style.color = ''))
     this.deleteGame()
   }
 

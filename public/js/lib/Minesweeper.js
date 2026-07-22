@@ -41,10 +41,10 @@ class Minesweeper {
     this.ngi1 = document.getElementById('j3ngi1')
     this.ngi2 = document.getElementById('j3ngi2')
     this.ngb1 = document.getElementById('j3ngb1')
-    this.grid = document.querySelector('.j3Grid')
-    this.options = document.querySelector('.j3Options')
-    this.newGamer = document.querySelector('.j3NewGamer')
-    this.statistics = document.querySelector('.j3Statistics')
+    this.grid = document.querySelector('.mine-grid')
+    this.options = document.querySelector('.mine-options')
+    this.newGamer = document.querySelector('.mine-new-game')
+    this.statistics = document.querySelector('.mine-stats')
     this.game = null
     this.id = null
     this.documents = null
