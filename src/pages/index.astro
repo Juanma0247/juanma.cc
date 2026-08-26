@@ -87,12 +87,12 @@ const portraits = [
   </div>
 
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image gallery" data-i18n-aria-label="a11y.imageGallery">
-    <button class="lightbox__close" id="lb-close" aria-label="Close" data-i18n-aria-label="a11y.close">&times;</button>
-    <button class="lightbox__nav lightbox__nav--prev" id="lb-prev" aria-label="Previous" data-i18n-aria-label="a11y.previous">&#8249;</button>
     <div class="lightbox__stage">
       <img class="lightbox__img" id="lb-img" src="" alt="Juan Manuel" />
     </div>
-    <button class="lightbox__nav lightbox__nav--next" id="lb-next" aria-label="Next" data-i18n-aria-label="a11y.next">&#8250;</button>
+    <button class="lightbox__close" id="lb-close" aria-label="Close" data-i18n-aria-label="a11y.close"><i data-feather="x"></i></button>
+    <button class="lightbox__nav lightbox__nav--prev" id="lb-prev" aria-label="Previous" data-i18n-aria-label="a11y.previous"><i data-feather="chevron-left"></i></button>
+    <button class="lightbox__nav lightbox__nav--next" id="lb-next" aria-label="Next" data-i18n-aria-label="a11y.next"><i data-feather="chevron-right"></i></button>
     <div class="lightbox__counter" id="lb-counter"></div>
   </div>
 </MainLayout>
@@ -129,7 +129,7 @@ const portraits = [
   imgs[0].classList.add('active');
   scheduleNext();
 
-  // ── Lightbox (fullscreen image slider) ──────────────────────────────────────
+  // ── Lightbox (fullscreen image slider with zoom) ─────────────────────────────
   const lb        = document.getElementById('lightbox') as HTMLElement;
   // Move it out of `.contenedor` (which has its own stacking context) so the
   // overlay sits above the fixed navbar.
@@ -139,13 +139,68 @@ const portraits = [
   const srcs      = imgs.map(img => img.getAttribute('src') ?? '');
   let lbIndex = 0;
 
+  // ── Zoom / pan state ──
+  const MIN_SCALE = 1;
+  const MAX_SCALE = 4;
+  let scale = 1;
+  let panX = 0;
+  let panY = 0;
+
+  function applyTransform() {
+    lbImg.style.transform = scale === 1 ? '' : `translate(${panX}px, ${panY}px) scale(${scale})`;
+  }
+
+  function clampPan() {
+    const maxX = (lbImg.clientWidth * (scale - 1)) / 2;
+    const maxY = (lbImg.clientHeight * (scale - 1)) / 2;
+    panX = Math.min(maxX, Math.max(-maxX, panX));
+    panY = Math.min(maxY, Math.max(-maxY, panY));
+  }
+
+  function setScale(next: number) {
+    scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, next));
+    lbImg.classList.toggle('is-zoomed', scale > 1);
+    if (scale === 1) { panX = 0; panY = 0; } else clampPan();
+    applyTransform();
+  }
+
+  function resetZoom() {
+    scale = 1;
+    panX = 0;
+    panY = 0;
+    lbImg.classList.remove('is-zoomed', 'is-dragging');
+    applyTransform();
+  }
+
+  // Controls sit flush against the image's edges by default; when the image
+  // leaves an empty margin on an axis (letterboxing), float them there
+  // instead so they never sit on top of the picture.
+  const CONTROL_GAP = 56;
+
+  function updateLbLayout() {
+    const w = lbImg.clientWidth;
+    const h = lbImg.clientHeight;
+    if (!w || !h) return;
+    const gapX = Math.max(0, (window.innerWidth - w) / 2);
+    const gapY = Math.max(0, (window.innerHeight - h) / 2);
+    lb.style.setProperty('--lb-gap-x', `${Math.round(gapX)}px`);
+    lb.style.setProperty('--lb-gap-y', `${Math.round(gapY)}px`);
+    lb.classList.toggle('lb-x-outside', gapX >= CONTROL_GAP);
+    lb.classList.toggle('lb-y-outside', gapY >= CONTROL_GAP);
+  }
+
+  lbImg.addEventListener('load', updateLbLayout);
+  window.addEventListener('resize', updateLbLayout);
+
   function renderLb() {
     lbImg.src = srcs[lbIndex];
     lbCounter.textContent = `${lbIndex + 1} / ${srcs.length}`;
+    if (lbImg.complete) updateLbLayout();
   }
 
   function openLb(i: number) {
     lbIndex = i;
+    resetZoom();
     renderLb();
     lb.classList.add('is-open');
     document.body.style.overflow = 'hidden';
@@ -155,11 +210,13 @@ const portraits = [
   function closeLb() {
     lb.classList.remove('is-open');
     document.body.style.overflow = '';
+    resetZoom();
     scheduleNext();
   }
 
   function navLb(dir: number) {
     lbIndex = (lbIndex + dir + srcs.length) % srcs.length;
+    resetZoom();
     renderLb();
   }
 
@@ -179,15 +236,108 @@ const portraits = [
     else if (e.key === 'ArrowLeft') navLb(-1);
   });
 
-  // Swipe on touch devices.
-  let touchStartX: number | null = null;
-  lb.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-  lb.addEventListener('touchend', e => {
-    if (touchStartX === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 45) navLb(dx < 0 ? 1 : -1);
-    touchStartX = null;
+  // Zoom with the mouse wheel / trackpad.
+  lb.addEventListener('wheel', e => {
+    if (!lb.classList.contains('is-open')) return;
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+    setScale(scale * factor);
+  }, { passive: false });
+
+  // Drag to pan once zoomed in (mouse).
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let panStartX = 0;
+  let panStartY = 0;
+
+  lbImg.addEventListener('mousedown', e => {
+    if (scale === 1) return;
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    panStartX = panX;
+    panStartY = panY;
+    lbImg.classList.add('is-dragging');
   });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    panX = panStartX + (e.clientX - dragStartX);
+    panY = panStartY + (e.clientY - dragStartY);
+    clampPan();
+    applyTransform();
+  });
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    lbImg.classList.remove('is-dragging');
+  });
+
+  // Double-click to toggle zoom.
+  lbImg.addEventListener('dblclick', () => setScale(scale > 1 ? 1 : 2.5));
+
+  // Touch: one finger swipes to navigate (or pans once zoomed), two fingers
+  // pinch to zoom, a double-tap toggles zoom.
+  type TouchMode = 'none' | 'swipe' | 'pan' | 'pinch';
+  let touchMode: TouchMode = 'none';
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let pinchStartDist = 0;
+  let pinchStartScale = 1;
+  let lastTapTime = 0;
+
+  function touchDist(a: Touch, b: Touch) {
+    return Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
+  }
+
+  lb.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) {
+      touchMode = 'pinch';
+      pinchStartDist = touchDist(e.touches[0], e.touches[1]);
+      pinchStartScale = scale;
+      return;
+    }
+    if (e.touches.length !== 1) return;
+
+    const now = Date.now();
+    if (now - lastTapTime < 300) {
+      lastTapTime = 0;
+      touchMode = 'none';
+      setScale(scale > 1 ? 1 : 2.5);
+      return;
+    }
+    lastTapTime = now;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    if (scale > 1) {
+      touchMode = 'pan';
+      panStartX = panX;
+      panStartY = panY;
+    } else {
+      touchMode = 'swipe';
+    }
+  }, { passive: true });
+
+  lb.addEventListener('touchmove', e => {
+    if (touchMode === 'pinch' && e.touches.length === 2) {
+      e.preventDefault();
+      const dist = touchDist(e.touches[0], e.touches[1]);
+      setScale(pinchStartScale * (dist / pinchStartDist));
+    } else if (touchMode === 'pan' && e.touches.length === 1) {
+      e.preventDefault();
+      panX = panStartX + (e.touches[0].clientX - touchStartX);
+      panY = panStartY + (e.touches[0].clientY - touchStartY);
+      clampPan();
+      applyTransform();
+    }
+  }, { passive: false });
+
+  lb.addEventListener('touchend', e => {
+    if (touchMode === 'swipe') {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 45) navLb(dx < 0 ? 1 : -1);
+    }
+    if (e.touches.length === 0) touchMode = 'none';
+  }, { passive: true });
 
   // Preload the Google Maps minimaps as soon as the page loads, so the popover
   // shows instantly on hover instead of loading the iframe on demand.
