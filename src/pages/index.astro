@@ -339,8 +339,12 @@ const portraits = [
     if (e.touches.length === 0) touchMode = 'none';
   }, { passive: true });
 
-  // Preload the Google Maps minimaps as soon as the page loads, so the popover
-  // shows instantly on hover instead of loading the iframe on demand.
+  // Preload the Google Maps minimaps so the popover shows instantly on
+  // hover instead of loading the iframe on demand. These are heavy
+  // cross-origin iframes that gate the window `load` event, so the first
+  // preload waits until after the page has actually loaded — a hover in
+  // the first instant is unlikely, and this keeps them off the critical
+  // path for the initial page load.
   function preloadGeoMaps() {
     document.querySelectorAll<HTMLElement>('.geo').forEach(geo => {
       const pop = geo.querySelector<HTMLElement>('.geo-pop');
@@ -358,5 +362,7 @@ const portraits = [
   // which wipes the preloaded iframes — re-run the preload after each change.
   const heroBio = document.querySelector('.hero-bio');
   if (heroBio) new MutationObserver(() => preloadGeoMaps()).observe(heroBio, { childList: true, subtree: true });
-  preloadGeoMaps();
+
+  if (document.readyState === 'complete') preloadGeoMaps();
+  else window.addEventListener('load', () => preloadGeoMaps(), { once: true });
 </script>
