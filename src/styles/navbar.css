@@ -15,9 +15,9 @@
   box-shadow: -2px 2px 18px rgba(0, 0, 0, 0.4);
 }
 
-/* ── Back / home button ───────────────────────────── */
+/* ── Back button (subpages only) ──────────────────── */
 
-.topbar__home-btn {
+.topbar__back-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,13 +29,13 @@
   transition: color 160ms, background 160ms;
 }
 
-.topbar__home-btn:hover {
+.topbar__back-btn:hover {
   color: var(--color-bg);
   background: var(--color-muted);
 }
 
-.topbar__home-btn svg,
-.topbar__home-btn i {
+.topbar__back-btn svg,
+.topbar__back-btn i {
   width: 1.15rem;
   height: 1.15rem;
   flex-shrink: 0;

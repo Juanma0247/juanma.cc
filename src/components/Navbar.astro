@@ -30,21 +30,20 @@ const activeSection = getActiveSection(SECTIONS, pathname)
 // A page is a "subpage" once it declares a `titleHref` back to its parent
 // section while not being the home page itself (home may set its own
 // titleHref for unrelated reasons). Section-root pages (Projects, Scripts,
-// Space…) don't set titleHref, so they fall back to home.
+// Space…) don't set titleHref, so they fall back to home. The back button
+// only appears on subpages — on section-root pages the logo already covers
+// "go home", so a redundant house button isn't shown there.
 const isSubpage = pathname !== '/' && !!titleHref
 const showLogo = !isSubpage
-const showBackBtn = pathname !== '/'
-const backHref = isSubpage ? titleHref : '/'
-const backIcon = isSubpage ? 'arrow-left' : 'home'
-const backLabelKey = isSubpage ? 'a11y.goBack' : 'a11y.goHome'
+const showBackBtn = isSubpage
 const titleLinkHref = titleHref || '/'
 ---
 
 <nav id="topbar" class="topbar" aria-label="Main navigation" data-i18n-aria-label="a11y.mainNav">
 
   {showBackBtn && (
-    <a class="topbar__home-btn" href={backHref} aria-label={backIcon === 'home' ? 'Go home' : 'Go back'} data-i18n-aria-label={backLabelKey}>
-      <i data-feather={backIcon}></i>
+    <a class="topbar__back-btn" href={titleHref} aria-label="Go back" data-i18n-aria-label="a11y.goBack">
+      <i data-feather="arrow-left"></i>
     </a>
   )}
 
