@@ -16,7 +16,7 @@ if (!game) throw new Error(`Game not found: "${slug}"`)
   title={game.pageTitle}
   navTitle={game.navTitle}
   section="Games"
-  labels={game.labels}
+  titleHref="/projects"
 >
   <slot name="head" slot="head" />
   <slot />

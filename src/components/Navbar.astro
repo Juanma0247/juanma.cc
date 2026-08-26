@@ -1,12 +1,10 @@
 ---
 import { SECTIONS } from '../data/nav'
 import type { NavSection } from '../data/nav'
-import { tagKey } from '../data/i18n/keys'
 
 interface Props {
   navTitle?: string
   section?: string
-  labels?: string[]
   icon?: string
   titleHref?: string
   titleKey?: string
@@ -15,7 +13,6 @@ interface Props {
 const {
   navTitle = 'Juanma',
   section = '',
-  labels = [],
   icon = '/img/favicon.svg',
   titleHref = '',
   titleKey = '',
@@ -29,30 +26,40 @@ function getActiveSection(sections: NavSection[], path: string): NavSection | un
 }
 
 const activeSection = getActiveSection(SECTIONS, pathname)
-const displayLabels = labels.slice(0, 3)
+
+// A page is a "subpage" once it declares a `titleHref` back to its parent
+// section while not being the home page itself (home may set its own
+// titleHref for unrelated reasons). Section-root pages (Projects, Scripts,
+// Space…) don't set titleHref, so they fall back to home.
+const isSubpage = pathname !== '/' && !!titleHref
+const showLogo = !isSubpage
+const showBackBtn = pathname !== '/'
+const backHref = isSubpage ? titleHref : '/'
+const backIcon = isSubpage ? 'arrow-left' : 'home'
+const backLabelKey = isSubpage ? 'a11y.goBack' : 'a11y.goHome'
+const titleLinkHref = titleHref || '/'
 ---
 
 <nav id="topbar" class="topbar" aria-label="Main navigation" data-i18n-aria-label="a11y.mainNav">
 
+  {showBackBtn && (
+    <a class="topbar__home-btn" href={backHref} aria-label={backIcon === 'home' ? 'Go home' : 'Go back'} data-i18n-aria-label={backLabelKey}>
+      <i data-feather={backIcon}></i>
+    </a>
+  )}
+
   <div class="topbar__identity">
-    {titleHref
-      ? <a class="topbar__title topbar__title--link" href={titleHref} data-i18n={titleKey || undefined}>{navTitle}</a>
-      : <p class="topbar__title" data-i18n={titleKey || undefined}>{navTitle}</p>}
-    <div class="topbar__meta">
-      {(displayLabels.length > 0 || section) && (
-        <img class="topbar__icon" src={icon} alt="" aria-hidden="true" />
-      )}
-      {displayLabels.length > 0 && (
-        <span
-          class="topbar__label"
-          id="topbar-label"
-          data-labels={JSON.stringify(displayLabels)}
-          data-label-keys={JSON.stringify(displayLabels.map(l => `tags.${tagKey(l)}`))}
-        >
-          {displayLabels[0]}
-        </span>
-      )}
-      {section && <span class="topbar__section" data-i18n={`sections.${section.toLowerCase()}`}>{section}</span>}
+    {showLogo && (
+      <a class="topbar__logo-link" href="/" aria-label="Go home" data-i18n-aria-label="a11y.goHome">
+        <img class="topbar__logo" src={icon} alt="" aria-hidden="true" />
+      </a>
+    )}
+    <div class="topbar__identity-text">
+      <a class="topbar__title topbar__title--link" href={titleLinkHref} data-i18n={titleKey || undefined}>{navTitle}</a>
+      <div class="topbar__meta">
+        {section && <img class="topbar__icon" src={icon} alt="" aria-hidden="true" />}
+        {section && <span class="topbar__section" data-i18n={`sections.${section.toLowerCase()}`}>{section}</span>}
+      </div>
     </div>
   </div>
 
@@ -80,32 +87,6 @@ const displayLabels = labels.slice(0, 3)
 </nav>
 
 <script>
-  const labelEl = document.getElementById('topbar-label') as HTMLElement | null
-  if (labelEl) {
-    const allLabels: string[] = JSON.parse(labelEl.dataset.labels || '[]')
-    const labelKeys: string[] = JSON.parse(labelEl.dataset.labelKeys || '[]')
-    // Resolve each rotating label against the current language, falling back to
-    // the English source when a tag has no translation.
-    const resolve = (i: number) => {
-      const get = (window as any).i18nGet
-      return get ? get(labelKeys[i], allLabels[i]) : allLabels[i]
-    }
-    let idx = 0
-    const paint = () => { labelEl.textContent = resolve(idx) }
-    paint()
-    if (allLabels.length > 1) {
-      setInterval(() => {
-        labelEl.style.opacity = '0'
-        setTimeout(() => {
-          idx = (idx + 1) % allLabels.length
-          paint()
-          labelEl.style.opacity = '1'
-        }, 300)
-      }, 2500)
-    }
-    window.addEventListener('langchanged', paint)
-  }
-
   const toggleBtn = document.getElementById('topbar-menu-toggle') as HTMLButtonElement | null
   const nav = document.getElementById('topbar-nav') as HTMLElement | null
 

@@ -258,6 +258,8 @@ export interface I18n {
     previous: string
     next: string
     imageGallery: string
+    goHome: string
+    goBack: string
   }
   notFound: {
     message: string
@@ -991,6 +993,8 @@ export const en: I18n = {
     previous: 'Previous',
     next: 'Next',
     imageGallery: 'Image gallery',
+    goHome: 'Go home',
+    goBack: 'Go back',
   },
   notFound: {
     message: 'Page not found :/',

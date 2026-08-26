@@ -654,6 +654,8 @@ export const es: I18n = {
     previous: 'Anterior',
     next: 'Siguiente',
     imageGallery: 'Galería de imágenes',
+    goHome: 'Ir al inicio',
+    goBack: 'Volver',
   },
   notFound: {
     message: 'Página no encontrada :/',

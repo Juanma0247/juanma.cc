@@ -16,7 +16,7 @@ if (!project) throw new Error(`Project not found: "${slug}"`)
   title={project.pageTitle}
   navTitle={project.navTitle}
   section="Projects"
-  labels={project.labels}
+  titleHref="/projects"
 >
   <slot name="head" slot="head" />
   <slot />
