@@ -152,9 +152,7 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
 
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body)"></script>
-    <script src="https://www.geogebra.org/apps/deployggb.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
+    <script defer src="https://unpkg.com/feather-icons"></script>
 
     <slot name="head" />
   </head>
@@ -274,34 +272,48 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
       S.listenWeb((web: any) => { lastWeb = web; refresh() })
 
       // ── Auth: admin flag, per-account settings, last-page sync ───────────────
-      ;(async () => {
-        try {
-          const auth = await import('../lib/core/Auth.js')
-          auth.onAuthChange(async (user: any) => {
-            if (!user) {
-              localStorage.removeItem(S.LS.admin)
-              refresh()
-              return
-            }
-            if (auth.isAuthorized(user.email)) localStorage.setItem(S.LS.admin, '1')
-            else localStorage.removeItem(S.LS.admin)
-            try {
-              const us: any = await S.getUserSettings(user.uid)
-              if (us) {
-                if (us.theme)        localStorage.setItem(S.LS.theme, us.theme)
-                if (us.customColors) localStorage.setItem(S.LS.custom, JSON.stringify(us.customColors))
-                if (us.font)         localStorage.setItem(S.LS.font, us.font)
-                if (us.lang)         localStorage.setItem(S.LS.lang, us.lang)
+      // Only relevant to the site owner signing in — deferred past `load` and
+      // onto an idle slice so anonymous visitors don't pay for the Firebase
+      // Auth bundle during the initial page load.
+      function initAuth() {
+        ;(async () => {
+          try {
+            const auth = await import('../lib/core/Auth.js')
+            auth.onAuthChange(async (user: any) => {
+              if (!user) {
+                localStorage.removeItem(S.LS.admin)
+                refresh()
+                return
               }
-            } catch (e) {}
-            refresh()
-            const lp = localStorage.getItem(S.LS.lastPage)
-            if (lp) S.saveUserSettings(user.uid, { lastPage: lp }).catch(() => {})
-          })
-        } catch (e) {
-          console.error('MainLayout: auth unavailable', e)
-        }
-      })()
+              if (auth.isAuthorized(user.email)) localStorage.setItem(S.LS.admin, '1')
+              else localStorage.removeItem(S.LS.admin)
+              try {
+                const us: any = await S.getUserSettings(user.uid)
+                if (us) {
+                  if (us.theme)        localStorage.setItem(S.LS.theme, us.theme)
+                  if (us.customColors) localStorage.setItem(S.LS.custom, JSON.stringify(us.customColors))
+                  if (us.font)         localStorage.setItem(S.LS.font, us.font)
+                  if (us.lang)         localStorage.setItem(S.LS.lang, us.lang)
+                }
+              } catch (e) {}
+              refresh()
+              const lp = localStorage.getItem(S.LS.lastPage)
+              if (lp) S.saveUserSettings(user.uid, { lastPage: lp }).catch(() => {})
+            })
+          } catch (e) {
+            console.error('MainLayout: auth unavailable', e)
+          }
+        })()
+      }
+
+      function scheduleAuth() {
+        const w = window as any
+        if (typeof w.requestIdleCallback === 'function') w.requestIdleCallback(initAuth, { timeout: 2000 })
+        else setTimeout(initAuth, 200)
+      }
+
+      if (document.readyState === 'complete') scheduleAuth()
+      else window.addEventListener('load', scheduleAuth, { once: true })
     </script>
 
     <script is:inline define:vars={{ i18nEn: en, i18nEs: es }}>

@@ -2,6 +2,8 @@
 import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
 <ProjectLayout slug="sets">
+  <script slot="head" is:inline defer src="https://www.geogebra.org/apps/deployggb.js"></script>
+  <script slot="head" is:inline defer src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
   <h1 class="subtitle p2subtitulo" data-i18n="pd.sets.title">Sets</h1>
   <div id="p2Options0" class="center p2Options"></div>
   <div style="display: flex;" class="center p2InputSets">

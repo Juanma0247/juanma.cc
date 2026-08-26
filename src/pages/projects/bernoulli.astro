@@ -2,6 +2,7 @@
 import ProjectLayout from '../../layouts/ProjectLayout.astro'
 ---
 <ProjectLayout slug="bernoulli">
+  <script slot="head" is:inline defer src="https://www.geogebra.org/apps/deployggb.js"></script>
   <div style="display: flex; flex-wrap: wrap;">
     <div id="p10ggbContainer" class="ggbContainer"></div>
     <div id="p10CalcContainer" class="calcContainer">
