@@ -9,7 +9,8 @@
   border-radius: 0;
   overflow: hidden;
   z-index: 1000;
-  background: var(--color-bg);
+  background: color-mix(in srgb, var(--color-bg) 96%, var(--color-text) 4%);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-text) 10%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: -2px 2px 18px rgba(0, 0, 0, 0.4);
