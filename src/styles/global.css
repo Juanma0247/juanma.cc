@@ -8,8 +8,14 @@
 }
 
 /* Code snippets (reset.css forces --font-ui on every element, including
-   these) always render in the monospace face, sitewide. */
-code, pre, kbd, samp {
+   these) always render in the monospace face, sitewide. The `*` descendant
+   selectors are needed too: reset.css's own `code, pre { font-family }`
+   rule doesn't cascade into syntax-highlighter spans (e.g. highlight.js's
+   .hljs-keyword/.hljs-comment/...) because reset's `* { font-family }`
+   already sets it explicitly on each of those spans — an inherited value
+   never overrides an explicit one, regardless of selector specificity. */
+code, pre, kbd, samp,
+code *, pre *, kbd *, samp * {
   font-family: var(--font-mono);
 }
 

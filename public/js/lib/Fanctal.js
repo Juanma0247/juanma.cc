@@ -9,7 +9,7 @@ const t = (key, fallback) =>
 
 // Google Drive file id for the full write-up PDF. Set once it's shared;
 // the button stays hidden until then (see main()).
-const PDF_DRIVE_ID = ''
+const PDF_DRIVE_ID = '18mrxCsuYxWPeMb-hP4Z7Yxh5pNsqDmcd'
 
 class Fanctal {
     constructor() {
