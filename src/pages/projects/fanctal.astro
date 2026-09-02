@@ -4,8 +4,7 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
 <ProjectLayout slug="fanctal">
   <div class="p11Content">
     <header class="p11Intro">
-      <p class="p11Eyebrow" data-i18n="pd.fanctal.introEyebrow">Interactive companion to a research paper</p>
-      <p class="p11Lead" data-i18n="pd.fanctal.introLead">The fanctal is a self-similar circular fractal: divide a disk into six sectors, inscribe a tangent child disk in three alternating sectors, and repeat the construction indefinitely inside each child. Explore the family behind it below, or read the summary and download a Python implementation further down the page.</p>
+      <p class="p11Lead" data-i18n="pd.fanctal.introLead">A fanctal is a family of self-similar circular fractals, built by dividing a disk into equal angular sectors and inscribing, in some of them, a smaller tangent disk that repeats the same construction inside itself, indefinitely. Varying how many sectors there are and how many are recursed traces out an entire family of shapes — from sparse, spidery patterns to dense, almost space-filling ones — all sharing the same self-similar logic. Explore that family below, or read the summary and download a Python implementation further down the page.</p>
     </header>
 
     <div class="p11Layout">
@@ -65,11 +64,11 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
 
       <div class="p11Paper">
         <p class="p11PaperMeta" data-i18n="pd.fanctal.paperMeta">Yasser Díaz Arcila, Juan Manuel Díaz Gómez, and Elizabeth Solórzano Tovar.</p>
-        <p class="p11PaperStatus" data-i18n="pd.fanctal.paperStatus">Manuscript in preparation, currently in the review and submission process to Eco Matemático (UFPS). The link to the full article will be added here once it is published.</p>
-        <div class="p11Citation">
-          <span class="p11CitationLabel" data-i18n="pd.fanctal.citationLabel">Suggested citation (APA, manuscript in preparation)</span>
-          <p class="p11CitationText" data-i18n="pd.fanctal.citationText">Díaz Arcila, Y., Díaz Gómez, J. M., &amp; Solórzano Tovar, E. (in preparation). <em>The Fanctal: Area, Perimeter, and a Generalized Family of Self-Similar Circular Fractals</em>. Manuscript in preparation for submission to Eco Matemático.</p>
-        </div>
+        <p class="p11PaperStatus" data-i18n="pd.fanctal.paperStatus">A version restructured for peer review is in preparation for submission to Eco Matemático (Universidad Francisco de Paula Santander).</p>
+        <button id="p11PdfBtn" class="p11PdfBtn" hidden>
+          <i data-feather="download"></i>
+          <span data-i18n="pd.fanctal.downloadPdf">Download PDF</span>
+        </button>
         <p class="p11License" data-i18n="pd.fanctal.licenseNote">It will be published under a CC BY 4.0 license.</p>
       </div>
     </section>

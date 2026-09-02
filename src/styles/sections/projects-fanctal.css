@@ -9,18 +9,9 @@
 /* ── Intro ──────────────────────────────────────────────── */
 
 .p11Intro {
-  max-width: 40rem;
-  margin: 0 auto 2rem;
-  text-align: center;
-}
-
-.p11Eyebrow {
-  margin: 0 0 .4rem;
-  font-family: var(--font-bold);
-  font-size: .8rem;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--color-primary);
+  max-width: 42rem;
+  margin: 0 0 2rem;
+  text-align: left;
 }
 
 .p11Lead {
@@ -234,28 +225,24 @@
   color: var(--color-muted);
 }
 
-.p11Citation {
-  padding: .9rem 1.1rem;
-  background: var(--color-bg);
-  border-left: .2rem solid var(--color-primary);
-  border-radius: var(--radius-md);
-}
-
-.p11CitationLabel {
-  display: block;
-  margin-bottom: .4rem;
+.p11PdfBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  margin: 0 0 .9rem;
+  padding: 0;
   font-family: var(--font-bold);
-  font-size: .75rem;
-  text-transform: uppercase;
-  letter-spacing: .03em;
+  font-size: .85rem;
   color: var(--color-primary);
+  background: none;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
 }
 
-.p11CitationText {
-  margin: 0;
-  font-size: .88rem;
-  line-height: 1.5;
-}
+.p11PdfBtn:hover { opacity: .8; text-decoration: underline; }
+.p11PdfBtn:active { animation: none; }
+.p11PdfBtn svg { width: .9rem; height: .9rem; }
 
 .p11License {
   margin: .9rem 0 0;

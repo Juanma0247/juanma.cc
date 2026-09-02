@@ -7,6 +7,10 @@ var color = rootStyles.getPropertyValue('--color-text').trim() || '#000000'
 const t = (key, fallback) =>
   typeof window !== 'undefined' && window.i18nGet ? window.i18nGet(`pd.fanctal.${key}`, fallback) : fallback
 
+// Google Drive file id for the full write-up PDF. Set once it's shared;
+// the button stays hidden until then (see main()).
+const PDF_DRIVE_ID = ''
+
 class Fanctal {
     constructor() {
         this.content = document.getElementById('fanctal')
@@ -310,6 +314,12 @@ class Fanctal {
         this.b2.addEventListener("click", () => {
             this.downloadSVG(this.content, `f(${this.n},${this.a}) - depth ${this.i3.value}.svg`)
         })
+
+        const pdfBtn = document.getElementById('p11PdfBtn')
+        if (pdfBtn && PDF_DRIVE_ID) {
+            pdfBtn.hidden = false
+            ExtText.linkButton(pdfBtn, `https://drive.google.com/uc?export=download&id=${PDF_DRIVE_ID}`)
+        }
 
         window.addEventListener("langchanged", () => this.displayAreaCalculation(this.n, this.a))
     }
