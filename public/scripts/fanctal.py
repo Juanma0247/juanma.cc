@@ -25,6 +25,7 @@ Usage:
 import argparse
 import math
 import random
+import sys
 
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
@@ -131,7 +132,11 @@ def main():
     parser.add_argument("--radius", type=float, default=1.0, help="radius R of the initial disk")
     parser.add_argument("--seed", type=int, default=None, help="random seed for sector selection when it is not fully determined by (n, a)")
     parser.add_argument("--out", default="fanctal.svg", help="output file (.svg or .png)")
-    args = parser.parse_args()
+    # In a Jupyter/IPython cell sys.argv holds the kernel's own connection
+    # args (e.g. `-f ...kernel.json`), which argparse would otherwise choke
+    # on; fall back to the defaults there instead of a real CLI's argv.
+    in_notebook = "ipykernel_launcher" in sys.argv[0]
+    args = parser.parse_args([] if in_notebook else None)
 
     fig, ax = plt.subplots(figsize=(6, 6))
     draw_fanctal(ax, args.n, args.a, r0=args.radius, depth=args.depth, seed=args.seed)

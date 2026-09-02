@@ -7,6 +7,12 @@
   height: 100%;
 }
 
+/* Code snippets (reset.css forces --font-ui on every element, including
+   these) always render in the monospace face, sitewide. */
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+}
+
 /* Location chip with a small map preview on hover.
    Global (not scoped) because the bio is injected via innerHTML by i18n. */
 .geo {
