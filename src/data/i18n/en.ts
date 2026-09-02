@@ -578,8 +578,6 @@ export const en: I18n = {
       codeCopy: 'Copy',
       codeCopied: 'Copied!',
       codeDownload: 'Download .py',
-      relatedTitle: 'See also',
-      relatedCantor: 'Cantor Sets — another fractal in this portfolio',
     },
     hillCipher: {
       alphabet: 'Alphabet',

@@ -121,3 +121,51 @@ el aplicativo y el manuscrito.
    página pública (ver la decisión que tomé arriba).
 5. El commit de este cambio ya se hizo y se subió a `origin/main` (Firebase App Hosting desplegará
    automáticamente).
+
+## Adenda — quitar "Ver también" y arreglar los inputs a nivel de sitio (mismo día)
+
+Tras revisar la primera versión en el navegador, pediste dos cosas más:
+
+1. **Quitar la sección "Ver también"** de la página de Fanctal (markup, claves i18n
+   `relatedTitle`/`relatedCantor` y el CSS `.p11Related`/`.p11RelatedLink`) — hecho.
+2. **Arreglar los inputs con label**, y de forma global, no solo en Fanctal. El problema real: el
+   label flotante (`.field-label`) de `src/styles/forms.css` asumía texto plano centrado
+   verticalmente y encogido con `transform: scale(.85)`; cuando el label es LaTeX renderizado por
+   KaTeX (como `n`, `a`, `μ`, `σ`, "Grados de libertad", etc. — usado en **más de una docena de
+   páginas**, no solo Fanctal), las métricas verticales del `.katex` interno no coinciden con las
+   de texto plano y el label quedaba superpuesto sobre el valor en vez de flotar limpiamente.
+
+   Antes de tocar nada audité **todo el sitio** (proyectos, juegos, herramientas, página de
+   diseño) para catalogar cada variante real del componente: labels de 1 carácter, frases largas
+   ("Alphabet Σ (symbols separated by spaces)"), LaTeX con y sin entities HTML, inputs de solo
+   lectura (resultados en Minecraft Coords), inputs con botones ▲▼ (`.number-wrap`/`.spin`), y un
+   caso con un tercer hijo dentro del mismo `.field` (`hill-cipher.astro` tiene un
+   `<p class="p1Error">` después del label). También encontré que `turing-machine.astro` ya
+   resolvía esto con un patrón propio (`.tm-field`/`.tm-label`: label estático arriba, .85rem,
+   ComputerModern, gris) — lo tomé como referencia porque ya era la solución correcta, solo que
+   sin generalizar al resto del sitio.
+
+   **Solución aplicada** (un único cambio en `src/styles/forms.css`, sin tocar el DOM de ninguna
+   página excepto quitar la sección de Fanctal): el label deja de ser flotante/superpuesto y pasa
+   a ser una leyenda estática siempre visible arriba del input (mismo lenguaje visual que ya tenía
+   Turing Machine). Para lograrlo sin reordenar el HTML de cada página, `.field` es ahora
+   `display:flex; flex-direction:column` y `.field-label` lleva `order:-1` — eso sube solo el
+   label al frente y deja intacto el orden relativo de cualquier otro hermano (como el párrafo de
+   error de Hill Cipher), a diferencia de invertir la lista completa. También quité el padding
+   extra (`1.5rem` arriba) que existía solo para dejarle espacio al label flotante — ya no hace
+   falta, así que los inputs quedan más compactos y con el mismo padding que cualquier otro input
+   del sitio. Los labels largos ahora hacen wrap en vez de desbordar (`max-width: 16rem`).
+
+   Verificado con Playwright en Fanctal, Hill Cipher, Bernoulli, Normal Distribution,
+   Sigma-Star Enumeration (label largo), Cantor Sets, Minecraft Coords (inputs de solo lectura),
+   Sorting y Turing Machine (para confirmar que su patrón propio seguía intacto) — en las nueve,
+   el label aparece limpio arriba del input, sin superposición, sin overflow, sin errores de
+   consola nuevos.
+
+**Archivos tocados en esta adenda:**
+- `src/styles/forms.css` (el fix real — componente compartido `.field`/`.field-label`)
+- `src/pages/projects/fanctal.astro`, `src/data/i18n/{es,en}.ts`,
+  `src/styles/sections/projects-fanctal.css` (quitar "Ver también")
+
+Ningún otro archivo cambió — el punto de tocar un solo componente compartido era justamente no
+tener que tocar página por página.

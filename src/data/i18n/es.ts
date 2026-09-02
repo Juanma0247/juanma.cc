@@ -239,8 +239,6 @@ export const es: I18n = {
       codeCopy: 'Copiar',
       codeCopied: '¡Copiado!',
       codeDownload: 'Descargar .py',
-      relatedTitle: 'Ver también',
-      relatedCantor: 'Conjuntos de Cantor — otro fractal de este portafolio',
     },
     hillCipher: {
       alphabet: 'Alfabeto',
