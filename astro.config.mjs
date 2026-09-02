@@ -10,6 +10,7 @@ export default defineConfig({
     '/tools': '/projects#tools',
     '/games': '/projects#games',
     '/settings': '/accessibility',
+    '/projects/fractal': '/projects/fanctal',
   },
   vite: {
     server: {

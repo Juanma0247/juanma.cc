@@ -80,10 +80,10 @@
     ]
   },
   {
-    "slug": "fractal",
-    "title": "Fractal",
-    "navTitle": "Fractal",
-    "pageTitle": "Fractal Geometry",
+    "slug": "fanctal",
+    "title": "Fanctal",
+    "navTitle": "Fanctal",
+    "pageTitle": "Fanctal — Self-Similar Circular Fractals",
     "image": "p11.png",
     "order": 11,
     "size": "tall",

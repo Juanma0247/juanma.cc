@@ -5,11 +5,11 @@ const rootStyles = getComputedStyle(document.documentElement)
 var color = rootStyles.getPropertyValue('--color-text').trim() || '#000000'
 
 const t = (key, fallback) =>
-  typeof window !== 'undefined' && window.i18nGet ? window.i18nGet(`pd.fractal.${key}`, fallback) : fallback
+  typeof window !== 'undefined' && window.i18nGet ? window.i18nGet(`pd.fanctal.${key}`, fallback) : fallback
 
-class Fractal {
+class Fanctal {
     constructor() {
-        this.content = document.getElementById('fractal')
+        this.content = document.getElementById('fanctal')
         this.i1 = document.getElementById('p11i1')
         this.i2 = document.getElementById('p11i2')
         this.i3 = document.getElementById('p11i3')
@@ -285,7 +285,6 @@ class Fractal {
     }
 
     main() {
-        this.content.setAttribute("width", window.typeOfUser ? "95vw" : "80vh")
         ExtText.restrictNI(this.i3, 1, 7, "N")
         this.content.setAttribute("viewBox", `-1 -1 2 2`)
         this.i1.addEventListener("input", () => {
@@ -306,8 +305,7 @@ class Fractal {
         this.action()
 
         this.b1.addEventListener("click", () => {
-            let idRef = "1X5aZ-jnnQy5nOX3G4kNKYIPtuaPjRCaV"
-            ExtText.linkButton(this.b1, `https://drive.google.com/uc?export=download&id=${idRef}`)
+            document.getElementById('p11About')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
         })
         this.b2.addEventListener("click", () => {
             this.downloadSVG(this.content, `f(${this.n},${this.a}) - depth ${this.i3.value}.svg`)
@@ -317,4 +315,4 @@ class Fractal {
     }
 }
 
-export default Fractal
+export default Fanctal

@@ -1,0 +1,141 @@
+---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
+---
+<ProjectLayout slug="fanctal">
+  <div class="p11Content">
+    <header class="p11Intro">
+      <p class="p11Eyebrow" data-i18n="pd.fanctal.introEyebrow">Interactive companion to a research paper</p>
+      <p class="p11Lead" data-i18n="pd.fanctal.introLead">The fanctal is a self-similar circular fractal: divide a disk into six sectors, inscribe a tangent child disk in three alternating sectors, and repeat the construction indefinitely inside each child. Explore the family behind it below, or read the summary and download a Python implementation further down the page.</p>
+    </header>
+
+    <div class="p11Layout">
+      <div class="p11FigureCard">
+        <svg id="fanctal"></svg>
+      </div>
+      <aside class="p11Panel">
+        <h3 class="p11PanelTitle" data-i18n="pd.fanctal.paramsTitle">Parameters</h3>
+        <div class="p11inputs">
+          <div class="field p11InputGroup">
+            <input id="p11i1" required="" type="number" min="1" step="1" value="6" placeholder=" ">
+            <label class="field-label">\(\text&#123;\textbf&#123;n&#125;&#125;\)</label>
+            <p class="p11Hint" data-i18n="pd.fanctal.hintN">Number of angular sectors</p>
+          </div>
+          <div class="field p11InputGroup">
+            <input id="p11i2" required="" type="number" min="0" step="1" value="3" placeholder=" ">
+            <label class="field-label">\(\text&#123;\textbf&#123;a&#125;&#125;\)</label>
+            <p class="p11Hint" data-i18n="pd.fanctal.hintA">Sectors selected to recurse</p>
+          </div>
+          <div class="field p11InputGroup">
+            <input id="p11i3" required="" type="number" placeholder=" ">
+            <label class="field-label" data-i18n="pd.fanctal.depth">\(\text&#123;\textbf&#123;Depth&#125;&#125;\)</label>
+            <p class="p11Hint" data-i18n="pd.fanctal.hintDepth">Explicit depth 1–7 (empty = automatic cutoff)</p>
+          </div>
+        </div>
+        <div class="p11buttons">
+          <button id="p11b1" class="p11Button" data-i18n="pd.fanctal.aboutBtn">About the fanctal</button>
+          <button id="p11b2" class="p11Button" data-i18n="pd.fanctal.downloadSvg">Download SVG</button>
+        </div>
+        <div id="p11ResArea"></div>
+      </aside>
+    </div>
+
+    <section class="p11AreaSection">
+      <h3 data-i18n="pd.fanctal.areaCalc">Area calculation A(r, n, a)</h3>
+      <div id="p11AreaCalc" class="p11AreaCalc"></div>
+    </section>
+
+    <section id="p11About" class="p11About">
+      <h3 data-i18n="pd.fanctal.aboutTitle">About the fanctal</h3>
+      <p data-i18n="pd.fanctal.aboutConstruction">The original fanctal divides a disk of radius \(R\) into \(6\) congruent sectors and inscribes, in \(3\) alternating sectors, a tangent child disk; the construction repeats indefinitely inside each child.</p>
+
+      <div class="p11AboutGrid">
+        <div class="p11AboutCard">
+          <h4 data-i18n="pd.fanctal.resultAreaLabel">Main result</h4>
+          <p data-i18n="pd.fanctal.resultAreaText">The shaded area equals \(\pi R^2/4\) — proved by two independent methods. The perimeter added at each generation is invariant, \(\pi R + 6R\), but the sum over all generations diverges.</p>
+        </div>
+        <div class="p11AboutCard">
+          <h4 data-i18n="pd.fanctal.generalizationLabel">Generalization</h4>
+          <p data-i18n="pd.fanctal.generalizationText">The construction generalizes to a parametric family \(f(r,n,a)\): \(n\) angular sectors, of which \(a\) (preferably alternated) are selected to recurse, with scale ratio \(k(n) = \dfrac&#123;\sin(\pi/n)&#125;&#123;1+\sin(\pi/n)&#125;\). Its closed-form area is \(A(r,n,a) = \pi r^2 \cdot \dfrac&#123;a\left(\frac&#123;1&#125;&#123;n&#125; - k^2\right)&#125;&#123;1 - ak^2&#125;\), valid for every admissible \((n,a)\); setting \(n=6\), \(a=3\) recovers exactly \(\pi R^2/4\).</p>
+        </div>
+        <div class="p11AboutCard">
+          <h4 data-i18n="pd.fanctal.dimensionLabel">Fractal dimension</h4>
+          <p data-i18n="pd.fanctal.dimensionText">The family's self-similar attractor has Hausdorff dimension \(\dim_H(K) = \dfrac&#123;\log a&#125;&#123;-\log k&#125;\), which equals exactly \(1\) when \(ak=1\) — the same condition connected to the invariant perimeter of the original fanctal.</p>
+        </div>
+      </div>
+
+      <div class="p11Paper">
+        <p class="p11PaperMeta" data-i18n="pd.fanctal.paperMeta">Yasser Díaz Arcila, Juan Manuel Díaz Gómez, and Elizabeth Solórzano Tovar.</p>
+        <p class="p11PaperStatus" data-i18n="pd.fanctal.paperStatus">Manuscript in preparation, currently in the review and submission process to Eco Matemático (UFPS). The link to the full article will be added here once it is published.</p>
+        <div class="p11Citation">
+          <span class="p11CitationLabel" data-i18n="pd.fanctal.citationLabel">Suggested citation (APA, manuscript in preparation)</span>
+          <p class="p11CitationText" data-i18n="pd.fanctal.citationText">Díaz Arcila, Y., Díaz Gómez, J. M., &amp; Solórzano Tovar, E. (in preparation). <em>The Fanctal: Area, Perimeter, and a Generalized Family of Self-Similar Circular Fractals</em>. Manuscript in preparation for submission to Eco Matemático.</p>
+        </div>
+        <p class="p11License" data-i18n="pd.fanctal.licenseNote">It will be published under a CC BY 4.0 license.</p>
+      </div>
+    </section>
+
+    <section class="p11CodeSection">
+      <h3 data-i18n="pd.fanctal.codeTitle">Reproduce it in Python</h3>
+      <p data-i18n="pd.fanctal.codeIntro">This script implements the same recursive construction described above — sector selection, scale ratio, and termination criteria — so you can regenerate every figure independently, in your own language if you prefer.</p>
+      <div class="p11CodeCard">
+        <div class="p11CodeToolbar">
+          <span class="p11CodeFilename">fanctal.py</span>
+          <div class="p11CodeActions">
+            <button id="p11CodeToggle" class="p11CodeBtn" data-i18n="pd.fanctal.codeShow">Show code</button>
+            <button id="p11CodeCopy" class="p11CodeBtn" data-i18n="pd.fanctal.codeCopy">Copy</button>
+            <a id="p11CodeDownload" class="p11CodeBtn is-solid" href="/scripts/fanctal.py" download data-i18n="pd.fanctal.codeDownload">Download .py</a>
+          </div>
+        </div>
+        <pre id="p11CodePre" class="p11CodePre" hidden><code id="p11CodeBlock" class="language-python"></code></pre>
+      </div>
+    </section>
+
+    <section class="p11Related">
+      <h3 data-i18n="pd.fanctal.relatedTitle">See also</h3>
+      <a class="p11RelatedLink" href="/projects/cantor-sets" data-i18n="pd.fanctal.relatedCantor">Cantor Sets — another fractal in this portfolio</a>
+    </section>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style>@import '../../styles/sections/projects.css';</style>
+<style is:global>@import '../../styles/sections/projects-fanctal.css';</style>
+<script type="module" is:inline>
+  import Fanctal from '/js/lib/Fanctal.js'
+  import hljs from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/es/highlight.min.js'
+
+  const p = new Fanctal(); p.starter?.(); p.main()
+
+  const codeToggle = document.getElementById('p11CodeToggle')
+  const codeCopy = document.getElementById('p11CodeCopy')
+  const codePre = document.getElementById('p11CodePre')
+  const codeBlock = document.getElementById('p11CodeBlock')
+  let codeText = ''
+  let codeLoaded = false
+
+  async function loadCode() {
+    if (codeLoaded) return
+    codeLoaded = true
+    const res = await fetch('/scripts/fanctal.py')
+    codeText = await res.text()
+    codeBlock.textContent = codeText
+    hljs.highlightElement(codeBlock)
+  }
+
+  codeToggle?.addEventListener('click', async () => {
+    await loadCode()
+    const willShow = codePre.hidden
+    codePre.hidden = !willShow
+    const key = willShow ? 'pd.fanctal.codeHide' : 'pd.fanctal.codeShow'
+    const fallback = willShow ? 'Hide code' : 'Show code'
+    codeToggle.dataset.i18n = key
+    codeToggle.textContent = window.i18nGet ? window.i18nGet(key, fallback) : fallback
+  })
+
+  codeCopy?.addEventListener('click', async () => {
+    await loadCode()
+    navigator.clipboard.writeText(codeText)
+    const original = codeCopy.textContent
+    codeCopy.textContent = window.i18nGet ? window.i18nGet('pd.fanctal.codeCopied', 'Copied!') : 'Copied!'
+    setTimeout(() => { codeCopy.textContent = original }, 1500)
+  })
+</script>
