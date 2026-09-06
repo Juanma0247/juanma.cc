@@ -407,6 +407,19 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
     min-height: calc(100vh - 3.375rem);
   }
 
+  /* Shared horizontal gutter for Projects/Tools/Games pages — see ProjectLayout,
+     ToolLayout and GameLayout. Individual pages should not add their own side
+     padding/max-width; use .page-shell--wide (per-slug) to opt out instead. */
+  .page-shell {
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-shell--wide {
+    max-width: none;
+  }
+
   /* ── Page Loader ─────────────────────────────────────────────────────────── */
 
   #page-loader {

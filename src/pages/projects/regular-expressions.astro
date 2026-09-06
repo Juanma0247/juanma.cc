@@ -14,8 +14,7 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   <div id="p14r1"></div>
   <div class="space-bottom"></div>
 </ProjectLayout>
-<style>@import '../../styles/sections/projects.css';
-  @import '../../styles/sections/projects-regexp.css';</style>
+<style is:global>@import '../../styles/sections/projects-regexp.css';</style>
 <script type="module" is:inline>
   import RegularExpressions from '/js/lib/RegularExpressions.js'
   const p = new RegularExpressions(); p.starter?.(); p.main()

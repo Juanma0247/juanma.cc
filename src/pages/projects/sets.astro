@@ -30,8 +30,7 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   <div id="p2VeenDiagram" class="center"></div>
   <div class="space-bottom"></div>
 </ProjectLayout>
-<style>@import '../../styles/sections/projects.css';
-  @import '../../styles/sections/projects-sets.css';</style>
+<style is:global>@import '../../styles/sections/projects-sets.css';</style>
 <script type="module" is:inline>
   import Sets from '/js/lib/Sets.js'
   const p = new Sets(); p.starter?.(); p.main()

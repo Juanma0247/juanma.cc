@@ -104,7 +104,7 @@ class CantorSets {
 
     main() {
         const this_ = this
-        const dfltLenght = !window.typeOfUser ? window.innerHeight - 6 : window.innerWidth - 3
+        const dfltLenght = document.getElementById("p3ggbContainer").clientWidth || 320
         var applet = new GGBApplet({
             appName: "graphing",
             width: dfltLenght,

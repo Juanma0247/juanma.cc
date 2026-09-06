@@ -63,7 +63,7 @@ class Bernoulli {
     start() {
         this.i1.value = this.i1.value.replace(/[^0-9.-]/g, '')
         const this_ = this
-        const dfltLenght = !window.typeOfUser ? window.innerHeight - 6 : window.innerWidth - 3
+        const dfltLenght = document.getElementById("p10ggbContainer").clientWidth || 320
         var applet = new GGBApplet({
             appName: "graphing",
             width: dfltLenght,

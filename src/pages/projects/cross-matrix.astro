@@ -46,8 +46,7 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   </div>
   <div class="space-bottom"></div>
 </ProjectLayout>
-<style>@import '../../styles/sections/projects.css';
-  @import '../../styles/sections/projects-cross-matrix.css';</style>
+<style is:global>@import '../../styles/sections/projects-cross-matrix.css';</style>
 <script type="module" is:inline>
   import CrossMatrix from '/js/lib/CrossMatrix.js'
   const p = new CrossMatrix(); p.starter?.(); p.main()

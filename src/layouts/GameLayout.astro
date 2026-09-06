@@ -19,5 +19,9 @@ if (!game) throw new Error(`Game not found: "${slug}"`)
   titleHref="/projects"
 >
   <slot name="head" slot="head" />
-  <slot />
+  <div class="page-shell">
+    <slot />
+  </div>
 </MainLayout>
+
+<style is:global>@import '../styles/sections/games.css';</style>

@@ -7,8 +7,6 @@ import GameLayout from '../../layouts/GameLayout.astro'
   <div class="space-bottom"></div>
 </GameLayout>
 
-<style is:global>@import '../../styles/sections/games.css';</style>
-
 <script type="module" is:inline>
   import Sudoku from '/js/lib/Sudoku.js'
   const p = new Sudoku(); p.main()

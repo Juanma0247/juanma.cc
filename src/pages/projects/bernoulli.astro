@@ -37,8 +37,7 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   </div>
   <div class="space-bottom"></div>
 </ProjectLayout>
-<style>@import '../../styles/sections/projects.css';
-  @import '../../styles/sections/projects-bernoulli.css';</style>
+<style is:global>@import '../../styles/sections/projects-bernoulli.css';</style>
 <script type="module" is:inline>
   import Bernoulli from '/js/lib/Bernoulli.js'
   const p = new Bernoulli(); p.starter?.(); p.main()

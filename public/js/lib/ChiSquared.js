@@ -52,7 +52,7 @@ class ChiSquared {
 
     start() {
         const this_      = this
-        const dfltLenght = !window.typeOfUser ? window.innerHeight - 6 : window.innerWidth - 3
+        const dfltLenght = document.getElementById("p9ggbContainer").clientWidth || 320
         const applet     = new GGBApplet({
             appName:             "graphing",
             width:               dfltLenght,

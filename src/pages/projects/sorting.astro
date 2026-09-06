@@ -36,12 +36,11 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
     </div>
   </div>
   <div style="display: flex; flex-wrap: wrap;">
-    <svg id="p12GCont" height="100vh" width="100vw"></svg>
+    <svg id="p12GCont" height="100vh" width="100%"></svg>
   </div>
   <div class="space-bottom"></div>
 </ProjectLayout>
-<style>@import '../../styles/sections/projects.css';
-  @import '../../styles/sections/projects-sorting.css';</style>
+<style is:global>@import '../../styles/sections/projects-sorting.css';</style>
 <script type="module" is:inline>
   import Sorting from '/js/lib/Sorting.js'
   const p = new Sorting(); p.starter?.(); p.main()

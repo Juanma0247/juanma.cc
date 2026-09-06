@@ -27,6 +27,15 @@ Cómo funciona:
 - **LaTeX:** no traducir la notación matemática. Para prosa/etiquetas que contienen `\(…\)`, `applyLang` dispara un re-render global de KaTeX en `langchanged`, así que sí se pueden traducir (guardar el LaTeX completo en el diccionario, con `\\` escapado en el `.ts`).
 - **Excepciones que se dejan sin traducir a propósito:** nombres propios y términos técnicos (React, Firebase, Turing Machine…), identificadores de código, y el prompt para IA de `TMPrompt.js` (se mantiene en inglés por convención).
 
+## Layout de páginas de Proyectos/Tools/Games — margen lateral y `is:global`
+
+`ProjectLayout.astro`, `ToolLayout.astro` y `GameLayout.astro` envuelven el `<slot />` de cada página en un `<div class="page-shell">` (regla definida una sola vez en `MainLayout.astro`: `max-width: 64rem; margin: 0 auto; padding: 0 1.5rem;`). Esto le da margen lateral automático a **toda** página de proyecto/tool/game — `.contenedor` en sí no tiene padding horizontal.
+
+- **No** añadir `max-width`/`padding` lateral propios en una página nueva; ya lo resuelve el layout compartido.
+- Si una página necesita ir a **ancho completo** (p. ej. un lienzo con `position: fixed`/`100vw` como Cross Matrix, o una herramienta muy densa como Turing Machine), usar el modificador `page-shell--wide` (`max-width: none`) en vez de pelear contra el wrapper. Turing Machine ya está exceptuada en `ProjectLayout.astro` (`slug === 'turing-machine'`); seguir el mismo patrón por slug para casos nuevos.
+- Los imports de CSS por página (`@import '.../projects-X.css'`, `tools.css`, `games.css`) van en un `<style is:global>` — **nunca** en un `<style>` sin `is:global`. Cada proyecto/juego que crea elementos dinámicamente vía JS (`innerHTML`, `createElement`, `ExtText.createElement`, etc.) los inserta sin el atributo `data-astro-cid-*` que Astro exige para que un `<style>` con scope los alcance; una hoja no-global simplemente no le pega estilo a nada de eso (bug ya encontrado y corregido en sigma-star-enum, regular-expressions, sets, cross-matrix y voice). El CSS compartido (`projects.css`, `tools.css`, `games.css`) ya se importa una sola vez, como global, desde cada layout — las páginas individuales no necesitan volver a importarlo.
+- Si un applet/canvas dentro de una página (GeoGebra, SVG, etc.) calcula su tamaño en JS, que lea el `clientWidth` del contenedor (que a su vez tiene su tamaño fijado por CSS, p. ej. `.ggbContainer { width: min(32rem, 100%); aspect-ratio: 1/1; }`) — **nunca** `window.innerWidth`/`innerHeight` en crudo, porque eso ignora el `page-shell` y hace que el widget se salga del contenedor.
+
 ## Política de commit y push
 
 Hacer `git commit` y `git push` (a la rama principal) en estos momentos:

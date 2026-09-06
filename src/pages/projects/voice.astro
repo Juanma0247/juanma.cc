@@ -18,8 +18,7 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   <div id="audiosGuardados" class="center"></div>
   <div class="space-bottom"></div>
 </ProjectLayout>
-<style>@import '../../styles/sections/projects.css';
-  @import '../../styles/sections/projects-voice.css';</style>
+<style is:global>@import '../../styles/sections/projects-voice.css';</style>
 <script type="module" is:inline>
   import Voice from '/js/lib/Voice.js'
   const p = new Voice(); p.starter?.(); p.main()
