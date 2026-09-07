@@ -17,10 +17,21 @@
 .plotContainer {
   width: min(32rem, 100%);
   aspect-ratio: 1 / 1;
-  border-radius: 0 3px 3px 3px;
-  border-top: var(--color-primary) 3px solid;
-  border-bottom: var(--color-primary) 3px solid;
-  border-right: var(--color-primary) 3px solid;
+}
+
+/* Fade the plotted curves/axes out right at the edge of the board instead of
+   letting them end in a hard clip against the container boundary. Two
+   gradients (one per axis) intersected give a fade on all four sides. */
+.plotContainer svg {
+  --plot-fade: 12px;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 var(--plot-fade), #000 calc(100% - var(--plot-fade)), transparent),
+    linear-gradient(to bottom, transparent, #000 var(--plot-fade), #000 calc(100% - var(--plot-fade)), transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 var(--plot-fade), #000 calc(100% - var(--plot-fade)), transparent),
+    linear-gradient(to bottom, transparent, #000 var(--plot-fade), #000 calc(100% - var(--plot-fade)), transparent);
+  mask-composite: intersect;
 }
 
 .calcContainer { margin-left: 1rem; margin-top: 1rem; width: 25rem; }

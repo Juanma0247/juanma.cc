@@ -1,12 +1,3 @@
-#p3PlotContainer {
-  width: min(32rem, 100%);
-  aspect-ratio: 1 / 1;
-  border-radius: 0 3px 3px 0;
-  border-top: var(--color-primary) 3px solid;
-  border-bottom: var(--color-primary) 3px solid;
-  border-right: var(--color-primary) 3px solid;
-}
-
 .p3Processp { margin-top: .5rem; margin-right: 1rem; }
 
 #p3CalcContainer {
