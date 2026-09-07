@@ -1,7 +1,15 @@
 #p13container { display: block; }
-#p13canvas { flex: 1; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
+/* z-index 0 (not negative): a descendant already paints above its own
+   ancestors' boxes by default, so this is enough to stay under the
+   panels below (they opt into z-index 2+) without needing to be pushed
+   behind the whole root stacking context. A negative z-index here used
+   to also sit behind ordinary, non-positioned ancestor wrappers
+   (.page-shell, #p13container...) whenever one of them had real
+   in-flow height, silently swallowing every tap/drag meant for the
+   canvas. */
+#p13canvas { flex: 1; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; }
 
-.p13presets { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-wrap: wrap; align-content: center; justify-content: center; gap: .5rem; background-color: rgba(0,0,0,.5); overflow-y: auto; z-index: 1; }
+.p13presets { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-wrap: wrap; align-content: center; justify-content: center; gap: .5rem; background-color: rgba(0,0,0,.5); overflow-y: auto; z-index: 5; }
 .p13prefunc { background-color: var(--color-primary); color: var(--color-bg); border: .1rem solid var(--color-text); border-radius: .5rem; padding: .5rem; cursor: pointer; }
 
 /* ── Floating panels ─────────────────────────────────────
@@ -41,17 +49,33 @@
 .p13Panel .control { width: 100%; margin-left: 0; }
 .p13Panel .control label { width: auto; margin-right: .5rem; white-space: nowrap; }
 
-.p13ranges { display: flex; flex-wrap: wrap; gap: 0 .75rem; }
-.p13ranges .field, .p13functions .field { margin-top: .6rem; }
-#p13i21, #p13i22 { width: 6rem; }
-#p13i23 { width: 100%; box-sizing: border-box; }
+.p13rangeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1.25rem;
+  margin-bottom: 1rem;
+}
 
-.p13functions { display: flex; flex-direction: column; align-items: stretch; gap: .6rem; margin-top: .3rem; }
-.p13functions .field { width: 100%; }
-#p13b21 { align-self: flex-start; }
+.p13rangeGroup { display: flex; align-items: center; gap: .35rem; }
 
-#p13presetsBotton { cursor: pointer; width: max-content; margin: .7rem 0 0; font-size: .85rem; color: var(--color-primary); }
-#p13presetsBotton:hover { text-decoration: underline; }
+.p13rangeLabel {
+  font-family: var(--font-label);
+  font-size: .95rem;
+  color: var(--color-muted);
+}
+
+.p13rangeSep { color: var(--color-muted); }
+
+.p13rangeGroup input[type="number"] {
+  width: 3.4rem;
+  text-align: center;
+  padding: .35rem .3rem;
+}
+
+.p13FuncField { width: 100%; margin: 0 0 1rem; }
+.p13FuncField input { width: 100%; box-sizing: border-box; }
+
+.p13actions { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
 
 .p13output {
   display: flex;
@@ -70,12 +94,30 @@
   -webkit-backdrop-filter: blur(6px);
 }
 
+.p13ViewGap { display: none; }
+
 /* ── Responsive ─────────────────────────────────────────── */
 
 @media (max-width: 42rem) {
-  .p13Panel { max-width: calc(100vw - 1.5rem); }
-  .p13Panel--top { top: 4rem; left: .75rem; right: .75rem; }
-  .p13Panel--bottom { left: .75rem; right: .75rem; bottom: .75rem; max-width: none; }
-  .p13output { right: .75rem; bottom: .75rem; font-size: .82rem; }
+  /* Below this width the top/bottom cards both go full-width to fit the
+     range inputs and intro text, which left no free corner for .p13output
+     to float in without overlapping the (now taller, full-width) bottom
+     card and blocking its buttons. Stacking everything in normal flow
+     instead, with .p13ViewGap reserving a fixed-height window onto the 3D
+     scene between the two cards, sidesteps that: no two elements can ever
+     end up sharing the same screen area regardless of how tall the
+     panels' content gets. */
+  .p13Panel, .p13output {
+    position: static;
+    z-index: auto;
+    max-width: none;
+    width: auto;
+    margin: .75rem .75rem 0;
+  }
+  .p13Panel--bottom { margin-bottom: .75rem; }
+  .p13output { width: max-content; margin-bottom: .75rem; font-size: .82rem; }
+  /* pointer-events: none so this empty spacer doesn't block drag/tap
+     gestures meant for the fixed canvas rendered behind it. */
+  .p13ViewGap { display: block; height: 42vh; min-height: 16rem; pointer-events: none; }
   .p13Intro { font-size: .8rem; }
 }

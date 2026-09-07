@@ -518,7 +518,7 @@ export const en: I18n = {
       generate: 'Generate',
       presetFunctions: 'Preset functions',
       totalCost: 'Total cost:',
-      errRangeFormat: 'Ranges must have the format "x1 x2" and "y1 y2"',
+      errRangeFormat: 'Each range needs a lower bound smaller than its upper bound',
       errNoFunction: 'You must enter a function',
       errGenerating: 'Error generating matrix:',
       presetTurbulent: 'Turbulent',

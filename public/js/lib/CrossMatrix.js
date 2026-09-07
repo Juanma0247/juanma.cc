@@ -42,8 +42,10 @@ class CrossMatrix {
         this.p13CanvasContainer = document.getElementById('p13canvas')
         this.presets = document.querySelector(".p13presets")
         this.pesets_botton = document.getElementById("p13presetsBotton")
-        this.i21 = document.getElementById("p13i21")
-        this.i22 = document.getElementById("p13i22")
+        this.i21a = document.getElementById("p13i21a")
+        this.i21b = document.getElementById("p13i21b")
+        this.i22a = document.getElementById("p13i22a")
+        this.i22b = document.getElementById("p13i22b")
         this.i23 = document.getElementById("p13i23")
         this.b21 = document.getElementById("p13b21")
         this.cellSize = 25
@@ -253,13 +255,13 @@ class CrossMatrix {
     generateMatrixFromFunction() {
         try {
             const funcStr = this.i23.value.trim()
-            const x_range = this.i21.value.trim().split(/\s+/).map(Number)
-            const y_range = this.i22.value.trim().split(/\s+/).map(Number)
+            const x_range = [Number(this.i21a.value), Number(this.i21b.value)]
+            const y_range = [Number(this.i22a.value), Number(this.i22b.value)]
             if (funcStr.includes("mountain")) {
                 this.matrix = this.generateMountainMatrix(x_range, y_range, funcStr)
             } else {
-                if (x_range.length !== 2 || y_range.length !== 2) {
-                    alert(t('errRangeFormat', 'Ranges must have the format "x1 x2" and "y1 y2"'))
+                if (x_range.some(Number.isNaN) || y_range.some(Number.isNaN) || x_range[0] >= x_range[1] || y_range[0] >= y_range[1]) {
+                    alert(t('errRangeFormat', 'Each range needs a lower bound smaller than its upper bound'))
                     return
                 }
                 if (!funcStr) {
@@ -304,8 +306,12 @@ class CrossMatrix {
     }
 
     applyPreset(preset) {
-        this.i21.value = preset.x_range
-        this.i22.value = preset.y_range
+        const [x0, xn] = preset.x_range.trim().split(/\s+/)
+        const [y0, yn] = preset.y_range.trim().split(/\s+/)
+        this.i21a.value = x0
+        this.i21b.value = xn
+        this.i22a.value = y0
+        this.i22b.value = yn
         this.i23.value = preset.func
         this.presets.style.display = 'none'
         this.generateMatrixFromFunction()
@@ -396,8 +402,8 @@ class CrossMatrix {
     // Whether a mouse/touch event originated on the canvas itself, rather
     // than on one of the HTML controls floating over it. p5 attaches its
     // mouse listeners globally (to the window, not just the canvas), so
-    // *every* click and drag on the page — including dragging the "Start"
-    // slider's native thumb — reaches mousePressed/mouseDragged too. The
+    // *every* click and drag on the page (including dragging the "Start"
+    // slider's native thumb) reaches mousePressed/mouseDragged too. The
     // previous approach re-checked the mouse position against a hand-kept
     // list of UI element rects on every single mousemove: if the cursor
     // drifted even a few px outside a control's thin hitbox mid-drag (easy
@@ -440,7 +446,7 @@ class CrossMatrix {
             }
 
             // Bakes every cell's box into one static p5.Geometry the first time
-            // it's needed (matrix regeneration nulls the cache — see
+            // it's needed (matrix regeneration nulls the cache; see
             // invalidateTerrain()), so redraws triggered by dragging/zooming/
             // moving the start-row slider issue one p.model() draw call instead
             // of re-issuing hundreds/thousands of individual box() calls, which
@@ -516,9 +522,11 @@ class CrossMatrix {
                 p.box(self.matrix[0].length * self.cellSize + 50, 5, self.matrix.length * self.cellSize + 50)
                 p.pop()
 
-                // Arrow
+                // Arrow: points at the row the path starts from, so it tracks
+                // the "Start" slider instead of always sitting at the center row.
+                var startRowZ = -(self.matrix.length * self.cellSize) / 2 + self.startRow * self.cellSize + self.cellSize / 2
                 p.push()
-                p.translate(-(self.matrix[0].length * self.cellSize / 2 + 100), offsetY + 5, 0)
+                p.translate(-(self.matrix[0].length * self.cellSize / 2 + 100), offsetY + 5, startRowZ)
                 p.fill(...c1rgb)
                 p.noStroke()
                 p.box(80, 10, 10)
@@ -529,6 +537,23 @@ class CrossMatrix {
                 p.pop()
 
                 p.pop()
+            }
+
+            // Shared by mouseDragged/touchMoved: applies the rotation delta
+            // between the last known pointer position and the current one.
+            function dragRotate() {
+                if (!(p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height)) return
+                self.isDragging = true
+                var deltaX = p.mouseX - self.prevMouseX
+                var deltaY = p.mouseY - self.prevMouseY
+
+                self.rotationY += deltaX * 0.01
+                self.rotationX += deltaY * 0.01
+                self.rotationX = p.constrain(self.rotationX, -Math.PI / 2, 0)
+
+                self.prevMouseX = p.mouseX
+                self.prevMouseY = p.mouseY
+                self.p5Instance.redraw()
             }
 
             p.mousePressed = function(event) {
@@ -543,20 +568,7 @@ class CrossMatrix {
 
             p.mouseDragged = function() {
                 if (!self.p5Instance || !self.dragFromCanvas) return
-                if (p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
-                    self.isDragging = true
-                    var deltaX = p.mouseX - self.prevMouseX
-                    var deltaY = p.mouseY - self.prevMouseY
-
-                    self.rotationY += deltaX * 0.01
-                    self.rotationX += deltaY * 0.01
-
-                    self.rotationX = p.constrain(self.rotationX, -Math.PI / 2, 0)
-
-                    self.prevMouseX = p.mouseX
-                    self.prevMouseY = p.mouseY
-                    self.p5Instance.redraw()
-                }
+                dragRotate()
             }
 
             p.mouseWheel = function(event) {
@@ -568,6 +580,37 @@ class CrossMatrix {
             }
 
             p.mouseReleased = function() {
+                self.isDragging = false
+                self.dragFromCanvas = false
+            }
+
+            // Touch equivalents of the three handlers above. p5 only routes
+            // touch input through mousePressed/mouseDragged when a page
+            // defines no touch handlers at all *and* the browser happens to
+            // synthesize compatibility mouse events from the touch — not
+            // guaranteed on every device. Defining these directly makes
+            // one-finger rotate work the same way single-finger drag does
+            // with a mouse, and reuses the same canvas-origin check so
+            // touching a control (the Start slider, an input) still can't
+            // rotate the view.
+            p.touchStarted = function(event) {
+                self.dragFromCanvas = self.isFromCanvas(event)
+                if (!self.dragFromCanvas) return true // let the touch do its normal thing (e.g. drag the slider)
+                if (p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+                    self.isDragging = false
+                    self.prevMouseX = p.mouseX
+                    self.prevMouseY = p.mouseY
+                }
+                return false // prevent the page from scrolling while rotating
+            }
+
+            p.touchMoved = function() {
+                if (!self.p5Instance || !self.dragFromCanvas) return true
+                dragRotate()
+                return false
+            }
+
+            p.touchEnded = function() {
                 self.isDragging = false
                 self.dragFromCanvas = false
             }

@@ -179,7 +179,7 @@ export const es: I18n = {
       generate: 'Generar',
       presetFunctions: 'Funciones predefinidas',
       totalCost: 'Costo total:',
-      errRangeFormat: 'Los rangos deben tener el formato "x1 x2" y "y1 y2"',
+      errRangeFormat: 'Cada rango necesita un límite inferior menor que el superior',
       errNoFunction: 'Debes ingresar una función',
       errGenerating: 'Error al generar la matriz:',
       presetTurbulent: 'Turbulento',
