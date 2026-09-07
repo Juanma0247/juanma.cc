@@ -1,10 +1,9 @@
+/* Positioning/sizing lives inline on the <svg> in MainLayout, not here: if this
+   stylesheet ever fails to load, the wave paths (drawn in JS with raw pixel
+   coordinates) would otherwise auto-size the SVG to their own bounding box
+   and blow out the whole page layout. */
 .background {
-  position: fixed;
-  inset: 0;
-  z-index: -10;
   opacity: 10%;
-  width: 100%;
-  height: 100%;
 }
 
 /* Code snippets (reset.css forces --font-ui on every element, including
