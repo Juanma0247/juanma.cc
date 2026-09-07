@@ -83,10 +83,10 @@ const nameKey = (key: string) => `name${key[0].toUpperCase()}${key.slice(1)}`
             <summary data-i18n={`pd.distributions.${nameKey(d.key)}`}>{d.nameEn}</summary>
             <div class="p18RefBody">
               {d.portrait && <img class="p18Portrait" src={cld(d.portrait.img)} alt={d.portrait.alt} loading="lazy" />}
-              <p><strong data-i18n="pd.distributions.theoryLabel">Theory</strong> — <span data-i18n={`pd.distributions.${d.key}Theory`}>{d.theoryEn}</span></p>
-              <p><strong data-i18n="pd.distributions.historyLabel">History</strong> — <span data-i18n={`pd.distributions.${d.key}History`}>{d.historyEn}</span></p>
+              <p><strong data-i18n="pd.distributions.theoryLabel">Theory</strong>: <span data-i18n={`pd.distributions.${d.key}Theory`}>{d.theoryEn}</span></p>
+              <p><strong data-i18n="pd.distributions.historyLabel">History</strong>: <span data-i18n={`pd.distributions.${d.key}History`}>{d.historyEn}</span></p>
               {d.portrait && <p class="p18Credit">{d.portrait.credit}</p>}
-              <p><strong data-i18n="pd.distributions.useCaseLabel">Practical use</strong> — <span data-i18n={`pd.distributions.${d.key}UseCase`}>{d.useCaseEn}</span></p>
+              <p><strong data-i18n="pd.distributions.useCaseLabel">Practical use</strong>: <span data-i18n={`pd.distributions.${d.key}UseCase`}>{d.useCaseEn}</span></p>
               <button type="button" class="p18JumpBtn" data-dist={d.key} data-i18n="pd.distributions.jumpBtn">Try it in the grapher ↑</button>
             </div>
           </details>
