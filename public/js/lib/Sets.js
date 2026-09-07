@@ -85,7 +85,6 @@ class Sets {
     constructor() {
         this.i1 = document.getElementById("p2i1")
         this.i2 = document.getElementById("p2i2")
-        this.ggb = null
 
         this.inputOnFocus = this.i1
         this.i1.addEventListener("focus", () => {

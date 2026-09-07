@@ -1,42 +1,39 @@
 import ExtText from '/js/core/ExtText.js'
+import PlotBoard from '/js/core/PlotBoard.js'
 import jStat from 'https://cdn.jsdelivr.net/npm/jstat@1.9.6/+esm'
 
 class TStudent {
     constructor() {
-        this.i1  = document.getElementById("p8i1")
-        this.i2  = document.getElementById("p8i2")
-        this.ggb = null
+        this.i1 = document.getElementById("p8i1")
+        this.i2 = document.getElementById("p8i2")
+        this.board = null
+        this.plot = null
     }
 
     tStudentCDF(x, df) { return jStat.studentt.cdf(x, df) }
     tStudentInv(p, df)  { return jStat.studentt.inv(p, df) }
 
-    graficOfTCDF(x, df) {
-        this.ggb.evalCommand(`f(x) = (gamma((${df}+1)/2))/(sqrt(${df} * pi) * gamma(${df}/2)) * (1 + x^2/${df})^(-(${df}+1)/2)`)
-        this.ggb.evalCommand(`P = Vector((${x}, 0),(${x}, f(${x})))`)
-        this.ggb.evalCommand(`SetCaption[P, "$T_{${df}}(${x})$"]`)
-        this.ggb.setColor("P", 180, 180, 180)
+    draw(x, df) {
+        this.board.suspendUpdate()
+        if (this.plot) this.board.removeObject(this.plot)
+
+        const c = PlotBoard.palette()
+        const f = x_ => jStat.studentt.pdf(x_, df)
+        const curve  = PlotBoard.curve(this.board, f, c.primary)
+        const point  = this.board.create('point', [x, f(x)], {
+            strokeColor: c.secondary, fillColor: c.secondary, size: 3, name: '', fixed: true, highlight: false,
+        })
+        const vector = PlotBoard.vector(this.board, [x, 0], [x, f(x)], c.secondary)
+        const label  = PlotBoard.label(this.board, x, f(x), `T_{${df}}(${x})`, c.secondary)
+
+        this.plot = [curve, point, vector, label]
+        this.board.unsuspendUpdate()
     }
 
-    clean() {
-        if (!this.ggb) return
-        let objectCount = this.ggb.getObjectNumber()
-        for (let i = objectCount - 1; i >= 0; i--) {
-            let objectName = this.ggb.getObjectName(i)
-            let objectType = this.ggb.getObjectType(objectName)
-            if (objectType === "point" || objectType === "vector") {
-                this.ggb.deleteObject(objectName)
-            }
-        }
-    }
-
-    executeGGB() {
+    executeBoard() {
         const x  = parseFloat(this.i1.value)
         const df = parseInt(this.i2.value)
-        this.clean()
-        this.graficOfTCDF(x, df)
-        this.ggb.setPerspective("G")
-        this.ggb.setCoordSystem(-4, 4, -0.1, 1.1)
+        this.draw(x, df)
     }
 
     action() {
@@ -49,39 +46,12 @@ class TStudent {
         ExtText.tex(`T_{${df}}(${val}) = ${p}`, "p8Res1")
         ExtText.tex(`T_{${df}}^{-1}(${val}) = ${x}`, "p8Res2")
 
-        if (this.ggb) this.executeGGB()
+        if (this.board) this.executeBoard()
     }
 
     start() {
-        const this_      = this
-        const dfltLenght = document.getElementById("p8ggbContainer").clientWidth || 320
-        const applet     = new GGBApplet({
-            appName:            "graphing",
-            width:              dfltLenght,
-            height:             dfltLenght,
-            showToolbar:        false,
-            showAlgebraInput:   false,
-            showMenuBar:        false,
-            showAlgebraView:    false,
-            enableLabelDrags:   false,
-            enableShiftDragZoom: true,
-            enableRightClick:   true,
-            useBrowserForJS:    false,
-        }, true)
-
-        applet.inject("p8ggbContainer")
-
-        const tryToLoad = () => {
-            setTimeout(() => {
-                this_.ggb = applet.getAppletObject()
-                if (this_.ggb) {
-                    this_.executeGGB()
-                } else {
-                    tryToLoad()
-                }
-            }, 100)
-        }
-        tryToLoad()
+        this.board = PlotBoard.create("p8PlotContainer", [-4, 1.1, 4, -0.1])
+        this.executeBoard()
     }
 
     main() {

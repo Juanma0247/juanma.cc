@@ -1,50 +1,42 @@
 import ExtText from '/js/core/ExtText.js'
+import PlotBoard from '/js/core/PlotBoard.js'
 
 const t = (key, fallback) =>
   typeof window !== "undefined" && window.i18nGet ? window.i18nGet(`pd.cantor.${key}`, fallback) : fallback
 
 class CantorSets {
     constructor() {
-        this.ggb = null
+        this.board = null
+        this.plot = null
         this.i1 = document.getElementById("p3i1")
         this.i2 = document.getElementById("p3i2")
         this.b1 = document.getElementById("p3b1")
-    }
-
-    cantorParing(p, q) {
-        let n = (q_) => {
-            return q >= 0 ? 2 * q : -1 * 2 * 1 - 1
-        }
-        return ((n(q) + p - 1) * (n(q) + p) / 2) * (p - 1)
     }
 
     CPTG(p, q) {
         return (((parseInt(p) + parseInt(q)) * (parseInt(p) + parseInt(q) + 1)) / 2) + parseInt(q)
     }
 
-    cantorParingSequence(p, q, res) {
-        let dot = (c1_, c2_, name) => {
-            this.ggb.evalCommand(`P${c1_}Y${c2_} = (${c1_}, ${c2_})`)
-            this.ggb.evalCommand(`SetCaption[P${c1_}Y${c2_}, "${name}"]`)
-            this.ggb.setColor(`P${c1_}Y${c2_}`, 0, 128, 128)
-            if (name == res) {
-                this.ggb.evalCommand(`SetCaption[P${c1_}Y${c2_}, "${name}"]`)
-                this.ggb.setColor(`P${c1_}Y${c2_}`, 255, 0, 0)
-            }
+    drawSequence(p, q, res) {
+        const c = PlotBoard.palette()
+        const objs = []
+
+        const dot = (c1, c2, name) => {
+            const isTarget = name === res
+            const color = isTarget ? c.secondary : c.primary
+            objs.push(this.board.create('point', [c1, c2], {
+                name: String(name), size: 3, fixed: true, highlight: false,
+                strokeColor: color, fillColor: color,
+                label: { offset: [6, 6], strokeColor: color, fontSize: 12 },
+            }))
         }
 
-        let arrow = (c11_, c12_, c21_, c22_) => {
-            this.ggb.evalCommand(`V${c11_}Y${c12_}Y${c21_}Y${c22_} = Vector(P${c11_}Y${c12_},P${c21_}Y${c22_})`)
-            this.ggb.evalCommand(`SetCaption[V${c11_}Y${c12_}Y${c21_}Y${c22_}, "​"]`)
+        const arrow = (from, to) => {
+            objs.push(PlotBoard.vector(this.board, from, to, c.muted))
         }
 
-        var direction = 1
-        var c1 = 1
-        var c2 = 0
-        var cont = 0
+        let direction = 1, c1 = 1, c2 = 0, cont = 0
         dot(0, 0, 0)
-        this.ggb.evalCommand(`VC = Vector((0,0),(1,0))`)
-        this.ggb.evalCommand(`SetCaption[VC, "​"]`)
         while (c1 < p || c2 < q) {
             const c1_ = c1
             const c2_ = c2
@@ -54,31 +46,20 @@ class CantorSets {
                 c2 = 0
                 cont++
                 dot(c1, c2, cont)
-                arrow(c1_, c2_, c1, c2)
+                arrow([c1_, c2_], [c1, c2])
+            } else if (c1 !== 0) {
+                c2++
+                c1--
+                cont++
+                dot(c1, c2, cont)
+                arrow([c1_, c2_], [c1, c2])
             } else {
-                if (c1 != 0) {
-                    c2++
-                    c1--
-                    cont++
-                    dot(c1, c2, cont)
-                    arrow(c1_, c2_, c1, c2)
-                } else {
-                    direction = 1
-                }
+                direction = 1
             }
         }
-        return cont
-    }
 
-    clean() {
-        let objectCount = this.ggb.getObjectNumber()
-        for (let i = objectCount - 1; i >= 0; i--) {
-            let objectName = this.ggb.getObjectName(i)
-            let objectType = this.ggb.getObjectType(objectName)
-            if (objectType === "point" || objectType === "vector") {
-                this.ggb.deleteObject(objectName)
-            }
-        }
+        this.plot = objs
+        return cont
     }
 
     makeProcces(x, y) {
@@ -92,53 +73,22 @@ class CantorSets {
     }
 
     execute(x, y) {
-        const res = this.cantorParingSequence(x, y, this.CPTG(x, y))
-        this.ggb.setPerspective("G")
-        const x_ = parseInt(x) - 5
-        const x__ = parseInt(x) + 5
-        const y_ = parseInt(y) - 5
-        const y__ = parseInt(y) + 5
-        this.ggb.setCoordSystem(x_, x__, y_, y__)
+        const p = parseInt(x)
+        const q = parseInt(y)
+        this.board.suspendUpdate()
+        if (this.plot) this.board.removeObject(this.plot)
+        const res = this.drawSequence(p, q, this.CPTG(x, y))
+        this.board.unsuspendUpdate()
+        this.board.setBoundingBox([p - 5, q + 5, p + 5, q - 5])
         this.makeProcces(x, y, res)
     }
 
     main() {
-        const this_ = this
-        const dfltLenght = document.getElementById("p3ggbContainer").clientWidth || 320
-        var applet = new GGBApplet({
-            appName: "graphing",
-            width: dfltLenght,
-            height: dfltLenght,
-            showToolbar: false,
-            showAlgebraInput: false,
-            showMenuBar: false,
-            showAlgebraView: false
-        }, false)
-
-        applet.inject("p3ggbContainer")
-
-        var tried = 0
-        let tryPerSecond = (x, y) => {
-            setTimeout(function() {
-                tried++
-                this_.ggb = applet.getAppletObject()
-                if (this_.ggb) {
-                    try {
-                        this_.clean()
-                    } catch (_) {}
-                    this_.execute(x, y)
-                } else {
-                    tryPerSecond(x, y)
-                }
-            }, 1000)
-        }
-
-        setTimeout(function() {
-            tryPerSecond(this_.i1.value, this_.i2.value)
-        }, 2000)
+        this.board = PlotBoard.create("p3PlotContainer", [-5, 5, 5, -5])
+        this.execute(this.i1.value, this.i2.value)
 
         this.b1.addEventListener("click", () => {
-            tryPerSecond(this.i1.value, this.i2.value)
+            this.execute(this.i1.value, this.i2.value)
         })
 
         window.addEventListener("langchanged", () => {
