@@ -24,11 +24,12 @@ class Bernoulli {
         const line   = this.board.create('line', [[-(a + 1), 0], [-(a + 1), 1]], {
             straightFirst: true, straightLast: true, strokeColor: c.muted, dash: 2, highlight: false, fixed: true,
         })
-        // Fixed legend spots (the viewport never moves for this project) rather
-        // than following the curve, whose value at any given x explodes or goes
-        // off-screen for most n.
-        const labelF = PlotBoard.label(this.board, -2.9, 0.7, `f(x)=(${a}+x)^{${n}}`, c.primary)
-        const labelH = PlotBoard.label(this.board, -2.9, -9, `h(x)=f(x)-g(x)`, c.tertiary)
+        // Seed spots near where each curve reads best (f flattens out near
+        // the top, h near the bottom); PlotBoard.label nudges away from
+        // there if f, g, h or the dashed guide line is in the way.
+        const obstacles = [f, g, h, { x: -(a + 1) }]
+        const labelF = PlotBoard.label(this.board, -2.9, 0.7, `f(x)=(${a}+x)^{${n}}`, c.primary, obstacles)
+        const labelH = PlotBoard.label(this.board, -2.9, -9, `h(x)=f(x)-g(x)`, c.tertiary, obstacles)
 
         this.plot = [curveF, curveG, curveH, line, labelF, labelH]
         this.board.unsuspendUpdate()

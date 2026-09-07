@@ -24,7 +24,7 @@ class TStudent {
             strokeColor: c.secondary, fillColor: c.secondary, size: 3, name: '', fixed: true, highlight: false,
         })
         const vector = PlotBoard.vector(this.board, [x, 0], [x, f(x)], c.secondary)
-        const label  = PlotBoard.label(this.board, x, f(x), `T_{${df}}(${x})`, c.secondary)
+        const label  = PlotBoard.label(this.board, x, f(x), `T_{${df}}(${x})`, c.secondary, [f, { x }])
 
         this.plot = [curve, point, vector, label]
         this.board.unsuspendUpdate()

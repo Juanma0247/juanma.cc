@@ -26,9 +26,9 @@ class NormalDistribution {
         const cdfAtX = F(x)
         const invAtX = Finv(x)
         const vecP   = PlotBoard.vector(this.board, [x, 0], [x, cdfAtX], c.muted)
-        const lblP   = PlotBoard.label(this.board, x, cdfAtX, `\\Phi(${x})`, c.muted)
+        const lblP   = PlotBoard.label(this.board, x, cdfAtX, `\\Phi(${x})`, c.muted, [f, F, { x }])
         const vecPI  = PlotBoard.vector(this.board, [0, x], [invAtX, x], c.tertiary)
-        const lblPI  = PlotBoard.label(this.board, invAtX, x, `\\Phi^{-1}(${x})`, c.tertiary)
+        const lblPI  = PlotBoard.label(this.board, invAtX, x, `\\Phi^{-1}(${x})`, c.tertiary, [f, F, { y: x }])
 
         this.plot = [curveF, curveCDF, vecP, lblP, vecPI, lblPI]
         this.board.unsuspendUpdate()
