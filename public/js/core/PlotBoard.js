@@ -55,15 +55,28 @@ class PlotBoard {
     })
   }
 
-  static vector(board, from, to, color) {
-    return board.create('arrow', [from, to], {
+  // Stops the arrowhead `gapPx` short of `to` (in screen pixels, so the gap
+  // reads the same regardless of the board's data scale) instead of letting
+  // it touch/overlap whatever marker sits at that coordinate.
+  static vector(board, from, to, color, gapPx = 8) {
+    const dxPx = (to[0] - from[0]) * board.unitX
+    const dyPx = (to[1] - from[1]) * board.unitY
+    const lenPx = Math.hypot(dxPx, dyPx)
+    const t = lenPx > gapPx * 1.5 ? (lenPx - gapPx) / lenPx : 1
+    const end = [from[0] + (to[0] - from[0]) * t, from[1] + (to[1] - from[1]) * t]
+    return board.create('arrow', [from, end], {
       strokeColor: color, strokeWidth: 1.5, highlight: false, fixed: true,
     })
   }
 
-  static label(board, x, y, tex, color, anchorX = 'left') {
-    return board.create('text', [x, y, tex], {
-      useKatex: true, anchorX, anchorY: 'bottom', fixed: true, highlight: false,
+  // Nudges the label `offsetPx` away from (x, y) — converted through the
+  // board's pixel scale so it reads as the same small screen gap on every
+  // board — so it sits near the point it annotates without covering it.
+  static label(board, x, y, tex, color, offsetPx = [8, 8]) {
+    const dx = offsetPx[0] / board.unitX
+    const dy = offsetPx[1] / board.unitY
+    return board.create('text', [x + dx, y + dy, tex], {
+      useKatex: true, anchorX: 'left', anchorY: 'bottom', fixed: true, highlight: false,
       strokeColor: color, fontSize: 13,
     })
   }
