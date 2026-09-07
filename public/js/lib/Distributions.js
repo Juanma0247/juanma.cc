@@ -121,6 +121,19 @@ class Distributions {
     return peak || 1
   }
 
+  // Widens a discrete domain a bit past its exact [kMin, kMax] for display,
+  // so the outermost bars get breathing room instead of sitting flush
+  // against the plot edge — Bernoulli (only 2 bars spanning the whole
+  // support) needs proportionally the most padding. Continuous domains are
+  // already framed the way each distribution wants, so they pass through.
+  viewDomain(cfg, domain) {
+    if (!cfg.discrete) return domain
+    const kMin = Math.ceil(domain[0])
+    const kMax = Math.floor(domain[1])
+    const pad = Math.max(0.75, (kMax - kMin) * 0.12)
+    return [kMin - pad, kMax + pad]
+  }
+
   draw() {
     const key = this.active
     const cfg = CONFIG[key]
@@ -159,7 +172,8 @@ class Distributions {
     this.plot = [...curveOrBars, point, vector, label]
 
     const peak = this.peakValue(key, cfg, params, domain)
-    this.board.setBoundingBox([domain[0], peak * 1.15, domain[1], -peak * 0.12])
+    const [viewMin, viewMax] = this.viewDomain(cfg, domain)
+    this.board.setBoundingBox([viewMin, peak * 1.15, viewMax, -peak * 0.12])
     this.board.unsuspendUpdate()
 
     const pdfTex = cfg.discrete ? `P(X=${x0})=${y0.toFixed(4)}` : `f(${x0.toFixed(2)})=${y0.toFixed(4)}`
