@@ -17,6 +17,11 @@
 .plotContainer {
   width: min(32rem, 100%);
   aspect-ratio: 1 / 1;
+  cursor: grab;
+}
+
+.plotContainer:active {
+  cursor: grabbing;
 }
 
 /* Fade the plotted curves/axes out right at the edge of the board instead of

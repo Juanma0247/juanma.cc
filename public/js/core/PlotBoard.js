@@ -43,7 +43,7 @@ class PlotBoard {
       showCopyright: false,
       showNavigation: false,
       keepAspectRatio: false,
-      pan: { enabled: false },
+      pan: { enabled: true, needShift: false, needTwoFingers: false },
       zoom: { enabled: false },
       defaultAxes: { x: axis, y: axis },
     })
