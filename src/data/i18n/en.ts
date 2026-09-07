@@ -512,8 +512,10 @@ export const en: I18n = {
       step4FinalIdx: 'Step 4 — final index',
     },
     crossMatrix: {
-      title: 'Cross Matrix',
+      introText: 'This renders a cost matrix as a 3D terrain and finds the cheapest path across it: starting at the row you pick, moving one column at a time, free to step to the row above or below at each step. The highlighted path is the minimum-cost route, found with dynamic programming. Drag to rotate, scroll to zoom.',
       startLabel: 'Start:',
+      startHint: 'Row the path starts from, on the left edge of the grid.',
+      generate: 'Generate',
       presetFunctions: 'Preset functions',
       totalCost: 'Total cost:',
       errRangeFormat: 'Ranges must have the format "x1 x2" and "y1 y2"',

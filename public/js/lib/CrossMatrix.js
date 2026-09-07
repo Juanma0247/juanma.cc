@@ -40,8 +40,6 @@ class CrossMatrix {
         this.p13StartRowValue = document.getElementById('p13StartRowValue')
         this.p13TotalCost = document.getElementById('p13TotalCost')
         this.p13CanvasContainer = document.getElementById('p13canvas')
-        this.p13input1 = document.querySelector(".p13input1")
-        this.p13input2 = document.querySelector(".p13input2")
         this.presets = document.querySelector(".p13presets")
         this.pesets_botton = document.getElementById("p13presetsBotton")
         this.i21 = document.getElementById("p13i21")
@@ -66,11 +64,13 @@ class CrossMatrix {
         this.autoRotationY = 0
 
         this.isDragging = false
+        this.dragFromCanvas = false
         this.prevMouseX = 0
         this.prevMouseY = 0
+        this.canvasEl = null
 
         this.p5Instance = null
-        this.pathSet = new Set()
+        this.terrainGeom = null
 
         this.presetsData = [
             {
@@ -270,8 +270,8 @@ class CrossMatrix {
             }
             this.startRow = parseInt((this.matrix.length - 1) / 2)
             this.path = this.dinamicCross(this.matrix, this.startRow)
-            this.updatePathSet()
             this.updateCost()
+            this.invalidateTerrain()
             this.p13StartRow.max = this.matrix.length - 1
             this.p13StartRowValue.textContent = this.startRow
             if (this.p5Instance) {
@@ -377,7 +377,6 @@ class CrossMatrix {
             this.p13StartRowValue.textContent = this.startRow
             this.path = this.dinamicCross(this.matrix, this.startRow)
             this.updateCost()
-            this.updatePathSet()
             this.p5Instance.redraw()
         })
 
@@ -394,37 +393,26 @@ class CrossMatrix {
         })
     }
 
-    isMouseOverUI() {
-        var uiElements = [
-            this.p13StartRow,
-            this.p13StartRowValue,
-            this.p13TotalCost,
-            this.p13input2,
-            this.p13input1,
-            this.presets
-        ]
-
-        for (var i = 0; i < uiElements.length; i++) {
-            if (uiElements[i]) {
-                var rect = uiElements[i].getBoundingClientRect()
-                var mouseX = event.clientX || 0
-                var mouseY = event.clientY || 0
-
-                if (mouseX >= rect.left && mouseX <= rect.right &&
-                    mouseY >= rect.top && mouseY <= rect.bottom) {
-                    return true
-                }
-            }
-        }
-
-        return false
+    // Whether a mouse/touch event originated on the canvas itself, rather
+    // than on one of the HTML controls floating over it. p5 attaches its
+    // mouse listeners globally (to the window, not just the canvas), so
+    // *every* click and drag on the page — including dragging the "Start"
+    // slider's native thumb — reaches mousePressed/mouseDragged too. The
+    // previous approach re-checked the mouse position against a hand-kept
+    // list of UI element rects on every single mousemove: if the cursor
+    // drifted even a few px outside a control's thin hitbox mid-drag (easy
+    // to do on a range input), it would stop counting as "over UI" and the
+    // camera would suddenly start rotating while the user was still
+    // dragging the slider. Checking the event's real target instead is
+    // exact regardless of where the cursor wanders afterward, and cheaper
+    // (no getBoundingClientRect() calls on every move).
+    isFromCanvas(event) {
+        return !!(event && this.canvasEl && event.target === this.canvasEl)
     }
 
-    updatePathSet() {
-        this.pathSet.clear()
-        for (var i = 0; i < this.path.length; i++) {
-            this.pathSet.add(this.path[i][0] + ',' + this.path[i][1])
-        }
+    invalidateTerrain() {
+        if (this.terrainGeom && this.p5Instance) this.p5Instance.freeGeometry(this.terrainGeom)
+        this.terrainGeom = null
     }
 
     _applyInitialPreset() {
@@ -444,10 +432,37 @@ class CrossMatrix {
             p.setup = function() {
                 var canvas = p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL)
                 canvas.parent(self.p13CanvasContainer)
+                self.canvasEl = canvas.elt
                 self.cam = p.createCamera()
                 self._applyInitialPreset()
                 self.updateCost()
                 p.noLoop()
+            }
+
+            // Bakes every cell's box into one static p5.Geometry the first time
+            // it's needed (matrix regeneration nulls the cache — see
+            // invalidateTerrain()), so redraws triggered by dragging/zooming/
+            // moving the start-row slider issue one p.model() draw call instead
+            // of re-issuing hundreds/thousands of individual box() calls, which
+            // is what made rotating a large matrix feel laggy.
+            function buildTerrain() {
+                return p.buildGeometry(function () {
+                    for (var i = 0; i < self.matrix.length; i++) {
+                        for (var j = 0; j < self.matrix[i].length; j++) {
+                            var height = self.matrix[i][j] * self.heightScale
+                            var colorVal = p.map(self.matrix[i][j], 1, 30, 100, 255)
+
+                            p.push()
+                            p.translate(j * self.cellSize + self.cellSize / 2, 0, i * self.cellSize + self.cellSize / 2)
+                            p.fill(colorVal * 0.4, colorVal * 0.6, colorVal)
+                            p.stroke(colorVal * 0.3, colorVal * 0.5, colorVal * 0.9)
+                            p.strokeWeight(1)
+                            p.translate(0, -height / 2, 0)
+                            p.box(self.cellSize * 0.9, height, self.cellSize * 0.9)
+                            p.pop()
+                        }
+                    }
+                })
             }
 
             p.draw = function() {
@@ -464,33 +479,31 @@ class CrossMatrix {
                 var offsetY = (self.matrix.length * self.cellSize) / 2
                 var offsetZ = -(self.matrix.length * self.cellSize) / 2
 
+                if (!self.terrainGeom) self.terrainGeom = buildTerrain()
+
                 p.push()
                 p.translate(offsetX, offsetY, offsetZ)
+                p.model(self.terrainGeom)
 
-                for (var i = 0; i < self.matrix.length; i++) {
-                    for (var j = 0; j < self.matrix[i].length; j++) {
-                        var height = self.matrix[i][j] * self.heightScale
-                        var isInPath = self.pathSet.has(j + ',' + i)
+                // The highlighted path is a small subset of the matrix (at most
+                // one cell per column) and changes on every slider move, so it's
+                // redrawn on top of the cached terrain each frame instead of
+                // being baked in.
+                for (var k = 0; k < self.path.length; k++) {
+                    var pj = self.path[k][0]
+                    var pi = self.path[k][1]
+                    var pHeight = self.matrix[pi][pj] * self.heightScale + 1
 
-                        p.push()
-                        p.translate(j * self.cellSize + self.cellSize / 2, 0, i * self.cellSize + self.cellSize / 2)
-
-                        if (isInPath) {
-                            p.fill(...c2rgb)
-                            p.stroke(...c1rgb)
-                            p.strokeWeight(2)
-                        } else {
-                            var colorVal = p.map(self.matrix[i][j], 1, 30, 100, 255)
-                            p.fill(colorVal * 0.4, colorVal * 0.6, colorVal)
-                            p.stroke(colorVal * 0.3, colorVal * 0.5, colorVal * 0.9)
-                            p.strokeWeight(1)
-                        }
-
-                        p.translate(0, -height / 2, 0)
-                        p.box(self.cellSize * 0.9, height, self.cellSize * 0.9)
-
-                        p.pop()
-                    }
+                    p.push()
+                    p.translate(pj * self.cellSize + self.cellSize / 2, 0, pi * self.cellSize + self.cellSize / 2)
+                    p.fill(...c2rgb)
+                    p.stroke(...c1rgb)
+                    p.strokeWeight(2)
+                    p.translate(0, -pHeight / 2, 0)
+                    // Slightly larger than the baked cell underneath so it fully
+                    // covers it without z-fighting the shared top/side faces.
+                    p.box(self.cellSize * 0.92, pHeight, self.cellSize * 0.92)
+                    p.pop()
                 }
 
                 p.pop()
@@ -518,8 +531,9 @@ class CrossMatrix {
                 p.pop()
             }
 
-            p.mousePressed = function() {
-                if (self.isMouseOverUI()) return
+            p.mousePressed = function(event) {
+                self.dragFromCanvas = self.isFromCanvas(event)
+                if (!self.dragFromCanvas) return
                 if (p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
                     self.isDragging = false
                     self.prevMouseX = p.mouseX
@@ -528,8 +542,7 @@ class CrossMatrix {
             }
 
             p.mouseDragged = function() {
-                if (!self.p5Instance) return
-                if (self.isMouseOverUI()) return
+                if (!self.p5Instance || !self.dragFromCanvas) return
                 if (p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
                     self.isDragging = true
                     var deltaX = p.mouseX - self.prevMouseX
@@ -547,8 +560,7 @@ class CrossMatrix {
             }
 
             p.mouseWheel = function(event) {
-                if (!self.p5Instance) return
-                if (self.isMouseOverUI()) return
+                if (!self.p5Instance || !self.isFromCanvas(event)) return
                 self.zoom -= event.delta * 0.001
                 self.zoom = p.constrain(self.zoom, 0.3, 3)
                 self.p5Instance.redraw()
@@ -557,10 +569,12 @@ class CrossMatrix {
 
             p.mouseReleased = function() {
                 self.isDragging = false
+                self.dragFromCanvas = false
             }
 
             p.windowResized = function() {
-                p.resizeCanvas(p.windowWidth - 320, p.windowHeight - 100)
+                p.resizeCanvas(p.windowWidth, p.windowHeight)
+                self.p5Instance.redraw()
             }
         }
     }
@@ -568,7 +582,6 @@ class CrossMatrix {
     main() {
         this.path = this.dinamicCross(this.matrix, this.startRow)
         this.setupEventListeners()
-        this.updatePathSet()
         this.renderPresets()
         window.addEventListener("langchanged", () => this.renderPresets())
         const sketch = this.createSketch()

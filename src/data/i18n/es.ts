@@ -173,8 +173,10 @@ export const es: I18n = {
       step4FinalIdx: 'Paso 4 — índice final',
     },
     crossMatrix: {
-      title: 'Matriz cruz',
+      introText: 'Esto muestra una matriz de costos como un terreno 3D y encuentra el camino más barato para cruzarla: empieza en la fila que elijas, avanza una columna a la vez, y en cada paso puede subir o bajar una fila. El camino resaltado es la ruta de costo mínimo, calculada con programación dinámica. Arrastra para rotar, usa la rueda del mouse para hacer zoom.',
       startLabel: 'Inicio:',
+      startHint: 'Fila en la que empieza el camino, en el borde izquierdo de la cuadrícula.',
+      generate: 'Generar',
       presetFunctions: 'Funciones predefinidas',
       totalCost: 'Costo total:',
       errRangeFormat: 'Los rangos deben tener el formato "x1 x2" y "y1 y2"',

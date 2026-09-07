@@ -1,14 +1,81 @@
 #p13container { display: block; }
-.p13title { position: fixed; top: 0; left: 0; font-size: 1.3rem; width: 100vw; height: 3rem; display: flex; align-content: center; flex-wrap: wrap; justify-content: center; }
 #p13canvas { flex: 1; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
+
 .p13presets { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: none; flex-wrap: wrap; align-content: center; justify-content: center; gap: .5rem; background-color: rgba(0,0,0,.5); overflow-y: auto; z-index: 1; }
 .p13prefunc { background-color: var(--color-primary); color: var(--color-bg); border: .1rem solid var(--color-text); border-radius: .5rem; padding: .5rem; cursor: pointer; }
-.p13input1 { margin-bottom: 1.5rem; position: absolute; top: 0; left: 0; width: min-content; font-size: .9rem; z-index: 2; }
-.p13input2 { position: fixed; margin-bottom: 1.5rem; bottom: -.8rem; left: 0; width: min-content; font-size: .9rem; z-index: 2; }
-#p13i21, #p13i22 { width: 4.2rem; }
-.p13functions { display: flex; flex-direction: row; align-items: center; }
-#p13i23 { width: fit-content; min-width: 50vw; box-sizing: content-box; }
-#p13b21 { margin-left: .5rem; }
-#p13presetsBotton { cursor: pointer; width: max-content; margin-left: 1rem; margin-top: 1.2rem; font-size: .9rem; color: var(--color-primary); }
-.p13output { display: flex; position: fixed; bottom: .5rem; right: 0; justify-content: space-between; margin-right: .5rem; font-size: .9rem; }
-.p13output .value { margin-left: .5rem; }
+
+/* ── Floating panels ─────────────────────────────────────
+   Cards over the 3D scene, in the same visual language as the rest of
+   the site (background/border/radius), so the controls stay legible
+   against a busy terrain instead of floating as bare text. Positioned
+   below .topbar's 3.375rem sticky height, clear of the nav bar. */
+
+.p13Panel {
+  position: fixed;
+  z-index: 2;
+  max-width: min(22rem, calc(100vw - 2rem));
+  padding: 1rem 1.1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.p13Panel--top { top: 4.5rem; left: 1rem; }
+.p13Panel--bottom { bottom: 1rem; left: 1rem; }
+
+.p13Intro {
+  margin: 0 0 .8rem;
+  font-size: .85rem;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.p13Hint {
+  margin: .4rem 0 0;
+  font-size: .78rem;
+  color: var(--color-muted);
+}
+
+.p13Panel .control { width: 100%; margin-left: 0; }
+.p13Panel .control label { width: auto; margin-right: .5rem; white-space: nowrap; }
+
+.p13ranges { display: flex; flex-wrap: wrap; gap: 0 .75rem; }
+.p13ranges .field, .p13functions .field { margin-top: .6rem; }
+#p13i21, #p13i22 { width: 6rem; }
+#p13i23 { width: 100%; box-sizing: border-box; }
+
+.p13functions { display: flex; flex-direction: column; align-items: stretch; gap: .6rem; margin-top: .3rem; }
+.p13functions .field { width: 100%; }
+#p13b21 { align-self: flex-start; }
+
+#p13presetsBotton { cursor: pointer; width: max-content; margin: .7rem 0 0; font-size: .85rem; color: var(--color-primary); }
+#p13presetsBotton:hover { text-decoration: underline; }
+
+.p13output {
+  display: flex;
+  align-items: baseline;
+  gap: .4rem;
+  position: fixed;
+  z-index: 2;
+  bottom: 1rem;
+  right: 1rem;
+  padding: .6rem .9rem;
+  font-size: .9rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+
+@media (max-width: 42rem) {
+  .p13Panel { max-width: calc(100vw - 1.5rem); }
+  .p13Panel--top { top: 4rem; left: .75rem; right: .75rem; }
+  .p13Panel--bottom { left: .75rem; right: .75rem; bottom: .75rem; max-width: none; }
+  .p13output { right: .75rem; bottom: .75rem; font-size: .82rem; }
+  .p13Intro { font-size: .8rem; }
+}
