@@ -67,9 +67,7 @@ export const es: I18n = {
     sorting: 'Ordenamiento',
     fanctal: 'Fanctal',
     bernoulli: 'Bernoulli',
-    'chi-squared': 'F.D. χ²',
-    't-student': 'F.D. T-Student',
-    'normal-distribution': 'F.D. Normal',
+    'distribution-functions': 'Distribuciones',
     ruffini: 'Ruffini',
     fractions: 'Fracciones',
     voice: 'Voz',
@@ -285,8 +283,70 @@ export const es: I18n = {
       process: 'Proceso:',
       result: 'Resultado:',
     },
-    chiSquared: {
-      degreesOfFreedom: '\\(\\text{Grados de libertad}\\)',
+    distributions: {
+      introLead: 'Una distribución de probabilidad describe qué tan probable es cada valor posible de una cantidad aleatoria. Elige una a continuación para graficarla con parámetros ajustables, o desplázate hacia abajo para ver la teoría, la historia y un caso práctico detrás de cada una.',
+      paramsTitle: 'Parámetros',
+      evalLabel: 'Evaluar en',
+      theoryLabel: 'Teoría',
+      historyLabel: 'Historia',
+      useCaseLabel: 'Uso práctico',
+      referenceTitle: 'Referencia de distribuciones',
+      jumpBtn: 'Probarla en el graficador ↑',
+
+      nameNormal: 'Normal',
+      normalTheory: 'Modela cantidades continuas que surgen como la suma de muchos efectos pequeños e independientes — el Teorema Central del Límite. Su forma de campana viene de una cuadrática negativa en el exponente, simétrica y con pico en la media μ; la dispersión σ la estira o la comprime, mientras que el área bajo la curva siempre se mantiene en 1.',
+      normalHistory: 'Abraham de Moivre la derivó por primera vez en 1733 como una aproximación a la distribución binomial — décadas antes que Gauss. Gauss la usó en 1809 para justificar el ajuste por mínimos cuadrados de observaciones astronómicas, y el nombre se le quedó de todos modos: un caso de manual de la Ley de Epónimos de Stigler.',
+      normalUseCase: 'Cartas de control en manufactura (Six Sigma): se asume que la medida de una pieza mecanizada es normal alrededor de un valor objetivo, y los límites en μ±3σ marcan las piezas defectuosas.',
+
+      nameStudentt: 'T de Student',
+      studenttTheory: 'Modela la media muestral estandarizada cuando la desviación estándar de la población es desconocida y se estima con una muestra pequeña. Como esa estimación fluctúa, las colas son más pesadas que las de la normal; a medida que los grados de libertad ν crecen, esa incertidumbre extra se reduce y la curva converge a la normal estándar.',
+      studenttHistory: 'William Sealy Gosset, químico de la cervecería Guinness en Dublín, la derivó en 1908 para sacar conclusiones válidas de las muestras pequeñas típicas de los experimentos de la cervecería. Guinness prohibía a su personal publicar bajo su propio nombre, así que firmó el artículo como «Student»; Fisher formalizó rigurosamente la fórmula en términos de grados de libertad más tarde (1925).',
+      studenttUseCase: 'La prueba t de dos muestras: comparar la media de un ensayo clínico pequeño (digamos, 10 pacientes) contra un valor base cuando se desconoce la varianza poblacional.',
+
+      nameChisquare: 'Chi-cuadrado',
+      chisquareTheory: 'Modela la suma de k variables normales estándar independientes al cuadrado, así que solo vive en los números positivos y es asimétrica hacia la derecha. Con k pequeño hay un pico agudo cerca de cero; a medida que k crece, la suma tiende a la normal por el Teorema Central del Límite, y la curva se vuelve más simétrica alrededor de su media k.',
+      chisquareHistory: 'El geodesta Friedrich Robert Helmert la derivó de forma independiente en 1876 mientras estudiaba la varianza del error de medición, y Karl Pearson la redescubrió y le dio nombre en 1900 para su prueba de bondad de ajuste — sin conocer el trabajo previo de Helmert. Las fuentes en inglés solo reconocieron la prioridad de Helmert décadas después, por el propio Pearson en 1931.',
+      chisquareUseCase: 'La prueba de bondad de ajuste de Pearson: verificar si un dado está cargado, o si la incidencia de una enfermedad es independiente del tipo de sangre en una tabla de contingencia.',
+
+      nameF: 'F de Snedecor',
+      fTheory: 'Modela el cociente entre dos estimaciones de varianza independientes, cada una una variable chi-cuadrado dividida entre sus propios grados de libertad — así que vive en los números positivos y es asimétrica hacia la derecha. d₁ determina qué tan puntiaguda es la curva; d₂ controla sobre todo qué tan pesada es su cola derecha.',
+      fHistory: 'Ronald Fisher dio la forma matemática hacia 1922–1924, trabajando con una estadística transformada en vez del cociente mismo. George Snedecor tabuló la distribución directamente como un cociente en su libro de texto de 1934 y la llamó «F» en honor a Fisher — nunca trabajaron juntos en ella; una década separa sus aportes.',
+      fUseCase: 'El ANOVA de una vía: comparar el rendimiento medio de varios cultivos entre distintos tratamientos con fertilizante mediante el cociente entre la varianza entre grupos y la varianza dentro de los grupos.',
+
+      nameBinomial: 'Binomial',
+      binomialTheory: 'Cuenta el número de éxitos en n ensayos independientes que cada uno tiene éxito con probabilidad p — la suma de n ensayos Bernoulli(p). Un n más grande dispersa y suaviza la distribución hacia una forma normal; p controla su asimetría, simétrica en p=0.5 y sesgada a medida que p se acerca a 0 o a 1.',
+      binomialHistory: 'Jacob Bernoulli derivó las probabilidades binomiales y demostró una versión temprana de la ley de los grandes números para ellas en Ars Conjectandi, publicado póstumamente en 1713 — el mismo libro detrás de la distribución de Bernoulli más abajo. Abraham de Moivre tenía resultados relacionados poco antes, en 1711, aunque el tratamiento de Bernoulli es el que se reconoce como el que formuló la distribución.',
+      binomialUseCase: 'Control de calidad: contar cuántas de 100 unidades inspeccionadas de un lote de producción están defectuosas, cuando cada unidad falla de forma independiente con la misma probabilidad fija.',
+
+      nameBernoulli: 'Bernoulli',
+      bernoulliTheory: 'La distribución más simple posible: un solo ensayo con dos resultados, con peso p en el éxito (1) y 1−p en el fracaso (0). Como su soporte tiene solo dos puntos, no hay un parámetro de «dispersión» aparte — p por sí solo fija toda la forma.',
+      bernoulliHistory: 'Lleva el nombre de Jacob Bernoulli (1655–1705), cuyo tratamiento de las probabilidades de un ensayo simple y repetido en Ars Conjectandi (1713, publicado por su sobrino tras su muerte) es el origen de la distribución — la misma fuente detrás de la Binomial de arriba.',
+      bernoulliUseCase: 'Pruebas A/B: si un solo visitante que llega a una página hace clic o no en el botón de llamada a la acción.',
+
+      namePoisson: 'Poisson',
+      poissonTheory: 'Cuenta eventos raros e independientes que ocurren a una tasa promedio constante λ en un intervalo fijo de tiempo, área o volumen — el límite de la Binomial cuando n→∞ y p→0 manteniendo np fijo en λ. El mismo número λ fija tanto el centro como la dispersión, su rasgo distintivo (la media es igual a la varianza).',
+      poissonHistory: 'Publicada por Siméon Denis Poisson en 1837, aplicada a modelar tasas de condenas injustas en juicios penales y civiles. Abraham de Moivre había anticipado resultados similares ya en 1711, pero la distribución conservó el nombre de Poisson; su aplicación temprana más conocida llegó después, en el estudio de 1898 de Ladislaus Bortkiewicz sobre muertes de la caballería prusiana por coces de caballo.',
+      poissonUseCase: 'Dimensionamiento de un call center: modelar cuántas llamadas llegan en una hora dada cuando ocurren de forma independiente a una tasa promedio aproximadamente constante.',
+
+      nameExponential: 'Exponencial',
+      exponentialTheory: 'Modela el tiempo de espera hasta el siguiente evento en un proceso de Poisson — eventos que ocurren de forma continua e independiente a una tasa constante λ. No tiene memoria (haber esperado ya no cambia la probabilidad de seguir esperando), y esa única propiedad obliga a la forma de decaimiento exponencial; un λ más grande comprime la espera hacia cero.',
+      exponentialHistory: 'Se desprende directamente del marco del proceso de Poisson, construido a lo largo del siglo XIX y formalizado dentro de la teoría de la probabilidad del siglo XX — a diferencia de la Normal o la Poisson, no hay una sola persona a quien se le atribuya haberla descubierto como distribución con nombre propio.',
+      exponentialUseCase: 'Ingeniería de confiabilidad: modelar el tiempo hasta la falla de un componente con una tasa de riesgo constante, como una pieza electrónica sin memoria.',
+
+      nameUniform: 'Uniforme',
+      uniformTheory: 'Modela una cantidad de la que solo se sabe que está en algún punto de [a,b], con cada subintervalo de igual longitud igualmente probable — la suposición natural cuando nada favorece a un punto sobre otro. La densidad plana 1/(b−a) es exactamente la altura necesaria para que el área bajo la curva se mantenga en 1.',
+      uniformHistory: 'No está ligada a una sola figura histórica — sus orígenes son inciertos; el razonamiento de equiprobabilidad se remonta a los problemas de dados del siglo XVI (Gerolamo Cardano), pero su formalización como distribución continua es un subproducto de la teoría de la probabilidad basada en la medida del siglo XX.',
+      uniformUseCase: 'La primitiva base de los generadores de números aleatorios en software (como random.random() de Python), transformada después mediante muestreo por CDF inversa para generar valores de otras distribuciones.',
+
+      nameGamma: 'Gamma',
+      gammaTheory: 'Generaliza la Exponencial: es la distribución de la suma de k tiempos de espera exponenciales independientes (con k entero es el caso especial llamado Erlang). Un k pequeño da una curva que decae bruscamente — k=1 es exactamente la exponencial — mientras que un k más grande aleja el pico de cero; la escala θ estira el eje x sin cambiar esa forma.',
+      gammaHistory: 'La función Gamma en la que se basa la distribución viene de las cartas de Leonhard Euler a Christian Goldbach en 1729, que extienden el factorial a argumentos no enteros — análisis puro del siglo XVIII, no estadística. La distribución Gamma como objeto estadístico llegó unos 165 años después, cuando Karl Pearson la incluyó (su curva «Tipo III») en su sistema de curvas de frecuencia asimétricas de 1895.',
+      gammaUseCase: 'Ciencia actuarial: modelar el monto total de siniestros de un seguro en un periodo — siempre positivo, y típicamente asimétrico hacia la derecha.',
+
+      nameBeta: 'Beta',
+      betaTheory: 'Modela una cantidad confinada a (0,1) — naturalmente, una probabilidad o una proporción. Sus dos parámetros actúan como pseudo-conteos de éxitos (α) y fracasos (β) previos: aumentar α desplaza la masa hacia 1, aumentar β la desplaza hacia 0, y aumentar ambos a la vez concentra la curva alrededor de su media compartida.',
+      betaHistory: 'Igual que la Gamma, su función viene del trabajo de Euler en el siglo XVIII — ligada a la función Gamma por B(α,β)=Γ(α)Γ(β)/Γ(α+β) —, y el nombre «beta» lo introdujo después Jacques Binet en 1839. Como distribución aparece de forma implícita en el ensayo de 1763 de Thomas Bayes sobre probabilidad inversa, y se incorporó formalmente al sistema de curvas asimétricas de Pearson (como «Tipo I») en el mismo artículo de 1895 que la Gamma.',
+      betaUseCase: 'Pruebas A/B bayesianas: representar la creencia sobre la tasa de conversión real de un sitio web tras observar algunas conversiones y no conversiones.',
     },
     scripts: {
       tablasMultiplicar: 'Tablas de multiplicar',

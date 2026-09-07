@@ -1,5 +1,19 @@
 [
   {
+    "slug": "distribution-functions",
+    "title": "Distributions",
+    "navTitle": "Distributions",
+    "pageTitle": "Distribution Functions",
+    "image": "p18.png",
+    "order": 18,
+    "size": "tall",
+    "labels": [
+      "Statistics",
+      "Probability",
+      "Distribution"
+    ]
+  },
+  {
     "slug": "turing-machine",
     "title": "Turing Machine",
     "navTitle": "Turing Machine Lab",
@@ -100,48 +114,6 @@
     "pageTitle": "Bernoulli Inequality",
     "image": "p10.png",
     "order": 10,
-    "size": "sm",
-    "labels": [
-      "Statistics",
-      "Probability",
-      "Distribution"
-    ]
-  },
-  {
-    "slug": "chi-squared",
-    "title": "χ² Dist.",
-    "navTitle": "Chi-Squared",
-    "pageTitle": "Chi-Squared Distribution",
-    "image": "p9.png",
-    "order": 9,
-    "size": "sm",
-    "labels": [
-      "Statistics",
-      "Probability",
-      "Distribution"
-    ]
-  },
-  {
-    "slug": "t-student",
-    "title": "T-Student Dist.",
-    "navTitle": "T-Student",
-    "pageTitle": "T-Student Distribution",
-    "image": "p8.png",
-    "order": 8,
-    "size": "sm",
-    "labels": [
-      "Statistics",
-      "Probability",
-      "Distribution"
-    ]
-  },
-  {
-    "slug": "normal-distribution",
-    "title": "Normal Dist.",
-    "navTitle": "Normal Dist.",
-    "pageTitle": "Normal Distribution",
-    "image": "p7.png",
-    "order": 7,
     "size": "sm",
     "labels": [
       "Statistics",

@@ -55,6 +55,20 @@ class PlotBoard {
     })
   }
 
+  // Lollipop bars for a discrete PMF over integers [kMin, kMax] — one
+  // segment per k, fixed pixel width regardless of the board's data scale
+  // (same trick `vector` uses for its arrowhead gap), so bars stay readable
+  // whether k spans 2 values or 50.
+  static bars(board, kMin, kMax, pmf, color, widthPx = 14) {
+    const items = []
+    for (let k = kMin; k <= kMax; k++) {
+      items.push(board.create('segment', [[k, 0], [k, pmf(k)]], {
+        strokeColor: color, strokeWidth: widthPx, lineCap: 'round', highlight: false, fixed: true,
+      }))
+    }
+    return items
+  }
+
   // Stops the arrowhead `gapPx` short of `to` (in screen pixels, so the gap
   // reads the same regardless of the board's data scale) instead of letting
   // it touch/overlap whatever marker sits at that coordinate.

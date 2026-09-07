@@ -1,0 +1,221 @@
+.p18Content {
+  padding: 1.5rem;
+  max-width: 58rem;
+  margin: 0 auto;
+}
+
+/* ── Intro ──────────────────────────────────────────────── */
+
+.p18Intro {
+  max-width: 42rem;
+  margin: 0 0 2rem;
+}
+
+.p18Lead {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ── Distribution picker ────────────────────────────────── */
+
+.p18Picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-bottom: 1.5rem;
+}
+
+.p18PickBtn {
+  padding: .3rem .7rem;
+  font-family: var(--font-label);
+  font-size: .85rem;
+  color: var(--color-muted);
+  background: transparent;
+  border: var(--border-width) solid var(--primary-15);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.p18PickBtn:hover:not(.is-active) { background: var(--primary-05); color: var(--color-text); }
+.p18PickBtn:active { animation: none; }
+.p18PickBtn.is-active { background: var(--color-primary); color: var(--color-bg); border-color: var(--color-primary); }
+
+/* ── Layout: figure + panel ─────────────────────────────── */
+
+.p18Layout {
+  display: grid;
+  grid-template-columns: minmax(14rem, 24rem) minmax(14rem, 1fr);
+  gap: 1.75rem;
+  align-items: start;
+  justify-content: center;
+}
+
+.p18FigureCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-lg);
+}
+
+/* ── Control panel ──────────────────────────────────────── */
+
+.p18Panel {
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  padding: 1.1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+.p18PanelTitle {
+  margin: 0;
+  font-size: .95rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.p18Formula { font-size: 1.02rem; }
+.p18Formula .katex { font-size: 1.05em; }
+
+.p18Facts {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  font-size: .85rem;
+  color: var(--color-muted);
+}
+
+.p18inputs {
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+}
+
+.p18ParamField,
+.p18EvalField { margin: 0; }
+.p18ParamField .number-wrap,
+.p18EvalField .number-wrap { width: 100%; }
+
+.p18EvalField { padding-top: .5rem; border-top: var(--border-width) dashed var(--primary-15); }
+
+.p18Readout {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  padding-top: .6rem;
+  font-size: .95rem;
+}
+
+.p18Readout:empty { display: none; }
+
+/* ── Reference accordion ─────────────────────────────────── */
+
+.p18Reference {
+  width: 100%;
+  margin-top: 3rem;
+  padding-top: 2.5rem;
+  border-top: var(--border-width) solid var(--color-muted);
+}
+
+.p18Reference > h3 {
+  margin-left: 0;
+  font-size: 1.25rem;
+}
+
+.p18RefList {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  margin-top: 1.5rem;
+}
+
+.p18RefItem {
+  padding: 0 1.5rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+.p18RefItem summary {
+  padding: 1rem 0;
+  font-family: var(--font-bold);
+  font-size: 1.02rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.p18RefItem summary::-webkit-details-marker { display: none; }
+
+.p18RefItem summary::before {
+  content: '▸';
+  display: inline-block;
+  width: 1.1rem;
+  color: var(--color-primary);
+  transition: transform var(--transition);
+}
+
+.p18RefItem[open] summary::before { transform: rotate(90deg); }
+
+.p18RefBody {
+  padding: 0 0 1.5rem;
+}
+
+.p18RefBody p {
+  margin: 0 0 .75rem;
+  max-width: 42rem;
+  font-size: .95rem;
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.p18RefBody p strong { color: var(--color-primary); }
+
+.p18Portrait {
+  width: 5.5rem;
+  height: auto;
+  float: right;
+  margin: 0 0 .5rem 1rem;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-muted);
+}
+
+.p18Credit {
+  margin: -.4rem 0 .75rem !important;
+  font-size: .72rem !important;
+  color: var(--color-muted);
+  text-align: left !important;
+}
+
+.p18JumpBtn {
+  font-family: var(--font-bold);
+  font-size: .82rem;
+  color: var(--color-primary);
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.p18JumpBtn:hover { opacity: .8; text-decoration: underline; }
+.p18JumpBtn:active { animation: none; }
+
+/* ── Responsive ─────────────────────────────────────────── */
+
+@media (max-width: 42rem) {
+  .p18Layout { grid-template-columns: 1fr; }
+  .p18Content { padding: 1rem; }
+  .p18Portrait { width: 4rem; }
+}

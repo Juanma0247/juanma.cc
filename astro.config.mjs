@@ -11,6 +11,9 @@ export default defineConfig({
     '/games': '/projects#games',
     '/settings': '/accessibility',
     '/projects/fractal': '/projects/fanctal',
+    '/projects/chi-squared': '/projects/distribution-functions',
+    '/projects/t-student': '/projects/distribution-functions',
+    '/projects/normal-distribution': '/projects/distribution-functions',
   },
   vite: {
     server: {

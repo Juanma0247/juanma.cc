@@ -1,0 +1,103 @@
+---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
+import { DISTRIBUTIONS } from '../../data/distributions'
+import { cld } from '../../lib/core/cld'
+
+const nameKey = (key: string) => `name${key[0].toUpperCase()}${key.slice(1)}`
+---
+<ProjectLayout slug="distribution-functions">
+  <script slot="head" is:inline defer src="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.2/distrib/jsxgraphcore.min.js"></script>
+  <link slot="head" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.2/distrib/jsxgraph.css" />
+
+  <div class="p18Content">
+    <header class="p18Intro">
+      <p class="p18Lead" data-i18n="pd.distributions.introLead">A probability distribution describes how likely each possible value of a random quantity is. Pick one below to graph it with adjustable parameters, or scroll down for the theory, history, and a practical use case behind each one.</p>
+    </header>
+
+    <section id="p18Sandbox" class="p18Sandbox">
+      <div class="p18Picker">
+        {DISTRIBUTIONS.map(d => (
+          <button type="button" class="p18PickBtn" data-dist={d.key} data-i18n={`pd.distributions.${nameKey(d.key)}`}>{d.nameEn}</button>
+        ))}
+      </div>
+
+      <div class="p18Layout">
+        <div class="p18FigureCard">
+          <div id="p18PlotContainer" class="plotContainer"></div>
+        </div>
+
+        <aside class="p18Panel">
+          <h3 class="p18PanelTitle" data-i18n="pd.distributions.paramsTitle">Parameters</h3>
+
+          {DISTRIBUTIONS.map(d => (
+            <div class="p18Formula latex" data-dist={d.key} hidden={d.key !== 'normal'}>{`\\(${d.formulaTex}\\)`}</div>
+          ))}
+
+          {DISTRIBUTIONS.map(d => (
+            <div class="p18Facts" data-dist={d.key} hidden={d.key !== 'normal'}>
+              <span>{`\\(\\text{Support: }${d.support}\\)`}</span>
+              <span>{`\\(\\text{Mean: }${d.mean}\\)`}</span>
+              <span>{`\\(\\text{Var: }${d.variance}\\)`}</span>
+            </div>
+          ))}
+
+          <div class="p18inputs">
+            {DISTRIBUTIONS.flatMap(d => d.params.map(p => (
+              <div class="field p18ParamField" data-dist={d.key} data-param={p.key} hidden={d.key !== 'normal'}>
+                <div class="number-wrap">
+                  <input type="number" min={p.min} max={p.max} step={p.step} value={p.default} />
+                  <div class="spin">
+                    <button type="button" data-step="up" tabindex="-1">▲</button>
+                    <button type="button" data-step="down" tabindex="-1">▼</button>
+                  </div>
+                </div>
+                <label class="field-label">{`\\(${p.symbol}\\)`}</label>
+              </div>
+            )))}
+
+            <div class="field p18EvalField">
+              <div class="number-wrap">
+                <input id="p18Eval" type="number" step="0.1" value="0" />
+                <div class="spin">
+                  <button type="button" data-step="up" tabindex="-1">▲</button>
+                  <button type="button" data-step="down" tabindex="-1">▼</button>
+                </div>
+              </div>
+              <label class="field-label"><span data-i18n="pd.distributions.evalLabel">Evaluate at</span> <span id="p18EvalLabel">x</span> =</label>
+            </div>
+          </div>
+
+          <div class="p18Readout">
+            <div id="p18ReadoutPdf" class="latex"></div>
+            <div id="p18ReadoutCdf" class="latex"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="p18Reference">
+      <h3 data-i18n="pd.distributions.referenceTitle">Distribution reference</h3>
+      <div class="p18RefList">
+        {DISTRIBUTIONS.map(d => (
+          <details class="p18RefItem">
+            <summary data-i18n={`pd.distributions.${nameKey(d.key)}`}>{d.nameEn}</summary>
+            <div class="p18RefBody">
+              {d.portrait && <img class="p18Portrait" src={cld(d.portrait.img)} alt={d.portrait.alt} loading="lazy" />}
+              <p><strong data-i18n="pd.distributions.theoryLabel">Theory</strong> — <span data-i18n={`pd.distributions.${d.key}Theory`}>{d.theoryEn}</span></p>
+              <p><strong data-i18n="pd.distributions.historyLabel">History</strong> — <span data-i18n={`pd.distributions.${d.key}History`}>{d.historyEn}</span></p>
+              {d.portrait && <p class="p18Credit">{d.portrait.credit}</p>}
+              <p><strong data-i18n="pd.distributions.useCaseLabel">Practical use</strong> — <span data-i18n={`pd.distributions.${d.key}UseCase`}>{d.useCaseEn}</span></p>
+              <button type="button" class="p18JumpBtn" data-dist={d.key} data-i18n="pd.distributions.jumpBtn">Try it in the grapher ↑</button>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style is:global>@import '../../styles/sections/projects-distributions.css';</style>
+<script type="module" is:inline>
+  import Distributions from '/js/lib/Distributions.js'
+  const p = new Distributions(); p.starter?.(); p.main()
+</script>
