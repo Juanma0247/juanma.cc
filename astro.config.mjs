@@ -11,6 +11,7 @@ export default defineConfig({
     '/games': '/projects#games',
     '/settings': '/accessibility',
     '/projects/fractal': '/projects/fanctal',
+    '/projects/cantor-sets': '/projects/cantor-pairing',
     '/projects/chi-squared': '/projects/distribution-functions',
     '/projects/t-student': '/projects/distribution-functions',
     '/projects/normal-distribution': '/projects/distribution-functions',

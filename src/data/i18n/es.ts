@@ -41,6 +41,8 @@ export const es: I18n = {
     audio: 'Audio',
     webapi: 'Web API',
     settheory: 'Teoría de conjuntos',
+    cardinality: 'Cardinalidad',
+    bijection: 'Biyección',
     topology: 'Topología',
     logic: 'Lógica',
     discretemath: 'Matemática discreta',
@@ -71,7 +73,7 @@ export const es: I18n = {
     ruffini: 'Ruffini',
     fractions: 'Fracciones',
     voice: 'Voz',
-    'cantor-sets': 'Conj. de Cantor',
+    'cantor-pairing': 'Empar. de Cantor',
     sets: 'Conjuntos',
     'hill-cipher': 'Cifrado Hill',
     'tic-tac-toe': 'Tres en raya',
@@ -270,7 +272,7 @@ export const es: I18n = {
       detZero: 'Determinante = 0',
       noInverse: 'Sin inverso modular',
     },
-    cantor: {
+    cantorPairing: {
       generate: 'Generar',
       presentation: 'Presentación',
       p1: '\\(f\\) representa la función de emparejamiento de Cantor para un \\(\\mathbb{Q^{+}}\\) de la forma \\(\\frac{p}{q}\\)',

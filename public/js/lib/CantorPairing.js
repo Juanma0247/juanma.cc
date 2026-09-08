@@ -2,9 +2,9 @@ import ExtText from '/js/core/ExtText.js'
 import PlotBoard from '/js/core/PlotBoard.js'
 
 const t = (key, fallback) =>
-  typeof window !== "undefined" && window.i18nGet ? window.i18nGet(`pd.cantor.${key}`, fallback) : fallback
+  typeof window !== "undefined" && window.i18nGet ? window.i18nGet(`pd.cantorPairing.${key}`, fallback) : fallback
 
-class CantorSets {
+class CantorPairing {
     constructor() {
         this.board = null
         this.plot = null
@@ -101,4 +101,4 @@ class CantorSets {
     }
 }
 
-export default CantorSets
+export default CantorPairing

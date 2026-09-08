@@ -1,0 +1,41 @@
+﻿---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
+---
+<ProjectLayout slug="cantor-pairing">
+  <script slot="head" is:inline defer src="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.2/distrib/jsxgraphcore.min.js"></script>
+  <link slot="head" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.2/distrib/jsxgraph.css" />
+  <div style="display: flex; flex-wrap: wrap;">
+    <div id="p3PlotContainer" class="plotContainer"></div>
+    <div id="p3CalcContainer">
+      <div class="center">
+        <div class="field" style="margin: 1rem;">
+          <input id="p3i1" required="" type="text" style="width: 5rem;" value="4" placeholder=" ">
+          <label class="field-label">\(p\) (\(x\) \(\text&#123;axis&#125;\))</label>
+        </div>
+        <div class="field" style="margin: 1rem;">
+          <input id="p3i2" required="" type="text" style="width: 5rem;" value="3" placeholder=" ">
+          <label class="field-label">\(q\) (\(y\) \(\text&#123;axis&#125;\))</label>
+        </div>
+        <button id="p3b1" data-i18n="pd.cantorPairing.generate">Generate</button>
+      </div>
+      <div id="p3Process">
+        <p id="p3Prosessp1" class="p3Processp" data-i18n="pd.cantorPairing.p1">\(f\) represents Cantor's pairing function for a \(\mathbb&#123;Q^&#123;+&#125;&#125;\) of the form \(\frac&#123;p&#125;&#123;q&#125;\)</p>
+        <p id="p3Prosessp2" style="text-align: center" class="p3Processp"></p>
+        <p id="p3Prosessp3" class="p3Processp" data-i18n="pd.cantorPairing.p3">Substituting \(p\) and \(q\) into \(f\) we get</p>
+        <p id="p3Prosessp4" style="text-align: center" class="p3Processp"></p>
+        <p id="p3Prosessp5" class="p3Processp"></p>
+        <p class="p3Processp" data-i18n="pd.cantorPairing.para1">The pairing sequence starts at point \((0,0)\) and traverses all points on the Cartesian plane in a zigzag pattern until reaching the indicated coordinate.</p>
+        <p class="p3Processp" data-i18n="pd.cantorPairing.para2">Note that to handle any value \(p \in \mathbb&#123;Z&#125;\), another function should be applied that maps to \(2p\) if \(p\geq 0\), otherwise to \(-2p - 1\). This is applied to \(p\) since it can take the sign of the fraction.</p>
+        <p class="p3Processp" data-i18n="pd.cantorPairing.para3">In set theory, this sequence is used to prove that \(\mathbb&#123;Q&#125;\) has the same cardinality as \(\mathbb&#123;N&#125;\).</p>
+        <br><br>
+        <a class="p3Processp" href="https://gamma.app/docs/Georg-Cantor--qphdv8v760hujtz?mode=present#card-wer5nwhu8a8z40j" data-i18n="pd.cantorPairing.presentation">Presentation</a>
+      </div>
+    </div>
+  </div>
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style is:global>@import '../../styles/sections/projects-cantor-pairing.css';</style>
+<script type="module" is:inline>
+  import CantorPairing from '/js/lib/CantorPairing.js'
+  const p = new CantorPairing(); p.starter?.(); p.main()
+</script>

@@ -1,0 +1,23 @@
+<svg viewBox="0 0 108 64" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M13 5V54H100" stroke-width="1.5" opacity=".3"/>
+  <g fill="var(--accent)" stroke="none" opacity=".3">
+    <circle cx="78" cy="48" r="1.7"/>
+    <circle cx="91" cy="48" r="1.7"/>
+    <circle cx="65" cy="35" r="1.7"/>
+    <circle cx="78" cy="35" r="1.7"/>
+    <circle cx="91" cy="35" r="1.7"/>
+    <circle cx="52" cy="22" r="1.7"/>
+    <circle cx="65" cy="22" r="1.7"/>
+    <circle cx="78" cy="22" r="1.7"/>
+    <circle cx="91" cy="22" r="1.7"/>
+    <circle cx="39" cy="9" r="1.7"/>
+    <circle cx="52" cy="9" r="1.7"/>
+    <circle cx="65" cy="9" r="1.7"/>
+    <circle cx="78" cy="9" r="1.7"/>
+    <circle cx="91" cy="9" r="1.7"/>
+  </g>
+  <g data-anim="true">
+    <polyline points="26,48 26,35 39,48 52,48 39,35 26,22 26,9 39,22 52,35 65,48"/>
+    <circle cx="26" cy="48" r="3.2" fill="var(--accent)" stroke="none"/>
+  </g>
+</svg>

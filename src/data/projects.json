@@ -161,17 +161,17 @@
     ]
   },
   {
-    "slug": "cantor-sets",
-    "title": "Cantor Sets",
-    "navTitle": "Cantor Sets",
-    "pageTitle": "Cantor Sets",
+    "slug": "cantor-pairing",
+    "title": "Cantor Pairing",
+    "navTitle": "Cantor Pairing",
+    "pageTitle": "Cantor Pairing",
     "image": "p3.png",
     "order": 3,
     "size": "wide",
     "labels": [
       "Set Theory",
-      "Fractals",
-      "Topology"
+      "Cardinality",
+      "Bijection"
     ]
   },
   {

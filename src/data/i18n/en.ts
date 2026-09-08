@@ -380,6 +380,8 @@ export const en: I18n = {
     audio: 'Audio',
     webapi: 'Web API',
     settheory: 'Set Theory',
+    cardinality: 'Cardinality',
+    bijection: 'Bijection',
     topology: 'Topology',
     logic: 'Logic',
     discretemath: 'Discrete Math',
@@ -410,7 +412,7 @@ export const en: I18n = {
     ruffini: 'Ruffini',
     fractions: 'Fractions',
     voice: 'Voice',
-    'cantor-sets': 'Cantor Sets',
+    'cantor-pairing': 'Cantor Pairing',
     sets: 'Sets',
     'hill-cipher': 'Hill Cipher',
     'tic-tac-toe': 'Tic-Tac-Toe',
@@ -609,7 +611,7 @@ export const en: I18n = {
       detZero: 'Determinant = 0',
       noInverse: 'No modular inverse',
     },
-    cantor: {
+    cantorPairing: {
       generate: 'Generate',
       presentation: 'Presentation',
       p1: "\\(f\\) represents Cantor's pairing function for a \\(\\mathbb{Q^{+}}\\) of the form \\(\\frac{p}{q}\\)",
