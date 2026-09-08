@@ -410,7 +410,7 @@ export const en: I18n = {
     'cross-matrix': 'Cross Matrix',
     sorting: 'Sorting',
     fanctal: 'Fanctal',
-    bernoulli: 'Bernoulli Inequality',
+    bernoulli: 'Bernoulli',
     'distribution-functions': 'Distributions',
     ruffini: 'Ruffini',
     fractions: 'Fractions',

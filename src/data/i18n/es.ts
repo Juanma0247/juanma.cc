@@ -71,7 +71,7 @@ export const es: I18n = {
     'cross-matrix': 'Matriz cruz',
     sorting: 'Ordenamiento',
     fanctal: 'Fanctal',
-    bernoulli: 'Desig. de Bernoulli',
+    bernoulli: 'Bernoulli',
     'distribution-functions': 'Distribuciones',
     ruffini: 'Ruffini',
     fractions: 'Fracciones',

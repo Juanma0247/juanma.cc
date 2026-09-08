@@ -1,8 +1,8 @@
-<svg viewBox="0 0 64 48" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M5.0 34.6C23.0 34.6 41.0 34.6 59.0 7.0L59.0 21.3L5.0 41.0Z" fill="color-mix(in oklab, var(--accent) 16%, transparent)" stroke="none"/>
+<svg viewBox="0 0 64 48" fill="none" stroke="var(--accent)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3.0 20.3C22.3 32.4 41.7 27.2 61.0 4.6L61.0 10.3L3.0 43.4Z" fill="color-mix(in oklab, var(--accent) 16%, transparent)" stroke="none"/>
   <g data-anim="true">
-    <path d="M5.0 34.6C23.0 34.6 41.0 34.6 59.0 7.0"/>
-    <path d="M5.0 41.0L59.0 21.3" stroke-width="1.8" stroke-dasharray="4 3" opacity=".7"/>
-    <circle cx="31.3" cy="31.4" r="3" fill="var(--accent)" stroke="none"/>
+    <path d="M3.0 20.3C22.3 32.4 41.7 27.2 61.0 4.6"/>
+    <path d="M3.0 43.4L61.0 10.3" stroke-width="2.02" stroke-dasharray="4 3" opacity=".7"/>
+    <circle cx="41.7" cy="21.4" r="3.2" fill="var(--accent)" stroke="none"/>
   </g>
 </svg>
