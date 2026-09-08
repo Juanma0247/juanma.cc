@@ -1,45 +1,169 @@
-﻿---
+---
 import ProjectLayout from '../../layouts/ProjectLayout.astro'
+
+const PDF_ID = '1B5ODi_EFoTIaaTolGHYud4x_KgTb3j_I'
+const PDF_VIEW = `https://drive.google.com/file/d/${PDF_ID}/view`
+const PDF_DOWNLOAD = `https://drive.google.com/uc?export=download&id=${PDF_ID}`
+
+const comparison = [
+  { key: 'classic', hyp: '\\(n \\in \\mathbb{N},\\ x \\ge -1\\)', ineq: '\\((1+x)^n \\ge 1+nx\\)' },
+  { key: 'realExp', hyp: '\\(r \\ge 1,\\ x \\ge -1\\)', ineq: '\\((1+x)^r \\ge 1+rx\\)' },
+  { key: 'weierstrass', hyp: '\\(x_i > -1\\)', ineq: '\\(\\prod (1+x_i) \\ge 1 + \\sum x_i\\)' },
+  { key: 'refined', hyp: '\\(r \\ge 1,\\ x \\ge -1\\)', ineq: '\\((1+x)^r \\ge 1+rx+\\tfrac{r(r-1)}{2}x^2\\)' },
+  { key: 'thisWork', hyp: '\\(z,\\ y \\ge 1,\\ x \\ge -y\\)', ineq: '\\((y+x)^z \\ge y+xz\\)', highlight: true },
+]
+
+const applications = ['analysis', 'probability', 'convex', 'finance']
 ---
 <ProjectLayout slug="bernoulli">
   <script slot="head" is:inline defer src="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.2/distrib/jsxgraphcore.min.js"></script>
   <link slot="head" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.13.2/distrib/jsxgraph.css" />
-  <div style="display: flex; flex-wrap: wrap;">
-    <div id="p10PlotContainer" class="plotContainer"></div>
-    <div id="p10CalcContainer" class="calcContainer">
-      <div class="field">
-        <div class="number-wrap">
-          <input id="p10i1" required="" type="number" value="21" placeholder=" ">
-          <div class="spin">
-            <button type="button" data-step="up" tabindex="-1">▲</button>
-            <button type="button" data-step="down" tabindex="-1">▼</button>
-          </div>
+
+  <div class="p10Content">
+    <header class="p10Intro">
+      <p class="p10Lead" data-i18n="pd.bernoulli.lead">Bernoulli's inequality, \((1+x)^n \ge 1+nx\), is one of the workhorses of elementary analysis, but it is classically stated only for a base of the form \(1+x\) and only for \(x \ge -1\). This page explores a generalization that moves two things at once: it puts a translation parameter \(y \ge 1\) into the base and lets the exponent \(z \ge 1\) be any real number, which widens the domain of \(x\) from \([-1,\infty)\) to \([-y,\infty)\). Move the parameters below and watch the curve, its linear lower bound, and the gap between them.</p>
+    </header>
+
+    <div class="p10Layout">
+      <div class="p10FigureCard">
+        <div class="seg-ctrl seg-ctrl--sm p10Views" id="p10View">
+          <button type="button" class="seg-opt" data-view="inequality" aria-pressed="true" data-i18n="pd.bernoulli.viewInequality">Inequality</button>
+          <button type="button" class="seg-opt" data-view="proof" aria-pressed="false" data-i18n="pd.bernoulli.viewProof">Proof</button>
         </div>
-        <label class="field-label">\(n \in \mathbb&#123;N&#125;\)</label>
+        <div id="p10PlotContainer" class="plotContainer"></div>
+        <ul class="p10Legend" data-legend="inequality">
+          <li><span class="p10Swatch p10Swatch--curve"></span><span data-i18n="pd.bernoulli.legendCurve">Curve \((y+x)^z\)</span></li>
+          <li><span class="p10Swatch p10Swatch--bound"></span><span data-i18n="pd.bernoulli.legendBound">Bound \(y+xz\)</span></li>
+          <li><span class="p10Swatch p10Swatch--gap"></span><span data-i18n="pd.bernoulli.legendGap">Gap</span></li>
+          <li><span class="p10Swatch p10Swatch--bad"></span><span data-i18n="pd.bernoulli.legendBad">Where it fails</span></li>
+        </ul>
+        <ul class="p10Legend" data-legend="proof">
+          <li><span class="p10Swatch p10Swatch--curve"></span><span data-i18n="pd.bernoulli.legendAux">Auxiliary \(f(t)=t^z-tz\)</span></li>
+          <li><span class="p10Swatch p10Swatch--bound"></span><span data-i18n="pd.bernoulli.legendMin">Minimum \(1-z\)</span></li>
+          <li><span class="p10Swatch p10Swatch--aux"></span><span data-i18n="pd.bernoulli.legendYBound">Lower bound \(y(1-z)\)</span></li>
+          <li><span class="p10Swatch p10Swatch--gap"></span><span data-i18n="pd.bernoulli.legendMargin">Margin above the minimum</span></li>
+        </ul>
       </div>
-      <div class="field">
-        <input id="p10i2" required="" pattern="^-?\d+([.]\d+)?$" inputmode="decimal" value="1" placeholder=" ">
-        <label class="field-label">\(a \in \mathbb&#123;R&#125;\)</label>
-      </div>
-      <div style="display: flex; margin-left: 1rem;">
-        <label class="checkbox-container">
-          <input id="p10cb1" type="checkbox">
-          <svg viewBox="0 0 64 64">
-            <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" class="checkbox-svg"></path>
-          </svg>
-        </label>
-        <label class="checkbox-label">\((\text&#123;odd&#125; = 2n+1)\)</label>
-      </div>
-      <div class="p10Processp">
-        <a href="https://drive.google.com/uc?export=download&id=1-Sh9vxZMl7W3Fppa1w7_DbjFKL73qOzK">Proof.</a>
-        <a href="https://drive.google.com/uc?export=download&id=1sLSSU_sDr2LXx7PPFbmhGih_uchMjdfn">Proof 2.</a>
-      </div>
+
+      <aside class="p10Panel">
+        <h3 class="p10PanelTitle" data-i18n="pd.bernoulli.paramsTitle">Parameters</h3>
+
+        <div class="field p10Field">
+          <input id="p10y" type="number" min="0.1" step="0.1" value="2" placeholder=" ">
+          <label class="field-label">\(y\)</label>
+          <p class="p10Hint" data-i18n="pd.bernoulli.hintY">Translation of the base. The theorem needs \(y \ge 1\).</p>
+        </div>
+
+        <div class="field p10Field">
+          <input id="p10z" type="number" min="0.1" step="0.1" value="2" placeholder=" ">
+          <label class="field-label">\(z\)</label>
+          <p class="p10Hint" data-i18n="pd.bernoulli.hintZ">Real exponent. The theorem needs \(z \ge 1\).</p>
+        </div>
+
+        <div class="p10Field">
+          <label class="p10SliderLabel" for="p10x">\(x =\) <span id="p10xValue">1</span></label>
+          <input id="p10x" type="range" min="-2" max="2.6" step="0.01" value="1">
+          <p class="p10Hint" data-i18n="pd.bernoulli.hintX">Point where both sides are compared.</p>
+        </div>
+
+        <p id="p10Status" class="p10Status is-ok" data-i18n="pd.bernoulli.hypOk">Hypotheses hold: the inequality is guaranteed.</p>
+        <div id="p10Readout" class="p10Readout"></div>
+
+        <div class="p10Presets">
+          <button type="button" class="p10Preset" data-preset="general" data-i18n="pd.bernoulli.presetGeneral">General</button>
+          <button type="button" class="p10Preset" data-preset="classic" data-i18n="pd.bernoulli.presetClassic">Classic</button>
+          <button type="button" class="p10Preset" data-preset="counter" data-i18n="pd.bernoulli.presetCounter">Counterexample</button>
+        </div>
+      </aside>
     </div>
+
+    <section class="p10Theory">
+      <h3 data-i18n="pd.bernoulli.theoryTitle">The result</h3>
+
+      <div class="p10Statement">
+        <h4 data-i18n="pd.bernoulli.theoremTitle">Theorem (Bernoulli with translation and real exponent)</h4>
+        <p data-i18n="pd.bernoulli.theoremText">For all \(y, x, z \in \mathbb&#123;R&#125;\) with \(z \ge 1\), \(y \ge 1\) and \(x \ge -y\):</p>
+        <p class="p10Display">\[(y+x)^z \ \ge\ y + xz\]</p>
+        <p data-i18n="pd.bernoulli.theoremEquality">Equality holds if and only if \(x = 0\) or \(z = 1\).</p>
+      </div>
+
+      <h4 class="p10ProofHead" data-i18n="pd.bernoulli.proofTitle">Proof</h4>
+      <p class="p10Prose" data-i18n="pd.bernoulli.proofSetup">Put \(t = x + y\). The hypothesis \(x \ge -y\) gives \(t \ge 0\), and the statement becomes \(t^z \ge tz + y(1-z)\), so it suffices to prove that \(f(t) := t^z - tz \ge y(1-z)\).</p>
+
+      <div class="p10Steps">
+        <div class="p10Step">
+          <h5 data-i18n="pd.bernoulli.step1Title">Step 1: the global minimum of \(f\)</h5>
+          <p data-i18n="pd.bernoulli.step1Text">Differentiating, \(f'(t) = z(t^&#123;z-1&#125;-1)\) and \(f''(t) = z(z-1)t^&#123;z-2&#125;\). Since \(z \ge 1\) and \(t > 0\), we get \(f'' \ge 0\), so \(f\) is convex on \((0,\infty)\). Its only critical point there is \(t = 1\), which convexity turns into a global minimum: \(f(t) \ge f(1) = 1-z\). The bound extends to \(t = 0\) by continuity, since \(f(0) = 0 \ge 1-z\).</p>
+        </div>
+        <div class="p10Step">
+          <h5 data-i18n="pd.bernoulli.step2Title">Step 2: comparison with \(y(1-z)\)</h5>
+          <p data-i18n="pd.bernoulli.step2Text">Because \(z \ge 1\) we have \(1-z \le 0\), and because \(y \ge 1\), multiplying by \(y\) only makes it smaller: \(y(1-z) \le 1-z\). Chaining both steps gives \(y(1-z) \le 1-z \le f(t)\), which is exactly what was needed.</p>
+        </div>
+        <div class="p10Step">
+          <h5 data-i18n="pd.bernoulli.step3Title">The equality case</h5>
+          <p data-i18n="pd.bernoulli.step3Text">Equality requires both steps to be tight at once. Step 1 is tight only at \(t = 1\), that is \(x = 1-y\); step 2 only when \(y = 1\) or \(z = 1\). If \(z = 1\) the statement collapses to the identity \(y+x \ge y+x\). If \(z > 1\), the two conditions together force \(y = 1\) and hence \(x = 0\). So equality holds exactly when \(x = 0\) or \(z = 1\).</p>
+        </div>
+      </div>
+
+      <div class="p10Notes">
+        <div class="p10Note">
+          <h5 data-i18n="pd.bernoulli.corollaryTitle">Corollary</h5>
+          <p data-i18n="pd.bernoulli.corollaryText">Setting \(y = 1\) recovers the standard real-exponent form \((1+x)^r \ge 1+rx\) for \(r \ge 1\) and \(x \ge -1\); restricting further to a natural exponent gives the classical inequality. Press <em>Classic</em> above to land on that case.</p>
+        </div>
+        <div class="p10Note p10Note--warn">
+          <h5 data-i18n="pd.bernoulli.remarkTitle">Why \(y \ge 1\) cannot be dropped</h5>
+          <p data-i18n="pd.bernoulli.remarkText">If \(0 &lt; y &lt; 1\) and \(z > 1\), the comparison in step 2 reverses and the conclusion can fail. Take \(y = \tfrac&#123;1&#125;&#123;2&#125;\), \(z = 2\), \(x = 0\): the left side is \(\tfrac&#123;1&#125;&#123;4&#125;\) while the right side is \(\tfrac&#123;1&#125;&#123;2&#125;\). Press <em>Counterexample</em> above and the failing region shows up in red.</p>
+        </div>
+      </div>
+
+      <h4 class="p10ProofHead" data-i18n="pd.bernoulli.compareTitle">Against earlier generalizations</h4>
+      <p class="p10Prose" data-i18n="pd.bernoulli.compareIntro">Classical extensions to a real exponent keep the restriction \(x \ge -1\). Tying the lower end of the domain to the translation parameter is what widens it to \(x \ge -y\).</p>
+      <div class="p10TableWrap">
+        <table class="p10Table">
+          <thead>
+            <tr>
+              <th data-i18n="pd.bernoulli.colResult">Result</th>
+              <th data-i18n="pd.bernoulli.colHyp">Hypotheses</th>
+              <th data-i18n="pd.bernoulli.colIneq">Inequality</th>
+            </tr>
+          </thead>
+          <tbody>
+            {comparison.map(row => (
+              <tr class={row.highlight ? 'is-highlight' : undefined}>
+                <td data-i18n={`pd.bernoulli.row_${row.key}`}>{row.key}</td>
+                <td set:html={row.hyp} />
+                <td set:html={row.ineq} />
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="p10ProofHead" data-i18n="pd.bernoulli.appsTitle">Where it is useful</h4>
+      <div class="p10Apps">
+        {applications.map(key => (
+          <div class="p10App">
+            <h5 data-i18n={`pd.bernoulli.app_${key}_title`}>{key}</h5>
+            <p data-i18n={`pd.bernoulli.app_${key}_text`}>{key}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="p10Paper">
+        <div class="p10PaperText">
+          <h4 data-i18n="pd.bernoulli.paperTitle">Full write-up</h4>
+          <p data-i18n="pd.bernoulli.paperText">The complete article, with the formal proof, the comparison against the literature and every figure, is available as a PDF.</p>
+        </div>
+        <div class="p10PaperLinks">
+          <a class="p10Button" href={PDF_VIEW} target="_blank" rel="noopener noreferrer" data-i18n="pd.bernoulli.paperView">Read the PDF</a>
+          <a class="p10Button p10Button--ghost" href={PDF_DOWNLOAD} data-i18n="pd.bernoulli.paperDownload">Download</a>
+        </div>
+      </div>
+    </section>
   </div>
-  <div class="space-bottom"></div>
 </ProjectLayout>
 <style is:global>@import '../../styles/sections/projects-bernoulli.css';</style>
 <script type="module" is:inline>
   import Bernoulli from '/js/lib/Bernoulli.js'
-  const p = new Bernoulli(); p.starter?.(); p.main()
+  new Bernoulli().main()
 </script>

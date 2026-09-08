@@ -26,6 +26,9 @@ class PlotBoard {
       muted: cssVar('--color-muted', '#888888'),
       secondary: resolveColor(`oklch(from ${primary} l c calc(h + 140))`),
       tertiary: resolveColor(`oklch(from ${primary} l c calc(h - 130))`),
+      // Reserved for "this is wrong / out of hypothesis" marks, so a broken
+      // case never reads as just another series in the theme colour.
+      warn: resolveColor('oklch(0.62 0.20 25)'),
     }
   }
 
@@ -49,9 +52,9 @@ class PlotBoard {
     })
   }
 
-  static curve(board, f, color, domain) {
+  static curve(board, f, color, domain, opts = {}) {
     return board.create('functiongraph', domain ? [f, ...domain] : [f], {
-      strokeColor: color, strokeWidth: 2, highlight: false,
+      strokeColor: color, strokeWidth: 2, highlight: false, ...opts,
     })
   }
 
@@ -67,6 +70,75 @@ class PlotBoard {
       }))
     }
     return items
+  }
+
+  // Shaded region between two functions over [xmin, xmax], split at every
+  // sign change of f - g so the part where f dominates and the part where it
+  // does not can be painted differently. That distinction is the point: it
+  // makes a violated inequality visible as a region rather than as something
+  // the reader has to infer from two crossing lines.
+  static signedBand(board, f, g, xmin, xmax, colorPos, colorNeg, opts = {}) {
+    const samples = opts.samples ?? 240
+    const opacity = opts.opacity ?? 0.18
+    const at = i => {
+      const x = xmin + (xmax - xmin) * (i / samples)
+      const a = f(x), b = g(x)
+      return Number.isFinite(a) && Number.isFinite(b) ? [x, a, b] : null
+    }
+    const emit = (run, positive) => {
+      if (run.length < 2) return null
+      const xs = [], ys = []
+      run.forEach(([x, a]) => { xs.push(x); ys.push(a) })
+      for (let i = run.length - 1; i >= 0; i--) { xs.push(run[i][0]); ys.push(run[i][2]) }
+      return board.create('curve', [xs, ys], {
+        fillColor: positive ? colorPos : colorNeg,
+        fillOpacity: opacity, strokeWidth: 0, highlight: false, fixed: true,
+      })
+    }
+    const out = []
+    let run = [], positive = null
+    for (let i = 0; i <= samples; i++) {
+      const p = at(i)
+      if (!p) { const o = emit(run, positive); if (o) out.push(o); run = []; positive = null; continue }
+      const sign = p[1] >= p[2]
+      if (positive === null) positive = sign
+      if (sign !== positive) {
+        // Carry the crossing point into both runs so the two regions meet
+        // instead of leaving a sliver of unpainted gap between them.
+        run.push(p)
+        const o = emit(run, positive); if (o) out.push(o)
+        run = [p]; positive = sign
+      } else {
+        run.push(p)
+      }
+    }
+    const o = emit(run, positive); if (o) out.push(o)
+    return out
+  }
+
+  // Filled dot with an optional LaTeX caption, for marking a distinguished
+  // point (an equality case, a minimum) that the reader should notice.
+  static marker(board, x, y, color, opts = {}) {
+    return board.create('point', [x, y], {
+      size: opts.size ?? 3, fillColor: color, strokeColor: color,
+      strokeWidth: 1, fixed: true, highlight: false, showInfobox: false,
+      name: opts.name ?? '', withLabel: !!opts.name, label: { useKatex: true, strokeColor: color, fontSize: 12, offset: opts.offset ?? [8, 8] },
+    })
+  }
+
+  // Vertical guide, e.g. the left edge x = -y of the inequality's domain.
+  static vLine(board, x, color, opts = {}) {
+    return board.create('line', [[x, 0], [x, 1]], {
+      straightFirst: true, straightLast: true, strokeColor: color,
+      strokeWidth: opts.width ?? 1.5, dash: opts.dash ?? 2, highlight: false, fixed: true,
+    })
+  }
+
+  static hLine(board, y, color, opts = {}) {
+    return board.create('line', [[0, y], [1, y]], {
+      straightFirst: true, straightLast: true, strokeColor: color,
+      strokeWidth: opts.width ?? 1.5, dash: opts.dash ?? 2, highlight: false, fixed: true,
+    })
   }
 
   // Stops the arrowhead `gapPx` short of `to` (in screen pixels, so the gap

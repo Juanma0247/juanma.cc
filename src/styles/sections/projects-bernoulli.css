@@ -1,1 +1,376 @@
-.p10Processp { font-size: .8rem; margin-left: 1rem; margin-top: 1rem; }
+/* ── Layout ──────────────────────────────────────────────
+   Figure and controls side by side on wide screens, stacked below the
+   breakpoint, followed by the write-up in a single reading column. */
+
+.p10Content { padding-bottom: 4rem; }
+
+.p10Intro { margin: 0 0 1.75rem; }
+
+.p10Lead {
+  margin: 0;
+  max-width: 46rem;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--color-text);
+  text-align: justify;
+  hyphens: auto;
+}
+
+.p10Layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20rem;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* ── Figure ──────────────────────────────────────────── */
+
+.p10FigureCard {
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  padding: 1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-lg);
+}
+
+.p10Views { align-self: flex-start; }
+
+#p10PlotContainer {
+  width: 100%;
+  height: 26rem;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.p10Legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem 1.1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-label);
+  font-size: .78rem;
+  color: var(--color-muted);
+}
+
+.p10Legend li { display: flex; align-items: center; gap: .4rem; }
+
+.p10Swatch {
+  width: .85rem;
+  height: .85rem;
+  flex: none;
+  border-radius: 2px;
+}
+
+/* Swatch colours are set from the plot's own palette at runtime (see
+   Bernoulli.syncLegend), because the secondary and tertiary series are
+   derived by hue rotation in JS and cannot be restated in CSS without
+   drifting from what is actually drawn. The values here are fallbacks. */
+.p10Swatch--curve { background: var(--p10-curve, var(--color-primary)); }
+
+.p10Swatch--bound {
+  height: 0;
+  border-top: 2px dashed var(--p10-bound, var(--color-muted));
+  border-radius: 0;
+}
+
+.p10Swatch--aux {
+  height: 0;
+  border-top: 2px dashed var(--p10-aux, var(--color-muted));
+  border-radius: 0;
+}
+
+.p10Swatch--gap {
+  background: color-mix(in srgb, var(--p10-curve, var(--color-primary)) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--p10-curve, var(--color-primary)) 45%, transparent);
+}
+
+.p10Swatch--bad {
+  background: color-mix(in srgb, var(--p10-warn, #d64545) 25%, transparent);
+  border: 1px solid color-mix(in srgb, var(--p10-warn, #d64545) 55%, transparent);
+}
+
+/* One legend per view; the figure card carries the current view. */
+.p10FigureCard [data-legend="proof"] { display: none; }
+.p10FigureCard[data-view="proof"] [data-legend="inequality"] { display: none; }
+.p10FigureCard[data-view="proof"] [data-legend="proof"] { display: flex; }
+
+/* ── Control panel ───────────────────────────────────── */
+
+.p10Panel {
+  padding: 1.1rem 1.2rem 1.25rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+.p10PanelTitle {
+  margin: 0 0 .9rem;
+  font-family: var(--font-label);
+  font-size: .95rem;
+  font-weight: normal;
+  color: var(--color-muted);
+}
+
+.p10Field { margin: 0 0 1rem; width: auto; }
+.p10Field input[type="range"] { width: 100%; }
+
+.p10SliderLabel {
+  display: block;
+  margin-bottom: .3rem;
+  font-family: var(--font-label);
+  font-size: .9rem;
+  color: var(--color-text);
+}
+
+.p10Hint {
+  margin: .3rem 0 0;
+  font-size: .75rem;
+  line-height: 1.4;
+  color: var(--color-muted);
+}
+
+.p10Status {
+  margin: 0 0 .75rem;
+  padding: .5rem .65rem;
+  font-size: .78rem;
+  line-height: 1.4;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+}
+
+.p10Status.is-ok {
+  color: var(--color-primary);
+  background: var(--primary-10);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.p10Status.is-warn {
+  color: #b03030;
+  background: color-mix(in srgb, #d64545 12%, transparent);
+  border-color: color-mix(in srgb, #d64545 45%, transparent);
+}
+
+/* ── Numeric readout ─────────────────────────────────── */
+
+.p10Readout {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  padding: .65rem .75rem;
+  background: var(--color-bg);
+  border: var(--border-width) dashed var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.p10Row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .75rem;
+  font-size: .85rem;
+}
+
+.p10Row.is-strong {
+  margin-top: .2rem;
+  padding-top: .35rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-muted) 40%, transparent);
+  font-family: var(--font-bold);
+}
+
+.p10Key { color: var(--color-muted); }
+.p10Val { font-family: var(--font-mono); color: var(--color-text); }
+
+.p10Verdict {
+  margin: .4rem 0 0;
+  font-size: .75rem;
+  line-height: 1.35;
+}
+
+.p10Verdict.is-ok { color: var(--color-primary); }
+.p10Verdict.is-warn { color: #b03030; }
+
+.p10Presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-top: 1rem;
+}
+
+.p10Preset { padding: .3rem .6rem; font-size: .78rem; }
+
+/* ── Write-up ────────────────────────────────────────── */
+
+.p10Theory {
+  margin-top: 3rem;
+  padding-top: 2.25rem;
+  border-top: var(--border-width) solid var(--color-muted);
+}
+
+.p10Theory > h3 { margin: 0 0 1.25rem; font-size: 1.3rem; }
+
+.p10ProofHead { margin: 2.25rem 0 .75rem; font-size: 1.05rem; }
+
+.p10Prose,
+.p10Statement p,
+.p10Step p,
+.p10Note p {
+  max-width: 44rem;
+  line-height: 1.65;
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* The boxed statement: the one thing a reader skimming the page should
+   come away with. */
+.p10Statement {
+  padding: 1.25rem 1.5rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-primary);
+  border-left-width: .25rem;
+  border-radius: var(--radius-lg);
+}
+
+.p10Statement h4 { margin: 0 0 .6rem; font-size: 1rem; }
+.p10Statement p { margin: .4rem 0; }
+
+.p10Display {
+  margin: 1rem 0;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.p10Steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.p10Step {
+  padding: 1rem 1.15rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+.p10Step h5,
+.p10Note h5,
+.p10App h5 {
+  margin: 0 0 .5rem;
+  font-family: var(--font-bold);
+  font-size: .92rem;
+  color: var(--color-primary);
+}
+
+.p10Step p, .p10Note p, .p10App p { margin: 0; font-size: .9rem; }
+
+.p10Notes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.p10Note {
+  padding: 1rem 1.15rem;
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+.p10Note--warn {
+  border-color: color-mix(in srgb, #d64545 45%, transparent);
+  background: color-mix(in srgb, #d64545 6%, transparent);
+}
+
+.p10Note--warn h5 { color: #b03030; }
+
+/* ── Comparison table ────────────────────────────────── */
+
+.p10TableWrap { overflow-x: auto; }
+
+.p10Table { width: 100%; min-width: 34rem; }
+.p10Table td, .p10Table th { font-size: .85rem; }
+.p10Table tr.is-highlight td {
+  background: var(--primary-10);
+  font-family: var(--font-bold);
+}
+
+/* ── Applications ────────────────────────────────────── */
+
+.p10Apps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+}
+
+.p10App {
+  padding: 1rem 1.15rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+/* ── Paper link ──────────────────────────────────────── */
+
+.p10Paper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-lg);
+}
+
+.p10PaperText h4 { margin: 0 0 .35rem; font-size: 1rem; }
+.p10PaperText p { margin: 0; max-width: 32rem; font-size: .88rem; line-height: 1.5; color: var(--color-muted); }
+
+.p10PaperLinks { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+.p10Button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .45rem .9rem;
+  font-family: var(--font-bold);
+  font-size: .88rem;
+  color: var(--color-bg);
+  background: var(--color-primary);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  box-shadow: var(--shadow-primary);
+  transition: opacity var(--transition);
+}
+
+.p10Button:hover { opacity: .85; }
+
+.p10Button--ghost {
+  color: var(--color-primary);
+  background: transparent;
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+
+@media (max-width: 56rem) {
+  .p10Layout { grid-template-columns: minmax(0, 1fr); }
+  .p10Panel { order: 2; }
+  #p10PlotContainer { height: 22rem; }
+}
+
+@media (max-width: 40rem) {
+  .p10Lead { font-size: .95rem; text-align: left; }
+  .p10Prose, .p10Statement p, .p10Step p, .p10Note p { text-align: left; }
+  #p10PlotContainer { height: 18rem; }
+  .p10Statement { padding: 1rem 1.1rem; }
+  .p10Display { font-size: 1rem; }
+  .p10Paper { padding: 1rem 1.1rem; }
+}

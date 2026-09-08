@@ -109,16 +109,16 @@
   },
   {
     "slug": "bernoulli",
-    "title": "Bernoulli",
-    "navTitle": "Bernoulli",
+    "title": "Bernoulli Inequality",
+    "navTitle": "Bernoulli Inequality",
     "pageTitle": "Bernoulli Inequality",
     "image": "p10.png",
     "order": 10,
     "size": "sm",
     "labels": [
-      "Statistics",
-      "Probability",
-      "Distribution"
+      "Inequalities",
+      "Real Analysis",
+      "Convexity"
     ]
   },
   {
