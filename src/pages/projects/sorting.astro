@@ -24,23 +24,6 @@ const algorithms = [
   <section class="p12Panel" id="p12Panel">
     <header class="p12PanelHead">
       <h2 class="p12PanelTitle" data-i18n="pd.sorting.controls">Controls</h2>
-      <div class="p12PanelActions">
-      <button
-        type="button"
-        id="p12Sound"
-        class="p12Toggle p12SoundBtn"
-        aria-pressed="true"
-        aria-label="Mute sound"
-      >
-        <svg class="p12SoundOn" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M8 2 L4.5 5 H2 v6 h2.5 L8 14 Z" fill="currentColor"/>
-          <path d="M10.5 5.5 a3.5 3.5 0 0 1 0 5 M12.8 3.2 a7 7 0 0 1 0 9.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
-        <svg class="p12SoundOff" viewBox="0 0 16 16" fill="none" aria-hidden="true" hidden>
-          <path d="M8 2 L4.5 5 H2 v6 h2.5 L8 14 Z" fill="currentColor"/>
-          <path d="M10.8 6 L14.4 10 M14.4 6 L10.8 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
-      </button>
       <button
         type="button"
         id="p12Toggle"
@@ -53,7 +36,6 @@ const algorithms = [
           <path d="M1 1.5 L6 6.5 L11 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-      </div>
     </header>
 
     <div class="p12PanelBody" id="p12PanelBody">
@@ -86,7 +68,23 @@ const algorithms = [
         <li><span class="p12Swatch p12Swatch--mark" aria-hidden="true"></span><span data-i18n="pd.sorting.legendMark">Pivot / marker</span></li>
       </ul>
 
-      <div class="p12ScaleRow">
+      <div class="p12SoundRow">
+      <button
+        type="button"
+        id="p12Sound"
+        class="p12Toggle p12SoundBtn"
+        aria-pressed="true"
+        aria-label="Mute sound"
+      >
+        <svg class="p12SoundOn" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M8 2 L4.5 5 H2 v6 h2.5 L8 14 Z" fill="currentColor"/>
+          <path d="M10.5 5.5 a3.5 3.5 0 0 1 0 5 M12.8 3.2 a7 7 0 0 1 0 9.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <svg class="p12SoundOff" viewBox="0 0 16 16" fill="none" aria-hidden="true" hidden>
+          <path d="M8 2 L4.5 5 H2 v6 h2.5 L8 14 Z" fill="currentColor"/>
+          <path d="M10.8 6 L14.4 10 M14.4 6 L10.8 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
         <span class="p12ScaleLabel" data-i18n="pd.sorting.scale">Scale</span>
         <div class="seg-ctrl seg-ctrl--sm" id="p12Scale">
           <button type="button" class="seg-opt" data-scale="major" data-i18n="pd.sorting.scaleMajor">Major</button>

@@ -78,10 +78,15 @@
 .p12Panel.is-collapsed .p12PanelBody { display: none; }
 .p12Panel.is-collapsed { padding-bottom: .7rem; }
 
-.p12PanelActions {
+/* ── Sound row ───────────────────────────────────────────
+   The mute switch and the scale it applies to sit together, since one is
+   useless without the other. */
+
+.p12SoundRow {
   display: flex;
   align-items: center;
-  gap: .4rem;
+  gap: .5rem;
+  margin-top: .75rem;
 }
 
 /* The pressed state reads as "sound is on"; muted falls back to the plain
@@ -91,18 +96,10 @@
   background: var(--color-primary);
 }
 
-/* ── Scale selector ──────────────────────────────────────
-   Only meaningful while the sound is on, so it folds away when muted
-   instead of sitting there inert. */
-
-.p12ScaleRow {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  margin-top: .75rem;
-}
-
-.p12Panel.is-muted .p12ScaleRow { display: none; }
+/* Only the scale folds away when muted, never the switch itself: hiding the
+   whole row would leave no way back to un-muting. */
+.p12Panel.is-muted .p12ScaleLabel,
+.p12Panel.is-muted #p12Scale { display: none; }
 
 .p12ScaleLabel {
   font-family: var(--font-label);
@@ -110,7 +107,7 @@
   color: var(--color-muted);
 }
 
-.p12ScaleRow .seg-ctrl { background: color-mix(in srgb, var(--color-bg) 70%, transparent); }
+.p12SoundRow .seg-ctrl { background: color-mix(in srgb, var(--color-bg) 70%, transparent); }
 
 /* ── Fields ──────────────────────────────────────────────
    .field ships with its own gutter margins for in-flow forms; inside the
@@ -228,9 +225,9 @@
   .p12Fields .field-label { font-size: .78rem; }
   .p12Legend { gap: .25rem .7rem; margin-top: .6rem; font-size: .68rem; }
   .p12Legend .p12Swatch { width: .65rem; height: .65rem; }
-  .p12ScaleRow { margin-top: .6rem; gap: .4rem; }
+  .p12SoundRow { margin-top: .6rem; gap: .4rem; }
   .p12ScaleLabel { font-size: .72rem; }
-  .p12ScaleRow .seg-opt { padding: .12rem .5rem; font-size: .68rem; }
+  .p12SoundRow .seg-opt { padding: .12rem .5rem; font-size: .68rem; }
   .p12Algos { gap: .35rem; margin-top: .65rem; }
 
   .p12Algos button {
