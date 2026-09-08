@@ -539,6 +539,13 @@ export const en: I18n = {
     sorting: {
       size: 'Size',
       delay: 'Delay',
+      controls: 'Controls',
+      hidePanel: 'Hide controls',
+      showPanel: 'Show controls',
+      chartLabel: 'Sorting animation',
+      legendIdle: 'Value',
+      legendActive: 'Comparing',
+      legendMark: 'Pivot / marker',
     },
     fanctal: {
       downloadSvg: 'Download SVG',

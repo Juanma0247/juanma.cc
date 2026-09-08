@@ -200,6 +200,13 @@ export const es: I18n = {
     sorting: {
       size: 'Tamaño',
       delay: 'Retardo',
+      controls: 'Controles',
+      hidePanel: 'Ocultar controles',
+      showPanel: 'Mostrar controles',
+      chartLabel: 'Animación de ordenamiento',
+      legendIdle: 'Valor',
+      legendActive: 'Comparando',
+      legendMark: 'Pivote / marca',
     },
     fanctal: {
       downloadSvg: 'Descargar SVG',

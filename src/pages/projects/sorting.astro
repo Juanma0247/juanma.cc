@@ -1,47 +1,88 @@
 ﻿---
 import ProjectLayout from '../../layouts/ProjectLayout.astro'
+
+const algorithms = [
+  { id: 'p12bTim', label: 'Tim' },
+  { id: 'p12bMerge', label: 'Merge' },
+  { id: 'p12bHeap', label: 'Heap' },
+  { id: 'p12bQuick3', label: 'Quick3' },
+  { id: 'p12bQuick', label: 'Quick' },
+  { id: 'p12bShell', label: 'Shell' },
+  { id: 'p12bInsertion', label: 'Insertion' },
+  { id: 'p12bSelection', label: 'Selection' },
+  { id: 'p12bBubble', label: 'Bubble' },
+]
 ---
 <ProjectLayout slug="sorting">
-  <div>
-    <div class="p12ControlPanel">
-      <div class="field">
-        <div class="number-wrap">
-          <input id="p12i1" required="" type="number" class="p12imput" placeholder=" ">
-          <div class="spin">
-            <button type="button" data-step="up" tabindex="-1">▲</button>
-            <button type="button" data-step="down" tabindex="-1">▼</button>
+  <svg
+    id="p12GCont"
+    role="img"
+    aria-label="Sorting animation"
+    data-i18n-aria-label="pd.sorting.chartLabel"
+  ></svg>
+
+  <section class="p12Panel" id="p12Panel">
+    <header class="p12PanelHead">
+      <h2 class="p12PanelTitle" data-i18n="pd.sorting.controls">Controls</h2>
+      <button
+        type="button"
+        id="p12Toggle"
+        class="p12Toggle"
+        aria-controls="p12PanelBody"
+        aria-expanded="true"
+        aria-label="Hide controls"
+      >
+        <svg viewBox="0 0 12 8" fill="none" aria-hidden="true">
+          <path d="M1 1.5 L6 6.5 L11 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <div class="p12PanelBody" id="p12PanelBody">
+      <div class="p12Fields">
+        <div class="field">
+          <div class="number-wrap">
+            <input id="p12i1" required="" type="number" min="1" max="400" step="1" placeholder=" ">
+            <div class="spin">
+              <button type="button" data-step="up" tabindex="-1">▲</button>
+              <button type="button" data-step="down" tabindex="-1">▼</button>
+            </div>
           </div>
+          <label class="field-label" id="p12l1" data-i18n="pd.sorting.size">Size</label>
         </div>
-        <label class="field-label" id="p12l1" data-i18n="pd.sorting.size">Size</label>
-      </div>
-      <div class="field">
-        <div class="number-wrap">
-          <input id="p12i2" required="" type="number" class="p12imput" placeholder=" ">
-          <div class="spin">
-            <button type="button" data-step="up" tabindex="-1">▲</button>
-            <button type="button" data-step="down" tabindex="-1">▼</button>
+        <div class="field">
+          <div class="number-wrap">
+            <input id="p12i2" required="" type="number" min="1" max="2000" step="10" placeholder=" ">
+            <div class="spin">
+              <button type="button" data-step="up" tabindex="-1">▲</button>
+              <button type="button" data-step="down" tabindex="-1">▼</button>
+            </div>
           </div>
+          <label class="field-label" data-i18n="pd.sorting.delay">Delay</label>
         </div>
-        <label class="field-label" data-i18n="pd.sorting.delay">Delay</label>
       </div>
-      <button id="p12bTim" class="p12button"><img src="/img/play.svg" alt="" aria-hidden="true"/>Tim</button>
-      <button id="p12bMerge" class="p12button"><img src="/img/play.svg" alt="" aria-hidden="true"/>Merge</button>
-      <button id="p12bHeap" class="p12button"><img src="/img/play.svg" alt="" aria-hidden="true"/>Heap</button>
-      <button id="p12bQuick3" class="p12button"><img src="/img/play.svg" alt="" aria-hidden="true"/>Quick3</button>
-      <button id="p12bQuick" class="p12button"><img src="/img/play.svg" alt="" aria-hidden="true"/>Quick</button>
-      <button id="p12bShell" class="p12button"><img src="/img/play.svg" alt="" aria-hidden="true"/>Shell</button>
-      <button id="p12bInsertion" class="p12button"><img src="/img/play.svg" alt="" aria-hidden="true"/>Insertion</button>
-      <button id="p12bSelection" class="p12button"><img src="/img/play.svg" alt="" aria-hidden="true"/>Selection</button>
-      <button id="p12bBubble" class="p12button"><img src="/img/play.svg" alt="" aria-hidden="true"/>Bubble</button>
+
+      <ul class="p12Legend">
+        <li><span class="p12Swatch p12Swatch--idle" aria-hidden="true"></span><span data-i18n="pd.sorting.legendIdle">Value</span></li>
+        <li><span class="p12Swatch p12Swatch--active" aria-hidden="true"></span><span data-i18n="pd.sorting.legendActive">Comparing</span></li>
+        <li><span class="p12Swatch p12Swatch--mark" aria-hidden="true"></span><span data-i18n="pd.sorting.legendMark">Pivot / marker</span></li>
+      </ul>
+
+      <div class="p12Algos">
+        {algorithms.map(a => (
+          <button id={a.id} class="p12button" type="button">
+            <svg viewBox="0 0 330 330" aria-hidden="true">
+              <path fill="currentColor" d="M37.728,328.12c2.266,1.256,4.77,1.88,7.272,1.88c2.763,0,5.522-0.763,7.95-2.28l240-149.999c4.386-2.741,7.05-7.548,7.05-12.72c0-5.172-2.664-9.979-7.05-12.72L52.95,2.28c-4.625-2.891-10.453-3.043-15.222-0.4C32.959,4.524,30,9.547,30,15v300C30,320.453,32.959,325.476,37.728,328.12z"/>
+            </svg>
+            {a.label}
+          </button>
+        ))}
+      </div>
     </div>
-  </div>
-  <div style="display: flex; flex-wrap: wrap;">
-    <svg id="p12GCont" height="100vh" width="100%"></svg>
-  </div>
-  <div class="space-bottom"></div>
+  </section>
 </ProjectLayout>
 <style is:global>@import '../../styles/sections/projects-sorting.css';</style>
 <script type="module" is:inline>
   import Sorting from '/js/lib/Sorting.js'
-  const p = new Sorting(); p.starter?.(); p.main()
+  new Sorting().main()
 </script>

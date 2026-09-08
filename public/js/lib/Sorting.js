@@ -1,9 +1,12 @@
 import ExtText from '/js/core/ExtText.js'
 
-const rootStyles = getComputedStyle(document.documentElement)
-const c1 = rootStyles.getPropertyValue('--c1').trim()
-const c2 = rootStyles.getPropertyValue('--c2').trim()
-const c3 = rootStyles.getPropertyValue('--c3').trim()
+const MAX_SIZE = 400
+const MAX_DELAY = 2000
+// Every recorded step keeps a snapshot of the whole array, so an O(n^2) run
+// on a wide screen would otherwise pile up hundreds of megabytes. Once the
+// cap is hit the timeline is halved and the stride doubled, which keeps the
+// animation's shape while bounding memory.
+const MAX_FRAMES = 8000
 
 class Sorting {
     constructor() {
@@ -11,22 +14,25 @@ class Sorting {
         this.i1 = document.getElementById('p12i1')
         this.i2 = document.getElementById('p12i2')
         this.l1 = document.getElementById('p12l1')
-        this.h = parseFloat(getComputedStyle(this.content).height)
-        this.w = parseFloat(getComputedStyle(this.content).width)
+        this.frames = []
+        this.frame = null
+        this.timer = null
+        this.seen = 0
+        this.stride = 1
         this.tick = 50
-        this.size = parseInt(this.w / 10)
+        this.measure()
+        this.size = Math.max(12, Math.min(120, Math.round(this.w / 8)))
         this.i1.value = this.size
         this.i2.value = this.tick
+        this.readPalette()
     }
 
-    add(element) {
-        this.content.appendChild(element)
-    }
+    // -- Canvas -------------------------------------------
 
-    group(elements) {
-        const g = this.svg('g')
-        elements.forEach(e => g.appendChild(e))
-        return g
+    measure() {
+        const box = this.content.getBoundingClientRect()
+        this.w = box.width || window.innerWidth
+        this.h = box.height || window.innerHeight
     }
 
     svg(element) {
@@ -34,64 +40,159 @@ class Sorting {
     }
 
     cleanGraph() {
-        this.content.innerHTML = ""
+        this.content.replaceChildren()
     }
 
-    stopAll() {
-        let lastTO = setTimeout(() => {}, 0)
-        for (let i = 0; i <= lastTO; i++) {
-            clearTimeout(i)
+    // -- Palette ------------------------------------------
+    // Read from the live custom properties instead of being captured once at
+    // import time: the accessibility page lets the user override
+    // --color-primary/text/bg, and the dark theme swaps text and bg.
+
+    readPalette() {
+        const s = getComputedStyle(document.documentElement)
+        const pick = (name, fallback) => s.getPropertyValue(name).trim() || fallback
+        this.palette = {
+            idle: pick('--color-primary', '#008888'),
+            active: pick('--color-text', '#000000'),
+            edge: pick('--color-bg', '#ffffff')
         }
+    }
+
+    watchPalette() {
+        const refresh = () => { this.readPalette(); this.paint() }
+        new MutationObserver(refresh).observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['style', 'data-theme']
+        })
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', refresh)
+    }
+
+    // -- Drawing ------------------------------------------
+
+    round(value) {
+        return Math.round(value * 100) / 100
+    }
+
+    bar(x, w, height, active) {
+        const y = this.h - height
+        const r = Math.min(2.5, w / 3, height / 2)
+        const n = v => this.round(v)
+        const p = this.svg('path')
+        p.setAttribute('d',
+            'M' + n(x) + ' ' + n(this.h) +
+            'V' + n(y + r) +
+            'Q' + n(x) + ' ' + n(y) + ' ' + n(x + r) + ' ' + n(y) +
+            'H' + n(x + w - r) +
+            'Q' + n(x + w) + ' ' + n(y) + ' ' + n(x + w) + ' ' + n(y + r) +
+            'V' + n(this.h) + 'Z')
+        p.setAttribute('fill', active ? this.palette.active : this.palette.idle)
+        // Below ~3px a background-coloured outline would swallow the bar
+        // itself, so thin bars are left as flat slivers of their own colour.
+        if (w >= 3) {
+            p.setAttribute('stroke', this.palette.edge)
+            p.setAttribute('stroke-width', 1)
+        }
+        return p
+    }
+
+    // Wedge notched out of the bar's base, marking the pivot / just-placed
+    // element the algorithm is currently pointing at.
+    mark(x, w, height) {
+        const peak = Math.min(height, Math.max(height / 2, 4))
+        const n = v => this.round(v)
+        const p = this.svg('path')
+        p.setAttribute('d',
+            'M' + n(x) + ' ' + n(this.h) +
+            'L' + n(x + w / 2) + ' ' + n(this.h - peak) +
+            'L' + n(x + w) + ' ' + n(this.h) + 'Z')
+        p.setAttribute('fill', this.palette.edge)
+        p.setAttribute('stroke', this.palette.edge)
+        p.setAttribute('stroke-width', 1)
+        return p
+    }
+
+    draw(frame) {
+        const data = frame.data
+        const n = data.length
+        if (!n) { this.cleanGraph(); return }
+        const slot = this.w / n
+        const unit = (this.h - 2) / n
+        const gap = slot >= 4 ? 1 : 0
+        const width = Math.max(slot - gap, 0.6)
+        const emphasis = new Set(frame.emphasis)
+        const flags = new Set(frame.flags)
+        const batch = document.createDocumentFragment()
+        for (let i = 0; i < n; i++) {
+            const x = i * slot + gap / 2
+            const height = Math.max(data[i] * unit, 1)
+            batch.appendChild(this.bar(x, width, height, emphasis.has(i)))
+            if (flags.has(i)) batch.appendChild(this.mark(x, width, height))
+        }
+        this.content.replaceChildren(batch)
+    }
+
+    paint() {
+        if (this.frame) this.draw(this.frame)
+    }
+
+    // -- Timeline -----------------------------------------
+    // The sorts run synchronously and record steps; playback is a single
+    // chained timeout. The previous version queued one setTimeout per step
+    // and cancelled them by clearing every timer id on the page, which also
+    // killed timers the site itself owned.
+
+    graph(data, emphasis = [], flags = [], force = false) {
+        this.seen += 1
+        if (!force && this.seen % this.stride !== 0) return
+        this.frames.push({
+            data: Array.from(data),
+            emphasis: Array.from(emphasis),
+            flags: Array.from(flags)
+        })
+        if (this.frames.length >= MAX_FRAMES) {
+            this.frames = this.frames.filter((_, i) => i % 2 === 0)
+            this.stride *= 2
+        }
+    }
+
+    stop() {
+        if (this.timer !== null) {
+            clearTimeout(this.timer)
+            this.timer = null
+        }
+    }
+
+    play(onDone) {
+        this.stop()
+        let i = 0
+        const step = () => {
+            if (i >= this.frames.length) {
+                this.timer = null
+                if (onDone) onDone()
+                return
+            }
+            this.frame = this.frames[i++]
+            this.draw(this.frame)
+            this.timer = setTimeout(step, Math.max(1, this.tick))
+        }
+        step()
     }
 
     reload() {
+        this.stop()
+        this.measure()
         this.data = this.randomList(this.size)
         this.mergeGraphData = this.data
-        this.sTO = 1
-        this.ew = this.w / this.size
-        this.eh = this.h / this.size
+        this.frames = []
+        this.seen = 0
+        this.stride = 1
         this.cleanGraph()
-        this.stopAll()
     }
 
-    complement(array, subarrat) {
-        return array.filter(x => !subarrat.includes(x))
-    }
-
-    straightTrapezoid(x, y, emphasis, flag) {
-        let isPixel = this.w / this.size < 2
-        const l = this.svg('path')
-        l.setAttribute('d', `
-            M ${x * this.ew} ${this.h}
-            l 0 ${-y * this.eh}
-            l ${this.ew} 0
-            l 0 ${y * this.eh} Z`)
-        l.setAttribute('fill', emphasis ? c2 : c1)
-        l.setAttribute("stroke", !isPixel ? c3 : emphasis ? c1 : c2)
-        l.setAttribute("stroke-width", 1)
-        this.add(l)
-        if (flag) {
-            const p = this.svg('path')
-            p.setAttribute('d', `
-                M ${x * this.ew} ${this.h}
-                l ${this.ew / 2} ${-(y * this.eh / 2)}
-                l ${this.ew / 2} ${y * this.eh / 2}Z`)
-            p.setAttribute('fill', c3)
-            p.setAttribute("stroke", c3)
-            p.setAttribute("stroke-width", 1)
-            this.add(p)
-        }
-    }
-
-    graph(data, emphasis = [], flags = []) {
-        setTimeout(() => {
-            this.cleanGraph()
-            for (let i_ in data) {
-                const i = parseInt(i_)
-                this.straightTrapezoid(i, data[i], emphasis.includes(i), flags.includes(i))
-            }
-        }, this.sTO * this.tick)
-        this.sTO += 1
+    preview() {
+        this.reload()
+        this.frame = { data: this.data, emphasis: [], flags: [] }
+        this.paint()
     }
 
     randomList(n) {
@@ -154,11 +255,8 @@ class Sorting {
     }
 
     heapGraph(changes, swapIndices = []) {
-        const sortChanges = [...changes]
-        const indexChanges = swapIndices.length > 0 ? swapIndices : []
-        const flags = [...swapIndices]
-        this.mergeGraphData = sortChanges
-        this.graph(this.mergeGraphData, indexChanges, flags)
+        this.mergeGraphData = [...changes]
+        this.graph(this.mergeGraphData, swapIndices, swapIndices)
     }
 
     heapify(arr, n, i) {
@@ -226,9 +324,9 @@ class Sorting {
         return i + 1
     }
 
-    insertionGraph(arr, indices = []) {
+    insertionGraph(arr, indices = [], flags = []) {
         this.mergeGraphData = [...arr]
-        this.graph(this.mergeGraphData, indices, [])
+        this.graph(this.mergeGraphData, indices, flags)
     }
 
     insertion(arr) {
@@ -238,17 +336,17 @@ class Sorting {
             while (j >= 0 && arr[j] > key) {
                 arr[j + 1] = arr[j]
                 j--
-                this.insertionGraph([...arr], [j + 1, i])
+                this.insertionGraph([...arr], [j + 1, i], [i])
             }
             arr[j + 1] = key
-            this.insertionGraph([...arr], [j + 1, i])
+            this.insertionGraph([...arr], [j + 1, i], [j + 1])
         }
         return arr
     }
 
-    selectionGraph(arr, indices = []) {
+    selectionGraph(arr, indices = [], flags = []) {
         this.mergeGraphData = [...arr]
-        this.graph(this.mergeGraphData, indices, [])
+        this.graph(this.mergeGraphData, indices, flags)
     }
 
     selection(arr) {
@@ -257,25 +355,19 @@ class Sorting {
             let min = i
             for (let j = i + 1; j < n; j++) {
                 if (arr[j] < arr[min]) min = j
-                this.selectionGraph([...arr], [i, j, min])
+                this.selectionGraph([...arr], [i, j], [min])
             }
             if (min !== i) {
                 [arr[i], arr[min]] = [arr[min], arr[i]]
-                this.selectionGraph([...arr], [i, min])
+                this.selectionGraph([...arr], [i, min], [i])
             }
         }
         return arr
     }
 
     bubbleGraph(data, emphasis = [], flags = []) {
-        setTimeout(() => {
-            this.cleanGraph()
-            for (let i_ in data) {
-                const i = parseInt(i_)
-                this.straightTrapezoid(i, data[i], emphasis.includes(i), flags.includes(i))
-            }
-        }, this.sTO * this.tick)
-        this.sTO += 1
+        this.mergeGraphData = [...data]
+        this.graph(this.mergeGraphData, emphasis, flags)
     }
 
     bubble(data) {
@@ -297,19 +389,12 @@ class Sorting {
             if (!swapped) break
         }
 
-        this.graph(arr)
         return arr
     }
 
     shellGraph(data, emphasis = [], flags = []) {
-        setTimeout(() => {
-            this.cleanGraph()
-            for (let i_ in data) {
-                const i = parseInt(i_)
-                this.straightTrapezoid(i, data[i], emphasis.includes(i), flags.includes(i))
-            }
-        }, this.sTO * this.tick)
-        this.sTO += 1
+        this.mergeGraphData = [...data]
+        this.graph(this.mergeGraphData, emphasis, flags)
     }
 
     shell(data) {
@@ -330,19 +415,12 @@ class Sorting {
                 this.shellGraph([...arr], [j], [i])
             }
         }
-        this.graph(arr)
         return arr
     }
 
     quick3Graph(data, emphasis = [], flags = []) {
-        setTimeout(() => {
-            this.cleanGraph()
-            for (let i_ in data) {
-                const i = parseInt(i_)
-                this.straightTrapezoid(i, data[i], emphasis.includes(i), flags.includes(i))
-            }
-        }, this.sTO * this.tick)
-        this.sTO += 1
+        this.mergeGraphData = [...data]
+        this.graph(this.mergeGraphData, emphasis, flags)
     }
 
     quick3(data) {
@@ -374,25 +452,16 @@ class Sorting {
             sort(gt + 1, hi)
         }
         sort(0, arr.length - 1)
-        this.graph(arr)
         return arr
     }
 
     timGraph(fullData, emphasis = [], flags = []) {
-        setTimeout(() => {
-            this.cleanGraph()
-            for (let i_ in fullData) {
-                const i = parseInt(i_)
-                this.straightTrapezoid(i, fullData[i], emphasis.includes(i), flags.includes(i))
-            }
-        }, this.sTO * this.tick)
-        this.sTO += 1
+        this.mergeGraphData = [...fullData]
+        this.graph(this.mergeGraphData, emphasis, flags)
     }
 
     timSort(data) {
         const RUN = 32
-        this.timGraphData = [...data]
-        this.sTO = 1
         const insertionSort = (arr, left, right) => {
             for (let i = left + 1; i <= right; i++) {
                 let temp = arr[i]
@@ -400,10 +469,10 @@ class Sorting {
                 while (j >= left && arr[j] > temp) {
                     arr[j + 1] = arr[j]
                     j--
-                    this.timGraph([...arr], [i, j])
+                    this.timGraph([...arr], [i, j], [left])
                 }
                 arr[j + 1] = temp
-                this.timGraph([...arr], [i])
+                this.timGraph([...arr], [i], [left])
             }
         }
 
@@ -425,19 +494,19 @@ class Sorting {
                     arr[k] = right[j]
                     j++
                 }
-                this.timGraph([...arr], [k])
+                this.timGraph([...arr], [k], [m])
                 k++
             }
             while (i < len1) {
                 arr[k] = left[i]
                 i++
-                this.timGraph([...arr], [k])
+                this.timGraph([...arr], [k], [m])
                 k++
             }
             while (j < len2) {
                 arr[k] = right[j]
                 j++
-                this.timGraph([...arr], [k])
+                this.timGraph([...arr], [k], [m])
                 k++
             }
         }
@@ -450,47 +519,90 @@ class Sorting {
                 if (mid < right) merge(data, left, mid, right)
             }
         }
-        this.graph(data)
         return data
     }
 
-    addSortListener(id, methodName, isAsync = false) {
-        const button = document.getElementById(id)
-        if (!button || typeof this[methodName] !== 'function') return
+    // -- Wiring -------------------------------------------
 
-        button.addEventListener('click', async () => {
-            this.reload()
-            this.graph(this.data)
-            const sorted = isAsync
-                ? await this[methodName]([...this.data])
-                : this[methodName]([...this.data])
-            this.graph(sorted)
+    setRunning(button) {
+        document.querySelectorAll('.p12Algos button').forEach(b => {
+            b.classList.toggle('is-solid', b === button)
         })
     }
 
+    addSortListener(id, methodName) {
+        const button = document.getElementById(id)
+        if (!button || typeof this[methodName] !== 'function') return
+
+        button.addEventListener('click', () => {
+            this.reload()
+            this.graph(this.data, [], [], true)
+            const sorted = this[methodName]([...this.data])
+            this.graph(sorted, [], [], true)
+            this.setRunning(button)
+            this.play(() => this.setRunning(null))
+        })
+    }
+
+    setupPanel() {
+        const panel = document.getElementById('p12Panel')
+        const toggle = document.getElementById('p12Toggle')
+        if (!panel || !toggle) return
+        const t = (k, f) => window.i18nGet ? window.i18nGet('pd.sorting.' + k, f) : f
+        const sync = () => {
+            const collapsed = panel.classList.contains('is-collapsed')
+            toggle.setAttribute('aria-expanded', String(!collapsed))
+            toggle.setAttribute('aria-label', collapsed
+                ? t('showPanel', 'Show controls')
+                : t('hidePanel', 'Hide controls'))
+        }
+        toggle.addEventListener('click', () => {
+            panel.classList.toggle('is-collapsed')
+            sync()
+        })
+        window.addEventListener('langchanged', sync)
+        sync()
+    }
+
     main() {
-        this.reload()
-        ExtText.restrictNI(this.i1, 1, this.w, "N")
-        ExtText.restrictNI(this.i2, 1, 2000, "N")
+        this.preview()
+        this.watchPalette()
+        this.setupPanel()
+
+        ExtText.restrictNI(this.i1, 1, MAX_SIZE, "N")
+        ExtText.restrictNI(this.i2, 1, MAX_DELAY, "N")
+
         this.i1.addEventListener("input", () => {
-            this.size = parseInt(this.i1.value)
+            const value = parseInt(this.i1.value)
+            if (!Number.isFinite(value) || value < 1) return
+            this.size = value
+            clearTimeout(this.previewTimer)
+            this.previewTimer = setTimeout(() => this.preview(), 250)
         })
         this.i2.addEventListener("input", () => {
-            this.tick = parseInt(this.i2.value)
+            const value = parseInt(this.i2.value)
+            if (Number.isFinite(value) && value >= 1) this.tick = value
         })
+
+        // The canvas tracks the viewport, so a rotation or resize has to
+        // remeasure before the current frame is redrawn at the new scale.
+        window.addEventListener('resize', () => {
+            clearTimeout(this.resizeTimer)
+            this.resizeTimer = setTimeout(() => {
+                this.measure()
+                this.paint()
+            }, 120)
+        })
+
         this.addSortListener('p12bMerge', 'merge')
         this.addSortListener('p12bHeap', 'heap')
-        this.addSortListener('p12bQuick', 'quick', true)
+        this.addSortListener('p12bQuick', 'quick')
         this.addSortListener('p12bInsertion', 'insertion')
         this.addSortListener('p12bSelection', 'selection')
         this.addSortListener('p12bBubble', 'bubble')
         this.addSortListener('p12bShell', 'shell')
         this.addSortListener('p12bQuick3', 'quick3')
         this.addSortListener('p12bTim', 'timSort')
-        window.scrollTo({
-            top: document.body.scrollHeight,
-            behavior: "smooth"
-        })
     }
 }
 
