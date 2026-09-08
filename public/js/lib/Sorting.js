@@ -1,4 +1,5 @@
 import ExtText from '/js/core/ExtText.js'
+import Sound from '/js/core/Sound.js'
 
 const MAX_SIZE = 400
 const MAX_DELAY = 2000
@@ -7,6 +8,8 @@ const MAX_DELAY = 2000
 // cap is hit the timeline is halved and the stride doubled, which keeps the
 // animation's shape while bounding memory.
 const MAX_FRAMES = 8000
+const SOUND_KEY = 'sorting-sound'
+const SCALE_KEY = 'sorting-scale'
 
 class Sorting {
     constructor() {
@@ -17,6 +20,8 @@ class Sorting {
         this.frames = []
         this.frame = null
         this.timer = null
+        this.sound = new Sound(localStorage.getItem(SCALE_KEY) || 'major')
+        this.sound.setEnabled(localStorage.getItem(SOUND_KEY) !== 'off')
         this.seen = 0
         this.stride = 1
         this.tick = 50
@@ -173,6 +178,7 @@ class Sorting {
             }
             this.frame = this.frames[i++]
             this.draw(this.frame)
+            this.audioStep(this.frame)
             this.timer = setTimeout(step, Math.max(1, this.tick))
         }
         step()
@@ -180,6 +186,7 @@ class Sorting {
 
     reload() {
         this.stop()
+        this.sound.reset()
         this.measure()
         this.data = this.randomList(this.size)
         this.mergeGraphData = this.data
@@ -522,6 +529,92 @@ class Sorting {
         return data
     }
 
+    // -- Sonification -------------------------------------
+
+    // Fraction of adjacent pairs already in order, rescaled so a shuffled
+    // array reads as 0. A random permutation sits near 0.5 on the raw
+    // measure, which would start the pad half open.
+    sortedness(data) {
+        const n = data.length
+        if (n < 2) return 1
+        let ordered = 0
+        for (let i = 1; i < n; i++) if (data[i - 1] <= data[i]) ordered++
+        const raw = ordered / (n - 1)
+        return Math.max(0, (raw - 0.5) * 2)
+    }
+
+    // mergeGraph() can emit `[undefined]` when it flagged nothing, and
+    // dataToIndex() returns -1 for values it cannot place, so every index
+    // out of a frame has to be validated before it becomes a pitch.
+    audioStep(frame) {
+        if (!this.sound.enabled) return
+        const data = frame.data
+        const n = data.length
+        const valid = i => Number.isInteger(i) && i >= 0 && i < n
+        const marked = frame.flags.find(valid)
+        const index = marked !== undefined ? marked : frame.emphasis.find(valid)
+        if (index === undefined) return
+        this.sound.step({
+            value: data[index],
+            max: n,
+            pan: n > 1 ? (index / (n - 1)) * 2 - 1 : 0,
+            tick: this.tick,
+            accent: marked !== undefined,
+            progress: this.sortedness(data)
+        })
+    }
+
+    setupSound() {
+        const panel = document.getElementById('p12Panel')
+        const toggle = document.getElementById('p12Sound')
+        const scale = document.getElementById('p12Scale')
+        if (!panel || !toggle) return
+        const t = (k, f) => window.i18nGet ? window.i18nGet('pd.sorting.' + k, f) : f
+
+        const sync = () => {
+            const on = this.sound.enabled
+            panel.classList.toggle('is-muted', !on)
+            toggle.setAttribute('aria-pressed', String(on))
+            toggle.setAttribute('aria-label', on
+                ? t('muteSound', 'Mute sound')
+                : t('unmuteSound', 'Turn on sound'))
+            toggle.querySelector('.p12SoundOn').hidden = !on
+            toggle.querySelector('.p12SoundOff').hidden = on
+        }
+
+        toggle.addEventListener('click', () => {
+            const on = !this.sound.enabled
+            this.sound.setEnabled(on)
+            localStorage.setItem(SOUND_KEY, on ? 'on' : 'off')
+            // The click is a user gesture, so it is a valid moment to open
+            // the AudioContext even if no run has started yet.
+            if (on) this.sound.start()
+            sync()
+        })
+
+        if (scale) {
+            scale.addEventListener('click', e => {
+                const option = e.target.closest('[data-scale]')
+                if (!option) return
+                const name = option.dataset.scale
+                this.sound.setScale(name)
+                localStorage.setItem(SCALE_KEY, name)
+                scale.querySelectorAll('[data-scale]').forEach(b => {
+                    b.classList.toggle('is-active', b === option)
+                    b.setAttribute('aria-pressed', String(b === option))
+                })
+            })
+            scale.querySelectorAll('[data-scale]').forEach(b => {
+                const active = b.dataset.scale === this.sound.scaleName
+                b.classList.toggle('is-active', active)
+                b.setAttribute('aria-pressed', String(active))
+            })
+        }
+
+        window.addEventListener('langchanged', sync)
+        sync()
+    }
+
     // -- Wiring -------------------------------------------
 
     setRunning(button) {
@@ -534,13 +627,19 @@ class Sorting {
         const button = document.getElementById(id)
         if (!button || typeof this[methodName] !== 'function') return
 
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
+            // Opening the context here keeps it inside the click gesture.
+            if (this.sound.enabled) await this.sound.start()
             this.reload()
             this.graph(this.data, [], [], true)
             const sorted = this[methodName]([...this.data])
             this.graph(sorted, [], [], true)
             this.setRunning(button)
-            this.play(() => this.setRunning(null))
+            this.sound.startDrone()
+            this.play(() => {
+                this.setRunning(null)
+                this.sound.finale(sorted)
+            })
         })
     }
 
@@ -568,6 +667,7 @@ class Sorting {
         this.preview()
         this.watchPalette()
         this.setupPanel()
+        this.setupSound()
 
         ExtText.restrictNI(this.i1, 1, MAX_SIZE, "N")
         ExtText.restrictNI(this.i2, 1, MAX_DELAY, "N")

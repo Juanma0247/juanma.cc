@@ -207,6 +207,11 @@ export const es: I18n = {
       legendIdle: 'Valor',
       legendActive: 'Comparando',
       legendMark: 'Pivote / marca',
+      muteSound: 'Silenciar sonido',
+      unmuteSound: 'Activar sonido',
+      scale: 'Escala',
+      scaleMajor: 'Mayor',
+      scaleMinor: 'Menor',
     },
     fanctal: {
       downloadSvg: 'Descargar SVG',
