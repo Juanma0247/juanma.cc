@@ -657,6 +657,12 @@ export const en: I18n = {
       codeCopy: 'Copy',
       codeCopied: 'Copied!',
       codeDownload: 'Download .py',
+      animateBtn: 'Animation',
+      animTitle: 'Animation',
+      animExit: 'Exit view',
+      animStart: 'Start',
+      animStop: 'Stop',
+      animHint: 'It runs through every valid pair (n, a) with 2 ≤ n ≤ 20 and 1 ≤ a ≤ n − 1, speeding up as n grows. Changing any parameter stops it and draws the values you typed.',
     },
     hillCipher: {
       alphabet: 'Alphabet',

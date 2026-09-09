@@ -86,6 +86,165 @@
   color: var(--color-muted);
 }
 
+.p11PanelFoot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: .3rem;
+}
+
+.p11AnimBtn { font-size: .85rem; }
+
+/* ── Fullscreen animation view ───────────────────── */
+
+body.p11FsLock { overflow: hidden; }
+
+.p11Fs {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  background: var(--color-bg);
+}
+
+.p11Fs[hidden] { display: none; }
+
+/* The SVG keeps its 1:1 viewBox with preserveAspectRatio, so it fills whichever
+   of the two dimensions is smaller and stays centred in the leftover space. */
+.p11FsStage {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: .75rem;
+}
+
+.p11FsStage > svg { width: 100%; height: 100%; }
+
+.p11FsPanel {
+  flex: 0 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  padding: 1rem 1.1rem;
+  overflow-y: auto;
+  background: var(--primary-05);
+}
+
+@media (orientation: landscape) {
+  .p11Fs { flex-direction: row; }
+  .p11FsPanel {
+    width: min(23rem, 40vw);
+    min-width: 15rem;
+    border-left: var(--border-width) solid var(--color-muted);
+  }
+}
+
+@media (orientation: portrait) {
+  .p11Fs { flex-direction: column; }
+  /* The figure claims a full-width square first; the panel takes what is left
+     and scrolls inside it. */
+  .p11FsStage { min-height: min(100vw, 48vh); }
+  .p11FsPanel {
+    max-height: 60vh;
+    border-top: var(--border-width) solid var(--color-muted);
+  }
+}
+
+/* The panel scrolls as a whole; its blocks keep their natural height instead of
+   being squeezed by the column. */
+.p11FsPanel > * { flex-shrink: 0; }
+
+.p11FsHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+}
+
+.p11FsTitle {
+  margin: 0;
+  font-size: .95rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.p11FsExit {
+  font-size: .8rem;
+  padding: .35rem .6rem;
+}
+
+.p11FsInputs .p11inputs { gap: .6rem; }
+.p11FsInputs .p11InputGroup:first-child { margin-top: 0; }
+.p11FsInputs .p11Hint { margin-top: .2rem; font-size: .72rem; }
+
+.p11FsControls { display: flex; gap: .6rem; }
+
+.p11FsCtrl { flex: 1 1 0; }
+
+.p11FsProgress {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.p11FsProgressHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .6rem;
+  font-size: .82rem;
+  color: var(--color-muted);
+}
+
+.p11FsFrame {
+  font-family: var(--font-bold);
+  color: var(--color-primary);
+}
+
+.p11FsCount { font-variant-numeric: tabular-nums; }
+
+.p11FsBar {
+  display: block;
+  height: .4rem;
+  background: var(--primary-10);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.p11FsBarFill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--color-primary);
+  transition: width .18s linear;
+}
+
+.p11FsArea {
+  padding: .7rem .8rem;
+  background: var(--primary-10);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
+
+.p11FsArea:empty { display: none; }
+
+.p11FsArea .katex {
+  font-size: .9rem;
+  color: var(--color-text);
+}
+
+.p11FsHint {
+  margin: 0;
+  font-size: .75rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
 /* ── Actions card: buttons + area result, below the figure/panel row ──── */
 
 .p11ActionsCard {

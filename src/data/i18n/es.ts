@@ -318,6 +318,12 @@ export const es: I18n = {
       codeCopy: 'Copiar',
       codeCopied: '¡Copiado!',
       codeDownload: 'Descargar .py',
+      animateBtn: 'Animación',
+      animTitle: 'Animación',
+      animExit: 'Salir de la vista',
+      animStart: 'Iniciar',
+      animStop: 'Detener',
+      animHint: 'Recorre cada par válido (n, a) con 2 ≤ n ≤ 20 y 1 ≤ a ≤ n − 1, acelerando a medida que crece n. Cambiar cualquier parámetro la detiene y dibuja los valores que escribiste.',
     },
     hillCipher: {
       alphabet: 'Alfabeto',

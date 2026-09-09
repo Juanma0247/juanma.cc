@@ -11,6 +11,14 @@ const t = (key, fallback) =>
 // the button stays hidden until then (see main()).
 const PDF_DRIVE_ID = '18mrxCsuYxWPeMb-hP4Z7Yxh5pNsqDmcd'
 
+// Animation sweep: every admissible pair (n, a) with n in [2, 20] and 1 <= a < n,
+// 190 frames in total. The dwell time is constant inside each n group and drops
+// linearly from ANIM_DELAY_START to ANIM_DELAY_END, which adds up to ~2 minutes.
+const ANIM_N_MIN = 2
+const ANIM_N_MAX = 20
+const ANIM_DELAY_START = 1000
+const ANIM_DELAY_END = 333
+
 class Fanctal {
     constructor() {
         this.content = document.getElementById('fanctal')
@@ -25,6 +33,31 @@ class Fanctal {
         this.n = 6
         this.a = 3
         this.step = (2 * pi) / this.n
+        this.buffer = document.createDocumentFragment()
+
+        this.figureCard = this.content?.parentElement
+        this.panel = document.querySelector('.p11Panel')
+        this.inputsWrap = document.querySelector('.p11inputs')
+        this.panelFoot = document.querySelector('.p11PanelFoot')
+        this.animBtn = document.getElementById('p11AnimBtn')
+        this.fs = document.getElementById('p11Fs')
+        this.fsStage = document.getElementById('p11FsStage')
+        this.fsInputs = document.getElementById('p11FsInputs')
+        this.fsExit = document.getElementById('p11FsExit')
+        this.fsPlay = document.getElementById('p11FsPlay')
+        this.fsStop = document.getElementById('p11FsStop')
+        this.fsFrame = document.getElementById('p11FsFrame')
+        this.fsCount = document.getElementById('p11FsCount')
+        this.fsBarFill = document.getElementById('p11FsBarFill')
+        this.fsArea = document.getElementById('p11FsArea')
+
+        this.fsOpen = false
+        this.animOn = false
+        this.animTimer = null
+        this.animIndex = 0
+        this.sequence = []
+        this.seqIndex = new Map()
+        this.delays = new Map()
     }
 
     frac(decimal, tolerance = 1e-10) {
@@ -163,10 +196,18 @@ class Fanctal {
 
     clean() {
         this.content.innerHTML = ""
+        this.buffer = document.createDocumentFragment()
     }
 
+    // A single fanctal can reach ~20k nodes, so shapes are staged in a fragment
+    // and committed once per redraw instead of appended one by one.
     add(element) {
-        this.content.appendChild(element)
+        this.buffer.appendChild(element)
+    }
+
+    flush() {
+        this.content.appendChild(this.buffer)
+        this.buffer = document.createDocumentFragment()
     }
 
     svg(element) {
@@ -276,30 +317,147 @@ class Fanctal {
         this.step = (2 * pi) / this.n
         this.form = this.setForm(this.n, this.a)
         this.i2.max = this.n
-        this.displayAreaCalculation(this.n, this.a)
         if (this.a == this.n) {
             this.add(this.circle(0, 0, 1))
-            return
-        }
-        if (!this.i3.value) {
+        } else if (!this.i3.value) {
             this.graf()
         } else {
             this.graf(parseInt(this.i3.value) - 1)
         }
+        this.flush()
+        // The step-by-step breakdown re-renders KaTeX over the whole document,
+        // far too heavy to run once per animation frame.
+        if (!this.animOn) this.displayAreaCalculation(this.n, this.a)
+        if (this.fsOpen) this.updateAnimReadout()
+    }
+
+    buildSequence() {
+        this.sequence = []
+        for (let n = ANIM_N_MIN; n <= ANIM_N_MAX; n++) {
+            for (let a = 1; a < n; a++) this.sequence.push({ n, a })
+        }
+        this.sequence.forEach((pair, i) => this.seqIndex.set(`${pair.n},${pair.a}`, i))
+
+        const last = this.sequence.length - 1
+        let offset = 0
+        for (let n = ANIM_N_MIN; n <= ANIM_N_MAX; n++) {
+            const count = n - 1
+            const mid = offset + (count - 1) / 2
+            this.delays.set(n, ANIM_DELAY_START + (ANIM_DELAY_END - ANIM_DELAY_START) * (mid / last))
+            offset += count
+        }
+    }
+
+    // First frame at or after the pair currently in the inputs, so resuming
+    // always picks up from the values on screen.
+    seqPos(n, a) {
+        for (let i = 0; i < this.sequence.length; i++) {
+            const pair = this.sequence[i]
+            if (pair.n > n || (pair.n === n && pair.a >= a)) return i
+        }
+        return 0
+    }
+
+    updateAnimControls() {
+        if (!this.fsPlay || !this.fsStop) return
+        this.fsPlay.disabled = this.animOn
+        this.fsStop.disabled = !this.animOn
+    }
+
+    updateAnimReadout() {
+        if (!this.fsFrame) return
+        const total = this.sequence.length
+        const pos = this.seqIndex.get(`${this.n},${this.a}`)
+        const done = pos == null ? 0 : pos + 1
+        this.fsFrame.textContent = `f(r, ${this.n}, ${this.a})`
+        this.fsCount.textContent = `${done || '-'} / ${total}`
+        this.fsBarFill.style.width = `${(done / total) * 100}%`
+
+        if (!Number.isFinite(this.n) || !Number.isFinite(this.a) || this.n < 2 || this.a < 1) {
+            this.fsArea.innerHTML = ""
+            return
+        }
+        const calc = this.calculateArea(1, this.n, this.a)
+        katex.render(
+            `A(r,${this.n},${this.a}) = ${calc.areaFrac}\\,\\pi r^2 \\approx ${calc.area.toFixed(3)}\\,\\pi r^2`,
+            this.fsArea,
+            { throwOnError: false }
+        )
+    }
+
+    openAnimation() {
+        if (this.fsOpen || !this.fs) return
+        this.fsOpen = true
+        this.fsStage.appendChild(this.content)
+        this.fsInputs.appendChild(this.inputsWrap)
+        this.fs.hidden = false
+        document.body.classList.add('p11FsLock')
+        this.playAnimation(true)
+    }
+
+    closeAnimation() {
+        if (!this.fsOpen) return
+        this.stopAnimation()
+        this.fsOpen = false
+        this.fs.hidden = true
+        document.body.classList.remove('p11FsLock')
+        this.figureCard.appendChild(this.content)
+        this.panel.insertBefore(this.inputsWrap, this.panelFoot)
+        this.action()
+    }
+
+    playAnimation(fromStart = false) {
+        if (this.animOn) return
+        let i = fromStart ? 0 : this.seqPos(this.n, this.a)
+        if (i >= this.sequence.length - 1) i = 0
+        this.animIndex = i
+        this.animOn = true
+        this.updateAnimControls()
+
+        const run = () => {
+            if (!this.animOn) return
+            const pair = this.sequence[this.animIndex]
+            this.n = pair.n
+            this.i1.value = pair.n
+            this.i2.value = pair.a
+            this.action()
+            this.animIndex++
+            const next = this.animIndex >= this.sequence.length ? () => this.finishAnimation() : run
+            this.animTimer = setTimeout(next, this.delays.get(pair.n))
+        }
+        run()
+    }
+
+    stopAnimation() {
+        if (this.animTimer) {
+            clearTimeout(this.animTimer)
+            this.animTimer = null
+        }
+        if (!this.animOn) return
+        this.animOn = false
+        this.updateAnimControls()
+    }
+
+    finishAnimation() {
+        this.stopAnimation()
+        this.action()
     }
 
     main() {
         ExtText.restrictNI(this.i3, 1, 7, "N")
         this.content.setAttribute("viewBox", `-1 -1 2 2`)
         this.i1.addEventListener("input", () => {
+            this.stopAnimation()
             this.n = parseInt(this.i1.value)
             this.i2.value = parseInt(this.i1.value / 2)
             this.action()
         })
         this.i2.addEventListener("input", () => {
+            this.stopAnimation()
             this.action()
         })
         this.i3.addEventListener("input", () => {
+            this.stopAnimation()
             this.action()
         })
 
@@ -315,13 +473,29 @@ class Fanctal {
             this.downloadSVG(this.content, `f(${this.n},${this.a}) - depth ${this.i3.value}.svg`)
         })
 
+        // The overlay has to sit outside .contenedor, which opens its own
+        // stacking context and would trap it under the navbar.
+        if (this.fs && this.fs.parentElement !== document.body) document.body.appendChild(this.fs)
+        this.buildSequence()
+        this.updateAnimControls()
+        this.animBtn?.addEventListener("click", () => this.openAnimation())
+        this.fsExit?.addEventListener("click", () => this.closeAnimation())
+        this.fsPlay?.addEventListener("click", () => this.playAnimation())
+        this.fsStop?.addEventListener("click", () => this.stopAnimation())
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && this.fsOpen) this.closeAnimation()
+        })
+
         const pdfBtn = document.getElementById('p11PdfBtn')
         if (pdfBtn && PDF_DRIVE_ID) {
             pdfBtn.hidden = false
             ExtText.linkButton(pdfBtn, `https://drive.google.com/uc?export=download&id=${PDF_DRIVE_ID}`)
         }
 
-        window.addEventListener("langchanged", () => this.displayAreaCalculation(this.n, this.a))
+        window.addEventListener("langchanged", () => {
+            if (!this.animOn) this.displayAreaCalculation(this.n, this.a)
+            if (this.fsOpen) this.updateAnimReadout()
+        })
     }
 }
 

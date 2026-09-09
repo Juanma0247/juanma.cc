@@ -30,6 +30,12 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
             <p class="p11Hint" data-i18n="pd.fanctal.hintDepth">Explicit depth 1–7 (empty = automatic cutoff)</p>
           </div>
         </div>
+        <div class="p11PanelFoot">
+          <button id="p11AnimBtn" class="p11AnimBtn">
+            <i data-feather="film"></i>
+            <span data-i18n="pd.fanctal.animateBtn">Animation</span>
+          </button>
+        </div>
       </aside>
     </div>
 
@@ -92,6 +98,40 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
       </div>
     </section>
   </div>
+
+  <div id="p11Fs" class="p11Fs" hidden>
+    <div id="p11FsStage" class="p11FsStage"></div>
+    <aside class="p11FsPanel">
+      <div class="p11FsHead">
+        <h3 class="p11FsTitle" data-i18n="pd.fanctal.animTitle">Animation</h3>
+        <button id="p11FsExit" class="p11FsExit">
+          <i data-feather="minimize-2"></i>
+          <span data-i18n="pd.fanctal.animExit">Exit view</span>
+        </button>
+      </div>
+      <div class="p11FsProgress">
+        <div class="p11FsProgressHead">
+          <span id="p11FsFrame" class="p11FsFrame"></span>
+          <span id="p11FsCount" class="p11FsCount"></span>
+        </div>
+        <span class="p11FsBar"><span id="p11FsBarFill" class="p11FsBarFill"></span></span>
+      </div>
+      <div id="p11FsArea" class="p11FsArea"></div>
+      <div class="p11FsControls">
+        <button id="p11FsPlay" class="p11FsCtrl is-solid">
+          <i data-feather="play"></i>
+          <span data-i18n="pd.fanctal.animStart">Start</span>
+        </button>
+        <button id="p11FsStop" class="p11FsCtrl">
+          <i data-feather="square"></i>
+          <span data-i18n="pd.fanctal.animStop">Stop</span>
+        </button>
+      </div>
+      <div id="p11FsInputs" class="p11FsInputs"></div>
+      <p class="p11FsHint" data-i18n="pd.fanctal.animHint">It runs through every valid pair (n, a) with 2 ≤ n ≤ 20 and 1 ≤ a ≤ n − 1, speeding up as n grows. Changing any parameter stops it and draws the values you typed.</p>
+    </aside>
+  </div>
+
   <div class="space-bottom"></div>
 </ProjectLayout>
 <style is:global>@import '../../styles/sections/projects-fanctal.css';</style>
