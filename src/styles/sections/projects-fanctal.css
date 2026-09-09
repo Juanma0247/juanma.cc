@@ -24,9 +24,12 @@
 
 /* ── Layout: figure + panel ─────────────────────────────── */
 
+/* The panel column is sized by its own max-content, i.e. the widest hint on a
+   single line, so it stays at the narrowest width that never wraps whatever the
+   language or the reader's font. Everything left over goes to the figure. */
 .p11Layout {
   display: grid;
-  grid-template-columns: minmax(14rem, 24rem) minmax(14rem, 1fr);
+  grid-template-columns: minmax(14rem, 1fr) auto;
   gap: 1.75rem;
   align-items: start;
   justify-content: center;
@@ -511,8 +514,19 @@ body.p11FsLock { overflow: hidden; }
 
 /* ── Responsive ─────────────────────────────────────────── */
 
-@media (max-width: 42rem) {
+/* Below this the two columns leave the figure narrower than it gets by stacking,
+   so they stack and both cards line up at the same width. Media-query rem is
+   always 16px, unlike the 110% root, so this is ~912px. */
+@media (max-width: 57rem) {
   .p11Layout { grid-template-columns: 1fr; }
   .p11Content { padding: 1rem; }
-  .p11FigureCard { max-width: 22rem; margin: 0 auto; }
+  /* The explicit width matters: with an auto margin and no width the card is no
+     longer stretched by the grid and falls back to the SVG's default 300px. */
+  .p11FigureCard,
+  .p11Panel {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 28rem;
+    margin: 0 auto;
+  }
 }
