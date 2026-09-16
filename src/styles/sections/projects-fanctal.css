@@ -473,6 +473,31 @@ body.p11FsLock { overflow: hidden; }
   background: var(--primary-10);
 }
 
+.p11CodeLangGroup {
+  display: flex;
+  gap: .3rem;
+  padding: .2rem;
+  background: var(--color-bg);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.p11CodeLangBtn {
+  font-family: var(--font-bold);
+  font-size: .78rem;
+  line-height: 1;
+  color: var(--color-muted);
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--radius-md) - .15rem);
+  padding: .35rem .65rem;
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition);
+}
+
+.p11CodeLangBtn:hover { color: var(--color-text); }
+.p11CodeLangBtn.is-active { color: var(--color-bg); background: var(--color-primary); }
+
 .p11CodeFilename {
   font-family: var(--font-mono);
   font-size: .85rem;
@@ -511,6 +536,62 @@ body.p11FsLock { overflow: hidden; }
 }
 
 .p11CodePre code { font-size: .8rem; line-height: 1.55; }
+
+/* ── Expected-output section ─────────────────────────────── */
+
+.p11ResultsSection {
+  width: 100%;
+  margin-top: 3rem;
+}
+
+.p11ResultsSection > h3 { margin-left: 0; font-size: 1.25rem; }
+.p11ResultsSection > p {
+  max-width: 42rem;
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.p11ResultsTableWrap {
+  margin-top: 1.25rem;
+  overflow-x: auto;
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+.p11ResultsTable {
+  width: 100%;
+  min-width: 40rem;
+  border-collapse: collapse;
+  font-size: .85rem;
+}
+
+.p11ResultsTable th,
+.p11ResultsTable td {
+  padding: .55rem .85rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.p11ResultsTable th:first-child,
+.p11ResultsTable td:first-child { text-align: left; }
+
+.p11ResultsTable thead th {
+  font-family: var(--font-bold);
+  color: var(--color-primary);
+  background: var(--primary-10);
+  border-bottom: var(--border-width) solid var(--color-muted);
+}
+
+.p11ResultsTable tbody tr:nth-child(even) { background: var(--primary-05); }
+
+.p11ResultsNote {
+  margin-top: .85rem;
+  max-width: 42rem;
+  font-size: .82rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+}
 
 /* ── Responsive ─────────────────────────────────────────── */
 

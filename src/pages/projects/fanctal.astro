@@ -83,19 +83,52 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
     </section>
 
     <section class="p11CodeSection">
-      <h3 data-i18n="pd.fanctal.codeTitle">Reproduce it in Python</h3>
-      <p data-i18n="pd.fanctal.codeIntro">This script implements the same recursive construction described above — sector selection, scale ratio, and termination criteria — so you can regenerate every figure independently, in your own language if you prefer.</p>
+      <h3 data-i18n="pd.fanctal.codeTitle">Reproduce it yourself</h3>
+      <p data-i18n="pd.fanctal.codeIntro">This script (available in Python and in R) implements the same recursive construction described above and, in addition, reproduces the three independent methods the article uses to verify the area (by generations, by self-similarity, and by Monte Carlo), so you can regenerate every figure and every number in Table I independently.</p>
       <div class="p11CodeCard">
         <div class="p11CodeToolbar">
-          <span class="p11CodeFilename">fanctal.py</span>
+          <div id="p11CodeLangGroup" class="p11CodeLangGroup" role="group" data-i18n-aria-label="pd.fanctal.codeLangLabel" aria-label="Script language">
+            <button type="button" class="p11CodeLangBtn is-active" data-lang="python">Python</button>
+            <button type="button" class="p11CodeLangBtn" data-lang="r">R</button>
+          </div>
+          <span id="p11CodeFilename" class="p11CodeFilename">fanctal.py</span>
           <div class="p11CodeActions">
             <button id="p11CodeToggle" class="p11CodeBtn" data-i18n="pd.fanctal.codeShow">Show code</button>
             <button id="p11CodeCopy" class="p11CodeBtn" data-i18n="pd.fanctal.codeCopy">Copy</button>
-            <a id="p11CodeDownload" class="p11CodeBtn is-solid" href="/scripts/fanctal.py" download data-i18n="pd.fanctal.codeDownload">Download .py</a>
+            <a id="p11CodeDownload" class="p11CodeBtn is-solid" href="/scripts/fanctal.py" download="fanctal.py" data-i18n="pd.fanctal.codeDownload">Download</a>
           </div>
         </div>
         <pre id="p11CodePre" class="p11CodePre" hidden><code id="p11CodeBlock" class="language-python"></code></pre>
       </div>
+    </section>
+
+    <section class="p11ResultsSection">
+      <h3 data-i18n="pd.fanctal.resultsTitle">Expected output</h3>
+      <p data-i18n="pd.fanctal.resultsIntro">The numerical verification reproduces the six (n, a) pairs from Table I of the article. Methods 1 and 2 are deterministic and match the figures shown exactly; Method 3 (Monte Carlo, N = 10&#8310; points) is random and is only expected to match within its standard error.</p>
+      <div class="p11ResultsTableWrap">
+        <table class="p11ResultsTable">
+          <thead>
+            <tr>
+              <th>n</th>
+              <th>a</th>
+              <th>k</th>
+              <th data-i18n="pd.fanctal.resultsColM1">Method 1</th>
+              <th data-i18n="pd.fanctal.resultsColM2">Method 2</th>
+              <th>Monte Carlo</th>
+              <th>z</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>3</td><td>1</td><td>0.4641</td><td>0.150321</td><td>0.150321</td><td>0.149848 &#177; 0.000357</td><td>&minus;1.32</td></tr>
+            <tr><td>4</td><td>2</td><td>0.4142</td><td>0.238796</td><td>0.238796</td><td>0.238064 &#177; 0.000426</td><td>&minus;1.72</td></tr>
+            <tr><td>5</td><td>2</td><td>0.3702</td><td>0.173458</td><td>0.173458</td><td>0.173436 &#177; 0.000379</td><td>&minus;0.06</td></tr>
+            <tr><td>6</td><td>3</td><td>0.3333</td><td>0.250000</td><td>0.250000</td><td>0.249860 &#177; 0.000433</td><td>&minus;0.32</td></tr>
+            <tr><td>8</td><td>4</td><td>0.2768</td><td>0.279120</td><td>0.279120</td><td>0.279041 &#177; 0.000449</td><td>&minus;0.18</td></tr>
+            <tr><td>12</td><td>6</td><td>0.2056</td><td>0.330082</td><td>0.330082</td><td>0.329808 &#177; 0.000470</td><td>&minus;0.58</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="p11ResultsNote" data-i18n="pd.fanctal.resultsNote">R's Monte Carlo uses a different random number generator from Python's fixed-seed PCG64, so it will not reproduce the same digits: it should only fall within statistical error, with |z| below 2, of the exact value.</p>
     </section>
   </div>
 
@@ -141,25 +174,57 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
 
   const p = new Fanctal(); p.starter?.(); p.main()
 
+  const LANGS = {
+    python: { file: '/scripts/fanctal.py', hljsClass: 'language-python', filename: 'fanctal.py' },
+    r: { file: '/scripts/fanctal.R', hljsClass: 'language-r', filename: 'fanctal.R' },
+  }
+  let currentLang = 'python'
+  const codeCache = {}
+
   const codeToggle = document.getElementById('p11CodeToggle')
   const codeCopy = document.getElementById('p11CodeCopy')
   const codePre = document.getElementById('p11CodePre')
   const codeBlock = document.getElementById('p11CodeBlock')
-  let codeText = ''
-  let codeLoaded = false
+  const codeFilename = document.getElementById('p11CodeFilename')
+  const codeDownload = document.getElementById('p11CodeDownload')
+  const codeLangGroup = document.getElementById('p11CodeLangGroup')
 
-  async function loadCode() {
-    if (codeLoaded) return
-    codeLoaded = true
-    const res = await fetch('/scripts/fanctal.py')
-    codeText = await res.text()
-    codeBlock.textContent = codeText
+  async function loadCode(lang) {
+    if (codeCache[lang]) return codeCache[lang]
+    const res = await fetch(LANGS[lang].file)
+    const text = await res.text()
+    codeCache[lang] = text
+    return text
+  }
+
+  async function renderCode(lang) {
+    const text = await loadCode(lang)
+    codeBlock.className = LANGS[lang].hljsClass
+    codeBlock.textContent = text
+    delete codeBlock.dataset.highlighted
     hljs.highlightElement(codeBlock)
   }
 
+  function setLang(lang) {
+    currentLang = lang
+    codeFilename.textContent = LANGS[lang].filename
+    codeDownload.href = LANGS[lang].file
+    codeDownload.setAttribute('download', LANGS[lang].filename)
+    codeLangGroup?.querySelectorAll('.p11CodeLangBtn').forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.lang === lang)
+    })
+  }
+
+  codeLangGroup?.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.p11CodeLangBtn')
+    if (!btn || btn.dataset.lang === currentLang) return
+    setLang(btn.dataset.lang)
+    if (!codePre.hidden) await renderCode(currentLang)
+  })
+
   codeToggle?.addEventListener('click', async () => {
-    await loadCode()
     const willShow = codePre.hidden
+    if (willShow) await renderCode(currentLang)
     codePre.hidden = !willShow
     const key = willShow ? 'pd.fanctal.codeHide' : 'pd.fanctal.codeShow'
     const fallback = willShow ? 'Hide code' : 'Show code'
@@ -168,8 +233,8 @@ import ProjectLayout from '../../layouts/ProjectLayout.astro'
   })
 
   codeCopy?.addEventListener('click', async () => {
-    await loadCode()
-    navigator.clipboard.writeText(codeText)
+    const text = await loadCode(currentLang)
+    navigator.clipboard.writeText(text)
     const original = codeCopy.textContent
     codeCopy.textContent = window.i18nGet ? window.i18nGet('pd.fanctal.codeCopied', 'Copied!') : 'Copied!'
     setTimeout(() => { codeCopy.textContent = original }, 1500)
