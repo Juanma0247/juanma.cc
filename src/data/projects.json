@@ -1,5 +1,19 @@
 [
   {
+    "slug": "linear-systems",
+    "title": "Linear Systems",
+    "navTitle": "Linear Systems",
+    "pageTitle": "Linear Systems — Phase Portraits of 2×2 Matrices",
+    "image": "p19.svg",
+    "order": 19,
+    "size": "wide",
+    "labels": [
+      "Dynamical Systems",
+      "Linear Algebra",
+      "Phase Plane"
+    ]
+  },
+  {
     "slug": "distribution-functions",
     "title": "Distributions",
     "navTitle": "Distributions",

@@ -1,0 +1,602 @@
+/* Linear Systems — phase portrait of x' = A x (Strogatz, chapter 5) */
+
+.p19Content {
+  --p19-in: var(--color-primary);
+  --p19-out: oklch(from var(--color-primary) l c calc(h + 140));
+  --p19-third: oklch(from var(--color-primary) l c calc(h - 130));
+  padding-block: 1rem 0;
+}
+
+/* ── Intro ──────────────────────────────────────────────── */
+
+.p19Intro {
+  max-width: 44rem;
+  margin: 0 0 2rem;
+}
+
+.p19Lead {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ── Layout: portrait + control panel ───────────────────── */
+
+.p19Layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 1fr) 19rem;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 56rem) {
+  .p19Layout { grid-template-columns: 1fr; }
+}
+
+/* Justification opens rivers once the measure gets this short. */
+@media (max-width: 34rem) {
+  .p19Lead,
+  .p19TheoryCard p { text-align: left; }
+}
+
+.p19Figure {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  min-width: 0;
+}
+
+.p19FigureCard {
+  position: relative;
+  padding: .5rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  aspect-ratio: 1 / 1;
+}
+
+.p19Stage {
+  width: 100%;
+  height: 100%;
+}
+
+#p19Canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.p19CanvasHint {
+  margin: 0;
+  font-size: .78rem;
+  color: var(--color-muted);
+}
+
+/* ── Control panel ──────────────────────────────────────── */
+
+.p19Side { min-width: 0; }
+
+.p19Controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+.p19Block {
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+
+.p19PanelTitle,
+.p19SubTitle {
+  margin: 0;
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--color-text);
+}
+
+.p19Hint {
+  margin: 0;
+  font-size: .74rem;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
+.p19Error {
+  margin: 0;
+  font-size: .76rem;
+  line-height: 1.4;
+  color: oklch(0.58 0.2 25);
+}
+
+/* ── Matrix input ───────────────────────────────────────── */
+
+.p19Matrix {
+  display: flex;
+  align-items: stretch;
+  gap: .35rem;
+}
+
+.p19Bracket {
+  flex: none;
+  width: .5rem;
+  border-top: var(--border-width) solid var(--color-muted);
+  border-bottom: var(--border-width) solid var(--color-muted);
+}
+
+.p19Bracket--l {
+  border-left: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.p19Bracket--r {
+  border-right: var(--border-width) solid var(--color-muted);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.p19Cells {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .4rem;
+  min-width: 0;
+}
+
+.p19Cells input {
+  font-family: var(--font-mono);
+  font-size: .9rem;
+  text-align: center;
+  padding: .35rem .3rem;
+}
+
+.p19Cells input.is-invalid,
+.p19ParamValue.is-invalid {
+  border-color: oklch(0.58 0.2 25);
+  box-shadow: .15rem .15rem 0 oklch(0.58 0.2 25);
+}
+
+/* ── Parameters, one per free letter ────────────────────── */
+
+.p19Params {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.p19Param {
+  display: grid;
+  grid-template-columns: 1.4rem 4.6rem 1fr;
+  align-items: center;
+  gap: .45rem;
+}
+
+.p19ParamName {
+  font-family: var(--font-label);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--color-primary);
+}
+
+.p19ParamValue {
+  font-family: var(--font-mono);
+  font-size: .82rem;
+  text-align: center;
+  padding: .25rem .2rem;
+}
+
+.p19ParamRange {
+  width: 100%;
+  min-width: 0;
+}
+
+/* ── Options, speed, view ───────────────────────────────── */
+
+.p19Opts {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+
+.p19Opts .checkbox .box {
+  width: 1rem;
+  height: 1rem;
+  box-shadow: .08rem .08rem 0 var(--color-primary);
+}
+
+.p19Opts .checkbox-label { font-size: .85rem; }
+
+.p19Speed {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.p19SpeedLabel {
+  font-family: var(--font-label);
+  font-size: .82rem;
+  color: var(--color-muted);
+}
+
+.p19Speed input[type="range"] { width: 100%; }
+
+.p19ViewButtons {
+  display: flex;
+  gap: .4rem;
+}
+
+.p19MiniBtn {
+  flex: 1 1 0;
+  padding: .35rem;
+  box-shadow: .1rem .1rem 0 var(--color-primary);
+}
+
+.p19FsBlock { margin-top: -.3rem; }
+
+.p19FsBtn {
+  width: 100%;
+  font-size: .88rem;
+}
+
+/* ── Verdict strip ──────────────────────────────────────── */
+
+.p19Verdict {
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  margin-top: 1.5rem;
+  padding: 1rem 1.1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-lg);
+}
+
+.p19VerdictHead {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .3rem .8rem;
+}
+
+.p19Kind {
+  font-family: var(--font-bold);
+  font-size: 1.3rem;
+  line-height: 1.2;
+  color: var(--color-primary);
+}
+
+.p19Kind[data-stability="unstable"] { color: var(--p19-out); }
+.p19Kind[data-stability="neutral"] { color: var(--p19-third); }
+
+.p19KindNote {
+  font-size: .85rem;
+  color: var(--color-muted);
+}
+
+.p19Invariants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.p19Stat {
+  display: flex;
+  align-items: baseline;
+  gap: .45rem;
+  padding: .3rem .6rem;
+  background: var(--primary-10);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.p19StatKey .katex { font-size: .92rem; color: var(--color-muted); }
+
+.p19StatValue {
+  font-family: var(--font-mono);
+  font-size: .88rem;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.p19EigenSummary {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+
+.p19EigenRow {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .2rem .7rem;
+}
+
+.p19EigenLabel {
+  flex: 0 0 auto;
+  min-width: 9rem;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--color-muted);
+}
+
+.p19EigenMath {
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.p19EigenMath .katex { font-size: .95rem; }
+
+/* ── Legend ─────────────────────────────────────────────── */
+
+.p19Legend { margin-top: 2rem; }
+
+.p19Legend h3,
+.p19DiagramSection h3,
+.p19StepsSection h3,
+.p19Theory h3 {
+  margin: 0 0 .7rem;
+  font-size: 1.05rem;
+}
+
+.p19LegendList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: .5rem 1.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.p19LegendList li {
+  display: flex;
+  align-items: flex-start;
+  gap: .55rem;
+  font-size: .85rem;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+
+.p19Swatch {
+  flex: none;
+  width: 1.4rem;
+  height: .28rem;
+  margin-top: .45rem;
+  border-radius: 999px;
+}
+
+.p19Swatch--in { background: var(--p19-in); }
+.p19Swatch--out { background: var(--p19-out); }
+.p19Swatch--third { background: var(--p19-third); }
+
+.p19Dot {
+  flex: none;
+  width: .7rem;
+  height: .7rem;
+  margin-top: .3rem;
+  border-radius: 50%;
+}
+
+.p19Dot--solid { background: var(--color-text); }
+
+.p19Dot--open {
+  background: var(--color-bg);
+  border: 2px solid var(--color-text);
+}
+
+/* ── Classification diagram ─────────────────────────────── */
+
+.p19DiagramSection { margin-top: 2.2rem; }
+
+.p19DiagramSection p,
+.p19StepsSection > p {
+  margin: 0 0 1rem;
+  max-width: 44rem;
+  font-size: .9rem;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.p19DiagramCard {
+  width: min(30rem, 100%);
+  aspect-ratio: 1 / 1;
+  padding: .5rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+#p19Td {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.p19Caption {
+  margin: .6rem 0 0;
+  max-width: 40rem;
+  font-size: .78rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* ── Worked solution ────────────────────────────────────── */
+
+.p19StepsSection { margin-top: 2.2rem; }
+
+.p19Steps {
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+}
+
+.p19Step {
+  padding: .85rem 1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.p19StepLabel {
+  font-family: var(--font-bold);
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--color-primary);
+}
+
+.p19StepMath {
+  margin-top: .5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.p19StepMath .katex-display { margin: .2rem 0; }
+
+.p19StepNote {
+  margin: .55rem 0 0;
+  font-size: .84rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+.p19StepNote strong { color: var(--color-primary); }
+
+/* ── Theory ─────────────────────────────────────────────── */
+
+.p19Theory { margin-top: 2.2rem; }
+
+.p19TheoryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: .8rem;
+}
+
+.p19TheoryCard {
+  padding: .9rem 1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.p19TheoryCard h4 {
+  margin: 0 0 .4rem;
+  font-size: .95rem;
+  color: var(--color-primary);
+}
+
+.p19TheoryCard p {
+  margin: 0;
+  font-size: .86rem;
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.p19Source {
+  margin: 1rem 0 0;
+  font-size: .78rem;
+  color: var(--color-muted);
+}
+
+/* ── Full screen view ───────────────────────────────────── */
+
+body.p19FsLock { overflow: hidden; }
+
+.p19Fs {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  background: var(--color-bg);
+  --p19-in: var(--color-primary);
+  --p19-out: oklch(from var(--color-primary) l c calc(h + 140));
+  --p19-third: oklch(from var(--color-primary) l c calc(h - 130));
+}
+
+.p19Fs[hidden] { display: none; }
+
+.p19FsStage {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  padding: .6rem;
+}
+
+.p19FsStage > .p19Stage { width: 100%; height: 100%; }
+
+.p19FsPanel {
+  flex: 0 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  padding: 1rem;
+  overflow-y: auto;
+  background: var(--primary-05);
+}
+
+.p19FsPanel > * { flex-shrink: 0; }
+
+@media (orientation: landscape) {
+  .p19Fs { flex-direction: row; }
+  .p19FsPanel {
+    width: min(23rem, 42vw);
+    min-width: 16rem;
+    border-left: var(--border-width) solid var(--color-muted);
+  }
+}
+
+@media (orientation: portrait) {
+  .p19Fs { flex-direction: column; }
+  .p19FsStage { min-height: min(100vw, 46vh); }
+  .p19FsPanel {
+    max-height: 62vh;
+    border-top: var(--border-width) solid var(--color-muted);
+  }
+}
+
+.p19FsHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+}
+
+.p19FsTitle {
+  margin: 0;
+  font-size: .9rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.p19FsExit {
+  font-size: .78rem;
+  padding: .3rem .55rem;
+}
+
+/* Inside the overlay the moved blocks lose their own frames: the panel is
+   already a single surface. */
+.p19FsVerdictSlot .p19Verdict,
+.p19FsControlsSlot .p19Controls {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+}
+
+.p19FsVerdictSlot .p19Kind { font-size: 1.1rem; }
+.p19FsVerdictSlot .p19EigenLabel { min-width: 100%; }
+.p19FsControlsSlot .p19FsBlock { display: none; }

@@ -1,0 +1,209 @@
+---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
+---
+<ProjectLayout slug="linear-systems">
+  <div class="p19Content">
+    <header class="p19Intro">
+      <p class="p19Lead" data-i18n="pd.linearSystems.introLead">A two-dimensional linear system \(\dot&#123;\mathbf x&#125; = A\mathbf x\) turns a 2×2 matrix into a flow on the plane. Everything about that flow is decided by two numbers, the trace and the determinant of \(A\): they fix the characteristic polynomial, the eigenvalues, and with them the eigenvectors along which the motion runs in a straight line. Type a matrix below and watch the portrait rearrange itself in real time, from saddle to node to spiral to center, following the classification of chapter 5 of Strogatz's <em>Nonlinear Dynamics and Chaos</em>.</p>
+    </header>
+
+    <div class="p19Layout">
+      <div class="p19Figure">
+        <div class="p19FigureCard">
+          <div id="p19Stage" class="p19Stage">
+            <canvas id="p19Canvas"></canvas>
+          </div>
+        </div>
+        <p class="p19CanvasHint" data-i18n="pd.linearSystems.canvasHint">Click anywhere to draw the trajectory through that point · drag to pan · scroll to zoom.</p>
+      </div>
+
+      <aside class="p19Side">
+        <div id="p19Controls" class="p19Controls">
+          <div class="p19Block">
+            <h3 class="p19PanelTitle" data-i18n="pd.linearSystems.matrixTitle">Matrix A</h3>
+            <div class="p19Matrix">
+              <span class="p19Bracket p19Bracket--l" aria-hidden="true"></span>
+              <div class="p19Cells">
+                <input id="p19a" type="text" spellcheck="false" autocomplete="off" aria-label="a" value="1" />
+                <input id="p19b" type="text" spellcheck="false" autocomplete="off" aria-label="b" value="1" />
+                <input id="p19c" type="text" spellcheck="false" autocomplete="off" aria-label="c" value="4" />
+                <input id="p19d" type="text" spellcheck="false" autocomplete="off" aria-label="d" value="-2" />
+              </div>
+              <span class="p19Bracket p19Bracket--r" aria-hidden="true"></span>
+            </div>
+            <p id="p19Error" class="p19Error" hidden></p>
+            <p class="p19Hint" data-i18n="pd.linearSystems.matrixHint">Fractions (-1/8), decimals with either separator (-0.8 or -0,8), pi and e, powers, and functions such as sqrt or sin are all accepted.</p>
+          </div>
+
+          <div id="p19ParamsWrap" class="p19Block p19ParamsWrap" hidden>
+            <h4 class="p19SubTitle" data-i18n="pd.linearSystems.paramsTitle">Parameters</h4>
+            <div id="p19Params" class="p19Params"></div>
+            <p class="p19Hint" data-i18n="pd.linearSystems.paramsHint">Any letter typed into the matrix becomes a parameter with its own slider. The names pi and e are reserved for the constants.</p>
+          </div>
+
+          <div class="p19Block">
+            <h4 class="p19SubTitle" data-i18n="pd.linearSystems.presetTitle">Examples from the chapter</h4>
+            <div class="select-wrap"><select id="p19Preset"></select></div>
+          </div>
+
+          <div class="p19Block">
+            <h4 class="p19SubTitle" data-i18n="pd.linearSystems.displayTitle">What to draw</h4>
+            <div class="p19Opts">
+              <label class="checkbox">
+                <input type="checkbox" data-opt="particles" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.linearSystems.optParticles">Animated flow</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="streams" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.linearSystems.optStreams">Trajectories</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="field" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.linearSystems.optField">Vector field</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="eigen" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.linearSystems.optEigen">Eigendirections</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="nullclines" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.linearSystems.optNullclines">Nullclines</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="grid" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.linearSystems.optGrid">Grid</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="p19Block">
+            <h4 class="p19SubTitle" data-i18n="pd.linearSystems.viewTitle">View</h4>
+            <label class="p19Speed">
+              <span class="p19SpeedLabel" data-i18n="pd.linearSystems.speedLabel">Speed</span>
+              <input id="p19Speed" type="range" min="0.1" max="3" step="0.05" value="1" />
+            </label>
+            <div class="p19ViewButtons">
+              <button id="p19ZoomIn" class="p19MiniBtn" data-i18n-title="pd.linearSystems.zoomIn" title="Zoom in"><i data-feather="zoom-in"></i></button>
+              <button id="p19ZoomOut" class="p19MiniBtn" data-i18n-title="pd.linearSystems.zoomOut" title="Zoom out"><i data-feather="zoom-out"></i></button>
+              <button id="p19ResetView" class="p19MiniBtn" data-i18n-title="pd.linearSystems.resetView" title="Reset view"><i data-feather="crosshair"></i></button>
+              <button id="p19ClearOrbits" class="p19MiniBtn" data-i18n-title="pd.linearSystems.clearOrbits" title="Clear drawn trajectories"><i data-feather="trash-2"></i></button>
+            </div>
+          </div>
+
+          <div class="p19Block p19FsBlock">
+            <button id="p19FsBtn" class="p19FsBtn">
+              <i data-feather="maximize-2"></i>
+              <span data-i18n="pd.linearSystems.fullscreenBtn">Full screen</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section id="p19Verdict" class="p19Verdict">
+      <div class="p19VerdictHead">
+        <span id="p19Kind" class="p19Kind"></span>
+        <span id="p19KindNote" class="p19KindNote"></span>
+      </div>
+      <div id="p19Invariants" class="p19Invariants"></div>
+      <div id="p19EigenSummary" class="p19EigenSummary"></div>
+    </section>
+
+    <section class="p19Legend">
+      <h3 data-i18n="pd.linearSystems.legendTitle">Reading the picture</h3>
+      <ul class="p19LegendList">
+        <li><span class="p19Swatch p19Swatch--in"></span><span data-i18n="pd.linearSystems.legendIn">Eigendirection with \(\lambda \lt 0\): the flow runs inward along it and the eigensolution decays.</span></li>
+        <li><span class="p19Swatch p19Swatch--out"></span><span data-i18n="pd.linearSystems.legendOut">Eigendirection with \(\lambda \gt 0\): the flow runs outward and the eigensolution grows.</span></li>
+        <li><span class="p19Swatch p19Swatch--third"></span><span data-i18n="pd.linearSystems.legendThird">Trajectories you click, nullclines, and any line made entirely of fixed points.</span></li>
+        <li><span class="p19Dot p19Dot--solid"></span><span data-i18n="pd.linearSystems.legendStable">Solid dot: a Liapunov stable fixed point.</span></li>
+        <li><span class="p19Dot p19Dot--open"></span><span data-i18n="pd.linearSystems.legendUnstable">Open dot: an unstable fixed point. This is the convention used throughout the book.</span></li>
+      </ul>
+    </section>
+
+    <section class="p19DiagramSection">
+      <h3 data-i18n="pd.linearSystems.diagramTitle">Classification diagram</h3>
+      <p data-i18n="pd.linearSystems.diagramIntro">The type and stability of every fixed point fit on a single picture whose axes are the determinant \(\Delta\) and the trace \(\tau\). Saddles fill the half plane \(\Delta \lt 0\). For \(\Delta \gt 0\) the parabola \(\tau^2 - 4\Delta = 0\) separates nodes from spirals, and the sign of \(\tau\) decides whether they attract or repel. The borderline cases live on the curves: centers on the positive \(\Delta\) axis, stars and degenerate nodes on the parabola, and non-isolated fixed points on the \(\tau\) axis.</p>
+      <div class="p19DiagramCard">
+        <canvas id="p19Td"></canvas>
+      </div>
+      <p class="p19Caption" data-i18n="pd.linearSystems.diagramCaption">The marker shows where the matrix you typed falls. Saddles, nodes and spirals occupy whole regions, so they survive a small change in the matrix; everything else sits on a curve and does not.</p>
+    </section>
+
+    <section class="p19StepsSection">
+      <h3 data-i18n="pd.linearSystems.stepsTitle">From the matrix to the portrait</h3>
+      <p data-i18n="pd.linearSystems.stepsIntro">Every number drawn above comes from the following chain, recomputed each time you touch a parameter.</p>
+      <div id="p19Steps" class="p19Steps"></div>
+    </section>
+
+    <section class="p19Theory">
+      <h3 data-i18n="pd.linearSystems.theoryTitle">The theory behind it</h3>
+      <div class="p19TheoryGrid">
+        <div class="p19TheoryCard">
+          <h4 data-i18n="pd.linearSystems.th1Title">The phase plane</h4>
+          <p data-i18n="pd.linearSystems.th1Text">The system assigns the vector \((\dot x, \dot y)\) to every point \((x, y)\), which is a vector field on the plane. Picture a fluid flowing with that local velocity: drop a phase point anywhere and watch where the current carries it. Since \(\dot&#123;\mathbf x&#125; = \mathbf 0\) exactly when \(\mathbf x = \mathbf 0\), the origin is a fixed point for every matrix, and the whole question is how the flow behaves around it.</p>
+        </div>
+        <div class="p19TheoryCard">
+          <h4 data-i18n="pd.linearSystems.th2Title">Straight-line solutions</h4>
+          <p data-i18n="pd.linearSystems.th2Text">Look for trajectories of the special form \(\mathbf x(t) = e^&#123;\lambda t&#125;\mathbf v\), which move along a fixed line through the origin with simple exponential growth or decay. Substituting into \(\dot&#123;\mathbf x&#125; = A\mathbf x\) and cancelling \(e^&#123;\lambda t&#125;\) leaves \(A\mathbf v = \lambda\mathbf v\), so these eigensolutions exist exactly when \(\mathbf v\) is an eigenvector of \(A\).</p>
+        </div>
+        <div class="p19TheoryCard">
+          <h4 data-i18n="pd.linearSystems.th3Title">Only two numbers matter</h4>
+          <p data-i18n="pd.linearSystems.th3Text">Expanding \(\det(A - \lambda I) = 0\) gives \(\lambda^2 - \tau\lambda + \Delta = 0\) with \(\tau = \operatorname&#123;tr&#125;(A)\) and \(\Delta = \det(A)\), so \(\lambda_&#123;1,2&#125; = \tfrac12\left(\tau \pm \sqrt&#123;\tau^2 - 4\Delta&#125;\right)\). The eigenvalues, and therefore the entire shape of the portrait, depend on nothing but the trace and the determinant.</p>
+        </div>
+        <div class="p19TheoryCard">
+          <h4 data-i18n="pd.linearSystems.th4Title">The general solution</h4>
+          <p data-i18n="pd.linearSystems.th4Text">When the eigenvalues are distinct, the eigenvectors are linearly independent and span the plane, so any initial condition splits as \(\mathbf x_0 = c_1\mathbf v_1 + c_2\mathbf v_2\) and the solution is \(\mathbf x(t) = c_1e^&#123;\lambda_1 t&#125;\mathbf v_1 + c_2e^&#123;\lambda_2 t&#125;\mathbf v_2\). It solves the equation, it matches the initial condition, and by the existence and uniqueness theorem it is the only one that does.</p>
+        </div>
+        <div class="p19TheoryCard">
+          <h4 data-i18n="pd.linearSystems.th5Title">Saddles and nodes</h4>
+          <p data-i18n="pd.linearSystems.th5Text">If \(\Delta \lt 0\) the eigenvalues are real with opposite signs and the origin is a saddle point: the eigenvector with \(\lambda \gt 0\) spans the unstable manifold, the one with \(\lambda \lt 0\) the stable manifold, and a typical trajectory approaches the unstable manifold as \(t \to \infty\). If both eigenvalues share a sign the point is a node, and trajectories leave the origin tangent to the slow eigendirection, the one with the smaller \(|\lambda|\).</p>
+        </div>
+        <div class="p19TheoryCard">
+          <h4 data-i18n="pd.linearSystems.th6Title">Spirals and centers</h4>
+          <p data-i18n="pd.linearSystems.th6Text">Complex eigenvalues \(\lambda = \alpha \pm i\omega\) appear when \(\tau^2 - 4\Delta \lt 0\). Euler's formula turns the exponentials into \(e^&#123;\alpha t&#125;\cos\omega t\) and \(e^&#123;\alpha t&#125;\sin\omega t\), so the trajectories rotate with period \(T = 2\pi/\omega\) while their amplitude follows \(e^&#123;\alpha t&#125;\). A negative \(\alpha\) gives a stable spiral, a positive one an unstable spiral, and \(\alpha = 0\) a center surrounded by closed orbits, the situation of the undamped harmonic oscillator.</p>
+        </div>
+        <div class="p19TheoryCard">
+          <h4 data-i18n="pd.linearSystems.th7Title">Repeated eigenvalues</h4>
+          <p data-i18n="pd.linearSystems.th7Text">When \(\lambda_1 = \lambda_2\) there are two possibilities. If two independent eigenvectors survive, then \(A\) simply stretches every vector by the same factor, so \(A = \lambda I\), every direction is an eigendirection and the point is a star node. If only one eigendirection remains, the point is a degenerate node: it is what you get by scissoring the two eigendirections of an ordinary node together, and it sits exactly on the borderline between a node and a spiral.</p>
+        </div>
+        <div class="p19TheoryCard">
+          <h4 data-i18n="pd.linearSystems.th8Title">The language of stability</h4>
+          <p data-i18n="pd.linearSystems.th8Text">A fixed point is attracting when every nearby trajectory reaches it as \(t \to \infty\), and Liapunov stable when every nearby trajectory stays nearby for all time. Neither implies the other: a center is Liapunov stable but not attracting, which is called neutrally stable, while the flow \(\dot\theta = 1 - \cos\theta\) on the circle is attracting but not Liapunov stable. A point that is both is called stable, or asymptotically stable.</p>
+        </div>
+      </div>
+      <p class="p19Source" data-i18n="pd.linearSystems.source">Following Steven H. Strogatz, <em>Nonlinear Dynamics and Chaos</em>, third edition, chapter 5: Linear Systems.</p>
+    </section>
+  </div>
+
+  <div id="p19Fs" class="p19Fs" hidden>
+    <div id="p19FsStage" class="p19FsStage"></div>
+    <aside class="p19FsPanel">
+      <div class="p19FsHead">
+        <h3 class="p19FsTitle" data-i18n="pd.linearSystems.fsTitle">Phase portrait</h3>
+        <button id="p19FsExit" class="p19FsExit">
+          <i data-feather="minimize-2"></i>
+          <span data-i18n="pd.linearSystems.exitView">Exit view</span>
+        </button>
+      </div>
+      <div id="p19FsVerdict" class="p19FsVerdictSlot"></div>
+      <div id="p19FsControls" class="p19FsControlsSlot"></div>
+    </aside>
+  </div>
+
+  <div class="space-bottom"></div>
+</ProjectLayout>
+
+<style is:global>@import '../../styles/sections/projects-linear-systems.css';</style>
+
+<script type="module" is:inline>
+  import LinearSystems from '/js/lib/LinearSystems.js'
+
+  const app = new LinearSystems()
+  app.main()
+</script>
