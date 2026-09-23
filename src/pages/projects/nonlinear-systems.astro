@@ -1,0 +1,233 @@
+---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
+---
+<ProjectLayout slug="nonlinear-systems">
+  <div class="p20Content">
+    <header class="p20Intro">
+      <p class="p20Lead" data-i18n="pd.nonlinearSystems.introLead">A nonlinear system \(\dot x = f(x, y)\), \(\dot y = g(x, y)\) can almost never be solved with a formula, and chapter 6 of Strogatz's <em>Nonlinear Dynamics and Chaos</em> answers it with a picture instead. Write the two equations below: the page finds every equilibrium in the window, linearizes the flow around each one with the Jacobian, classifies it with the trace and determinant of chapter 5, draws the stable and unstable manifolds that organize the portrait, and says how much of that verdict survives the nonlinear terms.</p>
+    </header>
+
+    <div class="p20Layout">
+      <div class="p20Figure">
+        <div class="p20FigureCard">
+          <div id="p20Stage" class="p20Stage">
+            <canvas id="p20Canvas"></canvas>
+          </div>
+        </div>
+        <p class="p20CanvasHint" data-i18n="pd.nonlinearSystems.canvasHint">Click a fixed point to inspect it, click anywhere else to draw the trajectory through that point · drag to pan · scroll to zoom.</p>
+      </div>
+
+      <aside class="p20Side">
+        <div id="p20Controls" class="p20Controls">
+          <div class="p20Block">
+            <h3 class="p20PanelTitle" data-i18n="pd.nonlinearSystems.systemTitle">The system</h3>
+            <div class="p20Eq">
+              <span class="p20EqLabel" aria-hidden="true">ẋ =</span>
+              <input id="p20f" type="text" spellcheck="false" autocomplete="off" aria-label="x dot" value="x(3 - x - 2y)" />
+            </div>
+            <div class="p20Eq">
+              <span class="p20EqLabel" aria-hidden="true">ẏ =</span>
+              <input id="p20g" type="text" spellcheck="false" autocomplete="off" aria-label="y dot" value="y(2 - x - y)" />
+            </div>
+            <p id="p20Error" class="p20Error" hidden></p>
+            <p class="p20Hint" data-i18n="pd.nonlinearSystems.systemHint">Write x and y freely: products such as x(3 - x), powers, sin, cos, exp, ln and sqrt are all accepted. Any other letter becomes a parameter with its own slider.</p>
+          </div>
+
+          <div id="p20ParamsWrap" class="p20Block p20ParamsWrap" hidden>
+            <h4 class="p20SubTitle" data-i18n="pd.nonlinearSystems.paramsTitle">Parameters</h4>
+            <div id="p20Params" class="p20Params"></div>
+          </div>
+
+          <div class="p20Block">
+            <h4 class="p20SubTitle" data-i18n="pd.nonlinearSystems.presetTitle">Examples from the chapter</h4>
+            <div class="select-wrap"><select id="p20Preset"></select></div>
+          </div>
+
+          <div class="p20Block">
+            <h4 class="p20SubTitle" data-i18n="pd.nonlinearSystems.displayTitle">What to draw</h4>
+            <div class="p20Opts">
+              <label class="checkbox">
+                <input type="checkbox" data-opt="particles" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.nonlinearSystems.optParticles">Animated flow</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="streams" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.nonlinearSystems.optStreams">Trajectories</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="nullclines" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.nonlinearSystems.optNullclines">Nullclines</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="manifolds" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.nonlinearSystems.optManifolds">Manifolds</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="basins" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.nonlinearSystems.optBasins">Basins of attraction</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="energy" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.nonlinearSystems.optEnergy">Conserved quantity</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="index" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.nonlinearSystems.optIndex">Index probe</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="field" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.nonlinearSystems.optField">Vector field</span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" data-opt="grid" />
+                <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+                <span class="checkbox-label" data-i18n="pd.nonlinearSystems.optGrid">Grid</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="p20Block">
+            <h4 class="p20SubTitle" data-i18n="pd.nonlinearSystems.viewTitle">View</h4>
+            <label class="p20Speed">
+              <span class="p20SpeedLabel" data-i18n="pd.nonlinearSystems.speedLabel">Speed</span>
+              <input id="p20Speed" type="range" min="0.1" max="3" step="0.05" value="1" />
+            </label>
+            <div class="p20ViewButtons">
+              <button id="p20ZoomIn" class="p20MiniBtn" data-i18n-title="pd.nonlinearSystems.zoomIn" title="Zoom in"><i data-feather="zoom-in"></i></button>
+              <button id="p20ZoomOut" class="p20MiniBtn" data-i18n-title="pd.nonlinearSystems.zoomOut" title="Zoom out"><i data-feather="zoom-out"></i></button>
+              <button id="p20ResetView" class="p20MiniBtn" data-i18n-title="pd.nonlinearSystems.resetView" title="Reset view"><i data-feather="crosshair"></i></button>
+              <button id="p20ClearOrbits" class="p20MiniBtn" data-i18n-title="pd.nonlinearSystems.clearOrbits" title="Clear drawn trajectories"><i data-feather="trash-2"></i></button>
+            </div>
+          </div>
+
+          <div class="p20Block p20FsBlock">
+            <button id="p20FsBtn" class="p20FsBtn">
+              <i data-feather="maximize-2"></i>
+              <span data-i18n="pd.nonlinearSystems.fullscreenBtn">Full screen</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section id="p20Verdict" class="p20Verdict">
+      <div class="p20VerdictHead">
+        <span id="p20Kind" class="p20Kind"></span>
+        <span id="p20KindNote" class="p20KindNote"></span>
+      </div>
+      <div id="p20Invariants" class="p20Invariants"></div>
+      <p id="p20Summary" class="p20SummaryLine"></p>
+      <div id="p20Points" class="p20Points"></div>
+    </section>
+
+    <section class="p20Legend">
+      <h3 data-i18n="pd.nonlinearSystems.legendTitle">Reading the picture</h3>
+      <ul class="p20LegendList">
+        <li><span class="p20Swatch p20Swatch--in"></span><span data-i18n="pd.nonlinearSystems.legendIn">Stable manifold of a saddle, and the eigendirections along which the flow comes in.</span></li>
+        <li><span class="p20Swatch p20Swatch--out"></span><span data-i18n="pd.nonlinearSystems.legendOut">Unstable manifold, and the eigendirections along which the flow leaves.</span></li>
+        <li><span class="p20Swatch p20Swatch--third p20Swatch--dash"></span><span data-i18n="pd.nonlinearSystems.legendNullX">The nullcline \(f = 0\), where the motion is purely vertical.</span></li>
+        <li><span class="p20Swatch p20Swatch--accent p20Swatch--dash"></span><span data-i18n="pd.nonlinearSystems.legendNullY">The nullcline \(g = 0\), where the motion is purely horizontal.</span></li>
+        <li><span class="p20Dot p20Dot--solid"></span><span data-i18n="pd.nonlinearSystems.legendStable">Solid dot: a Liapunov stable fixed point.</span></li>
+        <li><span class="p20Dot p20Dot--open"></span><span data-i18n="pd.nonlinearSystems.legendUnstable">Open dot: an unstable fixed point, the convention used throughout the book.</span></li>
+      </ul>
+    </section>
+
+    <section class="p20GlobalSection">
+      <h3 data-i18n="pd.nonlinearSystems.globalTitle">Structure of the system</h3>
+      <p data-i18n="pd.nonlinearSystems.globalIntro">Three questions about the system as a whole, rather than about one fixed point. The first two are exactly the tests that rescue a borderline center, and the third is the bookkeeping of index theory.</p>
+      <div id="p20Global" class="p20Global"></div>
+    </section>
+
+    <section class="p20DiagramSection">
+      <h3 data-i18n="pd.nonlinearSystems.diagramTitle">Where the linearization falls</h3>
+      <p data-i18n="pd.nonlinearSystems.diagramIntro">The Jacobian of the selected fixed point is an ordinary 2×2 matrix, so it lands somewhere on the classification diagram of chapter 5, with the determinant \(\Delta\) and the trace \(\tau\) as axes. Everything inside an open region is robust: the nonlinear terms cannot change it. Everything sitting on one of the curves is borderline, and the marker lands there exactly when linearization stops being enough.</p>
+      <div class="p20DiagramCard">
+        <canvas id="p20Td"></canvas>
+      </div>
+      <p class="p20Caption" data-i18n="pd.nonlinearSystems.diagramCaption">Saddles, nodes and spirals fill open regions and survive a small perturbation; centers, stars, degenerate nodes and non-isolated fixed points live on the curves and do not.</p>
+    </section>
+
+    <section class="p20StepsSection">
+      <h3 data-i18n="pd.nonlinearSystems.stepsTitle">From the equations to the verdict</h3>
+      <p data-i18n="pd.nonlinearSystems.stepsIntro">The chain below is recomputed for the selected fixed point every time you touch an equation, a parameter or the view.</p>
+      <div id="p20Steps" class="p20Steps"></div>
+    </section>
+
+    <section class="p20Theory">
+      <h3 data-i18n="pd.nonlinearSystems.theoryTitle">The theory behind it</h3>
+      <div class="p20TheoryGrid">
+        <div class="p20TheoryCard">
+          <h4 data-i18n="pd.nonlinearSystems.th1Title">6.1 · Phase portraits</h4>
+          <p data-i18n="pd.nonlinearSystems.th1Text">The system attaches the velocity \((\dot x, \dot y) = (f, g)\) to every point of the plane, and a trajectory is a curve that follows those velocities. The phase portrait is the whole family of them at once, and what one wants from it is qualitative: where the fixed points are, what the flow does around them, and whether there are closed orbits. The nullclines \(f = 0\) and \(g = 0\) are the natural first sketch, because the fixed points are exactly where they cross.</p>
+        </div>
+        <div class="p20TheoryCard">
+          <h4 data-i18n="pd.nonlinearSystems.th2Title">6.2 · Existence and uniqueness</h4>
+          <p data-i18n="pd.nonlinearSystems.th2Text">If \(f\) and \(g\) have continuous partial derivatives, every initial condition has exactly one solution. The consequence is geometric and stronger than it looks: trajectories can never cross. Two of them meeting at a point would give that point two futures. In the plane this traps the flow so completely that a trajectory confined to a bounded region with no fixed point in it has nowhere to go but onto a closed orbit, which is where the Poincaré–Bendixson theorem of the next chapter begins.</p>
+        </div>
+        <div class="p20TheoryCard">
+          <h4 data-i18n="pd.nonlinearSystems.th3Title">6.3 · Linearization</h4>
+          <p data-i18n="pd.nonlinearSystems.th3Text">Put \(x = x^* + u\), \(y = y^* + v\) with \(u\) and \(v\) small. Taylor's theorem gives \(\dot u = f_x u + f_y v + O(u^2, uv, v^2)\) and likewise for \(\dot v\), so dropping the quadratic terms leaves the linear system \(\dot&#123;\mathbf u&#125; = A\mathbf u\) with \(A\) the Jacobian evaluated at the fixed point. The classification of chapter 5 then applies unchanged, one matrix per fixed point.</p>
+        </div>
+        <div class="p20TheoryCard">
+          <h4 data-i18n="pd.nonlinearSystems.th4Title">6.3 · When it can be trusted</h4>
+          <p data-i18n="pd.nonlinearSystems.th4Text">A fixed point is hyperbolic when both eigenvalues have nonzero real part, and for those the Hartman–Grobman theorem says the nonlinear portrait near the point is a continuous deformation of the linear one: saddles stay saddles, nodes stay nodes, spirals stay spirals. Hyperbolic fixed points are structurally stable, so the answer survives small changes to the equations. The borderline cases are the rest: centers, stars, degenerate nodes and non-isolated fixed points, where arbitrarily small nonlinear terms can change the answer.</p>
+        </div>
+        <div class="p20TheoryCard">
+          <h4 data-i18n="pd.nonlinearSystems.th5Title">6.4 · Manifolds and basins</h4>
+          <p data-i18n="pd.nonlinearSystems.th5Text">A saddle has two special trajectories through it. The unstable manifold is the pair of curves leaving along the eigendirection with \(\lambda \gt 0\), and the stable manifold the pair arriving along the one with \(\lambda \lt 0\). In the rabbits-versus-sheep model of this section the stable manifold of the saddle is the border between the two basins of attraction, so which species wins depends on which side of that curve the initial numbers fall: the principle of competitive exclusion, drawn as a picture.</p>
+        </div>
+        <div class="p20TheoryCard">
+          <h4 data-i18n="pd.nonlinearSystems.th6Title">6.5 · Conservative systems</h4>
+          <p data-i18n="pd.nonlinearSystems.th6Text">A conserved quantity is a nonconstant function \(E(x, y)\) with \(dE/dt = 0\) on every trajectory, so the trajectories are the level curves of \(E\). A conservative system cannot have an attracting fixed point, since a whole neighbourhood would have to share one value of \(E\). Better still, if a fixed point of a conservative system is a local minimum or maximum of \(E\), and the linearization calls it a center, then it really is a center. The level curve through a saddle is its separatrix, and a loop that leaves a saddle and returns to the same one is a homoclinic orbit.</p>
+        </div>
+        <div class="p20TheoryCard">
+          <h4 data-i18n="pd.nonlinearSystems.th7Title">6.6 · Reversible systems</h4>
+          <p data-i18n="pd.nonlinearSystems.th7Text">Mechanical systems without friction do not care about the direction of time: sending \(t \to -t\) and \(y \to -y\) leaves \(\ddot x = F(x)\) unchanged. Any system with that symmetry is called reversible, and its portrait is mirror-symmetric about the \(x\) axis. That alone forces a predicted center to be a true center, since the reflected image of an inward spiral would have to be an outward one. It is a weaker hypothesis than conservation and catches systems that no conserved quantity would.</p>
+        </div>
+        <div class="p20TheoryCard">
+          <h4 data-i18n="pd.nonlinearSystems.th8Title">6.7 · The pendulum</h4>
+          <p data-i18n="pd.nonlinearSystems.th8Text">The pendulum \(\ddot\theta + \sin\theta = 0\) becomes \(\dot x = y\), \(\dot y = -\sin x\), which is both conservative, with energy \(E = \tfrac12 y^2 - \cos x\), and reversible. Its centers at \(x = 2k\pi\) are the hanging rest state and are genuine nonlinear centers; the saddles at \(x = (2k+1)\pi\) are the inverted position. The separatrices joining consecutive saddles divide the librating swings from the whirling ones. Because \(\theta\) and \(\theta + 2\pi\) are the same position, the true phase space is a cylinder, and adding damping turns every center into a stable spiral.</p>
+        </div>
+        <div class="p20TheoryCard">
+          <h4 data-i18n="pd.nonlinearSystems.th9Title">6.8 · Index theory</h4>
+          <p data-i18n="pd.nonlinearSystems.th9Text">Walk once counterclockwise around a closed curve \(C\) that passes through no fixed point and count the net number of turns the vector field makes: that integer is the index \(I_C\). It cannot change as \(C\) is deformed without crossing a fixed point, so it is a property of the fixed points enclosed, and it adds: the index of a curve is the sum of theirs. Saddles have index \(-1\), while nodes, spirals and centers all have \(+1\). The payoff is a negative result of real power: every closed orbit must enclose fixed points whose indices add up to \(+1\), so no closed orbit can surround a single saddle, or a region with no fixed point at all.</p>
+        </div>
+      </div>
+      <p class="p20Source" data-i18n="pd.nonlinearSystems.source">Following Steven H. Strogatz, <em>Nonlinear Dynamics and Chaos</em>, third edition, chapter 6: Phase Plane.</p>
+    </section>
+  </div>
+
+  <div id="p20Fs" class="p20Fs" hidden>
+    <div id="p20FsStage" class="p20FsStage"></div>
+    <aside class="p20FsPanel">
+      <div class="p20FsHead">
+        <h3 class="p20FsTitle" data-i18n="pd.nonlinearSystems.fsTitle">Phase portrait</h3>
+        <button id="p20FsExit" class="p20FsExit">
+          <i data-feather="minimize-2"></i>
+          <span data-i18n="pd.nonlinearSystems.exitView">Exit view</span>
+        </button>
+      </div>
+      <div id="p20FsVerdict" class="p20FsVerdictSlot"></div>
+      <div id="p20FsControls" class="p20FsControlsSlot"></div>
+    </aside>
+  </div>
+
+  <div class="space-bottom"></div>
+</ProjectLayout>
+
+<style is:global>@import '../../styles/sections/projects-nonlinear-systems.css';</style>
+
+<script type="module" is:inline>
+  import NonlinearSystems from '/js/lib/NonlinearSystems.js'
+
+  const app = new NonlinearSystems()
+  app.main()
+</script>

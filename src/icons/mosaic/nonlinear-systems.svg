@@ -1,0 +1,17 @@
+<svg viewBox="0 0 100 64" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <g data-anim="true">
+    <path d="M4 58 Q18 56 28 50" opacity=".45"/>
+    <path d="M96 6 Q82 8 72 14" opacity=".45"/>
+    <path d="M50 32 C42 44 28 52 12 54"/>
+    <path d="M50 32 C58 20 72 12 88 10"/>
+    <path d="M50 32 C45 19 38 9 33 3" stroke-dasharray="5 4" opacity=".75"/>
+    <path d="M50 32 C55 45 62 55 67 61" stroke-dasharray="5 4" opacity=".75"/>
+    <path d="M36 43.5 L29.6 47.4 L30.4 40.2 Z" fill="var(--accent)" stroke="none"/>
+    <path d="M64 20.5 L70.4 16.6 L69.6 23.8 Z" fill="var(--accent)" stroke="none"/>
+    <path d="M41.2 14.6 L39.6 21.6 L45.4 17.3 Z" fill="var(--accent)" stroke="none" opacity=".7"/>
+    <path d="M58.8 49.4 L60.4 42.4 L54.6 46.7 Z" fill="var(--accent)" stroke="none" opacity=".7"/>
+    <circle cx="12" cy="54" r="3.4" fill="var(--accent)" stroke="none"/>
+    <circle cx="88" cy="10" r="3.4" fill="var(--accent)" stroke="none"/>
+    <circle cx="50" cy="32" r="3.6" stroke-width="2.4" fill="color-mix(in oklab, var(--accent) 12%, transparent)"/>
+  </g>
+</svg>

@@ -1,5 +1,19 @@
 [
   {
+    "slug": "nonlinear-systems",
+    "title": "Nonlinear Systems",
+    "navTitle": "Nonlinear Systems",
+    "pageTitle": "Nonlinear Systems — Fixed Points and Phase Portraits",
+    "image": "p20.svg",
+    "order": 20,
+    "size": "wide",
+    "labels": [
+      "Dynamical Systems",
+      "Nonlinear",
+      "Phase Plane"
+    ]
+  },
+  {
     "slug": "linear-systems",
     "title": "Linear Systems",
     "navTitle": "Linear Systems",

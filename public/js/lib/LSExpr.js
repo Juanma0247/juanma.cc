@@ -228,7 +228,7 @@ function precOf(node) {
   return 10
 }
 
-function toTex(node, parentPrec = 0) {
+export function toTex(node, parentPrec = 0) {
   switch (node.kind) {
     case 'num': return node.text ?? String(node.value)
     case 'const': return CONSTANT_TEX[node.name]
@@ -254,7 +254,10 @@ function toTex(node, parentPrec = 0) {
       }
       const prec = PREC[node.op]
       const sep = node.op === '*' ? (node.implicit ? '' : ' \\cdot ') : ` ${node.op} `
-      const body = `${toTex(node.left, prec)}${sep}${toTex(node.right, prec + 0.5)}`
+      // A sum keeps its left operand unbracketed, so a leading minus sign reads
+      // as "-2x + 1" rather than "(-2x) + 1".
+      const leftPrec = node.op === '+' || node.op === '-' ? 0.5 : prec
+      const body = `${toTex(node.left, leftPrec)}${sep}${toTex(node.right, prec + 0.5)}`
       return prec < parentPrec ? `\\left(${body}\\right)` : body
     }
     default: return ''
@@ -287,4 +290,4 @@ export function evaluate(parsed, scope = {}) {
 
 export const RESERVED = Object.keys(CONSTANTS)
 
-export default { parseExpr, evaluate, ExprError, RESERVED }
+export default { parseExpr, evaluate, toTex, ExprError, RESERVED }

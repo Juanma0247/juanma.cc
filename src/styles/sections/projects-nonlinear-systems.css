@@ -1,0 +1,703 @@
+/* Nonlinear Systems — phase plane of x' = f(x,y), y' = g(x,y) (Strogatz, chapter 6) */
+
+/* The page sets its own text colour because only <p> inherits one from
+   typography.css: KaTeX renders into plain spans and divs, which would
+   otherwise stay at the browser default black on the dark theme. */
+.p20Content,
+.p20Fs {
+  --p20-in: var(--color-primary);
+  --p20-out: oklch(from var(--color-primary) l c calc(h + 140));
+  --p20-third: oklch(from var(--color-primary) l c calc(h - 130));
+  --p20-accent: oklch(from var(--color-primary) l c calc(h + 60));
+  color: var(--color-text);
+}
+
+.p20Content { padding-block: 1rem 0; }
+
+/* ── Intro ──────────────────────────────────────────────── */
+
+.p20Intro {
+  max-width: 44rem;
+  margin: 0 0 2rem;
+}
+
+.p20Lead {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ── Layout: portrait + control panel ───────────────────── */
+
+.p20Layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 1fr) 19rem;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 56rem) {
+  .p20Layout { grid-template-columns: 1fr; }
+}
+
+/* Justification opens rivers once the measure gets this short. */
+@media (max-width: 34rem) {
+  .p20Lead,
+  .p20TheoryCard p { text-align: left; }
+}
+
+.p20Figure {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  min-width: 0;
+}
+
+.p20FigureCard {
+  position: relative;
+  padding: .5rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  aspect-ratio: 1 / 1;
+}
+
+.p20Stage {
+  width: 100%;
+  height: 100%;
+}
+
+#p20Canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.p20CanvasHint {
+  margin: 0;
+  font-size: .78rem;
+  color: var(--color-muted);
+}
+
+/* ── Control panel ──────────────────────────────────────── */
+
+.p20Side { min-width: 0; }
+
+.p20Controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+.p20Block {
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+
+.p20PanelTitle,
+.p20SubTitle {
+  margin: 0;
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--color-text);
+}
+
+.p20Hint {
+  margin: 0;
+  font-size: .74rem;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
+.p20Error {
+  margin: 0;
+  font-size: .76rem;
+  line-height: 1.4;
+  color: oklch(0.58 0.2 25);
+}
+
+/* ── The two equations ──────────────────────────────────── */
+
+.p20Eq {
+  display: grid;
+  grid-template-columns: 2.1rem 1fr;
+  align-items: center;
+  gap: .4rem;
+}
+
+.p20EqLabel {
+  font-family: var(--font-label);
+  font-style: italic;
+  font-size: 1rem;
+  text-align: right;
+  color: var(--color-primary);
+}
+
+.p20Eq input {
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: .86rem;
+  padding: .35rem .45rem;
+}
+
+.p20Eq input.is-invalid,
+.p20ParamValue.is-invalid {
+  border-color: oklch(0.58 0.2 25);
+  box-shadow: .15rem .15rem 0 oklch(0.58 0.2 25);
+}
+
+/* ── Parameters, one per free letter ────────────────────── */
+
+.p20Params {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.p20Param {
+  display: grid;
+  grid-template-columns: 1.4rem 4.6rem 1fr;
+  align-items: center;
+  gap: .45rem;
+}
+
+.p20ParamName {
+  font-family: var(--font-label);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--color-primary);
+}
+
+.p20ParamValue {
+  font-family: var(--font-mono);
+  font-size: .82rem;
+  text-align: center;
+  padding: .25rem .2rem;
+}
+
+/* forms.css gives every range a fixed 12.5rem; the selector has to reach the
+   same specificity or the slider overflows its grid column. */
+.p20Params input[type="range"].p20ParamRange {
+  width: 100%;
+  min-width: 0;
+}
+
+/* ── Options, speed, view ───────────────────────────────── */
+
+.p20Opts {
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+
+.p20Opts .checkbox .box {
+  width: 1rem;
+  height: 1rem;
+  box-shadow: .08rem .08rem 0 var(--color-primary);
+}
+
+.p20Opts .checkbox-label { font-size: .85rem; }
+
+/* A conserved quantity only exists for a conservative system. */
+.p20Opts .checkbox.is-disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.p20Speed {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.p20SpeedLabel {
+  font-family: var(--font-label);
+  font-size: .82rem;
+  color: var(--color-muted);
+}
+
+.p20Speed input[type="range"] { width: 100%; }
+
+.p20ViewButtons {
+  display: flex;
+  gap: .4rem;
+}
+
+.p20MiniBtn {
+  flex: 1 1 0;
+  padding: .35rem;
+  box-shadow: .1rem .1rem 0 var(--color-primary);
+}
+
+.p20FsBlock { margin-top: -.3rem; }
+
+.p20FsBtn {
+  width: 100%;
+  font-size: .88rem;
+}
+
+/* ── Verdict strip ──────────────────────────────────────── */
+
+.p20Verdict {
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  margin-top: 1.5rem;
+  padding: 1rem 1.1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-lg);
+}
+
+.p20VerdictHead {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .3rem .8rem;
+}
+
+.p20Kind {
+  font-family: var(--font-bold);
+  font-size: 1.3rem;
+  line-height: 1.2;
+  color: var(--color-primary);
+}
+
+.p20Kind[data-stability="unstable"] { color: var(--p20-out); }
+.p20Kind[data-stability="neutral"] { color: var(--p20-third); }
+
+.p20KindNote {
+  font-size: .85rem;
+  color: var(--color-muted);
+}
+
+.p20Invariants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.p20Stat {
+  display: flex;
+  align-items: baseline;
+  gap: .45rem;
+  padding: .3rem .6rem;
+  background: var(--primary-10);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.p20StatKey .katex { font-size: .92rem; color: var(--color-muted); }
+
+.p20StatValue {
+  font-family: var(--font-mono);
+  font-size: .88rem;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.p20SummaryLine {
+  margin: 0;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--color-muted);
+}
+
+/* ── The fixed points found in the window ───────────────── */
+
+.p20Points {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(13rem, 100%), 1fr));
+  gap: .5rem;
+}
+
+.p20Point {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .25rem;
+  padding: .55rem .7rem;
+  text-align: left;
+  background: var(--primary-10);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.p20Point.is-selected {
+  border-color: var(--color-primary);
+  box-shadow: .12rem .12rem 0 var(--color-primary);
+}
+
+.p20PointCoords .katex { font-size: .95rem; color: var(--color-text); }
+
+.p20PointKind {
+  font-family: var(--font-bold);
+  font-size: .88rem;
+  color: var(--color-primary);
+}
+
+.p20Point[data-stability="unstable"] .p20PointKind { color: var(--p20-out); }
+.p20Point[data-stability="neutral"] .p20PointKind { color: var(--p20-third); }
+
+.p20PointMeta {
+  font-family: var(--font-mono);
+  font-size: .73rem;
+  color: var(--color-muted);
+}
+
+.p20Badge {
+  padding: .1rem .4rem;
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  border-radius: var(--radius-sm);
+  border: 1px solid currentColor;
+  color: var(--color-muted);
+}
+
+.p20Badge[data-verdict="robust"] { color: var(--p20-in); }
+.p20Badge[data-verdict="typeOnly"] { color: var(--p20-accent); }
+.p20Badge[data-verdict="marginal"] { color: var(--p20-third); }
+
+.p20Empty {
+  margin: 0;
+  font-size: .85rem;
+  color: var(--color-muted);
+}
+
+/* ── Legend ─────────────────────────────────────────────── */
+
+.p20Legend { margin-top: 2rem; }
+
+.p20Legend h3,
+.p20GlobalSection h3,
+.p20DiagramSection h3,
+.p20StepsSection h3,
+.p20Theory h3 {
+  margin: 0 0 .7rem;
+  font-size: 1.05rem;
+}
+
+.p20LegendList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr));
+  gap: .5rem 1.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.p20LegendList li {
+  display: flex;
+  align-items: flex-start;
+  gap: .55rem;
+  font-size: .85rem;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+
+.p20Swatch {
+  flex: none;
+  width: 1.4rem;
+  height: .28rem;
+  margin-top: .45rem;
+  border-radius: 999px;
+}
+
+.p20Swatch--in { background: var(--p20-in); }
+.p20Swatch--out { background: var(--p20-out); }
+.p20Swatch--third { background: var(--p20-third); }
+.p20Swatch--accent { background: var(--p20-accent); }
+
+/* Dashed on the canvas, dashed in the legend. */
+.p20Swatch--dash {
+  background: repeating-linear-gradient(
+    to right,
+    currentColor 0 .3rem,
+    transparent .3rem .5rem
+  );
+}
+
+.p20Swatch--third.p20Swatch--dash { color: var(--p20-third); }
+.p20Swatch--accent.p20Swatch--dash { color: var(--p20-accent); }
+
+.p20Dot {
+  flex: none;
+  width: .7rem;
+  height: .7rem;
+  margin-top: .3rem;
+  border-radius: 50%;
+}
+
+.p20Dot--solid { background: var(--color-text); }
+
+.p20Dot--open {
+  background: var(--color-bg);
+  border: 2px solid var(--color-text);
+}
+
+/* ── Structure of the system ────────────────────────────── */
+
+.p20GlobalSection { margin-top: 2.2rem; }
+
+.p20GlobalSection > p,
+.p20DiagramSection p:not(.p20Caption),
+.p20StepsSection > p {
+  margin: 0 0 1rem;
+  max-width: 44rem;
+  font-size: .9rem;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.p20Global {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr));
+  gap: .8rem;
+}
+
+.p20GlobalRow {
+  padding: .85rem 1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.p20GlobalRow[data-state="yes"] { border-color: var(--color-primary); }
+
+.p20GlobalRow h4 {
+  margin: 0;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--color-muted);
+}
+
+.p20GlobalValue {
+  margin: .2rem 0 .4rem;
+  font-family: var(--font-bold);
+  font-size: 1.1rem;
+  color: var(--color-text);
+}
+
+.p20GlobalRow[data-state="yes"] .p20GlobalValue { color: var(--color-primary); }
+
+.p20GlobalNote {
+  margin: 0;
+  font-size: .8rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+  overflow-x: auto;
+}
+
+/* ── Classification diagram ─────────────────────────────── */
+
+.p20DiagramSection { margin-top: 2.2rem; }
+
+/* The site has no global border-box, so the box that carries both an explicit
+   width and padding has to opt in or it overruns its container. */
+.p20DiagramCard {
+  box-sizing: border-box;
+  width: min(30rem, 100%);
+  aspect-ratio: 1 / 1;
+  padding: .5rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-lg);
+}
+
+#p20Td {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.p20Caption {
+  margin: .6rem 0 0;
+  max-width: 40rem;
+  font-size: .78rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* ── Worked solution ────────────────────────────────────── */
+
+.p20StepsSection { margin-top: 2.2rem; }
+
+.p20Steps {
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+}
+
+.p20Step {
+  padding: .85rem 1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.p20StepLabel {
+  font-family: var(--font-bold);
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--color-primary);
+}
+
+.p20StepMath {
+  margin-top: .5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.p20StepMath .katex-display { margin: .2rem 0; }
+
+.p20StepNote {
+  margin: .55rem 0 0;
+  font-size: .84rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+.p20StepNote strong { color: var(--color-primary); }
+
+/* ── Theory ─────────────────────────────────────────────── */
+
+.p20Theory { margin-top: 2.2rem; }
+
+.p20TheoryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr));
+  gap: .8rem;
+}
+
+.p20TheoryCard {
+  padding: .9rem 1rem;
+  background: var(--primary-05);
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.p20TheoryCard h4 {
+  margin: 0 0 .4rem;
+  font-size: .95rem;
+  color: var(--color-primary);
+}
+
+.p20TheoryCard p {
+  margin: 0;
+  font-size: .86rem;
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.p20Source {
+  margin: 1rem 0 0;
+  font-size: .78rem;
+  color: var(--color-muted);
+}
+
+/* ── Full screen view ───────────────────────────────────── */
+
+body.p20FsLock { overflow: hidden; }
+
+.p20Fs {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  background: var(--color-bg);
+}
+
+.p20Fs[hidden] { display: none; }
+
+.p20FsStage {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  padding: .6rem;
+}
+
+.p20FsStage > .p20Stage { width: 100%; height: 100%; }
+
+.p20FsPanel {
+  box-sizing: border-box;
+  flex: 0 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  padding: 1rem;
+  overflow-y: auto;
+  background: var(--primary-05);
+}
+
+.p20FsPanel > * { flex-shrink: 0; }
+
+@media (orientation: landscape) {
+  .p20Fs { flex-direction: row; }
+  .p20FsPanel {
+    width: min(23rem, 42vw);
+    min-width: 16rem;
+    border-left: var(--border-width) solid var(--color-muted);
+  }
+}
+
+@media (orientation: portrait) {
+  .p20Fs { flex-direction: column; }
+  .p20FsStage { min-height: min(100vw, 46vh); }
+  .p20FsPanel {
+    max-height: 62vh;
+    border-top: var(--border-width) solid var(--color-muted);
+  }
+}
+
+.p20FsHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+}
+
+.p20FsTitle {
+  margin: 0;
+  font-size: .9rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.p20FsExit {
+  font-size: .78rem;
+  padding: .3rem .55rem;
+}
+
+/* Inside the overlay the moved blocks lose their own frames: the panel is
+   already a single surface. */
+.p20FsVerdictSlot .p20Verdict,
+.p20FsControlsSlot .p20Controls {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+}
+
+.p20FsVerdictSlot .p20Kind { font-size: 1.1rem; }
+.p20FsVerdictSlot .p20Points { grid-template-columns: 1fr; }
+.p20FsControlsSlot .p20FsBlock { display: none; }

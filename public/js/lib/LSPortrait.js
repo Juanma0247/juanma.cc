@@ -14,13 +14,22 @@ const cssVar = (name, fallback) => {
   return v || fallback
 }
 
+// getComputedStyle hands back an oklch() string verbatim for the derived hues,
+// which withAlpha below cannot take apart, so the colour is rasterized once and
+// read back as plain sRGB.
 const resolveColor = (expr) => {
   const probe = document.createElement('span')
   probe.style.cssText = `position:absolute;visibility:hidden;color:${expr}`
   document.body.appendChild(probe)
-  const rgb = getComputedStyle(probe).color
+  const value = getComputedStyle(probe).color
   probe.remove()
-  return rgb
+  if (/^rgba?\(/.test(value)) return value
+  const ctx = document.createElement('canvas').getContext('2d')
+  ctx.fillStyle = '#000'
+  ctx.fillStyle = value
+  ctx.fillRect(0, 0, 1, 1)
+  const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data
+  return a ? `rgb(${r}, ${g}, ${b})` : value
 }
 
 const withAlpha = (rgb, alpha) => {
