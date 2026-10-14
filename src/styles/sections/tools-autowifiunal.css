@@ -181,6 +181,15 @@
   color: var(--p21-warn);
 }
 
+.p21BannerText { min-width: 0; }
+
+@media (max-width: 30rem) {
+  .p21Banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 .p21Content .p21BannerText h3 {
   margin: 0 0 .25rem;
   font-size: 1.1rem;
@@ -195,6 +204,7 @@
   font-family: var(--font-mono);
   font-size: .8rem;
   color: var(--color-primary);
+  overflow-wrap: anywhere;
 }
 
 .p21Qr {
@@ -388,6 +398,19 @@
 .p21TipBody {
   font-size: .92rem;
   line-height: 1.55;
+  color: var(--color-text);
+}
+
+.p21TipBody ul {
+  margin: .35rem 0 .55rem;
+  padding-left: 1.1rem;
+  list-style: disc;
+}
+
+.p21TipBody li {
+  margin-top: .2rem;
+  font-size: inherit;
+  line-height: 1.45;
   color: var(--color-text);
 }
 

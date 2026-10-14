@@ -36,7 +36,7 @@ const FILES = {
   instalar: {
     name: 'instalar.sh',
     lang: 'bash',
-    sha: '103f7382b4a067bf7631c410f7968354427e92da326dad91501493054ca4e28e',
+    sha: 'e50397f301c965b166d6578e995356ceb88479351b3093afd359135347694a25',
     blocks: [
       [1, 1, 'inShebang'], [3, 3, 'inSetE'], [5, 5, 'inOrigin'], [7, 8, 'inFind'],
       [10, 14, 'inMissing'], [16, 18, 'inStage1'], [20, 21, 'inStage2'], [23, 25, 'inStage3'],

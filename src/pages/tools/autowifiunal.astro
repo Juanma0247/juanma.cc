@@ -8,7 +8,7 @@ const SITE = 'https://juanma.cc'
 const BASE = '/scripts/autowifiunal'
 
 const FILES = [
-  { id: 'instalar', name: 'instalar.sh', size: 1675, role: 'fileInstaller', where: '', sha: '103f7382b4a067bf7631c410f7968354427e92da326dad91501493054ca4e28e' },
+  { id: 'instalar', name: 'instalar.sh', size: 1710, role: 'fileInstaller', where: '', sha: 'e50397f301c965b166d6578e995356ceb88479351b3093afd359135347694a25' },
   { id: 'unal', name: 'unal.sh', size: 219, role: 'fileLauncher', where: '~/.termux/tasker/unal.sh', sha: 'c76b855c7dfc09335136e55e8b3c3ddf549733cd2d30633882a2e79a4c70efbe' },
   { id: 'login', name: 'unal_wifi_login.py', size: 6836, role: 'fileProgram', where: '~/unal_wifi_login.py', sha: '84a31e1112e1d6833b6c2b8a93661eb70cf72c0a936f9fa87aa32f428855a791' },
 ]
@@ -54,7 +54,7 @@ const CURL_CMD = `mkdir -p ~/autowifiunal && cd ~/autowifiunal && curl -fL -O ${
 const MANUAL = [
   { code: 'pkg update -y', tip: 'mUpdate' },
   { code: 'apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold upgrade', tip: 'mUpgrade' },
-  { code: 'pkg install -y python', tip: 'mPython' },
+  { code: 'pkg install -y --no-install-recommends python python-pip', tip: 'mPython' },
   { code: 'pip install requests', tip: 'mRequests' },
   { code: 'cp ~/storage/downloads/unal_wifi_login.py ~/unal_wifi_login.py', tip: 'mCopyPy' },
   { code: 'mkdir -p ~/.termux/tasker', tip: 'mMkdir' },
@@ -73,7 +73,7 @@ const TROUBLE = [
       { id: 'Perm', cmd: 'termux-setup-storage' },
       { id: 'Mirror', cmd: 'termux-change-repo' },
       { id: 'Managed', cmd: 'pip install --break-system-packages requests' },
-      { id: 'Module', cmd: 'pkg install python && pip install requests' },
+      { id: 'Module', cmd: 'pkg install --no-install-recommends python python-pip && pip install requests' },
       { id: 'Curl', cmd: 'pkg upgrade && pkg install curl' },
       { id: 'Crlf' },
     ],
@@ -136,6 +136,7 @@ const COMMANDS = [
   { code: 'nano ~/.unal_credenciales', text: 'cmdNano' },
   { code: 'ls -l ~/.termux/tasker/', text: 'cmdLs' },
   { code: 'ls ~/storage/downloads/ | grep unal', text: 'cmdGrep' },
+  { code: 'pkg clean', text: 'cmdClean' },
 ]
 
 const ADVANCED = [
@@ -164,6 +165,8 @@ const CHECK_PATH = 'M3 8.5 L6.5 12 L13 4'
       <ul class="p21Chips">
         <li class="p21Chip"><i data-feather="smartphone"></i><T k="chipAndroid" /></li>
         <li class="p21Chip"><i data-feather="clock"></i><T k="chipTime" /></li>
+        <li class="p21Chip"><i data-feather="battery"></i><T k="chipBattery" /><Q tip="tipChipBattery" /></li>
+        <li class="p21Chip"><i data-feather="hard-drive"></i><T k="chipSize" /><Q tip="tipChipSize" /></li>
         <li class="p21Chip"><i data-feather="gift"></i><T k="chipCost" /></li>
         <li class="p21Chip"><i data-feather="code"></i><T k="chipOpen" /></li>
       </ul>

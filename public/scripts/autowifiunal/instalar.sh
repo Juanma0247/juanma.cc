@@ -18,7 +18,7 @@ pkg update -y
 apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold upgrade
 
 echo "[2/6] Instalando Python..."
-pkg install -y python
+pkg install -y --no-install-recommends python python-pip
 
 echo "[3/6] Instalando la librería requests..."
 pip install --disable-pip-version-check requests \
