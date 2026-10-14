@@ -295,13 +295,93 @@ export interface I18n {
   }
   games: {
     tictactoe: {
-      subtitle: string
-      restart: string
-      vsPc: string
+      lead: string
+      boardLabel: string
+      square: string
+      modeLabel: string
+      modePc: string
+      modePvp: string
+      difficultyLabel: string
+      easy: string
+      medium: string
+      impossible: string
+      markLabel: string
+      startsLabel: string
+      startsYou: string
+      startsPc: string
+      analysis: string
+      newGame: string
+      undo: string
+      hint: string
+      keys: string
+      scoreTitle: string
+      resetScore: string
+      scoreYou: string
+      scoreDraws: string
+      scorePc: string
+      yourTurn: string
+      pcThinking: string
+      turnOf: string
+      youWin: string
+      pcWins: string
       draw: string
       oWins: string
       xWins: string
-      title: string
+      noteDraw: string
+      noteLoss: string
+      noteWin: string
+      evalWin: string
+      evalDraw: string
+      evalLoss: string
+      evalWinIn: string
+      evalLossIn: string
+      evalLineWin: string
+      evalLineDraw: string
+      howTitle: string
+      treeText: string
+      minimaxTitle: string
+      minimaxText: string
+      formula: string
+      formulaLegend: string
+      minimaxWhy: string
+      refineTitle: string
+      refineDepth: string
+      refineMemo: string
+      refineTraps: string
+      refineAnalysis: string
+      levelsTitle: string
+      levelEasy: string
+      levelMedium: string
+      levelImpossible: string
+      strategyTitle: string
+      strategyIntro: string
+      numberingCaption: string
+      forkTitle: string
+      forkText: string
+      forkCaption: string
+      rulesTitle: string
+      rule1: string
+      rule2: string
+      rule3: string
+      rule4: string
+      rule5: string
+      rule6: string
+      rule7: string
+      rule8: string
+      rulesNote: string
+      firstTitle: string
+      first1: string
+      first2: string
+      first3: string
+      first4: string
+      secondTitle: string
+      second1: string
+      second2: string
+      second3: string
+      trapText: string
+      trapCaption: string
+      winTitle: string
+      winText: string
     }
     minesweeper: {
       subtitle: string
@@ -1945,13 +2025,93 @@ export const en: I18n = {
   },
   games: {
     tictactoe: {
-      subtitle: 'Tic-Tac-Toe',
-      restart: 'Restart',
-      vsPc: 'vs PC',
+      lead: 'Tic-tac-toe is a solved game: when neither player makes a mistake, every game ends in a draw. Play the machine on <b>Impossible</b> and you will see it for yourself, because it never loses. Below the board you can read how its algorithm thinks, and the strategy that lets you always draw, or win as soon as your opponent slips.',
+      boardLabel: 'Tic-tac-toe board',
+      square: 'Square',
+      modeLabel: 'Mode',
+      modePc: 'vs machine',
+      modePvp: '2 players',
+      difficultyLabel: 'Difficulty',
+      easy: 'Easy',
+      medium: 'Medium',
+      impossible: 'Impossible',
+      markLabel: 'You play',
+      startsLabel: 'Who starts',
+      startsYou: 'You',
+      startsPc: 'Machine',
+      analysis: 'Show analysis',
+      newGame: 'New game',
+      undo: 'Undo',
+      hint: 'Hint',
+      keys: 'Keyboard: <kbd>1</kbd>–<kbd>9</kbd> or the arrows to play, <kbd>H</kbd> hint, <kbd>U</kbd> undo, <kbd>N</kbd> new game.',
+      scoreTitle: 'Score',
+      resetScore: 'Reset score',
+      scoreYou: 'You',
+      scoreDraws: 'Draws',
+      scorePc: 'Machine',
+      yourTurn: 'Your turn ({mark})',
+      pcThinking: 'The machine is thinking…',
+      turnOf: '{mark} to move',
+      youWin: 'You win!',
+      pcWins: 'The machine wins!',
       draw: 'Draw!',
       oWins: 'O wins!',
       xWins: 'X wins!',
-      title: 'Tic-Tac-Toe',
+      noteDraw: 'Perfect play from both sides always ends like this.',
+      noteLoss: 'Use Undo and turn on the analysis to find where the game slipped away.',
+      noteWin: 'Ready for the next level? Try Impossible.',
+      evalWin: 'Win',
+      evalDraw: 'Draw',
+      evalLoss: 'Loss',
+      evalWinIn: 'Wins in {n} move(s)',
+      evalLossIn: 'Loses in {n} move(s)',
+      evalLineWin: '{mark} can force a win from here.',
+      evalLineDraw: 'With perfect play from here, the game is a draw.',
+      howTitle: 'How the machine plays',
+      treeText: 'Every tic-tac-toe position is a node in a tree, and every legal move is a branch to a new position. The tree is small enough to explore completely: it holds exactly <b>255,168</b> possible games (X wins 131,184 of them, O wins 77,904 and 46,080 end in a draw), and they pass through only <b>5,478</b> distinct positions, or 765 if rotations and reflections of the board count as the same position.',
+      minimaxTitle: 'Minimax',
+      minimaxText: 'On <em>Impossible</em> the machine runs <b>minimax</b> over that whole tree. A finished game is worth \\(+1\\) if the machine won, \\(-1\\) if it lost and \\(0\\) if it is a draw. Those values then travel up the tree: on its own turn the machine takes the move with the highest value, and on yours it assumes you will answer with the move that is worst for it, the one with the lowest value.',
+      formula: '\\[ v(s) = \\begin{cases} u(s) & \\text{if } s \\text{ is a finished game} \\\\ \\max_{a}\\, v(s_a) & \\text{if the machine moves} \\\\ \\min_{a}\\, v(s_a) & \\text{if you move} \\end{cases} \\]',
+      formulaLegend: 'Here \\(u(s)\\) is the result of a finished game and \\(s_a\\) is the position reached by playing move \\(a\\) in \\(s\\).',
+      minimaxWhy: 'The value of the empty board comes out as \\(0\\): with perfect play from both sides, tic-tac-toe is a draw. That is also why you cannot beat the machine. To win you would need a line of play it did not foresee, but minimax has already examined every reply you could make. If any of your moves led to your victory, that branch would have value \\(-1\\) and the machine would never have chosen the move that allowed it.',
+      refineTitle: 'Four refinements',
+      refineDepth: '<b>Fast wins, slow losses.</b> A win counts as \\(10 - n\\), where \\(n\\) is the number of moves until the game ends, and a loss counts as \\(n - 10\\). Among winning moves the machine takes the shortest route instead of toying with you.',
+      refineMemo: '<b>Memory.</b> The same position can be reached through different move orders, so each evaluated position is stored in a table (memoization). The tree is solved once, in a few milliseconds, and every later move is instant.',
+      refineTraps: '<b>Setting traps.</b> Several moves are often equally good, all of them a draw. Instead of choosing at random, the machine prefers the one that leaves you the most replies that lose. That is why it always opens in a corner when it starts: 7 of your 8 possible answers lose.',
+      refineAnalysis: '<b>Analysis.</b> The <em>Show analysis</em> option uses the same function: it labels each empty square as a win, a draw or a loss for the player to move, assuming perfect play afterwards. <em>Hint</em> plays the best of those squares.',
+      levelsTitle: 'Difficulty levels',
+      levelEasy: '<b>Easy.</b> Plays at random, although it usually completes a three in a row when it has one ready.',
+      levelMedium: '<b>Medium.</b> Looks one move ahead: it completes its own three in a row, blocks yours, and otherwise prefers the center and then the corners. It has a blind spot: it cannot see forks, so a double threat beats it.',
+      levelImpossible: '<b>Impossible.</b> The full minimax described above, with the trap-setting tie-break. It never loses: the best you can get is a draw.',
+      strategyTitle: 'How to always draw, or win',
+      strategyIntro: 'Since perfect play ends in a draw, the goal is twofold: never lose, and punish your opponent the moment they make a mistake. The squares are numbered from 1 to 9 like this:',
+      numberingCaption: 'Left to right and top to bottom. The keyboard shortcuts use the same numbers: 5 is the center, 1, 3, 7 and 9 are the corners, and 2, 4, 6 and 8 are the edges.',
+      forkTitle: 'The key idea: the fork',
+      forkText: 'A <b>fork</b> is a move that creates two threats of three in a row at once. Your opponent can block only one of them, so you win with the other. Almost every decided game of tic-tac-toe is won with a fork, so good strategy is all about creating forks and preventing them.',
+      forkCaption: 'X has played 1, 5 and 7 and now threatens both 3 and 4. O can only block one.',
+      rulesTitle: 'Priority rules',
+      rule1: '<b>Win:</b> if you have two in a row, complete the third.',
+      rule2: '<b>Block:</b> if your opponent has two in a row, take the third square.',
+      rule3: '<b>Fork:</b> make a move that creates two threats at once.',
+      rule4: '<b>Block the fork:</b> if your opponent can fork on their next move, prevent it, ideally by creating a threat of your own that forces them to answer somewhere harmless.',
+      rule5: '<b>Center:</b> take it if it is free.',
+      rule6: '<b>Opposite corner:</b> if your opponent is in a corner, take the opposite one.',
+      rule7: '<b>Empty corner:</b> take any free corner.',
+      rule8: '<b>Empty edge:</b> take any free edge.',
+      rulesNote: 'At every turn, apply the first rule that fits. This list comes from Newell and Simon (1972), and following it you will never lose. The subtle one is rule 4: blocking a fork the wrong way still loses, as the trap further down shows.',
+      firstTitle: 'If you play first (X)',
+      first1: '<b>Open in a corner.</b> It is the opening that leaves your opponent the fewest ways to survive: of their 8 replies, only the center draws and the other 7 lose.',
+      first2: '<b>If they answer on an edge or in a corner, you can force a win.</b> Example: you play 1 and they answer 2. Take 5, threatening 9; they must block at 9. Now play 7: you threaten 4 and 3 at once.',
+      first3: '<b>If they take the center,</b> play the opposite corner, 9. If they now take a corner you have a fork; if they take an edge, block what you must and the game is a draw.',
+      first4: '<b>Other openings.</b> The center is also solid: the 4 edge replies lose and the 4 corner replies draw. An edge is the weakest opening: 4 replies draw (the center, the two adjacent corners and the opposite edge).',
+      secondTitle: 'If you play second (O)',
+      second1: '<b>Against a corner,</b> take the center. It is the only move that does not lose.',
+      second2: '<b>Against the center,</b> take a corner. Any edge loses.',
+      second3: '<b>Against an edge,</b> take the center, one of the two adjacent corners or the opposite edge.',
+      trapText: '<b>The classic trap.</b> X plays 1, you take the center and X answers with the opposite corner, 9. The tempting move is another corner, and it loses: at 3 or 7 you make a threat, X blocks it, and that very block is a fork. The right answer is an edge (2, 4, 6 or 8): your threat forces X to block on a square that does not help them.',
+      trapCaption: 'After 1, 5 and 9 it is O to move: any edge (grey) holds the draw, either free corner (red) loses.',
+      winTitle: 'How to win',
+      winText: 'Against perfect play nobody wins, so winning means setting problems your opponent might fail to solve. As X, open in a corner and watch for any reply other than the center. As O, hold the draw and pounce on the first mistake with a fork. Practice with <em>Show analysis</em> turned on: teal squares win, grey squares draw and red squares lose. Then switch it off and try to see them on your own.',
     },
     minesweeper: {
       subtitle: 'Minesweeper',

@@ -1,31 +1,163 @@
-﻿---
+---
 import GameLayout from '../../layouts/GameLayout.astro'
+import { en } from '../../data/i18n/en'
+
+const T = en.games.tictactoe
+const K = (key: string) => `games.tictactoe.${key}`
+
+const segments = [
+  { setting: 'mode', label: 'modeLabel', options: [['pc', 'modePc'], ['pvp', 'modePvp']] },
+  { setting: 'difficulty', label: 'difficultyLabel', only: 'pc', options: [['easy', 'easy'], ['medium', 'medium'], ['impossible', 'impossible']] },
+  { setting: 'human', label: 'markLabel', only: 'pc', options: [['X', null], ['O', null]] },
+  { setting: 'starter', label: 'startsLabel', only: 'pc', options: [['human', 'startsYou'], ['pc', 'startsPc']] },
+  { setting: 'pvpStarter', label: 'startsLabel', only: 'pvp', options: [['X', null], ['O', null]] },
+]
+
+const mini = (marks: string, notes: Record<number, string> = {}) =>
+  [...marks].map((c, i) => ({ text: c === '.' ? '' : c, cls: [c === 'X' || c === 'O' ? `is-${c.toLowerCase()}` : '', notes[i + 1] ? `is-${notes[i + 1]}` : ''].join(' ').trim() }))
+
+const figures = [
+  { cells: mini('123456789', Object.fromEntries([1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => [n, 'num']))), caption: 'numberingCaption' },
+  { cells: mini('XO..X.X.O',{ 3: 'threat', 4: 'threat' }), caption: 'forkCaption' },
+  { cells: mini('X...O...X', { 2: 'draw', 4: 'draw', 6: 'draw', 8: 'draw', 3: 'loss', 7: 'loss' }), caption: 'trapCaption' },
+]
+
+const rules = [1, 2, 3, 4, 5, 6, 7, 8].map(n => `rule${n}`)
+const levels = ['levelEasy', 'levelMedium', 'levelImpossible']
+const refinements = ['refineDepth', 'refineMemo', 'refineTraps', 'refineAnalysis']
 ---
 
 <GameLayout slug="tic-tac-toe">
-  <h2 class="ttt-status" id="j1t1" data-i18n="games.tictactoe.subtitle">Tic-Tac-Toe</h2>
-  <div class="ttt-board">
-    <table class="ttt-table">
-      <tr>
-        <td class="ttt-hline"><input id="j1i1" class="ttt-cell" placeholder=" " /></td>
-        <td class="ttt-hline ttt-vline"><input id="j1i2" class="ttt-cell" placeholder=" " /></td>
-        <td class="ttt-hline"><input id="j1i3" class="ttt-cell" placeholder=" " /></td>
-      </tr>
-      <tr>
-        <td class="ttt-hline"><input id="j1i4" class="ttt-cell" placeholder=" " /></td>
-        <td class="ttt-hline ttt-vline"><input id="j1i5" class="ttt-cell" placeholder=" " /></td>
-        <td class="ttt-hline"><input id="j1i6" class="ttt-cell" placeholder=" " /></td>
-      </tr>
-      <tr>
-        <td><input id="j1i7" class="ttt-cell" placeholder=" " /></td>
-        <td class="ttt-vline"><input id="j1i8" class="ttt-cell" placeholder=" " /></td>
-        <td><input id="j1i9" class="ttt-cell" placeholder=" " /></td>
-      </tr>
-    </table>
-  </div>
-  <span id="j1auxTurn" style="display:none">0</span>
-  <div id="j1contButtons">
-    <button id="j1b1" data-i18n="games.tictactoe.restart">Restart</button>
+  <div class="ttt">
+    <p class="ttt-lead" data-i18n={K('lead')} set:html={T.lead} />
+
+    <div class="ttt-layout" id="tttRoot" data-mode="pc">
+      <div class="ttt-play">
+        <p class="ttt-status" id="tttStatus" aria-live="polite"></p>
+        <p class="ttt-note" id="tttNote"></p>
+
+        <div class="ttt-board" id="tttBoard" role="group" aria-label={T.boardLabel} data-i18n-aria-label={K('boardLabel')}>
+          {Array.from({ length: 9 }, (_, i) => (
+            <button type="button" class="ttt-cell" data-cell={i} data-mark="" aria-label={`${T.square} ${i + 1}`}></button>
+          ))}
+          <svg class="ttt-winline" id="tttWinLine" viewBox="0 0 3 3" aria-hidden="true">
+            <line pathLength="1" x1="0" y1="0" x2="0" y2="0" />
+          </svg>
+        </div>
+
+        <p class="ttt-eval" id="tttEval" aria-live="polite"></p>
+
+        <div class="ttt-actions">
+          <button type="button" class="is-solid" id="tttNew" data-i18n={K('newGame')}>{T.newGame}</button>
+          <button type="button" id="tttUndo" data-i18n={K('undo')}>{T.undo}</button>
+          <button type="button" id="tttHint" data-i18n={K('hint')}>{T.hint}</button>
+        </div>
+
+        <p class="ttt-keys" data-i18n={K('keys')} set:html={T.keys} />
+      </div>
+
+      <aside class="ttt-panel">
+        {segments.map(seg => (
+          <div class="ttt-group" data-only={seg.only}>
+            <span class="ttt-group-label" data-i18n={K(seg.label)}>{T[seg.label as keyof typeof T]}</span>
+            <div class="seg-ctrl" data-setting={seg.setting}>
+              {seg.options.map(([value, label]) => (
+                label
+                  ? <button type="button" class="seg-opt" data-value={value} aria-pressed="false" data-i18n={K(label)}>{T[label as keyof typeof T]}</button>
+                  : <button type="button" class="seg-opt" data-value={value} aria-pressed="false">{value}</button>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        <label class="checkbox">
+          <input type="checkbox" id="tttAnalysis" />
+          <span class="box"><svg viewBox="0 0 16 16"><path d="M3 8.5 L6.5 12 L13 4" /></svg></span>
+          <span class="checkbox-label" data-i18n={K('analysis')}>{T.analysis}</span>
+        </label>
+
+        <div class="ttt-score">
+          <div class="ttt-score-head">
+            <h4 data-i18n={K('scoreTitle')}>{T.scoreTitle}</h4>
+            <span class="ttt-score-ctx" id="tttScoreCtx"></span>
+          </div>
+          <div class="ttt-score-grid">
+            {[0, 1, 2].map(() => (
+              <div class="ttt-score-tile">
+                <span class="ttt-score-value">0</span>
+                <span class="ttt-score-label"></span>
+              </div>
+            ))}
+          </div>
+          <button type="button" class="ttt-reset" id="tttResetScore" data-i18n={K('resetScore')}>{T.resetScore}</button>
+        </div>
+      </aside>
+    </div>
+
+    <section class="ttt-theory">
+      <h3 data-i18n={K('howTitle')}>{T.howTitle}</h3>
+      <p class="ttt-prose" data-i18n={K('treeText')} set:html={T.treeText} />
+
+      <h4 data-i18n={K('minimaxTitle')}>{T.minimaxTitle}</h4>
+      <p class="ttt-prose" data-i18n={K('minimaxText')} set:html={T.minimaxText} />
+      <p class="ttt-display" data-i18n={K('formula')} set:html={T.formula} />
+      <p class="ttt-prose" data-i18n={K('formulaLegend')} set:html={T.formulaLegend} />
+      <p class="ttt-prose" data-i18n={K('minimaxWhy')} set:html={T.minimaxWhy} />
+
+      <h4 data-i18n={K('refineTitle')}>{T.refineTitle}</h4>
+      <ul class="ttt-list">
+        {refinements.map(key => <li data-i18n={K(key)} set:html={T[key as keyof typeof T]} />)}
+      </ul>
+
+      <h4 data-i18n={K('levelsTitle')}>{T.levelsTitle}</h4>
+      <div class="ttt-levels">
+        {levels.map(key => <p class="ttt-level" data-i18n={K(key)} set:html={T[key as keyof typeof T]} />)}
+      </div>
+
+      <h3 class="ttt-section" data-i18n={K('strategyTitle')}>{T.strategyTitle}</h3>
+      <p class="ttt-prose" data-i18n={K('strategyIntro')} set:html={T.strategyIntro} />
+      <figure class="ttt-figure">
+        <div class="ttt-mini" aria-hidden="true">
+          {figures[0].cells.map(c => <span class={c.cls}>{c.text}</span>)}
+        </div>
+        <figcaption data-i18n={K(figures[0].caption)} set:html={T.numberingCaption} />
+      </figure>
+
+      <h4 data-i18n={K('forkTitle')}>{T.forkTitle}</h4>
+      <p class="ttt-prose" data-i18n={K('forkText')} set:html={T.forkText} />
+      <figure class="ttt-figure">
+        <div class="ttt-mini" aria-hidden="true">
+          {figures[1].cells.map(c => <span class={c.cls}>{c.text}</span>)}
+        </div>
+        <figcaption data-i18n={K(figures[1].caption)} set:html={T.forkCaption} />
+      </figure>
+
+      <h4 data-i18n={K('rulesTitle')}>{T.rulesTitle}</h4>
+      <ol class="ttt-list ttt-rules">
+        {rules.map(key => <li data-i18n={K(key)} set:html={T[key as keyof typeof T]} />)}
+      </ol>
+      <p class="ttt-prose" data-i18n={K('rulesNote')} set:html={T.rulesNote} />
+
+      <h4 data-i18n={K('firstTitle')}>{T.firstTitle}</h4>
+      <ul class="ttt-list">
+        {['first1', 'first2', 'first3', 'first4'].map(key => <li data-i18n={K(key)} set:html={T[key as keyof typeof T]} />)}
+      </ul>
+
+      <h4 data-i18n={K('secondTitle')}>{T.secondTitle}</h4>
+      <ul class="ttt-list">
+        {['second1', 'second2', 'second3'].map(key => <li data-i18n={K(key)} set:html={T[key as keyof typeof T]} />)}
+      </ul>
+      <p class="ttt-prose" data-i18n={K('trapText')} set:html={T.trapText} />
+      <figure class="ttt-figure">
+        <div class="ttt-mini" aria-hidden="true">
+          {figures[2].cells.map(c => <span class={c.cls}>{c.text}</span>)}
+        </div>
+        <figcaption data-i18n={K(figures[2].caption)} set:html={T.trapCaption} />
+      </figure>
+
+      <h4 data-i18n={K('winTitle')}>{T.winTitle}</h4>
+      <p class="ttt-prose" data-i18n={K('winText')} set:html={T.winText} />
+    </section>
   </div>
   <div class="space-bottom"></div>
 </GameLayout>
