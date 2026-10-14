@@ -1,0 +1,22 @@
+---
+import MechanicsLayout from '../../../layouts/MechanicsLayout.astro'
+import TopicPage from '../../../components/mechanics/TopicPage.astro'
+import { uniform } from '../../../data/i18n/mechanics/uniform'
+
+const d = uniform.en
+---
+
+<MechanicsLayout topic="uniform">
+  <TopicPage topic="uniform" stage="wide" conditions={false}>
+    <section class="mxSection">
+      <h2 class="mxH2" data-i18n="pd.mechanics.uniform.average.title">{d.average.title}</h2>
+      <p class="mxSectionLead" data-i18n="pd.mechanics.uniform.average.lead" set:html={d.average.lead} />
+      <div id="mxAverage" class="mxModule"></div>
+    </section>
+    <section class="mxSection">
+      <h2 class="mxH2" data-i18n="pd.mechanics.uniform.encounter.title">{d.encounter.title}</h2>
+      <p class="mxSectionLead" data-i18n="pd.mechanics.uniform.encounter.lead" set:html={d.encounter.lead} />
+      <div id="mxEncounter" class="mxModule"></div>
+    </section>
+  </TopicPage>
+</MechanicsLayout>

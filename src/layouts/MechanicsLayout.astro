@@ -1,0 +1,83 @@
+---
+import MainLayout from './MainLayout.astro'
+import projects from '../data/projects.json'
+import { MECHANICS_TOPICS, MECHANICS_BASE } from '../data/mechanics'
+import { mechanicsDict } from '../data/i18n/mechanics'
+
+interface Props {
+  topic?: string
+}
+
+const { topic } = Astro.props
+const project = projects.find(p => p.slug === 'fisica-mecanica')!
+const current = MECHANICS_TOPICS.find(tp => tp.key === topic)
+const index = current ? MECHANICS_TOPICS.indexOf(current) : -1
+const { common } = mechanicsDict
+const own = topic ? (mechanicsDict as any)[topic] : mechanicsDict.hub
+
+// Only the common strings and the ones of this page travel with it.
+const i18nExtra = {
+  ns: 'mechanics',
+  en: { common: common.en, [topic ?? 'hub']: own.en },
+  es: { common: common.es, [topic ?? 'hub']: own.es },
+}
+
+const title = current ? `${current.title} · ${project.navTitle}` : project.pageTitle
+const titleKey = current ? `pd.mechanics.common.topics.${current.key}.title` : 'cardTitles.fisica-mecanica'
+const navTitle = current ? common.en.topics[current.key as keyof typeof common.en.topics].title : project.navTitle
+---
+
+<MainLayout
+  title={title}
+  navTitle={navTitle}
+  section="Projects"
+  titleKey={titleKey}
+  titleHref={current ? MECHANICS_BASE : '/projects'}
+  i18nExtra={i18nExtra}
+>
+  <div class="page-shell">
+    <div class="mx" data-topic={topic ?? 'hub'}>
+      {current && (
+        <nav class="mxTopicNav" aria-label="Topics" data-i18n-aria-label="pd.mechanics.common.nav.topics">
+          <a class="mxTopicChip mxTopicChip--home" href={MECHANICS_BASE}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            <span data-i18n="pd.mechanics.common.nav.hub">{common.en.nav.hub}</span>
+          </a>
+          {MECHANICS_TOPICS.map((tp, i) => (
+            <a
+              class:list={['mxTopicChip', { 'is-active': tp.key === topic }]}
+              href={`${MECHANICS_BASE}/${tp.slug}`}
+              aria-current={tp.key === topic ? 'page' : undefined}
+            >
+              <span class="mxTopicNum">{i + 1}</span>
+              <span data-i18n={`pd.mechanics.common.topics.${tp.key}.short`}>{common.en.topics[tp.key as keyof typeof common.en.topics].short}</span>
+            </a>
+          ))}
+        </nav>
+      )}
+      <slot />
+      {current && (
+        <nav class="mxPager">
+          {index > 0 ? (
+            <a class="mxPagerLink" href={`${MECHANICS_BASE}/${MECHANICS_TOPICS[index - 1].slug}`}>
+              <span class="mxPagerDir" data-i18n="pd.mechanics.common.nav.prev">{common.en.nav.prev}</span>
+              <span data-i18n={`pd.mechanics.common.topics.${MECHANICS_TOPICS[index - 1].key}.title`}>{common.en.topics[MECHANICS_TOPICS[index - 1].key as keyof typeof common.en.topics].title}</span>
+            </a>
+          ) : <span />}
+          {index < MECHANICS_TOPICS.length - 1 ? (
+            <a class="mxPagerLink mxPagerLink--next" href={`${MECHANICS_BASE}/${MECHANICS_TOPICS[index + 1].slug}`}>
+              <span class="mxPagerDir" data-i18n="pd.mechanics.common.nav.next">{common.en.nav.next}</span>
+              <span data-i18n={`pd.mechanics.common.topics.${MECHANICS_TOPICS[index + 1].key}.title`}>{common.en.topics[MECHANICS_TOPICS[index + 1].key as keyof typeof common.en.topics].title}</span>
+            </a>
+          ) : <span />}
+        </nav>
+      )}
+    </div>
+  </div>
+  <div class="space-bottom"></div>
+</MainLayout>
+
+<style is:global>
+  @import '../styles/sections/projects.css';
+  @import '../styles/sections/projects-mechanics.css';
+</style>

@@ -1,0 +1,895 @@
+/* Física Mecánica: hub and topic pages (prefix mx). Global on purpose: the
+   topic modules build most of the page with innerHTML/createElement. */
+
+.mx {
+  --mx-second: oklch(from var(--color-primary) l c calc(h + 140));
+  --mx-third: oklch(from var(--color-primary) l c calc(h - 130));
+  --mx-bad: oklch(0.6 0.19 25);
+  --mx-warn: oklch(0.72 0.15 75);
+  --mx-card: color-mix(in srgb, var(--color-primary) 4%, var(--color-bg));
+  --mx-line: color-mix(in srgb, var(--color-muted) 45%, transparent);
+  color: var(--color-text);
+  padding-block: .5rem 0;
+}
+
+.mx .katex { font-size: 1.05em; }
+.mx p, .mx li { color: var(--color-text); }
+
+/* reset.css sets the UI font on every element, which beats the inheritance of
+   KaTeX_Main inside formulas (digits and parentheses came out in the sans
+   face, and its contextual alternates turned "(2)" into a circled 2). The
+   :where() keeps this below KaTeX's own font classes. */
+:where(.mx) .katex :where(*) { font-family: inherit; }
+.mx { font-variant-ligatures: no-contextual; }
+
+/* forms.css styles inputs through a long chain of :not() selectors; matching
+   that chain is what lets these compact fields win. */
+.mx input.mxIn:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([readonly]),
+.mx .mxQueryForm input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([readonly]) {
+  padding: .26rem .45rem;
+  font-family: var(--font-mono);
+  font-size: .86rem;
+  line-height: 1.3;
+}
+
+.mx .mxQueryForm input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([readonly]) { width: 8rem; }
+.mx .mxQueryForm select { width: auto; max-width: 100%; }
+
+/* ── Topic navigation ─────────────────────────────────────── */
+
+.mxTopicNav {
+  display: flex;
+  gap: .4rem;
+  overflow-x: auto;
+  padding: .2rem .1rem .6rem;
+  margin-bottom: 1.2rem;
+  scrollbar-width: thin;
+  mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+}
+
+.mxTopicChip {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  flex: none;
+  padding: .3rem .7rem .3rem .35rem;
+  border: var(--border-width) solid var(--mx-line);
+  border-radius: 100rem;
+  font-family: var(--font-ui);
+  font-size: .82rem;
+  color: var(--color-muted);
+  white-space: nowrap;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+
+.mxTopicChip:hover { color: var(--color-text); border-color: var(--color-primary); }
+
+.mxTopicChip.is-active {
+  color: var(--color-bg);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.mxTopicChip--home { padding-left: .6rem; }
+.mxTopicChip svg { width: .9rem; height: .9rem; }
+
+.mxTopicNum {
+  display: inline-grid;
+  place-items: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  font-family: var(--font-bold);
+  font-size: .72rem;
+  background: var(--primary-10);
+  color: var(--color-primary);
+}
+
+.mxTopicChip.is-active .mxTopicNum { background: var(--color-bg); }
+
+/* ── Header ───────────────────────────────────────────────── */
+
+.mxHead { max-width: 46rem; margin-bottom: 1.6rem; }
+
+.mxEyebrow {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin: 0 0 .3rem;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.mxEyebrowNum { color: var(--color-primary); }
+
+.mxTitle {
+  margin: 0 0 .7rem;
+  font-size: clamp(1.7rem, 4vw, 2.3rem);
+  line-height: 1.15;
+}
+
+.mxLead {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ── Section scaffolding ──────────────────────────────────── */
+
+.mxH2 {
+  margin: 0 0 .8rem;
+  font-size: 1.25rem;
+  text-align: left;
+}
+
+.mxH3 {
+  margin: 0;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--color-text);
+}
+
+.mxSection { margin-top: 2.6rem; }
+
+.mxSectionLead {
+  max-width: 46rem;
+  margin: -.2rem 0 1rem;
+  font-size: .98rem;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.mxHint {
+  margin: 0;
+  font-size: .76rem;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
+/* ── Laboratory ───────────────────────────────────────────── */
+
+.mxLabGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20.5rem;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 58rem) {
+  .mxLabGrid { grid-template-columns: 1fr; }
+}
+
+.mxStageCol { display: flex; flex-direction: column; gap: .55rem; min-width: 0; }
+
+.mxStageCard {
+  position: relative;
+  background: var(--mx-card);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-primary);
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.mxStageCard--wide { aspect-ratio: 16 / 7; }
+.mxStageCard--square { aspect-ratio: 1 / 1; max-height: 34rem; }
+
+.mxScene { display: block; width: 100%; height: 100%; touch-action: none; }
+
+.mxLabPlots { display: flex; flex-direction: column; gap: .45rem; margin-top: .3rem; }
+.mxPlots.mxPlots--lab { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .6rem; }
+.mxPlots--lab .mxPlotNote { font-size: .72rem; }
+
+.mxSceneNote {
+  position: absolute;
+  inset: auto .6rem .6rem .6rem;
+  padding: .5rem .7rem;
+  font-size: .82rem;
+  line-height: 1.45;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  border: 1px solid var(--mx-line);
+  border-radius: var(--radius-md);
+}
+
+.mxPlayer {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .35rem .5rem;
+  border: 1px solid var(--mx-line);
+  border-radius: var(--radius-lg);
+}
+
+.mxPlayBtn {
+  width: 2rem;
+  height: 2rem;
+  padding: .35rem;
+  box-shadow: .1rem .1rem 0 var(--color-primary);
+}
+
+.mxPlayBtn svg { width: 1rem; height: 1rem; }
+
+.mxPlaySlider { flex: 1; min-width: 4rem; width: auto; }
+
+.mxPlayTime {
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  min-width: 6.2rem;
+  text-align: right;
+  color: var(--color-text);
+}
+
+.mxPlaySpeed { width: 4.2rem; padding: .25rem 1.6rem .25rem .45rem; font-size: .82rem; }
+
+.mxLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem 1rem;
+  font-size: .8rem;
+  color: var(--color-muted);
+}
+
+.mxLegendItem { display: inline-flex; align-items: center; gap: .35rem; }
+.mxSwatch { width: .9rem; height: .22rem; border-radius: 1rem; background: currentColor; }
+.mxSwatch--dot { width: .55rem; height: .55rem; }
+
+/* ── Panel ────────────────────────────────────────────────── */
+
+.mxPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+  padding: 1rem;
+  background: var(--mx-card);
+  border: var(--border-width) solid var(--mx-line);
+  border-radius: var(--radius-lg);
+  min-width: 0;
+}
+
+.mxBlock { display: flex; flex-direction: column; gap: .5rem; }
+.mxBlock[hidden] { display: none; }
+
+.mxBlockHead { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+
+.mxMiniBtn {
+  padding: .22rem .55rem;
+  font-size: .75rem;
+  box-shadow: .08rem .08rem 0 var(--color-primary);
+}
+
+.mxPresetSel { font-size: .88rem; }
+
+.mxStatement {
+  font-size: .84rem;
+  line-height: 1.5;
+  padding: .55rem .7rem;
+  border-left: .2rem solid var(--color-primary);
+  background: var(--primary-05);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.mxStatement p { margin: 0; font-size: inherit; }
+.mxStatementSource { display: block; margin-top: .35rem; font-size: .72rem; color: var(--color-muted); }
+
+.mxConditions { display: flex; flex-wrap: wrap; gap: .35rem; }
+
+.mxCond {
+  padding: .28rem .6rem;
+  font-family: var(--font-ui);
+  font-size: .8rem;
+  color: var(--color-muted);
+  background: transparent;
+  border: 1px solid var(--mx-line);
+  border-radius: 100rem;
+  box-shadow: none;
+}
+
+.mxCond:hover { color: var(--color-text); border-color: var(--color-primary); opacity: 1; }
+.mxCond.is-active { color: var(--color-bg); background: var(--color-primary); border-color: var(--color-primary); }
+.mxCond:active { animation: none; }
+
+.mxRows { display: flex; flex-direction: column; gap: .3rem; }
+
+.mxRow {
+  display: grid;
+  grid-template-columns: 2.3rem minmax(0, 1fr) 4.8rem 1.6rem;
+  align-items: end;
+  gap: .35rem;
+}
+
+.mxSym {
+  align-self: center;
+  padding-top: .8rem;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.mxField { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+
+.mxName {
+  font-family: var(--font-label);
+  font-size: .7rem;
+  line-height: 1.25;
+  color: var(--color-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mx input.mxIn::placeholder { color: var(--color-muted); opacity: .8; }
+
+.mxRow.is-solved input.mxIn::placeholder { color: var(--color-primary); opacity: 1; font-weight: bold; }
+.mxRow.is-given input.mxIn { border-color: var(--color-primary); }
+.mxRow.is-invalid input.mxIn { border-color: var(--mx-bad); }
+.mxRow.is-locked input.mxIn { border-style: dashed; opacity: .8; }
+
+.mx .mxUnitCell select, .mx select.mxUnit { padding: .26rem 1.4rem .26rem .4rem; font-size: .78rem; line-height: 1.3; background-position: right .4rem center; }
+.mxUnitStatic { display: block; padding-bottom: .35rem; font-size: .8rem; color: var(--color-muted); }
+
+.mxStar {
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  font-size: .9rem;
+  color: var(--color-muted);
+  border-color: var(--mx-line);
+  box-shadow: none;
+  margin-bottom: .1rem;
+}
+
+.mxStar[aria-pressed="true"] { color: var(--color-bg); background: var(--mx-warn); border-color: var(--mx-warn); }
+.mxRow.is-given .mxStar { visibility: hidden; }
+
+.mxGRow {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr) 7.4rem;
+  align-items: center;
+  gap: .4rem;
+  margin-top: .55rem;
+  padding-top: .55rem;
+  border-top: 1px dashed var(--mx-line);
+}
+
+.mxGRow .mxSym { padding-top: 0; }
+.mxGName { font-family: var(--font-label); font-size: .74rem; color: var(--color-muted); }
+.mxGSel { font-size: .8rem; padding: .3rem 1.5rem .3rem .45rem; }
+.mxGCustom { grid-column: 3; }
+
+.mxSeg { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
+.mxSegLabel { font-family: var(--font-label); font-size: .78rem; color: var(--color-muted); margin-right: .2rem; }
+
+/* ── Invariant ────────────────────────────────────────────── */
+
+.mxInvariant {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1rem;
+}
+
+.mxInvCard {
+  padding: .9rem 1rem;
+  border: var(--border-width) solid var(--mx-line);
+  border-radius: var(--radius-lg);
+  background: var(--mx-card);
+  min-width: 0;
+}
+
+.mxInvCard--variant { border-color: var(--color-primary); }
+
+.mxInvCardTitle {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .5rem;
+  margin: 0 0 .5rem;
+  font-family: var(--font-bold);
+  font-size: .95rem;
+  color: var(--color-primary);
+}
+
+.mxInvTag {
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  font-weight: normal;
+  padding: .1rem .45rem;
+  border-radius: 100rem;
+  background: var(--primary-10);
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.mxInvEq {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .4rem;
+  padding: .28rem .35rem;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+}
+
+.mxInvEq.is-used { background: var(--primary-10); }
+.mxInvNum { font-family: var(--font-mono); font-size: .75rem; color: var(--color-muted); }
+.mxInvLacks { font-size: .72rem; color: var(--color-muted); white-space: nowrap; }
+.mxInvNote { margin: .55rem 0 0; font-size: .82rem; line-height: 1.5; color: var(--color-muted); }
+
+/* ── Solution ─────────────────────────────────────────────── */
+
+.mxSolution { display: flex; flex-direction: column; gap: .8rem; }
+
+.mxSolHead {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: .8rem 1.2rem;
+}
+
+.mxSolBlock { min-width: 0; }
+
+.mxSolTitle {
+  margin: 0 0 .4rem;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--color-muted);
+}
+
+.mxChips { display: flex; flex-wrap: wrap; gap: .35rem; }
+
+.mxChip {
+  padding: .25rem .55rem;
+  border: 1px solid var(--mx-line);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font-size: .9rem;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.mxChip--unknown { border-style: dashed; color: var(--color-muted); }
+.mxChip.is-asked, .mxResult.is-asked { border-color: var(--mx-warn); box-shadow: inset .2rem 0 0 var(--mx-warn); }
+
+.mxBranchTabs { align-self: flex-start; }
+.mxBranch { display: flex; flex-direction: column; gap: .8rem; }
+.mxBranch[hidden] { display: none; }
+
+.mxStep {
+  padding: .85rem 1rem .9rem;
+  border: 1px solid var(--mx-line);
+  border-left: .22rem solid var(--color-primary);
+  border-radius: var(--radius-md);
+  background: var(--mx-card);
+  min-width: 0;
+}
+
+.mxStepHead { display: flex; align-items: center; gap: .6rem; margin-bottom: .35rem; }
+
+.mxStepNum {
+  display: inline-grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-bg);
+  font-family: var(--font-bold);
+  font-size: .8rem;
+}
+
+.mxStepTitle { font-family: var(--font-bold); font-size: 1rem; }
+
+.mxProse { margin: .35rem 0; font-size: .93rem; line-height: 1.55; }
+
+.mxEq {
+  margin: .25rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: .1rem 0;
+}
+
+.mxEq .katex-display { margin: .35rem 0; }
+
+.mxBoxed {
+  display: inline-flex;
+  flex-direction: column;
+  gap: .2rem;
+  margin-top: .45rem;
+  padding: .35rem .8rem;
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-md);
+  background: var(--primary-05);
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.mxResults { display: flex; flex-wrap: wrap; gap: .45rem; }
+
+.mxResult {
+  padding: .35rem .7rem;
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-md);
+  background: var(--primary-05);
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.mxAlert {
+  padding: .65rem .85rem;
+  border: 1px solid var(--mx-warn);
+  border-left: .22rem solid var(--mx-warn);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--mx-warn) 8%, transparent);
+}
+
+.mxAlert--bad { border-color: var(--mx-bad); background: color-mix(in srgb, var(--mx-bad) 7%, transparent); }
+.mxAlert .mxProse { margin: 0; }
+
+.mxEmpty { margin: 0; font-size: .92rem; color: var(--color-muted); }
+
+/* ── Graphs ───────────────────────────────────────────────── */
+
+.mxPlots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+
+.mxPlotCard {
+  position: relative;
+  border: 1px solid var(--mx-line);
+  border-radius: var(--radius-lg);
+  background: var(--mx-card);
+  padding: .4rem .4rem .2rem;
+  min-width: 0;
+}
+
+.mxPlotTitle { margin: .1rem .3rem .2rem; font-size: .8rem; color: var(--color-muted); font-family: var(--font-label); }
+.mxPlotCanvas { display: block; width: 100%; aspect-ratio: 4 / 3; cursor: ew-resize; touch-action: none; }
+.mxPlotNote { margin: .2rem .4rem .35rem; font-size: .76rem; line-height: 1.45; color: var(--color-muted); }
+
+/* ── Events & query ───────────────────────────────────────── */
+
+.mxEvents { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .8rem; }
+
+.mxEvent {
+  padding: .75rem .9rem;
+  border: 1px solid var(--mx-line);
+  border-radius: var(--radius-lg);
+  background: var(--mx-card);
+  min-width: 0;
+}
+
+.mxEventHead { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .3rem; }
+.mxEventTitle { margin: 0; font-family: var(--font-bold); font-size: .92rem; color: var(--color-primary); }
+.mxEventGo { padding: .15rem .45rem; font-size: .72rem; box-shadow: .06rem .06rem 0 var(--color-primary); }
+.mxEvent .mxEq { font-size: .92rem; }
+.mxEventCond { margin: 0 0 .2rem; font-size: .8rem; color: var(--color-muted); }
+
+.mxQuery {
+  margin-top: 1.2rem;
+  padding: .9rem 1rem;
+  border: var(--border-width) dashed var(--color-primary);
+  border-radius: var(--radius-lg);
+}
+
+.mxQueryForm { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: .5rem; }
+.mxQueryForm select { font-size: .86rem; }
+.mxQueryOut { margin-top: .6rem; display: flex; flex-direction: column; gap: .6rem; }
+
+/* ── Theory ───────────────────────────────────────────────── */
+
+.mxTheoryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: 1rem;
+}
+
+.mxTheoryCard {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--mx-line);
+  border-radius: var(--radius-lg);
+  background: var(--mx-card);
+  min-width: 0;
+}
+
+.mxTheoryCard .mxH3 { margin-bottom: .5rem; font-size: .82rem; color: var(--color-primary); }
+
+.mxTheoryBody {
+  font-family: var(--font-ui);
+  font-size: .95rem;
+  line-height: 1.62;
+  color: var(--color-text);
+  overflow-x: auto;
+}
+
+.mxTheoryBody p { margin: 0 0 .5rem; font-size: inherit; }
+.mxTheoryBody .katex-display { margin: .5rem 0; overflow-x: auto; overflow-y: hidden; }
+.mxTheoryBody ul, .mxTheoryBody ol { margin: .3rem 0 .5rem 1.2rem; }
+.mxTheoryBody li { margin: .15rem 0; }
+
+/* ── Problem bank ─────────────────────────────────────────── */
+
+.mxProblemList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  counter-reset: mxp;
+}
+
+.mxProblem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  padding: .95rem 1rem 1rem;
+  border: 1px solid var(--mx-line);
+  border-radius: var(--radius-lg);
+  background: var(--mx-card);
+  counter-increment: mxp;
+}
+
+.mxProblemHead { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; }
+
+.mxProblemTitle {
+  margin: 0;
+  font-size: .95rem;
+  color: var(--color-text);
+}
+
+.mxProblemTitle::before {
+  content: counter(mxp, decimal-leading-zero) " ";
+  font-family: var(--font-mono);
+  color: var(--color-primary);
+}
+
+.mxProblemSource { flex: none; font-family: var(--font-mono); font-size: .7rem; color: var(--color-muted); }
+
+.mxProblemText { flex: 1; margin: 0; font-size: .9rem; line-height: 1.55; }
+
+.mxLoadBtn { align-self: flex-start; font-size: .82rem; padding: .32rem .7rem; }
+
+.mxSource {
+  margin: 2.2rem 0 0;
+  font-size: .82rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+/* ── Pager ────────────────────────────────────────────────── */
+
+.mxPager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.mxPagerLink {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  padding: .75rem 1rem;
+  border: var(--border-width) solid var(--mx-line);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition);
+}
+
+.mxPagerLink:hover { border-color: var(--color-primary); }
+.mxPagerLink--next { text-align: right; }
+.mxPagerDir { font-family: var(--font-ui); font-size: .75rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: .05em; }
+
+/* ── Free-body diagrams ───────────────────────────────────── */
+
+.mxFbdGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+}
+
+.mxFbdCard {
+  border: 1px solid var(--mx-line);
+  border-radius: var(--radius-lg);
+  background: var(--mx-card);
+  padding: .6rem .7rem .8rem;
+  min-width: 0;
+}
+
+.mxFbdTitle { margin: 0 0 .3rem; font-family: var(--font-bold); font-size: .9rem; color: var(--color-primary); }
+.mxFbdStage { position: relative; width: 100%; aspect-ratio: 1 / 1; }
+.mxFbdStage svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+
+.mxFbdLabel {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: .95rem;
+  white-space: nowrap;
+  pointer-events: none;
+  padding: 0 .15rem;
+  border-radius: .2rem;
+  background: color-mix(in srgb, var(--mx-card) 80%, transparent);
+}
+
+.mxFbdEqs { margin-top: .3rem; font-size: .9rem; overflow-x: auto; }
+.mxFbdList { margin: .4rem 0 0; padding: 0; list-style: none; font-size: .82rem; line-height: 1.5; color: var(--color-text); }
+.mxFbdList li { display: flex; gap: .4rem; align-items: baseline; }
+.mxFbdDot { width: .55rem; height: .55rem; border-radius: 50%; flex: none; transform: translateY(-.05rem); }
+
+/* ── Extra modules (encounter, phases, x(t)) ──────────────── */
+
+.mxModule {
+  padding: 1rem;
+  border: var(--border-width) solid var(--mx-line);
+  border-radius: var(--radius-lg);
+  background: var(--mx-card);
+}
+
+.mxModuleGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 19rem;
+  gap: 1.1rem;
+  align-items: start;
+}
+
+@media (max-width: 52rem) {
+  .mxModuleGrid { grid-template-columns: 1fr; }
+}
+
+.mxTable {
+  width: 100%;
+  border-spacing: 0;
+  font-size: .86rem;
+}
+
+.mxTable th, .mxTable td {
+  border: none;
+  border-bottom: 1px solid var(--mx-line);
+  border-radius: 0;
+  padding: .35rem .45rem;
+  text-align: right;
+}
+
+.mxTable thead th {
+  background: transparent;
+  color: var(--color-muted);
+  font-family: var(--font-ui);
+  font-size: .72rem;
+}
+
+.mxTable td:first-child, .mxTable th:first-child { text-align: left; }
+.mxTable tbody tr:hover td { background: var(--primary-05); }
+.mxTableWrap { overflow-x: auto; }
+
+.mxPhaseList { display: flex; flex-direction: column; gap: .45rem; }
+
+.mxPhase {
+  display: grid;
+  grid-template-columns: 1.6rem repeat(2, minmax(0, 1fr)) 1.8rem;
+  gap: .35rem;
+  align-items: end;
+}
+
+.mxPhaseNum { align-self: center; padding-top: .9rem; font-family: var(--font-mono); font-size: .8rem; color: var(--color-primary); }
+.mxPhaseDel { width: 1.8rem; height: 1.8rem; padding: 0; box-shadow: none; border-color: var(--mx-line); color: var(--color-muted); }
+
+.mxBodyCard {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  padding: .6rem .7rem;
+  border: 1px solid var(--mx-line);
+  border-radius: var(--radius-md);
+}
+
+.mxBodyCard h4 { margin: 0; font-size: .85rem; display: flex; align-items: center; gap: .4rem; }
+.mxBodyGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem .5rem; }
+
+.mxSmallField { display: flex; flex-direction: column; gap: .1rem; }
+.mxSmallField span { font-family: var(--font-label); font-size: .72rem; color: var(--color-muted); }
+
+/* ── Hub ──────────────────────────────────────────────────── */
+
+.mxHubHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 1.6rem;
+  align-items: center;
+  margin-bottom: 2.2rem;
+}
+
+@media (max-width: 52rem) {
+  .mxHubHero { grid-template-columns: 1fr; }
+}
+
+.mxHubArt {
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-primary);
+  background: var(--mx-card);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.mxHubArt canvas { display: block; width: 100%; height: 100%; }
+
+.mxHubGroup { margin-top: 2rem; }
+
+.mxHubGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 1rem;
+}
+
+.mxHubCard {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1rem 1.05rem 1.05rem;
+  border: var(--border-width) solid var(--mx-line);
+  border-radius: var(--radius-lg);
+  background: var(--mx-card);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.mxHubCard:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-primary);
+  transform: translate(-.1rem, -.1rem);
+  color: inherit;
+}
+
+.mxHubCardTop { display: flex; align-items: center; gap: .65rem; }
+
+.mxHubIcon {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  flex: none;
+  border-radius: var(--radius-md);
+  background: var(--primary-10);
+  color: var(--color-primary);
+}
+
+.mxHubIcon svg { width: 1.7rem; height: 1.7rem; }
+
+.mxHubCardTitle { margin: 0; font-family: var(--font-bold); font-size: 1.02rem; color: var(--color-text); }
+.mxHubCardNum { font-family: var(--font-mono); font-size: .72rem; color: var(--color-primary); }
+.mxHubCardText { margin: 0; font-family: var(--font-ui); font-size: .88rem; line-height: 1.5; color: var(--color-text); }
+
+.mxHubTags { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: auto; }
+.mxHubTag { font-family: var(--font-mono); font-size: .68rem; padding: .08rem .45rem; border-radius: 100rem; border: 1px solid var(--mx-line); color: var(--color-muted); }
+
+.mxHowGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+  counter-reset: mxhow;
+}
+
+.mxHowCard {
+  padding: .9rem 1rem;
+  border-left: .22rem solid var(--color-primary);
+  background: var(--mx-card);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  counter-increment: mxhow;
+}
+
+.mxHowCard h3 { margin: 0 0 .35rem; font-size: .92rem; }
+.mxHowCard h3::before { content: counter(mxhow) ". "; color: var(--color-primary); font-family: var(--font-mono); }
+.mxHowCard p { margin: 0; font-size: .9rem; line-height: 1.55; }
+
+@media (max-width: 34rem) {
+  .mxLead, .mxTheoryBody { text-align: left; }
+  .mxRow { grid-template-columns: 2.1rem minmax(0, 1fr) 4.4rem 1.6rem; }
+  .mxPager { grid-template-columns: 1fr; }
+}

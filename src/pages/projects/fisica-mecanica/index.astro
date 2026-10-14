@@ -1,0 +1,24 @@
+---
+import MechanicsLayout from '../../../layouts/MechanicsLayout.astro'
+import { MECHANICS_TOPICS, MECHANICS_BASE } from '../../../data/mechanics'
+import { mechanicsDict } from '../../../data/i18n/mechanics'
+
+const c = mechanicsDict.common.en
+const d = mechanicsDict.hub.en
+---
+
+<MechanicsLayout>
+  <header class="mxHead">
+    <h1 class="mxTitle" data-i18n="pd.mechanics.common.project">{c.project}</h1>
+    <p class="mxLead" data-i18n="pd.mechanics.hub.lead" set:html={d.lead} />
+  </header>
+  <div class="mxHubGrid">
+    {MECHANICS_TOPICS.map((tp, i) => (
+      <a class="mxHubCard" href={`${MECHANICS_BASE}/${tp.slug}`}>
+        <span class="mxHubCardNum">{String(i + 1).padStart(2, '0')}</span>
+        <h2 class="mxHubCardTitle" data-i18n={`pd.mechanics.common.topics.${tp.key}.title`}>{(c.topics as any)[tp.key].title}</h2>
+        <p class="mxHubCardText" data-i18n={`pd.mechanics.common.topics.${tp.key}.text`}>{(c.topics as any)[tp.key].text}</p>
+      </a>
+    ))}
+  </div>
+</MechanicsLayout>

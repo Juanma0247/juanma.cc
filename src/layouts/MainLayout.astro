@@ -11,6 +11,9 @@ export interface Props {
   titleKey?: string
   description?: string
   titleHref?: string
+  // Page-scoped dictionaries merged under pd.<ns> only on the pages that pass
+  // them, so large bilingual content does not ship with every page of the site.
+  i18nExtra?: { ns: string; en: Record<string, unknown>; es: Record<string, unknown> }
 }
 
 const SITE_URL = 'https://juanma.cc'
@@ -24,6 +27,7 @@ const {
   titleKey = '',
   description = DEFAULT_DESCRIPTION,
   titleHref = '',
+  i18nExtra,
 } = Astro.props
 
 const resolvedNavTitle = navTitle || title || 'Juanma'
@@ -316,9 +320,13 @@ const ogImage = ogResolved.startsWith('http') ? ogResolved : `${SITE_URL}${ogRes
       else window.addEventListener('load', scheduleAuth, { once: true })
     </script>
 
-    <script is:inline define:vars={{ i18nEn: en, i18nEs: es }}>
+    <script is:inline define:vars={{ i18nEn: en, i18nEs: es, i18nExtra: i18nExtra ?? null }}>
       ;(function () {
         const TRANSLATIONS = { en: i18nEn, es: i18nEs }
+        if (i18nExtra) {
+          TRANSLATIONS.en.pd[i18nExtra.ns] = i18nExtra.en
+          TRANSLATIONS.es.pd[i18nExtra.ns] = i18nExtra.es
+        }
         const LANG_KEY = 'site-lang'
 
         const get = (obj, path) => path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj)

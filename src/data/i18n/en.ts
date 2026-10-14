@@ -486,9 +486,13 @@ export const en: I18n = {
     utility: 'Utility',
     android: 'Android',
     automation: 'Automation',
+    physics: 'Physics',
+    mechanics: 'Mechanics',
+    simulation: 'Simulation',
     networking: 'Networking',
   },
   cardTitles: {
+    'fisica-mecanica': 'Classical Mechanics',
     autowifiunal: 'Auto WiFi UNAL',
     'nonlinear-systems': 'Nonlinear Systems',
     'linear-systems': 'Linear Systems',

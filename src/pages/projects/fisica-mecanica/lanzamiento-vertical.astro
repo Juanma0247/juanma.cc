@@ -1,0 +1,17 @@
+---
+import MechanicsLayout from '../../../layouts/MechanicsLayout.astro'
+import TopicPage from '../../../components/mechanics/TopicPage.astro'
+import { vertical } from '../../../data/i18n/mechanics/vertical'
+
+const d = vertical.en
+---
+
+<MechanicsLayout topic="vertical">
+  <TopicPage topic="vertical">
+    <section class="mxSection">
+      <h2 class="mxH2" data-i18n="pd.mechanics.vertical.encounter.title">{d.encounter.title}</h2>
+      <p class="mxSectionLead" data-i18n="pd.mechanics.vertical.encounter.lead" set:html={d.encounter.lead} />
+      <div id="mxEncounter" class="mxModule"></div>
+    </section>
+  </TopicPage>
+</MechanicsLayout>

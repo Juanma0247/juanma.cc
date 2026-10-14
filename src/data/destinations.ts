@@ -1,5 +1,6 @@
 import projects from './projects.json'
 import { built } from './built'
+import { MECHANICS_TOPICS, MECHANICS_BASE } from './mechanics'
 
 export interface Destination {
   label: string
@@ -37,6 +38,13 @@ const TOOLS: Destination[] = [
   { label: 'Auto WiFi UNAL',   value: '/tools/autowifiunal',     group: 'Projects' },
 ]
 
+// Topic pages of Física Mecánica — derived from mechanics.ts.
+const MECHANICS: Destination[] = MECHANICS_TOPICS.map(tp => ({
+  label: `Mechanics · ${tp.title}`,
+  value: `${MECHANICS_BASE}/${tp.slug}`,
+  group: 'Projects',
+}))
+
 // Development projects — derived from built.ts so new ones appear automatically.
 const DEVELOPMENT: Destination[] = built.map(b => ({
   label: b.name,
@@ -47,6 +55,7 @@ const DEVELOPMENT: Destination[] = built.map(b => ({
 export const DESTINATIONS: Destination[] = [
   ...SECTIONS,
   ...INTERACTIVE,
+  ...MECHANICS,
   ...GAMES,
   ...TOOLS,
   ...DEVELOPMENT,

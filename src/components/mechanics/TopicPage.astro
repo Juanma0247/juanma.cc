@@ -1,0 +1,144 @@
+---
+// Standard page of a Física Mecánica topic: header, laboratory (simulation and
+// data panel), invariant, worked solution, graphs, notable events, theory and
+// problem bank. The topic module in public/js/lib/mechanics/topics fills the
+// dynamic parts; the static prose comes from the topic dictionary.
+import { MECHANICS_TOPICS } from '../../data/mechanics'
+import { mechanicsDict } from '../../data/i18n/mechanics'
+
+interface Props {
+  topic: string
+  conditions?: boolean
+  events?: boolean
+  fbd?: boolean
+  plots?: boolean
+  stage?: 'wide' | 'normal' | 'square'
+}
+
+const { topic, conditions = true, events = true, fbd = false, plots = true, stage = 'normal' } = Astro.props
+const d = (mechanicsDict as any)[topic].en
+const c = mechanicsDict.common.en
+const n = MECHANICS_TOPICS.findIndex(tp => tp.key === topic) + 1
+const k = (p: string) => `pd.mechanics.${topic}.${p}`
+const ck = (p: string) => `pd.mechanics.common.${p}`
+const theory: { title: string; body: string }[] = d.theory ?? []
+const presets: Record<string, { title: string; text: string; source?: string }> = d.presets ?? {}
+---
+
+<header class="mxHead">
+  <p class="mxEyebrow"><span class="mxEyebrowNum">{String(n).padStart(2, '0')}</span><span data-i18n={ck('project')}>{c.project}</span></p>
+  <h1 class="mxTitle" data-i18n={ck(`topics.${topic}.title`)}>{(c.topics as any)[topic].title}</h1>
+  <p class="mxLead" data-i18n={k('lead')} set:html={d.lead} />
+</header>
+
+<section class="mxLab" aria-labelledby="mxLabTitle">
+  <h2 id="mxLabTitle" class="mxH2" data-i18n={ck('sections.lab')}>{c.sections.lab}</h2>
+  <div class="mxLabGrid">
+    <div class="mxStageCol">
+      <div class:list={['mxStageCard', `mxStageCard--${stage}`]}>
+        <canvas id="mxScene" class="mxScene"></canvas>
+        <div id="mxSceneNote" class="mxSceneNote" hidden></div>
+      </div>
+      <div id="mxPlayer" class="mxPlayer"></div>
+      <div id="mxLegend" class="mxLegend"></div>
+      {plots && (
+        <div class="mxLabPlots">
+          <div id="mxPlots" class="mxPlots mxPlots--lab"></div>
+          <p class="mxHint" data-i18n={k('graphsLead')} set:html={d.graphsLead} />
+        </div>
+      )}
+    </div>
+
+    <aside class="mxPanel">
+      <div class="mxBlock">
+        <h3 class="mxH3" data-i18n={ck('sections.presets')}>{c.sections.presets}</h3>
+        <select id="mxPreset" class="mxPresetSel" aria-label="Problem" data-i18n-aria-label={ck('sections.presets')}></select>
+        <div id="mxStatement" class="mxStatement" hidden></div>
+      </div>
+      {conditions && (
+        <div class="mxBlock" id="mxConditionsBlock">
+          <h3 class="mxH3" data-i18n={ck('sections.conditions')}>{c.sections.conditions}</h3>
+          <div id="mxConditions" class="mxConditions"></div>
+        </div>
+      )}
+      <div id="mxExtraControls" class="mxBlock" hidden></div>
+      <div class="mxBlock">
+        <div class="mxBlockHead">
+          <h3 class="mxH3" data-i18n={ck('sections.data')}>{c.sections.data}</h3>
+          <button id="mxClear" class="mxMiniBtn" type="button" data-i18n={ck('panel.clear')}>{c.panel.clear}</button>
+        </div>
+        <p class="mxHint" data-i18n={ck('panel.hint')} set:html={c.panel.hint} />
+        <div id="mxData"></div>
+        <div id="mxGravity"></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="mxSection mxInvariantSec">
+  <h2 class="mxH2" data-i18n={ck('sections.invariant')}>{c.sections.invariant}</h2>
+  <p class="mxSectionLead" data-i18n={k('invariantLead')} set:html={d.invariantLead} />
+  <div id="mxInvariant" class="mxInvariant"></div>
+</section>
+
+{fbd && (
+  <section class="mxSection mxFbdSec" id="mxFbdSec">
+    <h2 class="mxH2" data-i18n={ck('sections.fbd')}>{c.sections.fbd}</h2>
+    <p class="mxSectionLead" data-i18n={ck('fbdLead')} set:html={c.fbdLead} />
+    <div id="mxFbd" class="mxFbdGrid"></div>
+  </section>
+)}
+
+<section class="mxSection mxSolutionSec">
+  <h2 class="mxH2" data-i18n={ck('sections.solution')}>{c.sections.solution}</h2>
+  <div id="mxSolution" class="mxSolution"></div>
+</section>
+
+{events && (
+  <section class="mxSection mxEventsSec" id="mxEventsSec">
+    <h2 class="mxH2" data-i18n={ck('sections.events')}>{c.sections.events}</h2>
+    <p class="mxSectionLead" data-i18n={k('eventsLead')} set:html={d.eventsLead} />
+    <div id="mxEvents" class="mxEvents"></div>
+    <div id="mxQuery" class="mxQuery"></div>
+  </section>
+)}
+
+<slot />
+
+<section class="mxSection mxTheorySec">
+  <h2 class="mxH2" data-i18n={ck('sections.theory')}>{c.sections.theory}</h2>
+  <div class="mxTheoryGrid">
+    {theory.map((card, i) => (
+      <article class="mxTheoryCard">
+        <h3 class="mxH3" data-i18n={k(`theory.${i}.title`)}>{card.title}</h3>
+        <div class="mxTheoryBody" data-i18n={k(`theory.${i}.body`)} set:html={card.body} />
+      </article>
+    ))}
+  </div>
+</section>
+
+<section class="mxSection mxProblemsSec">
+  <h2 class="mxH2" data-i18n={ck('sections.problems')}>{c.sections.problems}</h2>
+  <p class="mxSectionLead" data-i18n={ck('problemsLead')} set:html={c.problemsLead} />
+  <ol class="mxProblemList">
+    {Object.entries(presets).map(([id, p]) => (
+      <li class="mxProblem">
+        <div class="mxProblemHead">
+          <h3 class="mxProblemTitle" data-i18n={k(`presets.${id}.title`)}>{p.title}</h3>
+          {p.source && <span class="mxProblemSource" data-i18n={k(`presets.${id}.source`)}>{p.source}</span>}
+        </div>
+        <p class="mxProblemText" data-i18n={k(`presets.${id}.text`)} set:html={p.text} />
+        <button class="mxLoadBtn" type="button" data-preset={id}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          <span data-i18n={ck('panel.load')}>{c.panel.load}</span>
+        </button>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<p class="mxSource" data-i18n={k('source')} set:html={d.source} />
+
+<script type="module" is:inline define:vars={{ topic }}>
+  import(`/js/lib/mechanics/topics/${topic}.js`).then(m => m.default.main())
+</script>

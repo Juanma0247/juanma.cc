@@ -1,5 +1,19 @@
 [
   {
+    "slug": "fisica-mecanica",
+    "title": "Classical Mechanics",
+    "navTitle": "Classical Mechanics",
+    "pageTitle": "Classical Mechanics — Interactive Kinematics and Dynamics",
+    "image": "p21.svg",
+    "order": 21,
+    "size": "wide",
+    "labels": [
+      "Physics",
+      "Mechanics",
+      "Simulation"
+    ]
+  },
+  {
     "slug": "nonlinear-systems",
     "title": "Nonlinear Systems",
     "navTitle": "Nonlinear Systems",
