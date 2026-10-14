@@ -1,5 +1,5 @@
 ---
-import ProjectLayout from '../../layouts/ProjectLayout.astro'
+import ToolLayout from '../../layouts/ToolLayout.astro'
 import T from '../../components/autowifiunal/T.astro'
 import Q from '../../components/autowifiunal/Q.astro'
 import Cmd from '../../components/autowifiunal/Cmd.astro'
@@ -157,7 +157,7 @@ const SOURCES = [
 
 const CHECK_PATH = 'M3 8.5 L6.5 12 L13 4'
 ---
-<ProjectLayout slug="autowifiunal">
+<ToolLayout slug="autowifiunal">
   <div class="p21Content" id="p21Root" data-base={BASE}>
     <header class="p21Intro">
       <T k="introLead" as="p" class="p21Lead" />
@@ -178,7 +178,7 @@ const CHECK_PATH = 'M3 8.5 L6.5 12 L13 4'
       <div class="p21BannerText">
         <T k="desktopTitle" as="h3" />
         <T k="desktopText" as="p" />
-        <p class="p21BannerUrl">juanma.cc/projects/autowifiunal</p>
+        <p class="p21BannerUrl">juanma.cc/tools/autowifiunal</p>
       </div>
     </aside>
 
@@ -964,8 +964,8 @@ Termux (unal.sh Working Directory × Stdin × ... Wait For Result ✓)</code></p
   <p id="p21Live" class="p21Sr" aria-live="polite"></p>
 
   <div class="space-bottom"></div>
-</ProjectLayout>
-<style is:global>@import '../../styles/sections/projects-autowifiunal.css';</style>
+</ToolLayout>
+<style is:global>@import '../../styles/sections/tools-autowifiunal.css';</style>
 <script type="module" is:inline>
   import AutoWifiUnal from '/js/lib/AutoWifiUnal.js'
   const p = new AutoWifiUnal(); p.starter?.(); p.main()

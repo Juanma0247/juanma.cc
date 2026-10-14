@@ -15,6 +15,7 @@ export default defineConfig({
     '/projects/chi-squared': '/projects/distribution-functions',
     '/projects/t-student': '/projects/distribution-functions',
     '/projects/normal-distribution': '/projects/distribution-functions',
+    '/projects/autowifiunal': '/tools/autowifiunal',
   },
   vite: {
     server: {

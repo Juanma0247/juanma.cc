@@ -18,5 +18,15 @@
     "order": 2,
     "size": "wide",
     "labels": ["Strings", "Text", "Utility"]
+  },
+  {
+    "slug": "autowifiunal",
+    "title": "Auto WiFi UNAL",
+    "navTitle": "Auto WiFi UNAL",
+    "pageTitle": "Auto WiFi UNAL: automatic EstudiantesUN login on Android",
+    "image": "h3.png",
+    "order": 3,
+    "size": "wide",
+    "labels": ["Android", "Automation", "Networking"]
   }
 ]

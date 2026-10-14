@@ -1,19 +1,5 @@
 [
   {
-    "slug": "autowifiunal",
-    "title": "Auto WiFi UNAL",
-    "navTitle": "Auto WiFi UNAL",
-    "pageTitle": "Auto WiFi UNAL: automatic EstudiantesUN login on Android",
-    "image": "p21.svg",
-    "order": 21,
-    "size": "wide",
-    "labels": [
-      "Android",
-      "Automation",
-      "Networking"
-    ]
-  },
-  {
     "slug": "nonlinear-systems",
     "title": "Nonlinear Systems",
     "navTitle": "Nonlinear Systems",
