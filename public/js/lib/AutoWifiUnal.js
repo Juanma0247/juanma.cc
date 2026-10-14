@@ -274,7 +274,8 @@ class AutoWifiUnal {
       return
     }
     if (!/Android/i.test(ua)) {
-      this.showDesktop()
+      const isPhone = /Mobi|Tablet/i.test(ua) || window.matchMedia('(pointer: coarse)').matches
+      if (!isPhone) this.showDesktop()
       return
     }
 

@@ -183,6 +183,10 @@
 
 .p21BannerText { min-width: 0; }
 
+@media (max-width: 40rem), (pointer: coarse) {
+  #p21Desktop { display: none !important; }
+}
+
 @media (max-width: 30rem) {
   .p21Banner {
     flex-direction: column;
