@@ -591,6 +591,27 @@
   color: var(--color-primary);
 }
 
+.p21Content .p21SearchTip {
+  display: flex;
+  gap: .5rem;
+  align-items: flex-start;
+  padding-top: .6rem;
+  border-top: 1px solid var(--p21-line);
+  font-size: .8rem;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
+.p21SearchTip svg {
+  flex: none;
+  width: .9rem;
+  height: .9rem;
+  margin-top: .15rem;
+  color: var(--color-primary);
+}
+
+.p21SearchTip b { color: var(--color-text); }
+
 .p21ProgressHead {
   display: flex;
   align-items: baseline;
