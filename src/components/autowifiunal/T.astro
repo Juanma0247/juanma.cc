@@ -1,0 +1,14 @@
+---
+import { en } from '../../data/i18n/en'
+
+interface Props {
+  k: string
+  as?: string
+  [attr: string]: unknown
+}
+
+const { k, as: Tag = 'span', ...attrs } = Astro.props
+const text = en.pd.autowifiunal?.[k]
+if (typeof text !== 'string') throw new Error(`Missing i18n key: pd.autowifiunal.${k}`)
+---
+<Tag {...attrs} data-i18n={`pd.autowifiunal.${k}`} set:html={text}></Tag>

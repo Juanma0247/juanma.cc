@@ -1,0 +1,972 @@
+---
+import ProjectLayout from '../../layouts/ProjectLayout.astro'
+import T from '../../components/autowifiunal/T.astro'
+import Q from '../../components/autowifiunal/Q.astro'
+import Cmd from '../../components/autowifiunal/Cmd.astro'
+
+const SITE = 'https://juanma.cc'
+const BASE = '/scripts/autowifiunal'
+
+const FILES = [
+  { id: 'instalar', name: 'instalar.sh', size: 1675, role: 'fileInstaller', where: '', sha: '103f7382b4a067bf7631c410f7968354427e92da326dad91501493054ca4e28e' },
+  { id: 'unal', name: 'unal.sh', size: 219, role: 'fileLauncher', where: '~/.termux/tasker/unal.sh', sha: 'c76b855c7dfc09335136e55e8b3c3ddf549733cd2d30633882a2e79a4c70efbe' },
+  { id: 'login', name: 'unal_wifi_login.py', size: 6836, role: 'fileProgram', where: '~/unal_wifi_login.py', sha: '84a31e1112e1d6833b6c2b8a93661eb70cf72c0a936f9fa87aa32f428855a791' },
+]
+
+const BRANDS = [
+  { id: 'samsung', label: 'brandSamsung' },
+  { id: 'xiaomi', label: 'brandXiaomi' },
+  { id: 'stock', label: 'brandStock' },
+  { id: 'huawei', label: 'brandHuawei' },
+  { id: 'oppo', label: 'brandOppo' },
+  { id: 'other', label: 'brandOther' },
+]
+
+const VERSIONS = [
+  { id: '10', label: 'version10' },
+  { id: '8', label: 'version8' },
+  { id: '7', label: 'version7' },
+  { id: '6', label: 'version6' },
+]
+
+const BATTERY = [
+  { brand: 'samsung', text: 's3BatSamsung', links: [['Samsung', 'samsung']] },
+  { brand: 'xiaomi', text: 's3BatXiaomi', links: [['Xiaomi', 'xiaomi']] },
+  { brand: 'stock', text: 's3BatStock', links: [['Google', 'google'], ['Motorola', 'motorola'], ['Nokia', 'nokia']] },
+  { brand: 'huawei', text: 's3BatHuawei', links: [['Huawei · Honor', 'huawei']] },
+  { brand: 'oppo', text: 's3BatOppo', links: [['OPPO', 'oppo'], ['realme', 'realme'], ['OnePlus', 'oneplus']] },
+  { brand: 'other', text: 's3BatOther', links: [['dontkillmyapp.com', '']] },
+]
+
+const STEPS = [1, 2, 3, 4, 5, 6]
+
+const STAGES = [
+  { k: 'stage1', tip: 'tipStage1' },
+  { k: 'stage2', tip: 'tipStage2' },
+  { k: 'stage3', tip: 'tipStage3' },
+  { k: 'stage4', tip: 'tipStage4' },
+  { k: 'stage5', tip: 'tipStage5' },
+  { k: 'stage6', tip: '' },
+]
+
+const CURL_CMD = `mkdir -p ~/autowifiunal && cd ~/autowifiunal && curl -fL -O ${SITE}${BASE}/instalar.sh -O ${SITE}${BASE}/unal.sh -O ${SITE}${BASE}/unal_wifi_login.py && sha256sum instalar.sh unal.sh unal_wifi_login.py`
+
+const MANUAL = [
+  { code: 'pkg update -y', tip: 'mUpdate' },
+  { code: 'apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold upgrade', tip: 'mUpgrade' },
+  { code: 'pkg install -y python', tip: 'mPython' },
+  { code: 'pip install requests', tip: 'mRequests' },
+  { code: 'cp ~/storage/downloads/unal_wifi_login.py ~/unal_wifi_login.py', tip: 'mCopyPy' },
+  { code: 'mkdir -p ~/.termux/tasker', tip: 'mMkdir' },
+  { code: 'chmod 700 ~/.termux/tasker', tip: 'mChmodDir' },
+  { code: 'cp ~/storage/downloads/unal.sh ~/.termux/tasker/unal.sh && chmod 700 ~/.termux/tasker/unal.sh', tip: 'mCopySh' },
+]
+
+const TROUBLE = [
+  {
+    group: 'grpInstall',
+    icon: 'package',
+    items: [
+      { id: 'Mix' },
+      { id: 'Blocked' },
+      { id: 'Stat', cmd: 'ls ~/storage/downloads/ | grep unal' },
+      { id: 'Perm', cmd: 'termux-setup-storage' },
+      { id: 'Mirror', cmd: 'termux-change-repo' },
+      { id: 'Managed', cmd: 'pip install --break-system-packages requests' },
+      { id: 'Module', cmd: 'pkg install python && pip install requests' },
+      { id: 'Curl', cmd: 'pkg upgrade && pkg install curl' },
+      { id: 'Crlf' },
+    ],
+  },
+  {
+    group: 'grpMacro',
+    icon: 'zap',
+    items: [
+      { id: 'NoFire' },
+      { id: 'NoLog', cmd: 'ls -l ~/.termux/tasker/' },
+      { id: 'Plugin' },
+    ],
+  },
+  {
+    group: 'grpLog',
+    icon: 'file-text',
+    items: [
+      { id: 'Wlan' },
+      { id: 'Already' },
+      { id: 'NoResp' },
+      { id: 'Rejected', cmd: 'nano ~/.unal_credenciales' },
+      { id: 'NoCred' },
+      { id: 'Foreign', cmd: 'bash ~/.termux/tasker/unal.sh --debug' },
+      { id: 'Cert' },
+      { id: 'Strict' },
+      { id: 'Sent', cmd: 'bash ~/.termux/tasker/unal.sh --debug' },
+      { id: 'Failed' },
+    ],
+  },
+]
+
+const RISKS = [
+  { id: 'Apk', icon: 'package' },
+  { id: 'Termux', icon: 'terminal' },
+  { id: 'External', icon: 'link-2' },
+  { id: 'Macro', icon: 'zap' },
+  { id: 'Cred', icon: 'key' },
+  { id: 'Fake', icon: 'wifi-off' },
+]
+
+const STORED = [
+  { file: '~/.unal_credenciales', content: 'stCred', who: 'stCredWho' },
+  { file: '~/.termux/tasker/unal.sh', content: 'stLauncher', who: 'whoTermux' },
+  { file: '~/unal_wifi_login.py', content: 'stProgram', who: 'whoTermux' },
+  { file: '~/unal_wifi.log', content: 'stLog', who: 'whoTermux' },
+  { file: '~/unal_portal_N.html', content: 'stDebug', who: 'whoTermux' },
+]
+
+const CONNECTIONS = [
+  { address: 'http://connectivitycheck.gstatic.com/generate_204', what: 'cn204', data: 'cnNone' },
+  { address: 'http://neverssl.com/', what: 'cnNeverssl', data: 'cnNone' },
+  { address: 'https://porta.unal.edu.co:1003/…', what: 'cnPortal', data: 'cnPortalData' },
+]
+
+const COMMANDS = [
+  { code: 'cat ~/unal_wifi.log', text: 'cmdLog' },
+  { code: 'tail -n 20 ~/unal_wifi.log', text: 'cmdTail' },
+  { code: 'bash ~/.termux/tasker/unal.sh', text: 'cmdRun' },
+  { code: 'bash ~/.termux/tasker/unal.sh --debug', text: 'cmdDebug' },
+  { code: 'nano ~/.unal_credenciales', text: 'cmdNano' },
+  { code: 'ls -l ~/.termux/tasker/', text: 'cmdLs' },
+  { code: 'ls ~/storage/downloads/ | grep unal', text: 'cmdGrep' },
+]
+
+const ADVANCED = [
+  { name: 'UNAL_USER / UNAL_PASS', def: 'advByInstaller', use: 'advUser' },
+  { name: 'UNAL_IFACE', def: 'wlan0', use: 'advIface' },
+  { name: 'UNAL_DOMINIO', def: 'unal.edu.co', use: 'advDomain' },
+  { name: 'UNAL_TLS_ESTRICTO', def: 'advEmpty', use: 'advTls' },
+]
+
+const SOURCES = [
+  { k: 'srcTermux', url: 'https://github.com/termux/termux-app' },
+  { k: 'srcPlay', url: 'https://github.com/termux/termux-app/discussions/4000' },
+  { k: 'srcFdroid', url: 'https://f-droid.org/packages/com.termux/' },
+  { k: 'srcTasker', url: 'https://github.com/termux/termux-tasker' },
+  { k: 'srcTaskerFdroid', url: 'https://f-droid.org/packages/com.termux.tasker/' },
+  { k: 'srcMacro', url: 'https://play.google.com/store/apps/details?id=com.arlosoft.macrodroid' },
+  { k: 'srcDkma', url: 'https://dontkillmyapp.com/' },
+]
+
+const CHECK_PATH = 'M3 8.5 L6.5 12 L13 4'
+---
+<ProjectLayout slug="autowifiunal">
+  <div class="p21Content" id="p21Root" data-base={BASE}>
+    <header class="p21Intro">
+      <T k="introLead" as="p" class="p21Lead" />
+      <ul class="p21Chips">
+        <li class="p21Chip"><i data-feather="smartphone"></i><T k="chipAndroid" /></li>
+        <li class="p21Chip"><i data-feather="clock"></i><T k="chipTime" /></li>
+        <li class="p21Chip"><i data-feather="gift"></i><T k="chipCost" /></li>
+        <li class="p21Chip"><i data-feather="code"></i><T k="chipOpen" /></li>
+      </ul>
+      <div class="p21Trust">
+        <i data-feather="shield"></i>
+        <T k="introTrust" as="p" />
+      </div>
+    </header>
+
+    <aside id="p21Desktop" class="p21Banner" hidden>
+      <div id="p21Qr" class="p21Qr" aria-hidden="true"></div>
+      <div class="p21BannerText">
+        <T k="desktopTitle" as="h3" />
+        <T k="desktopText" as="p" />
+        <p class="p21BannerUrl">juanma.cc/projects/autowifiunal</p>
+      </div>
+    </aside>
+
+    <aside id="p21Ios" class="p21Banner is-warn" hidden>
+      <i data-feather="alert-circle"></i>
+      <div class="p21BannerText">
+        <T k="iosTitle" as="h3" />
+        <T k="iosText" as="p" />
+      </div>
+    </aside>
+
+    <section class="p21Section" id="p21Flow">
+      <T k="flowTitle" as="h3" class="p21H" />
+      <T k="flowIntro" as="p" class="p21SectionIntro" />
+      <ol class="p21Flow">
+        <li class="p21Node">
+          <span class="p21NodeIcon"><i data-feather="wifi"></i></span>
+          <span class="p21NodeName">Android <Q tip="tipFlowAndroid" /></span>
+          <T k="flowAndroidText" class="p21NodeText" />
+        </li>
+        <li class="p21Node">
+          <span class="p21NodeIcon"><i data-feather="zap"></i></span>
+          <span class="p21NodeName">MacroDroid <Q tip="tipFlowMacro" /></span>
+          <T k="flowMacroText" class="p21NodeText" />
+        </li>
+        <li class="p21Node">
+          <span class="p21NodeIcon"><i data-feather="link-2"></i></span>
+          <span class="p21NodeName">Termux:Tasker <Q tip="tipFlowTasker" /></span>
+          <T k="flowTaskerText" class="p21NodeText" />
+        </li>
+        <li class="p21Node">
+          <span class="p21NodeIcon"><i data-feather="terminal"></i></span>
+          <span class="p21NodeName">Termux <Q tip="tipFlowTermux" /></span>
+          <T k="flowTermuxText" class="p21NodeText" />
+        </li>
+        <li class="p21Node is-goal">
+          <span class="p21NodeIcon"><i data-feather="unlock"></i></span>
+          <span class="p21NodeName"><T k="flowPortalTitle" /> <Q tip="tipFlowPortal" /></span>
+          <T k="flowPortalText" class="p21NodeText" />
+        </li>
+      </ol>
+      <p class="p21FlowTime"><i data-feather="clock"></i><T k="flowTime" /></p>
+    </section>
+
+    <div class="p21Guide">
+      <aside class="p21Side">
+        <div class="p21SideCard">
+          <T k="phoneTitle" as="h4" class="p21SideTitle" />
+          <T k="phoneIntro" as="p" class="p21Small" />
+          <div class="p21Field">
+            <T k="brandLabel" as="label" for="p21Brand" class="p21FieldLabel" />
+            <div class="select-wrap">
+              <select id="p21Brand">
+                {BRANDS.map(b => <T k={b.label} as="option" value={b.id} selected={b.id === 'other'} />)}
+              </select>
+            </div>
+          </div>
+          <div class="p21Field">
+            <span class="p21FieldHead">
+              <T k="versionLabel" as="label" for="p21Version" class="p21FieldLabel" />
+              <Q tip="tipVersion" />
+            </span>
+            <div class="select-wrap">
+              <select id="p21Version">
+                {VERSIONS.map(v => <T k={v.label} as="option" value={v.id} selected={v.id === '10'} />)}
+              </select>
+            </div>
+          </div>
+          <p id="p21Detected" class="p21Detected" hidden></p>
+          <T k="unsupported" as="p" id="p21Unsupported" class="p21Note is-warn p21NoteSm" hidden />
+        </div>
+
+        <nav class="p21SideCard" aria-labelledby="p21ProgressTitle">
+          <div class="p21ProgressHead">
+            <T k="progressLabel" as="h4" class="p21SideTitle" id="p21ProgressTitle" />
+            <span id="p21ProgressCount" class="p21ProgressCount">0 / 6</span>
+          </div>
+          <span class="p21Bar"><span id="p21BarFill" class="p21BarFill"></span></span>
+          <ol class="p21StepNav">
+            {STEPS.map(n => (
+              <li>
+                <a href={`#p21Step${n}`} class="p21StepLink" data-goto={n}>
+                  <span class="p21StepDot"><span>{n}</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d={CHECK_PATH} /></svg></span>
+                  <T k={`navStep${n}`} />
+                </a>
+              </li>
+            ))}
+          </ol>
+          <div class="p21ProgressFoot">
+            <T k="progressNote" class="p21Small" />
+            <button type="button" id="p21Reset" class="p21LinkBtn"><T k="progressReset" /></button>
+          </div>
+          <div class="p21SideMore">
+            <T k="moreLabel" class="p21SideMoreLabel" />
+            <a href="#p21Files"><T k="filesTitle" /></a>
+            <a href="#p21Trouble"><T k="troubleTitle" /></a>
+            <a href="#p21Privacy"><T k="privacyTitle" /></a>
+            <a href="#p21Uninstall"><T k="uninstallTitle" /></a>
+          </div>
+        </nav>
+      </aside>
+
+      <div class="p21Steps">
+        <details class="p21Step" id="p21Step1" data-step="1" open>
+          <summary class="p21StepHead">
+            <span class="p21StepNum" aria-hidden="true"><span>1</span><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+            <span class="p21StepTitles">
+              <T k="s1Title" as="h3" class="p21StepTitle" />
+              <T k="s1Meta" class="p21StepMeta" />
+            </span>
+            <i data-feather="chevron-down" class="p21StepChevron"></i>
+          </summary>
+          <div class="p21StepBody">
+            <ol class="p21List">
+              <li>
+                <T k="s1Open" as="p" />
+                <T k="s1PathSamsung" as="p" class="p21Path" data-brand="samsung" hidden />
+                <T k="s1PathStock" as="p" class="p21Path" data-brand="stock" hidden />
+                <T k="s1PathWifi" as="p" class="p21Path" data-brand="xiaomi huawei oppo" hidden />
+                <T k="s1PathOther" as="p" class="p21Path" data-brand="other" />
+              </li>
+              <li>
+                <T k="s1Password" as="p" />
+                <Cmd code="RedEstudiantes" tip="tipPassword" prompt={false} />
+              </li>
+              <li>
+                <p><T k="s1Auto" /> <Q tip="tipAuto" /></p>
+                <T k="s1AutoSamsung" as="p" class="p21Path" data-brand="samsung" hidden />
+                <T k="s1AutoStock" as="p" class="p21Path" data-brand="stock" hidden />
+                <T k="s1AutoOther" as="p" class="p21Path" data-brand="xiaomi huawei oppo other" />
+              </li>
+              <li>
+                <p><T k="s1Switch" /> <Q tip="tipSwitch" /></p>
+                <T k="s1SwitchSamsung" as="p" class="p21Path" data-brand="samsung" hidden />
+                <T k="s1SwitchXiaomi" as="p" class="p21Path" data-brand="xiaomi" hidden />
+                <T k="s1SwitchHuawei" as="p" class="p21Path" data-brand="huawei" hidden />
+                <T k="s1SwitchOther" as="p" class="p21Path" data-brand="stock oppo other" />
+              </li>
+            </ol>
+            <label class="checkbox p21Done">
+              <input type="checkbox" data-done="1" />
+              <span class="box"><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+              <T k="markDone" class="checkbox-label" />
+            </label>
+          </div>
+        </details>
+
+        <details class="p21Step" id="p21Step2" data-step="2" open>
+          <summary class="p21StepHead">
+            <span class="p21StepNum" aria-hidden="true"><span>2</span><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+            <span class="p21StepTitles">
+              <T k="s2Title" as="h3" class="p21StepTitle" />
+              <T k="s2Meta" class="p21StepMeta" />
+            </span>
+            <i data-feather="chevron-down" class="p21StepChevron"></i>
+          </summary>
+          <div class="p21StepBody">
+            <div class="p21Note is-key">
+              <i data-feather="key"></i>
+              <p><T k="s2Rule" /> <Q tip="tipRule" /></p>
+            </div>
+
+            <div class="p21Apps">
+              <article class="p21App">
+                <header class="p21AppHead">
+                  <span class="p21AppIcon"><i data-feather="terminal"></i></span>
+                  <span class="p21AppName">Termux <Q tip="tipTermux" /></span>
+                  <span class="p21AppSrc">F-Droid · v0.118.3</span>
+                </header>
+                <T k="appTermuxRole" as="p" class="p21AppRole" />
+                <div class="p21AppBtns">
+                  <a class="p21Btn is-solid" href="https://f-droid.org/repo/com.termux_1002.apk"><i data-feather="download"></i><T k="btnApk" /></a>
+                  <a class="p21Btn" href="https://f-droid.org/packages/com.termux/" target="_blank" rel="noopener"><T k="btnFdroid" /></a>
+                  <a class="p21Btn is-ghost" href="https://github.com/termux/termux-app/releases" target="_blank" rel="noopener">GitHub</a>
+                </div>
+              </article>
+              <article class="p21App">
+                <header class="p21AppHead">
+                  <span class="p21AppIcon"><i data-feather="link-2"></i></span>
+                  <span class="p21AppName">Termux:Tasker <Q tip="tipTasker" /></span>
+                  <span class="p21AppSrc">F-Droid · v0.9.0</span>
+                </header>
+                <T k="appTaskerRole" as="p" class="p21AppRole" />
+                <div class="p21AppBtns">
+                  <a class="p21Btn is-solid" href="https://f-droid.org/repo/com.termux.tasker_1002.apk"><i data-feather="download"></i><T k="btnApk" /></a>
+                  <a class="p21Btn" href="https://f-droid.org/packages/com.termux.tasker/" target="_blank" rel="noopener"><T k="btnFdroid" /></a>
+                  <a class="p21Btn is-ghost" href="https://github.com/termux/termux-tasker/releases" target="_blank" rel="noopener">GitHub</a>
+                </div>
+              </article>
+              <article class="p21App">
+                <header class="p21AppHead">
+                  <span class="p21AppIcon"><i data-feather="zap"></i></span>
+                  <span class="p21AppName">MacroDroid <Q tip="tipMacro" /></span>
+                  <span class="p21AppSrc">Google Play</span>
+                </header>
+                <T k="appMacroRole" as="p" class="p21AppRole" />
+                <div class="p21AppBtns">
+                  <a class="p21Btn is-solid" href="https://play.google.com/store/apps/details?id=com.arlosoft.macrodroid" target="_blank" rel="noopener"><i data-feather="play"></i><T k="btnPlay" /></a>
+                  <a class="p21Btn is-ghost" href="https://www.macrodroid.com/" target="_blank" rel="noopener"><T k="btnSite" /></a>
+                </div>
+              </article>
+            </div>
+            <p class="p21Small p21AfterApps"><T k="s2FdroidClient" /> <Q tip="tipApk" /></p>
+
+            <div class="p21Note is-warn">
+              <i data-feather="alert-triangle"></i>
+              <T k="s2PlayWarn" as="p" />
+            </div>
+
+            <ol class="p21List">
+              <li><T k="s2Do1" as="p" /></li>
+              <li>
+                <p>
+                  <T k="s2Do2v8" data-av="10 8" />
+                  <T k="s2Do2v7" data-av="7 6" hidden />
+                  <Q tip="tipUnknown" />
+                </p>
+              </li>
+              <li>
+                <p><T k="s2Do3" /> <Q tip="tipPlayProtect" /></p>
+                <T k="s2Do3Samsung" as="p" class="p21Path" data-brand="samsung" hidden />
+                <T k="s2Do3Xiaomi" as="p" class="p21Path" data-brand="xiaomi" hidden />
+              </li>
+              <li>
+                <p>
+                  <T k="s2Do4v8" data-av="10 8" />
+                  <T k="s2Do4v7" data-av="7 6" hidden />
+                </p>
+              </li>
+              <li><p><T k="s2Do5" /> <Q tip="tipBootstrap" /></p></li>
+              <li>
+                <T k="s2Do6" as="p" />
+                <T k="s2Huawei" as="p" class="p21Path" data-brand="huawei" hidden />
+              </li>
+            </ol>
+
+            <details class="p21More">
+              <summary><i data-feather="help-circle"></i><T k="whyTitle" /></summary>
+              <div class="p21MoreBody">
+                <T k="whyP1" as="p" />
+                <T k="whyP2" as="p" />
+                <T k="whyP3" as="p" />
+              </div>
+            </details>
+            <details class="p21More">
+              <summary><i data-feather="shield"></i><T k="safeTitle" /></summary>
+              <ul class="p21MoreBody p21Bullets">
+                <T k="safeP1" as="li" />
+                <T k="safeP2" as="li" />
+                <T k="safeP3" as="li" />
+                <T k="safeP4" as="li" />
+                <T k="safeP5" as="li" />
+              </ul>
+            </details>
+
+            <label class="checkbox p21Done">
+              <input type="checkbox" data-done="2" />
+              <span class="box"><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+              <T k="markDone" class="checkbox-label" />
+            </label>
+          </div>
+        </details>
+
+        <details class="p21Step" id="p21Step3" data-step="3" open>
+          <summary class="p21StepHead">
+            <span class="p21StepNum" aria-hidden="true"><span>3</span><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+            <span class="p21StepTitles">
+              <T k="s3Title" as="h3" class="p21StepTitle" />
+              <T k="s3Meta" class="p21StepMeta" />
+            </span>
+            <i data-feather="chevron-down" class="p21StepChevron"></i>
+          </summary>
+          <div class="p21StepBody">
+            <ol class="p21List">
+              <li>
+                <p><T k="s3Run" /> <Q tip="tipRun" /></p>
+                <T k="s3RunNote" as="p" class="p21Small" />
+              </li>
+              <li>
+                <p>
+                  <T k="s3Loc10" data-av="10" />
+                  <T k="s3Loc8" data-av="8 7 6" hidden />
+                  <Q tip="tipLoc" />
+                </p>
+                <T k="s3LocOn" as="p" class="p21Small" />
+              </li>
+              <li>
+                <p><T k="s3Battery" /> <Q tip="tipBattery" /></p>
+                {BATTERY.map(b => (
+                  <div class="p21Path" data-brand={b.brand} hidden={b.brand !== 'other'}>
+                    <T k={b.text} as="p" />
+                    <p class="p21PathLinks">
+                      <i data-feather="external-link"></i>
+                      <span><T k="s3BatLink" />:</span>
+                      {b.links.map(([label, slug]) => (
+                        <a href={`https://dontkillmyapp.com/${slug}`} target="_blank" rel="noopener">{label}</a>
+                      ))}
+                    </p>
+                  </div>
+                ))}
+              </li>
+            </ol>
+            <label class="checkbox p21Done">
+              <input type="checkbox" data-done="3" />
+              <span class="box"><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+              <T k="markDone" class="checkbox-label" />
+            </label>
+          </div>
+        </details>
+
+        <details class="p21Step" id="p21Step4" data-step="4" open>
+          <summary class="p21StepHead">
+            <span class="p21StepNum" aria-hidden="true"><span>4</span><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+            <span class="p21StepTitles">
+              <T k="s4Title" as="h3" class="p21StepTitle" />
+              <T k="s4Meta" class="p21StepMeta" />
+            </span>
+            <i data-feather="chevron-down" class="p21StepChevron"></i>
+          </summary>
+          <div class="p21StepBody">
+            <div class="p21Tabs" role="tablist">
+              <button type="button" role="tab" id="p21TabA" class="p21Tab" aria-selected="true" aria-controls="p21PanelA" data-tab="A">
+                <T k="tabInstaller" />
+                <T k="tabRecommended" class="p21TabBadge" />
+              </button>
+              <button type="button" role="tab" id="p21TabB" class="p21Tab" aria-selected="false" aria-controls="p21PanelB" data-tab="B" tabindex="-1">
+                <T k="tabCurl" />
+              </button>
+              <button type="button" role="tab" id="p21TabC" class="p21Tab" aria-selected="false" aria-controls="p21PanelC" data-tab="C" tabindex="-1">
+                <T k="tabManual" />
+              </button>
+            </div>
+
+            <div class="p21Panel" id="p21PanelA" role="tabpanel" aria-labelledby="p21TabA">
+              <ol class="p21List">
+                <li>
+                  <T k="s4aDownload" as="p" />
+                  <div class="p21DlRow">
+                    {FILES.map(f => (
+                      <a class="p21Btn is-solid" href={`${BASE}/${f.name}`} download={f.name} data-download={f.id}>
+                        <i data-feather="download"></i><span class="p21Mono">{f.name}</span>
+                      </a>
+                    ))}
+                  </div>
+                  <a class="p21Jump" href="#p21Files"><i data-feather="eye"></i><T k="s4aSeeCode" /></a>
+                </li>
+                <li>
+                  <T k="s4aStorage" as="p" />
+                  <Cmd code="termux-setup-storage" tip="tipStorage" />
+                  <T k="s4aStorageNote" as="p" class="p21Small" />
+                </li>
+                <li>
+                  <T k="s4aRun" as="p" />
+                  <Cmd code="bash ~/storage/downloads/instalar.sh" tip="tipRunInstaller" />
+                </li>
+                <li>
+                  <T k="s4aStages" as="p" />
+                  <ol class="p21Stages">
+                    {STAGES.map((s, i) => (
+                      <li>
+                        <span class="p21StageTag">[{i + 1}/6]</span>
+                        <span class="p21StageText"><T k={s.k} />{s.tip && <> <Q tip={s.tip} /></>}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </li>
+                <li>
+                  <T k="s4aEnd" as="p" />
+<pre class="p21Out"><code>[6/6] Verificando...
+  requests: OK
+  script: OK
+-rwx------ 1 u0_a… u0_a… 219 … /data/data/com.termux/files/home/.termux/tasker/unal.sh
+
+Listo. Configura la macro en MacroDroid con el ejecutable: unal.sh
+Registro de cada conexión: cat ~/unal_wifi.log</code></pre>
+                </li>
+              </ol>
+              <div class="p21Note">
+                <i data-feather="info"></i>
+                <T k="s4aRenamed" as="p" />
+              </div>
+            </div>
+
+            <div class="p21Panel" id="p21PanelB" role="tabpanel" aria-labelledby="p21TabB" hidden>
+              <T k="s4bIntro" as="p" class="p21PanelIntro" />
+              <ol class="p21List">
+                <li>
+                  <T k="s4bFetch" as="p" />
+                  <Cmd code={CURL_CMD} tip="tipCurl" />
+                </li>
+                <li><T k="s4bCompare" as="p" /></li>
+                <li>
+                  <T k="s4bRun" as="p" />
+                  <Cmd code="bash ~/autowifiunal/instalar.sh" />
+                  <T k="s4bStages" as="p" class="p21Small" />
+                </li>
+              </ol>
+              <div class="p21Note">
+                <i data-feather="info"></i>
+                <T k="s4bNoCurl" as="p" />
+              </div>
+            </div>
+
+            <div class="p21Panel" id="p21PanelC" role="tabpanel" aria-labelledby="p21TabC" hidden>
+              <T k="s4cIntro" as="p" class="p21PanelIntro" />
+              <ol class="p21List p21ListTight">
+                {MANUAL.map(m => <li><Cmd code={m.code} tip={m.tip} /></li>)}
+                <li>
+                  <Cmd code="nano ~/.unal_credenciales" />
+                  <T k="mNano" as="p" class="p21Small" />
+<pre class="p21Out is-file"><code>UNAL_USER='<T k="credUser" />'
+UNAL_PASS='<T k="credPass" />'</code></pre>
+                </li>
+                <li><Cmd code="chmod 600 ~/.unal_credenciales" tip="mChmodCred" /></li>
+              </ol>
+              <div class="p21Note is-warn">
+                <i data-feather="alert-triangle"></i>
+                <T k="mQuote" as="p" />
+              </div>
+            </div>
+
+            <label class="checkbox p21Done">
+              <input type="checkbox" data-done="4" />
+              <span class="box"><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+              <T k="markDone" class="checkbox-label" />
+            </label>
+          </div>
+        </details>
+
+        <details class="p21Step" id="p21Step5" data-step="5" open>
+          <summary class="p21StepHead">
+            <span class="p21StepNum" aria-hidden="true"><span>5</span><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+            <span class="p21StepTitles">
+              <T k="s5Title" as="h3" class="p21StepTitle" />
+              <T k="s5Meta" class="p21StepMeta" />
+            </span>
+            <i data-feather="chevron-down" class="p21StepChevron"></i>
+          </summary>
+          <div class="p21StepBody">
+            <ol class="p21List">
+              <li><T k="s5Add" as="p" /></li>
+              <li><p><T k="s5Trigger" /> <Q tip="tipTrigger" /></p></li>
+              <li>
+                <T k="s5Action" as="p" />
+                <div class="p21Form">
+                  <div class="p21FormRow">
+                    <T k="fExec" class="p21FormLabel" />
+                    <span class="p21FormValue"><Cmd code="unal.sh" tip="tipExec" prompt={false} /></span>
+                  </div>
+                  <div class="p21FormRow">
+                    <T k="fArgs" class="p21FormLabel" />
+                    <T k="fEmpty" class="p21FormValue p21FormEmpty" />
+                  </div>
+                  <div class="p21FormRow">
+                    <T k="fDir" class="p21FormLabel" />
+                    <T k="fEmpty" class="p21FormValue p21FormEmpty" />
+                  </div>
+                  <div class="p21FormRow">
+                    <T k="fStdin" class="p21FormLabel" />
+                    <T k="fEmpty" class="p21FormValue p21FormEmpty" />
+                  </div>
+                  <div class="p21FormRow">
+                    <T k="fTerminal" class="p21FormLabel" />
+                    <span class="p21FormValue">
+                      <span class="p21Switch" aria-hidden="true"></span>
+                      <T k="fOff" />
+                      <Q tip="tipTerminal" />
+                    </span>
+                  </div>
+                  <div class="p21FormRow">
+                    <T k="fWait" class="p21FormLabel" />
+                    <span class="p21FormValue">
+                      <span class="p21Switch is-on" aria-hidden="true"></span>
+                      <T k="fOn" />
+                      <Q tip="tipWait" />
+                    </span>
+                  </div>
+                </div>
+              </li>
+              <li><p><T k="s5Constraints" /> <Q tip="tipConstraints" /></p></li>
+              <li><T k="s5Save" as="p" /></li>
+            </ol>
+            <T k="s5Log" as="p" class="p21Small" />
+<pre class="p21Out"><code><T k="macroLogTrigger" />  Auto WiFi UNAL
+Invoking Macro: Auto WiFi UNAL
+Termux (unal.sh Working Directory × Stdin × ... Wait For Result ✓)</code></pre>
+            <details class="p21More">
+              <summary><i data-feather="search"></i><T k="s5NoAction" /></summary>
+              <div class="p21MoreBody"><T k="s5NoActionText" as="p" /></div>
+            </details>
+            <details class="p21More">
+              <summary><i data-feather="repeat"></i><T k="s5Tasker" /></summary>
+              <div class="p21MoreBody">
+                <T k="s5TaskerText" as="p" />
+                <p><a href="https://play.google.com/store/apps/details?id=net.dinglisch.android.taskerm" target="_blank" rel="noopener">Tasker · Google Play</a></p>
+              </div>
+            </details>
+            <label class="checkbox p21Done">
+              <input type="checkbox" data-done="5" />
+              <span class="box"><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+              <T k="markDone" class="checkbox-label" />
+            </label>
+          </div>
+        </details>
+
+        <details class="p21Step" id="p21Step6" data-step="6" open>
+          <summary class="p21StepHead">
+            <span class="p21StepNum" aria-hidden="true"><span>6</span><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+            <span class="p21StepTitles">
+              <T k="s6Title" as="h3" class="p21StepTitle" />
+              <T k="s6Meta" class="p21StepMeta" />
+            </span>
+            <i data-feather="chevron-down" class="p21StepChevron"></i>
+          </summary>
+          <div class="p21StepBody">
+            <div class="p21TestGrid">
+              <article class="p21TestCard">
+                <h4 class="p21TestTitle"><i data-feather="home"></i><T k="s6HomeTitle" /></h4>
+                <T k="s6HomeText" as="p" />
+                <Cmd code="bash ~/.termux/tasker/unal.sh" tip="tipHomeRun" />
+                <T k="s6Expect" as="p" class="p21Small" />
+<pre class="p21Out"><code>2026-10-14 19:02:16 ---- inicio ----
+2026-10-14 19:02:16 Tráfico forzado por wlan0.
+2026-10-14 19:02:16 Ya hay internet; no hay nada que hacer.</code></pre>
+              </article>
+              <article class="p21TestCard">
+                <h4 class="p21TestTitle"><i data-feather="map-pin"></i><T k="s6CampusTitle" /></h4>
+                <ol class="p21List p21ListTight">
+                  <T k="s6Campus1" as="li" />
+                  <T k="s6Campus2" as="li" />
+                  <li>
+                    <T k="s6Campus3" as="p" />
+                    <Cmd code="cat ~/unal_wifi.log" tip="tipCat" />
+                  </li>
+                </ol>
+                <T k="s6Success" as="p" class="p21Small" />
+<pre class="p21Out"><code>2026-10-14 07:41:03 ---- inicio ----
+2026-10-14 07:41:03 Tráfico forzado por wlan0.
+2026-10-14 07:41:03 Intento 1: portal detectado -> https://porta.unal.edu.co:1003/fgtauth
+2026-10-14 07:41:04 Paso 1: aceptando los términos (answer=1).
+2026-10-14 07:41:04 Paso 1: respuesta HTTP 200
+2026-10-14 07:41:06 Conectado al WiFi de la UNAL.</code></pre>
+                <T k="s6LoginLine" as="p" class="p21Small" />
+                <T k="s6LogLang" as="p" class="p21Small" />
+              </article>
+            </div>
+            <div class="p21Note">
+              <i data-feather="life-buoy"></i>
+              <T k="s6Fail" as="p" />
+            </div>
+            <label class="checkbox p21Done">
+              <input type="checkbox" data-done="6" />
+              <span class="box"><svg viewBox="0 0 16 16"><path d={CHECK_PATH} /></svg></span>
+              <T k="markDone" class="checkbox-label" />
+            </label>
+          </div>
+        </details>
+
+        <div id="p21AllDone" class="p21AllDone" hidden>
+          <i data-feather="check-circle"></i>
+          <T k="allDone" as="p" />
+        </div>
+      </div>
+    </div>
+
+    <section class="p21Section" id="p21Files">
+      <T k="filesTitle" as="h3" class="p21H" />
+      <T k="filesIntro" as="p" class="p21SectionIntro" />
+      <div class="p21FileGrid">
+        {FILES.map(f => (
+          <article class="p21File" data-file={f.id}>
+            <header class="p21FileHead">
+              <i data-feather="file-text"></i>
+              <span class="p21FileName">{f.name}</span>
+              <span class="p21FileSize">{f.size} bytes</span>
+            </header>
+            <T k={f.role} as="p" class="p21FileRole" />
+            <p class="p21FileWhere">
+              <T k="fileWhere" />:
+              {f.where ? <code>{f.where}</code> : <T k="fileWhereInstaller" />}
+            </p>
+            <div class="p21FileHash">
+              <span class="p21HashLabel">SHA-256</span>
+              <code class="p21HashValue">{f.sha}</code>
+              <span class="p21HashState" data-hash-for={f.id} hidden>
+                <i data-feather="check"></i>
+                <T k="hashOk" />
+              </span>
+              <span class="p21HashState is-bad" data-hash-bad-for={f.id} hidden>
+                <i data-feather="x"></i>
+                <T k="hashBad" />
+              </span>
+            </div>
+            <div class="p21FileBtns">
+              <a class="p21Btn is-solid" href={`${BASE}/${f.name}`} download={f.name} data-download={f.id}>
+                <i data-feather="download"></i><T k="download" />
+              </a>
+              <button type="button" class="p21Btn" data-view={f.id}>
+                <i data-feather="eye"></i><T k="viewCode" />
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div class="p21FilesFoot">
+        <button type="button" id="p21DownloadAll" class="p21Btn"><i data-feather="download-cloud"></i><T k="downloadAll" /></button>
+        <T k="downloadAllNote" class="p21Small" />
+      </div>
+
+      <div id="p21Viewer" class="p21Viewer" hidden>
+        <div class="p21ViewerBar">
+          <div class="p21Seg" id="p21ViewerFiles" role="group">
+            {FILES.map(f => <button type="button" class="p21SegBtn p21Mono" data-file={f.id}>{f.name}</button>)}
+          </div>
+          <div class="p21Seg" id="p21ViewerModes" role="group">
+            <button type="button" class="p21SegBtn" data-mode="explained"><T k="viewerExplained" /></button>
+            <button type="button" class="p21SegBtn" data-mode="code"><T k="viewerCode" /></button>
+          </div>
+          <div class="p21ViewerActions">
+            <button type="button" class="p21Btn" id="p21ViewerCopy"><i data-feather="copy"></i><T k="copy" /></button>
+            <a class="p21Btn is-solid" id="p21ViewerDownload" href={`${BASE}/unal_wifi_login.py`} download="unal_wifi_login.py"><i data-feather="download"></i><T k="download" /></a>
+          </div>
+        </div>
+        <div id="p21ViewerBody" class="p21ViewerBody"></div>
+      </div>
+
+      <T k="hashCheck" as="p" class="p21HashCheck" />
+      <Cmd code="sha256sum ~/storage/downloads/instalar.sh ~/storage/downloads/unal.sh ~/storage/downloads/unal_wifi_login.py" tip="tipHash" />
+    </section>
+
+    <section class="p21Section" id="p21Trouble">
+      <T k="troubleTitle" as="h3" class="p21H" />
+      <T k="troubleIntro" as="p" class="p21SectionIntro" />
+      <Cmd code="tail -n 30 ~/unal_wifi.log" />
+      <div class="p21Search">
+        <i data-feather="search"></i>
+        <input
+          type="search"
+          id="p21TroubleSearch"
+          placeholder="Search the message you see…"
+          data-i18n-placeholder="pd.autowifiunal.troubleSearch"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+      {TROUBLE.map(g => (
+        <div class="p21TrGroup" data-tr-group>
+          <h4 class="p21TrGroupTitle"><i data-feather={g.icon}></i><T k={g.group} /></h4>
+          {g.items.map(it => (
+            <details class="p21Tr" data-tr>
+              <summary><T k={`tr${it.id}Title`} /></summary>
+              <div class="p21TrBody">
+                <p class="p21TrRow"><T k="cause" class="p21TrLabel" /><T k={`tr${it.id}Cause`} /></p>
+                <p class="p21TrRow"><T k="fix" class="p21TrLabel is-fix" /><T k={`tr${it.id}Fix`} /></p>
+                {it.cmd && <Cmd code={it.cmd} />}
+              </div>
+            </details>
+          ))}
+        </div>
+      ))}
+      <T k="troubleEmpty" as="p" id="p21TroubleEmpty" class="p21Small" hidden />
+    </section>
+
+    <section class="p21Section" id="p21Privacy">
+      <T k="privacyTitle" as="h3" class="p21H" />
+      <T k="privacyIntro" as="p" class="p21SectionIntro" />
+      <div class="p21RiskGrid">
+        {RISKS.map(r => (
+          <article class="p21Risk">
+            <h4 class="p21RiskTitle"><i data-feather={r.icon}></i><T k={`rk${r.id}Title`} /></h4>
+            <p class="p21RiskRow"><T k="riskWhy" class="p21TrLabel" /><T k={`rk${r.id}Why`} /></p>
+            <p class="p21RiskRow"><T k="riskHow" class="p21TrLabel is-fix" /><T k={`rk${r.id}How`} /></p>
+          </article>
+        ))}
+      </div>
+
+      <T k="storedTitle" as="h4" class="p21H4" />
+      <table class="p21Table">
+        <thead>
+          <tr><T k="colFile" as="th" /><T k="colContent" as="th" /><T k="colWho" as="th" /></tr>
+        </thead>
+        <tbody>
+          {STORED.map(s => (
+            <tr>
+              <td><T k="colFile" class="p21TdLabel" /><code>{s.file}</code></td>
+              <td><T k="colContent" class="p21TdLabel" /><T k={s.content} /></td>
+              <td><T k="colWho" class="p21TdLabel" /><T k={s.who} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <T k="storedNote" as="p" class="p21Small" />
+
+      <T k="connTitle" as="h4" class="p21H4" />
+      <table class="p21Table">
+        <thead>
+          <tr><T k="colAddress" as="th" /><T k="colWhat" as="th" /><T k="colData" as="th" /></tr>
+        </thead>
+        <tbody>
+          {CONNECTIONS.map(c => (
+            <tr>
+              <td><T k="colAddress" class="p21TdLabel" /><code>{c.address}</code></td>
+              <td><T k="colWhat" class="p21TdLabel" /><T k={c.what} /></td>
+              <td><T k="colData" class="p21TdLabel" /><T k={c.data} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <T k="connNote" as="p" class="p21Small" />
+
+      <div class="p21Tls">
+        <T k="tlsTitle" as="h4" class="p21H4" />
+        <T k="tlsText" as="p" />
+        <T k="tlsOn" as="p" />
+        <Cmd code="echo 'export UNAL_TLS_ESTRICTO=1' >> ~/.unal_credenciales" tip="tipTls" />
+        <T k="tlsOff" as="p" />
+      </div>
+      <div class="p21Note is-key">
+        <i data-feather="key"></i>
+        <T k="tlsAdvice" as="p" />
+      </div>
+    </section>
+
+    <section class="p21Section" id="p21Commands">
+      <T k="cmdsTitle" as="h3" class="p21H" />
+      <T k="cmdsIntro" as="p" class="p21SectionIntro" />
+      <ul class="p21CmdList">
+        {COMMANDS.map(c => (
+          <li>
+            <Cmd code={c.code} />
+            <T k={c.text} as="p" class="p21Small" />
+          </li>
+        ))}
+      </ul>
+
+      <T k="advTitle" as="h4" class="p21H4" />
+      <T k="advIntro" as="p" />
+      <table class="p21Table">
+        <thead>
+          <tr><T k="colVar" as="th" /><T k="colDefault" as="th" /><T k="colUse" as="th" /></tr>
+        </thead>
+        <tbody>
+          {ADVANCED.map(a => (
+            <tr>
+              <td><T k="colVar" class="p21TdLabel" /><code>{a.name}</code></td>
+              <td><T k="colDefault" class="p21TdLabel" />{a.def.startsWith('adv') ? <T k={a.def} /> : <code>{a.def}</code>}</td>
+              <td><T k="colUse" class="p21TdLabel" /><T k={a.use} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="p21Section" id="p21Uninstall">
+      <T k="uninstallTitle" as="h3" class="p21H" />
+      <T k="uninstallIntro" as="p" class="p21SectionIntro" />
+      <Cmd code="rm -f ~/.termux/tasker/unal.sh ~/unal_wifi_login.py ~/.unal_credenciales ~/unal_wifi.log ~/unal_portal_*.html" tip="tipRm" />
+      <T k="uninstallCurl" as="p" class="p21Small" />
+      <Cmd code="rm -rf ~/autowifiunal" />
+      <ol class="p21List p21ListTight">
+        <T k="uninstall1" as="li" />
+        <T k="uninstall2" as="li" />
+        <T k="uninstall3" as="li" />
+      </ol>
+    </section>
+
+    <section class="p21Section p21Sources" id="p21Sources">
+      <T k="sourcesTitle" as="h3" class="p21H" />
+      <ul>
+        {SOURCES.map(s => (
+          <li><a href={s.url} target="_blank" rel="noopener"><T k={s.k} /><i data-feather="external-link"></i></a></li>
+        ))}
+      </ul>
+      <T k="footer" as="p" class="p21Footer" />
+    </section>
+  </div>
+
+  <div id="p21Tip" class="p21Tip" role="dialog" hidden>
+    <button type="button" class="p21TipClose" aria-label="Close" data-i18n-aria-label="pd.autowifiunal.close">×</button>
+    <div class="p21TipBody" aria-live="polite"></div>
+    <span class="p21TipArrow" aria-hidden="true"></span>
+  </div>
+  <p id="p21Live" class="p21Sr" aria-live="polite"></p>
+
+  <div class="space-bottom"></div>
+</ProjectLayout>
+<style is:global>@import '../../styles/sections/projects-autowifiunal.css';</style>
+<script type="module" is:inline>
+  import AutoWifiUnal from '/js/lib/AutoWifiUnal.js'
+  const p = new AutoWifiUnal(); p.starter?.(); p.main()
+</script>

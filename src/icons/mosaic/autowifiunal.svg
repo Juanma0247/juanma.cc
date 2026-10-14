@@ -1,0 +1,10 @@
+<svg viewBox="0 0 64 64" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <g data-anim="true">
+    <path d="M7.9 24A34 34 0 0 1 56.1 24" opacity=".45"/>
+    <path d="M14.1 32A24 24 0 0 1 49.9 32" opacity=".7"/>
+    <path d="M21.8 40A13 13 0 0 1 42.2 40"/>
+    <circle cx="32" cy="48" r="3" fill="var(--accent)" stroke="none"/>
+    <circle cx="49" cy="49" r="8.5" fill="color-mix(in oklab, var(--accent) 14%, transparent)"/>
+    <path d="M45.2 49.2l2.7 2.7 5-5.6"/>
+  </g>
+</svg>

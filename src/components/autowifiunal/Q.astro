@@ -1,0 +1,19 @@
+---
+import { en } from '../../data/i18n/en'
+
+interface Props {
+  tip: string
+}
+
+const { tip } = Astro.props
+if (typeof en.pd.autowifiunal?.[tip] !== 'string') throw new Error(`Missing i18n tip: pd.autowifiunal.${tip}`)
+---
+<button
+  type="button"
+  class="p21Q"
+  data-tip={tip}
+  aria-expanded="false"
+  aria-controls="p21Tip"
+  aria-label="What does this do?"
+  data-i18n-aria-label="pd.autowifiunal.qLabel"
+>?</button>

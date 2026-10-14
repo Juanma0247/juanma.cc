@@ -1,0 +1,28 @@
+---
+import Q from './Q.astro'
+
+interface Props {
+  code?: string
+  tip?: string
+  prompt?: boolean
+}
+
+const { code, tip, prompt = true } = Astro.props
+---
+<div class:list={['p21Cmd', { 'is-plain': !prompt }]}>
+  {prompt && <span class="p21CmdPrompt" aria-hidden="true">$</span>}
+  <code class="p21CmdCode">{code ? code : <slot />}</code>
+  <div class="p21CmdActions">
+    {tip && <Q tip={tip} />}
+    <button
+      type="button"
+      class="p21CopyBtn"
+      data-copy
+      aria-label="Copy"
+      data-i18n-aria-label="pd.autowifiunal.copy"
+    >
+      <i data-feather="copy"></i>
+      <span class="p21CopyDone" aria-hidden="true">✓</span>
+    </button>
+  </div>
+</div>
