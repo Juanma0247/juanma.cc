@@ -75,6 +75,13 @@ const navTitle = current ? common.en.topics[current.key as keyof typeof common.e
     </div>
   </div>
   <div class="space-bottom"></div>
+  <script is:inline>
+    ;(function () {
+      var nav = document.querySelector('.mxTopicNav')
+      var chip = nav && nav.querySelector('.is-active')
+      if (chip) nav.scrollLeft = chip.offsetLeft - (nav.clientWidth - chip.offsetWidth) / 2
+    })()
+  </script>
 </MainLayout>
 
 <style is:global>

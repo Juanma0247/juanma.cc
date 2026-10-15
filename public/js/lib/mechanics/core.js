@@ -93,6 +93,7 @@ export const UNITS = {
     { id: 's', tex: '\\text{s}', f: 1 },
     { id: 'min', tex: '\\text{min}', f: 60 },
     { id: 'h', tex: '\\text{h}', f: 3600 },
+    { id: 'd', tex: '\\text{d}', f: 86400 },
     { id: 'ms', tex: '\\text{ms}', f: 0.001 },
   ],
   velocity: [

@@ -37,6 +37,7 @@ export class TopicPage {
     if (this.topic.extraControls) {
       const box = document.getElementById('mxExtraControls')
       box.hidden = false
+      if (this.topic.controlsFirst) box.parentElement.prepend(box)
       this.topic.extraControls(box, this)
     }
     watchPalette(p => { this.c = p; this.plots.forEach(pl => pl.plot.setPalette(p)); this.draw() })
@@ -68,11 +69,24 @@ export class TopicPage {
     return this.topic.system(this)
   }
 
+  order() {
+    return typeof this.topic.order === 'function' ? this.topic.order(this) : this.topic.order
+  }
+
+  // Topics with several physical setups (the dynamics pages) rebuild the data
+  // panel when the setup changes, since each one has its own quantities.
+  rebuildPanel() {
+    const box = document.getElementById('mxData')
+    box.innerHTML = ''
+    const sys = this.system()
+    this.panel = new DataPanel(box, { vars: sys.vars, order: this.order(), onChange: () => this.update() })
+  }
+
   buildPanel() {
     const sys = this.system()
     this.panel = new DataPanel(document.getElementById('mxData'), {
       vars: sys.vars,
-      order: this.topic.order,
+      order: this.order(),
       onChange: () => this.update(),
     })
     if (this.topic.usesG) {
@@ -208,6 +222,7 @@ export class TopicPage {
     this.renderPlots()
     this.renderEvents()
     this.renderLegend()
+    this.topic.afterUpdate?.(vals, this)
     this.setTime(Math.min(this.time, this.motion?.duration ?? 0))
   }
 

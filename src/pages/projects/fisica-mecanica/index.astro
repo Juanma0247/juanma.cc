@@ -5,20 +5,125 @@ import { mechanicsDict } from '../../../data/i18n/mechanics'
 
 const c = mechanicsDict.common.en
 const d = mechanicsDict.hub.en
+const topicsOf = (g: string) => MECHANICS_TOPICS.map((tp, i) => ({ ...tp, n: i + 1 })).filter(tp => tp.group === g)
+
+// Small line icons, one per topic.
+const ICONS: Record<string, string> = {
+  oneDim: '<path d="M3 16h18"/><circle cx="9" cy="16" r="2.2"/><path d="M12 11h6"/><path d="m16 9 2 2-2 2"/>',
+  uniform: '<path d="M3 19h18"/><path d="M4 16 20 6"/><circle cx="8" cy="13.5" r="1" fill="currentColor"/><circle cx="12" cy="11" r="1" fill="currentColor"/><circle cx="16" cy="8.5" r="1" fill="currentColor"/>',
+  accelerated: '<path d="M3 19h18"/><path d="M4 18c6 0 11-4 16-13"/><path d="m17 5 3 0 0 3"/>',
+  freeFall: '<path d="M4 21h16"/><circle cx="12" cy="4.5" r="1.6"/><circle cx="12" cy="8" r="1.6" opacity=".6"/><circle cx="12" cy="13.5" r="1.6" opacity=".35"/><path d="M12 16v3"/><path d="m10.5 17.5 1.5 1.5 1.5-1.5"/>',
+  vertical: '<path d="M4 21h16"/><path d="M8 20V8"/><path d="m6 10 2-2 2 2"/><path d="M16 8v12"/><path d="m14 18 2 2 2-2"/>',
+  projectile: '<path d="M3 20h18"/><path d="M4 19C7 6 15 6 20 19" stroke-dasharray="2.5 2"/><circle cx="12" cy="9.3" r="1.7"/>',
+  circular: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="1" fill="currentColor"/><path d="M12 12 18 7"/><circle cx="18" cy="6.7" r="1.6"/>',
+  newton: '<rect x="8" y="9" width="8" height="7" rx="1"/><path d="M16 12.5h6"/><path d="m20 10.5 2 2-2 2"/><path d="M12 16v5"/><path d="M12 9V3"/>',
+  friction: '<path d="M2 20 22 9"/><rect x="9" y="9" width="6" height="5" rx="1" transform="rotate(-29 12 11.5)"/><path d="M5 16l-1 2M8 14.5 7 16.5M11 13l-1 2" opacity=".6"/>',
+}
 ---
 
 <MechanicsLayout>
-  <header class="mxHead">
-    <h1 class="mxTitle" data-i18n="pd.mechanics.common.project">{c.project}</h1>
-    <p class="mxLead" data-i18n="pd.mechanics.hub.lead" set:html={d.lead} />
-  </header>
-  <div class="mxHubGrid">
-    {MECHANICS_TOPICS.map((tp, i) => (
-      <a class="mxHubCard" href={`${MECHANICS_BASE}/${tp.slug}`}>
-        <span class="mxHubCardNum">{String(i + 1).padStart(2, '0')}</span>
-        <h2 class="mxHubCardTitle" data-i18n={`pd.mechanics.common.topics.${tp.key}.title`}>{(c.topics as any)[tp.key].title}</h2>
-        <p class="mxHubCardText" data-i18n={`pd.mechanics.common.topics.${tp.key}.text`}>{(c.topics as any)[tp.key].text}</p>
-      </a>
-    ))}
-  </div>
+  <section class="mxHubHero">
+    <div>
+      <p class="mxEyebrow"><span class="mxEyebrowNum">UNAL</span><span data-i18n="pd.mechanics.common.project">{c.project}</span></p>
+      <h1 class="mxTitle" data-i18n="cardTitles.fisica-mecanica">{c.project}</h1>
+      <p class="mxLead" data-i18n="pd.mechanics.hub.lead" set:html={d.lead} />
+      <p style="margin-top:1.1rem">
+        <a class="mxLoadBtn" href={`${MECHANICS_BASE}/${MECHANICS_TOPICS[0].slug}`} style="display:inline-flex;gap:.4rem;align-items:center;padding:.45rem .9rem;border:var(--border-width) solid var(--color-primary);border-radius:var(--radius-md);box-shadow:var(--shadow-primary);color:var(--color-primary)">
+          <span data-i18n="pd.mechanics.hub.start">{d.start}</span> →
+        </a>
+      </p>
+    </div>
+    <div class="mxHubArt"><canvas id="mxHubCanvas"></canvas></div>
+  </section>
+
+  {['kinematics', 'dynamics'].map(g => (
+    <section class="mxHubGroup">
+      <h2 class="mxH2" data-i18n={`pd.mechanics.hub.${g}`}>{(d as any)[g]}</h2>
+      <p class="mxSectionLead" data-i18n={`pd.mechanics.hub.${g}Lead`}>{(d as any)[`${g}Lead`]}</p>
+      <div class="mxHubGrid">
+        {topicsOf(g).map(tp => (
+          <a class="mxHubCard" href={`${MECHANICS_BASE}/${tp.slug}`}>
+            <div class="mxHubCardTop">
+              <span class="mxHubIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={ICONS[tp.key]} /></span>
+              <div>
+                <span class="mxHubCardNum">{String(tp.n).padStart(2, '0')}</span>
+                <h3 class="mxHubCardTitle" data-i18n={`pd.mechanics.common.topics.${tp.key}.title`}>{(c.topics as any)[tp.key].title}</h3>
+              </div>
+            </div>
+            <p class="mxHubCardText" data-i18n={`pd.mechanics.common.topics.${tp.key}.text`}>{(c.topics as any)[tp.key].text}</p>
+            <div class="mxHubTags">
+              {((d.tags as any)[tp.key] as string[]).map((tag, i) => <span class="mxHubTag" data-i18n={`pd.mechanics.hub.tags.${tp.key}.${i}`}>{tag}</span>)}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <section class="mxSection">
+    <h2 class="mxH2" data-i18n="pd.mechanics.hub.howTitle">{d.howTitle}</h2>
+    <div class="mxHowGrid">
+      {d.how.map((item, i) => (
+        <div class="mxHowCard">
+          <h3 data-i18n={`pd.mechanics.hub.how.${i}.title`}>{item.title}</h3>
+          <p data-i18n={`pd.mechanics.hub.how.${i}.text`}>{item.text}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="mxSection">
+    <h2 class="mxH2" data-i18n="pd.mechanics.hub.sourcesTitle">{d.sourcesTitle}</h2>
+    <p class="mxSectionLead" data-i18n="pd.mechanics.hub.sources" set:html={d.sources} />
+  </section>
+
+  <script type="module" is:inline>
+    import { readPalette, watchPalette, fitCanvas } from '/js/lib/mechanics/core.js'
+
+    // A few projectiles launched at different angles with the same speed:
+    // complementary angles land at the same range.
+    const canvas = document.getElementById('mxHubCanvas')
+    let c = readPalette()
+    watchPalette(p => { c = p })
+    const angles = [20, 35, 45, 55, 70]
+    const start = performance.now()
+    function frame(now) {
+      const { ctx, w, h } = fitCanvas(canvas)
+      ctx.clearRect(0, 0, w, h)
+      const g = 9.8
+      const v0 = 20
+      const R = v0 * v0 / g
+      const s = (w - 40) / R
+      const base = h - 28
+      ctx.strokeStyle = c.muted
+      ctx.lineWidth = 1.4
+      ctx.beginPath(); ctx.moveTo(10, base); ctx.lineTo(w - 10, base); ctx.stroke()
+      const T = ((now - start) / 1000) % 4.6
+      const colors = [c.third, c.second, c.primary, c.second, c.third]
+      angles.forEach((deg, i) => {
+        const th = deg * Math.PI / 180
+        const tf = 2 * v0 * Math.sin(th) / g
+        const tt = Math.min(T * tf / 3.2, tf)
+        ctx.save()
+        ctx.strokeStyle = colors[i]
+        ctx.globalAlpha = 0.55
+        ctx.setLineDash([4, 4])
+        ctx.beginPath()
+        for (let k = 0; k <= 60; k++) {
+          const u = tt * k / 60
+          const x = 20 + v0 * Math.cos(th) * u * s
+          const y = base - (v0 * Math.sin(th) * u - 0.5 * g * u * u) * s
+          k ? ctx.lineTo(x, y) : ctx.moveTo(x, y)
+        }
+        ctx.stroke()
+        ctx.restore()
+        const x = 20 + v0 * Math.cos(th) * tt * s
+        const y = base - (v0 * Math.sin(th) * tt - 0.5 * g * tt * tt) * s
+        ctx.fillStyle = colors[i]
+        ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill()
+      })
+      requestAnimationFrame(frame)
+    }
+    requestAnimationFrame(frame)
+  </script>
 </MechanicsLayout>

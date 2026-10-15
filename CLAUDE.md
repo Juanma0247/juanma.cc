@@ -25,6 +25,7 @@ Cómo funciona:
 - **Contenido generado por JS** (`public/js/lib/*.js`): usar el puente global `window.i18nGet('clave', 'fallback en inglés')`. Definir un helper local `const t = (k, f) => window.i18nGet ? window.i18nGet('pd.<proyecto>.' + k, f) : f`. Para re-traducir al vuelo, escuchar `window.addEventListener('langchanged', …)` y volver a renderizar la parte afectada.
 - **Tarjetas del mosaico y navbar:** los títulos usan `cardTitles.<slug>` y las etiquetas/tags usan `tags.<clave>` (la clave se genera con `tagKey()` de `src/data/i18n/keys.ts`). Al añadir un proyecto/juego/herramienta nuevo, agregar su título en `cardTitles` y sus tags en `tags` (en ambos idiomas).
 - **LaTeX:** no traducir la notación matemática. Para prosa/etiquetas que contienen `\(…\)`, `applyLang` dispara un re-render global de KaTeX en `langchanged`, así que sí se pueden traducir (guardar el LaTeX completo en el diccionario, con `\\` escapado en el `.ts`).
+- **Diccionarios por página (`i18nExtra`):** `en.ts`/`es.ts` se inyectan en todas las páginas, así que el contenido bilingüe muy extenso de un solo proyecto no va ahí. `MainLayout` acepta la prop `i18nExtra={{ ns, en, es }}` y lo fusiona bajo `pd.<ns>` solo en esa página; `data-i18n` e `i18nGet` funcionan igual. Lo usa Física Mecánica (`src/data/i18n/mechanics/*.ts`, cada archivo exporta `{ en, es }` con `es: typeof en`, y `MechanicsLayout` envía `common` + el tema actual).
 - **Excepciones que se dejan sin traducir a propósito:** nombres propios y términos técnicos (React, Firebase, Turing Machine…), identificadores de código, y el prompt para IA de `TMPrompt.js` (se mantiene en inglés por convención).
 
 ## Layout de páginas de Proyectos/Tools/Games — margen lateral y `is:global`
@@ -35,6 +36,12 @@ Cómo funciona:
 - Si una página necesita ir a **ancho completo** (p. ej. un lienzo con `position: fixed`/`100vw` como Cross Matrix, o una herramienta muy densa como Turing Machine), usar el modificador `page-shell--wide` (`max-width: none`) en vez de pelear contra el wrapper. Turing Machine ya está exceptuada en `ProjectLayout.astro` (`slug === 'turing-machine'`); seguir el mismo patrón por slug para casos nuevos.
 - Los imports de CSS por página (`@import '.../projects-X.css'`, `tools.css`, `games.css`) van en un `<style is:global>` — **nunca** en un `<style>` sin `is:global`. Cada proyecto/juego que crea elementos dinámicamente vía JS (`innerHTML`, `createElement`, `ExtText.createElement`, etc.) los inserta sin el atributo `data-astro-cid-*` que Astro exige para que un `<style>` con scope los alcance; una hoja no-global simplemente no le pega estilo a nada de eso (bug ya encontrado y corregido en sigma-star-enum, regular-expressions, sets, cross-matrix y voice). El CSS compartido (`projects.css`, `tools.css`, `games.css`) ya se importa una sola vez, como global, desde cada layout — las páginas individuales no necesitan volver a importarlo.
 - Si un applet/canvas dentro de una página (GeoGebra, SVG, etc.) calcula su tamaño en JS, que lea el `clientWidth` del contenedor (que a su vez tiene su tamaño fijado por CSS, p. ej. `.ggbContainer { width: min(32rem, 100%); aspect-ratio: 1/1; }`) — **nunca** `window.innerWidth`/`innerHeight` en crudo, porque eso ignora el `page-shell` y hace que el widget se salga del contenedor.
+
+## Física Mecánica (`/projects/fisica-mecanica`)
+
+- Hub + una página por tema (`src/pages/projects/fisica-mecanica/*.astro`); la lista de temas vive en `src/data/mechanics.ts` (alimenta navegación, hub y `destinations.ts`).
+- Cada tema usa `TopicPage.astro` (secciones estándar) y un módulo `public/js/lib/mechanics/topics/<key>.js`. El motor común está en `public/js/lib/mechanics/`: `algebra.js` (ecuaciones en mini-lenguaje `eq('id', 'v = v0 + a*t')`, elige la ecuación, despeja, cuadráticas con ramas, sistemas lineales), `steps.js` (solución paso a paso), `topicPage.js` (controlador), `dynamics.js` + `dynScenes.js` + `fbd.js` (Newton/fricción con D.C.L.).
+- Para añadir un problema basta agregar el preset en el módulo del tema y su `title/text/source` en el diccionario del tema (ambos idiomas).
 
 ## Política de commit y push
 
