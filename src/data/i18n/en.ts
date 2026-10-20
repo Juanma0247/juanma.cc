@@ -1042,6 +1042,8 @@ export const en: I18n = {
       preset_dampedPendulum: 'Section 6.7: the damped pendulum',
       preset_dipole: 'Section 6.8: the dipole, of index +2',
       preset_lotka: 'Lotka–Volterra: predator and prey',
+      preset_montbrio: 'Montbrió–Pazó–Roxin: fold bifurcation in I (x = r, y = v)',
+      preset_brusselator: 'Brusselator: Hopf bifurcation in B',
 
       nullclineX: 'ẋ = 0',
       nullclineY: 'ẏ = 0',

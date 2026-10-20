@@ -623,6 +623,8 @@ export const es: I18n = {
       preset_dampedPendulum: 'Sección 6.7: el péndulo amortiguado',
       preset_dipole: 'Sección 6.8: el dipolo, de índice +2',
       preset_lotka: 'Lotka–Volterra: depredador y presa',
+      preset_montbrio: 'Montbrió–Pazó–Roxin: bifurcación fold en I (x = r, y = v)',
+      preset_brusselator: 'Brusselator: bifurcación de Hopf en B',
 
       nullclineX: 'ẋ = 0',
       nullclineY: 'ẏ = 0',

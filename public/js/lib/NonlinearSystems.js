@@ -30,6 +30,10 @@ const PRESETS = [
   { id: 'dampedPendulum', f: 'y', g: '-b y - sin(x)', vars: { b: 0.3 }, view: [[0, 0], 4.6] },
   { id: 'dipole', f: '2 x y', g: 'y^2 - x^2', vars: {}, view: [[0, 0], 1.6] },
   { id: 'lotka', f: 'x(a - y)', g: 'y(x - b)', vars: { a: 1, b: 1 }, view: [[1.1, 1.1], 1.9] },
+  // Neural mass model with x = r (firing rate) and y = v (mean potential). The
+  // window stays below v = 0.8 so the unphysical fixed point with r < 0 is left out.
+  { id: 'montbrio', f: 'Δ/pi + 2 x y', g: 'y^2 + η + J x + I - (pi x)^2', vars: { 'Δ': 1, 'η': -5, J: 15, I: 5 }, view: [[0.85, -1.2], 1.7] },
+  { id: 'brusselator', f: 'A - (B + 1) x + x^2 y', g: 'B x - x^2 y', vars: { A: 1, B: 1.8 }, view: [[1.3, 2.1], 1.9] },
 ]
 
 const KIND_FALLBACK = {
