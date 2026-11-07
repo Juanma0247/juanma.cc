@@ -1,0 +1,135 @@
+---
+import ToolLayout from '../../../layouts/ToolLayout.astro'
+import T from '../../../components/autowifiunal/T.astro'
+import dict from '../../../data/i18n/autowifiunal'
+
+const i18nExtra = { ns: 'autowifiunal', en: dict.en, es: dict.es }
+
+const CHIPS = [
+  { icon: 'smartphone', k: 'chipAndroid' },
+  { icon: 'zap', k: 'chipTime' },
+  { icon: 'eye-off', k: 'chipData' },
+  { icon: 'gift', k: 'chipFree' },
+  { icon: 'battery', k: 'chipBattery' },
+]
+
+const STEPS = [
+  { icon: 'wifi', k: 'how1' },
+  { icon: 'shield', k: 'how2' },
+  { icon: 'log-in', k: 'how3' },
+  { icon: 'activity', k: 'how4' },
+]
+
+const FEATURES = [
+  { icon: 'check-circle', k: 'f1' },
+  { icon: 'refresh-cw', k: 'f2' },
+  { icon: 'zap', k: 'f3' },
+  { icon: 'message-square', k: 'f4' },
+  { icon: 'lock', k: 'f5' },
+  { icon: 'moon', k: 'f6' },
+]
+
+const PERMS = ['Net', 'Wifi', 'Boot', 'Fgs', 'Notif', 'Bio', 'Turbo']
+
+const DOCS = [
+  { href: '/tools/autowifiunal/terms', icon: 'file-text', k: 'terms' },
+  { href: '/tools/autowifiunal/privacy', icon: 'lock', k: 'privacy' },
+  { href: '/tools/autowifiunal/legal', icon: 'shield', k: 'legal' },
+]
+---
+<ToolLayout
+  slug="autowifiunal"
+  description="WiFi UNAL: Android app that signs in to the EstudiantesUN network of the Universidad Nacional de Colombia automatically. No data collected."
+  i18nExtra={i18nExtra}
+>
+  <div class="awuContent">
+    <header class="awuHero">
+      <img class="awuHeroIcon" src="/img/autowifiunal/icon.svg" alt="" aria-hidden="true" width="96" height="96" />
+      <div class="awuHeroText">
+        <h2 class="awuHeroTitle">WiFi UNAL</h2>
+        <T k="page.tagline" as="p" class="awuTagline" />
+        <span class="awuBadge"><i data-feather="clock"></i><T k="page.status" /></span>
+      </div>
+    </header>
+
+    <T k="page.lead" as="p" class="awuLead" />
+    <ul class="awuChips">
+      {CHIPS.map(c => <li class="awuChip"><i data-feather={c.icon}></i><T k={`page.${c.k}`} /></li>)}
+    </ul>
+
+    <section class="awuSection" id="how">
+      <T k="page.howTitle" as="h3" class="awuH3" />
+      <T k="page.howIntro" as="p" class="awuIntro" />
+      <ol class="awuSteps">
+        {STEPS.map(s => (
+          <li class="awuStep">
+            <span class="awuStepIcon"><i data-feather={s.icon}></i></span>
+            <T k={`page.${s.k}Title`} as="b" class="awuStepTitle" />
+            <T k={`page.${s.k}Text`} as="p" />
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="awuSection" id="features">
+      <T k="page.featuresTitle" as="h3" class="awuH3" />
+      <ul class="awuGrid">
+        {FEATURES.map(f => (
+          <li class="awuCard">
+            <i data-feather={f.icon}></i>
+            <T k={`page.${f.k}Title`} as="b" class="awuCardTitle" />
+            <T k={`page.${f.k}Text`} as="p" />
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="awuSection awuCallout" id="privacy">
+      <i data-feather="lock"></i>
+      <div>
+        <T k="page.privacyTitle" as="h3" class="awuH3" />
+        <T k="page.privacyText" as="p" />
+        <a class="awuLink" href="/tools/autowifiunal/privacy"><T k="page.privacyLink" /><i data-feather="arrow-right"></i></a>
+      </div>
+    </section>
+
+    <section class="awuSection" id="permissions">
+      <T k="page.permsTitle" as="h3" class="awuH3" />
+      <T k="page.permsIntro" as="p" class="awuIntro" />
+      <table class="awuTable">
+        <thead><tr><T k="page.colPerm" as="th" /><T k="page.colWhy" as="th" /></tr></thead>
+        <tbody>
+          {PERMS.map(p => (
+            <tr><T k={`page.perm${p}`} as="td" /><T k={`page.perm${p}Why`} as="td" /></tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="awuSection" id="requirements">
+      <T k="page.reqTitle" as="h3" class="awuH3" />
+      <ul class="awuList">
+        <T k="page.req1" as="li" />
+        <T k="page.req2" as="li" />
+        <T k="page.req3" as="li" />
+      </ul>
+    </section>
+
+    <section class="awuSection" id="legal">
+      <T k="page.legalTitle" as="h3" class="awuH3" />
+      <T k="page.legalIntro" as="p" class="awuIntro" />
+      <ul class="awuDocs">
+        {DOCS.map(d => (
+          <li><a class="awuDocLink" href={d.href}><i data-feather={d.icon}></i><T k={`common.${d.k}`} /><i data-feather="chevron-right" class="awuChevron"></i></a></li>
+        ))}
+      </ul>
+    </section>
+
+    <footer class="awuFoot">
+      <T k="page.contactText" as="p" />
+      <T k="common.notOfficial" as="p" class="awuMuted" />
+    </footer>
+  </div>
+  <div class="space-bottom"></div>
+</ToolLayout>
+<style is:global>@import '../../../styles/sections/tools-autowifiunal.css';</style>

@@ -4,19 +4,25 @@ import tools from '../data/tools.json'
 
 interface Props {
   slug: string
+  title?: string
+  description?: string
+  titleHref?: string
+  i18nExtra?: { ns: string; en: Record<string, unknown>; es: Record<string, unknown> }
 }
 
-const { slug } = Astro.props
+const { slug, title, description, titleHref = '/projects', i18nExtra } = Astro.props
 
 const tool = tools.find(t => t.slug === slug)
 if (!tool) throw new Error(`Tool not found: "${slug}"`)
 ---
 
 <MainLayout
-  title={tool.pageTitle}
+  title={title ?? tool.pageTitle}
   navTitle={tool.navTitle}
   section="Tools"
-  titleHref="/projects"
+  titleHref={titleHref}
+  description={description}
+  i18nExtra={i18nExtra}
 >
   <slot name="head" slot="head" />
   <div class="page-shell">

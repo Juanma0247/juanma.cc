@@ -43,6 +43,14 @@ Cómo funciona:
 - Cada tema usa `TopicPage.astro` (secciones estándar) y un módulo `public/js/lib/mechanics/topics/<key>.js`. El motor común está en `public/js/lib/mechanics/`: `algebra.js` (ecuaciones en mini-lenguaje `eq('id', 'v = v0 + a*t')`, elige la ecuación, despeja, cuadráticas con ramas, sistemas lineales), `steps.js` (solución paso a paso), `topicPage.js` (controlador), `dynamics.js` + `dynScenes.js` + `fbd.js` (Newton/fricción con D.C.L.).
 - Para añadir un problema basta agregar el preset en el módulo del tema y su `title/text/source` en el diccionario del tema (ambos idiomas).
 
+## WiFi UNAL (`/tools/autowifiunal`)
+
+- Página de la app Android WiFi UNAL (el código de la app vive en `D:\Sistema\Carpetas\Programacion\Movil\WIFI UNAL`). Reemplazó el 7 nov 2026 a la guía anterior de Termux + script Python (se borraron sus traducciones, componentes, `AutoWifiUnal.js` y las descargas de `public/scripts/autowifiunal/`).
+- Páginas: `src/pages/tools/autowifiunal/index.astro` y las subpáginas legales `terms`, `privacy` y `legal` (las tres usan `components/autowifiunal/LegalDoc.astro`). **La app enlaza directamente a esas tres URL**: no cambiarlas sin actualizar `Ui.kt` de la app.
+- Textos en `src/data/i18n/autowifiunal.ts` (`{ en, es }`, enviados con `i18nExtra` bajo `pd.autowifiunal`; `components/autowifiunal/T.astro` los pinta). Ícono en `public/img/autowifiunal/icon.svg` (generado desde la vista previa del ícono de la app). Estilos en `src/styles/sections/tools-autowifiunal.css` (prefijo `awu`).
+- `ToolLayout.astro` acepta ahora `title`, `description`, `titleHref` e `i18nExtra` opcionales.
+- Los documentos legales nombran como responsable a Juan Manuel Díaz Gómez (juanma@juanma.cc) y citan la Ley 1581 de 2012. Si la app cambia lo que hace con los datos o sus permisos, actualizar también estas páginas y su fecha.
+
 ## Política de commit y push
 
 Hacer `git commit` y `git push` (a la rama principal) en estos momentos:

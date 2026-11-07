@@ -35,7 +35,7 @@ const GAMES: Destination[] = [
 const TOOLS: Destination[] = [
   { label: 'Minecraft Coords', value: '/tools/minecraft-coords', group: 'Projects' },
   { label: 'String Tool',      value: '/tools/string-tool',      group: 'Projects' },
-  { label: 'Auto WiFi UNAL',   value: '/tools/autowifiunal',     group: 'Projects' },
+  { label: 'WiFi UNAL',        value: '/tools/autowifiunal',     group: 'Projects' },
 ]
 
 // Topic pages of Física Mecánica — derived from mechanics.ts.

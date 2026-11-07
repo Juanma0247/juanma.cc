@@ -1,0 +1,58 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro'
+import T from './T.astro'
+import dict, { en } from '../../data/i18n/autowifiunal'
+
+interface Props {
+  doc: 'terms' | 'privacy' | 'legal'
+}
+
+const { doc } = Astro.props
+const content = en[doc]
+const i18nExtra = { ns: 'autowifiunal', en: dict.en, es: dict.es }
+const DOCS = ['terms', 'privacy', 'legal'] as const
+---
+<ToolLayout
+  slug="autowifiunal"
+  title={`${content.title} · WiFi UNAL`}
+  description={content.lead.replace(/<[^>]+>/g, '')}
+  titleHref="/tools/autowifiunal"
+  i18nExtra={i18nExtra}
+>
+  <article class="awuContent awuDoc">
+    <a class="awuBack" href="/tools/autowifiunal"><i data-feather="arrow-left"></i><T k="common.backToApp" /></a>
+    <header class="awuDocHead">
+      <img class="awuDocIcon" src="/img/autowifiunal/icon.svg" alt="" aria-hidden="true" width="48" height="48" />
+      <T k={`${doc}.title`} as="h2" class="awuDocTitle" />
+      <T k="common.updated" as="p" class="awuMuted" />
+    </header>
+    <T k={`${doc}.lead`} as="p" class="awuLead" />
+
+    <nav class="awuToc">
+      <ol>
+        {content.sections.map((_, i) => (
+          <li><a href={`#s${i + 1}`}><T k={`${doc}.sections.${i}.t`} /></a></li>
+        ))}
+      </ol>
+    </nav>
+
+    {content.sections.map((_, i) => (
+      <section class="awuDocSection" id={`s${i + 1}`}>
+        <T k={`${doc}.sections.${i}.t`} as="h3" class="awuH3" />
+        <T k={`${doc}.sections.${i}.b`} as="div" class="awuDocBody" />
+      </section>
+    ))}
+
+    <footer class="awuDocFoot">
+      <T k="common.legalNav" as="h3" class="awuH3" />
+      <ul class="awuLegalLinks">
+        {DOCS.filter(d => d !== doc).map(d => (
+          <li><a href={`/tools/autowifiunal/${d}`}><i data-feather={d === 'privacy' ? 'lock' : d === 'terms' ? 'file-text' : 'shield'}></i><T k={`common.${d}`} /></a></li>
+        ))}
+      </ul>
+      <T k="common.notOfficial" as="p" class="awuMuted" />
+    </footer>
+  </article>
+  <div class="space-bottom"></div>
+</ToolLayout>
+<style is:global>@import '../../styles/sections/tools-autowifiunal.css';</style>

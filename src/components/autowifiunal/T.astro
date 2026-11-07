@@ -1,5 +1,5 @@
 ---
-import { en } from '../../data/i18n/en'
+import { en } from '../../data/i18n/autowifiunal'
 
 interface Props {
   k: string
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { k, as: Tag = 'span', ...attrs } = Astro.props
-const text = en.pd.autowifiunal?.[k]
+const text = k.split('.').reduce<unknown>((node, key) => (node as Record<string, unknown> | undefined)?.[key], en)
 if (typeof text !== 'string') throw new Error(`Missing i18n key: pd.autowifiunal.${k}`)
 ---
 <Tag {...attrs} data-i18n={`pd.autowifiunal.${k}`} set:html={text}></Tag>
