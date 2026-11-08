@@ -7,16 +7,34 @@
     "build": "astro build",
     "preview": "astro preview",
     "start": "node dist/server/entry.mjs",
-    "cloudinary:upload": "node scripts/upload-cloudinary.mjs"
+    "cloudinary:upload": "node scripts/upload-cloudinary.mjs",
+    "test:notes": "firebase emulators:exec --only database --project demo-notes \"node scripts/notes-sync-test.mjs\""
   },
   "dependencies": {
     "@astrojs/node": "^8.3.0",
+    "@codemirror/autocomplete": "^6.20.4",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/lang-markdown": "^6.5.2",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/language-data": "^6.5.2",
+    "@codemirror/search": "^6.7.2",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
+    "@lezer/highlight": "^1.2.5",
+    "@lezer/markdown": "^1.8.1",
     "astro": "^4.16.0",
     "firebase": "^12.14.0",
-    "firebase-admin": "^12.0.0"
+    "firebase-admin": "^12.0.0",
+    "katex": "^0.19.1",
+    "lib0": "^0.2.119",
+    "markdown-it": "^15.0.3",
+    "y-codemirror.next": "^0.3.6",
+    "y-indexeddb": "^9.0.12",
+    "yjs": "^13.6.33"
   },
   "devDependencies": {
     "cloudinary": "^2.10.0",
+    "fake-indexeddb": "^6.2.7",
     "typescript": "^5.0.0"
   },
   "engines": {

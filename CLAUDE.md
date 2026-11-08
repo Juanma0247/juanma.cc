@@ -51,6 +51,21 @@ Cómo funciona:
 - `ToolLayout.astro` acepta ahora `title`, `description`, `titleHref` e `i18nExtra` opcionales.
 - Los documentos legales nombran como responsable a Juan Manuel Díaz Gómez (juanma@juanma.cc) y citan la Ley 1581 de 2012. Si la app cambia lo que hace con los datos o sus permisos, actualizar también estas páginas y su fecha.
 
+## Space y Notas (`/space`, `src/lib/notes/`)
+
+- `/space` (`src/pages/space/index.astro`) es la app de **Notas**; los ajustes que antes estaban en `/space` (Page Settings, variables web en vivo, modo kiosco) se movieron a **`/space/settings`** (`src/pages/space/settings.astro`), enlazados desde Notas ("Ajustes web").
+- El módulo `src/lib/notes/` es **compartido con la app Android** (`../app`, que lo importa con el alias `@notes`). No usar nada exclusivo de Astro dentro de él: los cambios aquí afectan a ambas plataformas.
+  - `config.js`: correos autorizados, config de Firebase (incluye `databaseURL`) y rutas de datos.
+  - `sync.js` (`NoteSync`): cada nota es un documento **Yjs** (CRDT) con caché local en IndexedDB (`y-indexeddb`) y RTDB como transporte: `notes/ydoc/<id>/log/<pushId>` (actualizaciones incrementales en base64, agrupadas cada ~24 ms) + `notes/ydoc/<id>/snap` (compactación cuando el log pasa de 250 entradas, con una transacción que no pisa un snapshot más nuevo). Al conectar, `reconcile()` sube lo que el dispositivo tenga y el servidor no (ediciones offline de sesiones anteriores).
+  - `store.js`: árbol de grupos y notas en `notes/tree/<id>` (`kind`, `parent` = id del grupo o `root`, `title`, `excerpt`, `words`, `updated`) y espejo en texto plano en `notes/text/<id>` (búsqueda y reutilización desde otras apps). Caché del árbol en localStorage para abrir sin red.
+  - `editor.js`: CodeMirror 6 con vista previa en vivo estilo Obsidian (oculta la sintaxis fuera de la línea activa; KaTeX para `$…$` y `$$…$$`; tareas clicables; imágenes; enlaces `[[Nota]]` con autocompletado). Modos: En vivo, Código y Lectura (`render.js`, markdown-it).
+  - `upload.js`: al pegar, soltar o elegir una imagen se inserta `![…](uploading://<tag>)` (marcador gris animado en todos los dispositivos), se redimensiona a 2400 px como máximo, se convierte a WebP, se sube a Storage `notes/<noteId>/…` y se reemplaza por la URL con `#w=…&h=…` para reservar el espacio exacto mientras carga.
+  - `ui.js` (`mountNotes`): interfaz completa (árbol con arrastrar y soltar, menú contextual, búsqueda en el contenido, migas, estado de sincronización, barra de herramientas). Textos en `i18n.js` (`{ en, es }`, enviados con `i18nExtra` bajo `pd.notes`; la app los usa directamente).
+  - `notes.css`: estilos con prefijo `nt-`, heredan los tokens de color del sitio.
+- El auto-render global de KaTeX de `MainLayout` ignora la clase `no-katex` (la raíz de Notas la lleva) para no reescribir el DOM del editor.
+- **Reglas**: `database.rules.json` (RTDB, nodo `notes` solo para los dos correos con email verificado) y `storage.rules` (`notes/**`, solo imágenes de menos de 15 MB, mismos correos). Se despliegan con `firebase deploy --only database,storage` (no van por App Hosting).
+- **Prueba de sincronización**: `npm run test:notes` (emulador de RTDB; requiere el JDK 21 de `C:\Users\Juan Manuel\.jdks\jdk-21.0.13+9` en `JAVA_HOME` y `PATH`). Simula varios dispositivos: concurrencia, offline, app cerrada sin red, compactación y latencia.
+
 ## Política de commit y push
 
 Hacer `git commit` y `git push` (a la rama principal) en estos momentos:

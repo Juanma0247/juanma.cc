@@ -1,9 +1,17 @@
 ---
-import MainLayout from '../layouts/MainLayout.astro'
+import MainLayout from '../../layouts/MainLayout.astro'
 ---
 
-<MainLayout title="Space" section="Space" titleKey="space.title">
+<MainLayout title="Web settings" section="Space" titleKey="space.settingsTitle" titleHref="/space">
   <div class="space-page">
+
+    <header class="space-page__head">
+      <a class="space-page__back" href="/space">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M12.8 15.2a.75.75 0 0 1-1.06 0l-4.67-4.67a.75.75 0 0 1 0-1.06l4.67-4.67a.75.75 0 1 1 1.06 1.06L8.66 10l4.14 4.14a.75.75 0 0 1 0 1.06Z"/></svg>
+        <span data-i18n="space.backToNotes">Back to notes</span>
+      </a>
+      <h2 data-i18n="space.settingsTitle">Web settings</h2>
+    </header>
 
     <div class="space-page__grid">
 
@@ -203,6 +211,28 @@ import MainLayout from '../layouts/MainLayout.astro'
     padding: 2rem 1.5rem 4rem;
   }
 
+  .space-page__head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .space-page__head h2 { margin: 0; }
+
+  .space-page__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    width: fit-content;
+    font-family: var(--font-ui), sans-serif;
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .space-page__back svg { width: 1.1rem; height: 1.1rem; }
+
   .space-page__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -256,8 +286,8 @@ import MainLayout from '../layouts/MainLayout.astro'
 </style>
 
 <script>
-  import { DESTINATIONS } from '../data/destinations'
-  import * as S from '../lib/core/settings.js'
+  import { DESTINATIONS } from '../../data/destinations'
+  import * as S from '../../lib/core/settings.js'
 
   function getMsg(key: string): string {
     const lang = localStorage.getItem('site-lang') || S.detectSystemLang()
@@ -479,7 +509,7 @@ import MainLayout from '../layouts/MainLayout.astro'
   ;(async () => {
     let auth: any
     try {
-      auth = await import('../lib/core/Auth.js')
+      auth = await import('../../lib/core/Auth.js')
     } catch (e) {
       console.error('Space: cloud/auth unavailable:', e)
       return

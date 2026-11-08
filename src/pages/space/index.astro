@@ -1,0 +1,68 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro'
+import { en, es } from '../../lib/notes/i18n.js'
+---
+
+<MainLayout
+  title="Space"
+  section="Space"
+  titleKey="space.title"
+  description="Espacio personal de Juan Manuel Díaz: notas en Markdown sincronizadas en tiempo real."
+  i18nExtra={{ ns: 'notes', en, es }}
+>
+  <div id="notes-root"></div>
+</MainLayout>
+
+<style is:global>
+  html:has(#notes-root), html:has(#notes-root) body { overflow: hidden; overscroll-behavior: none; }
+  .contenedor:has(#notes-root) { padding-top: 0; min-height: 0; }
+</style>
+
+<script>
+  import 'katex/dist/katex.min.css'
+  import '../../lib/notes/notes.css'
+  import { getApps, initializeApp } from 'firebase/app'
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, setPersistence, browserLocalPersistence } from 'firebase/auth'
+  import { FIREBASE_CONFIG } from '../../lib/notes/config.js'
+  import { mountNotes } from '../../lib/notes/ui.js'
+
+  const app = getApps()[0] ?? initializeApp(FIREBASE_CONFIG)
+  const auth = getAuth(app)
+  setPersistence(auth, browserLocalPersistence).catch(() => {})
+
+  async function signIn() {
+    const provider = new GoogleAuthProvider()
+    provider.setCustomParameters({ prompt: 'select_account' })
+    try {
+      await signInWithPopup(auth, provider)
+    } catch (err: any) {
+      if (err?.code === 'auth/popup-blocked' || err?.code === 'auth/operation-not-supported-in-this-environment') {
+        await signInWithRedirect(auth, provider)
+      } else if (err?.code !== 'auth/popup-closed-by-user' && err?.code !== 'auth/cancelled-popup-request') {
+        throw err
+      }
+    }
+  }
+
+  const root = document.getElementById('notes-root')!
+  const notes = mountNotes(root, {
+    firebaseApp: app,
+    signIn,
+    settingsHref: '/space/settings',
+    getRoute: () => new URLSearchParams(location.search).get('n'),
+    setRoute: (id: string | null) => {
+      const url = new URL(location.href)
+      if (id) url.searchParams.set('n', id)
+      else url.searchParams.delete('n')
+      if (url.href !== location.href) history.pushState({ n: id }, '', url)
+    },
+  })
+
+  window.addEventListener('popstate', () => {
+    const id = new URLSearchParams(location.search).get('n')
+    if (id) notes.openNote(id)
+    else notes.showList()
+  })
+  window.addEventListener('pagehide', () => notes.flush())
+  document.addEventListener('visibilitychange', () => { if (document.hidden) notes.flush() })
+</script>

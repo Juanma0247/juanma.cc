@@ -1051,6 +1051,8 @@ export const es: I18n = {
   space: {
     title: 'Space',
     intro: 'Tu área personal — datos y herramientas privadas. Requiere una cuenta autorizada.',
+    settingsTitle: 'Ajustes web',
+    backToNotes: 'Volver a las notas',
     web: {
       title: 'Variables de la web (en vivo)',
       desc: 'Se aplican en tiempo real a todas las personas en el sitio durante 4 horas.',

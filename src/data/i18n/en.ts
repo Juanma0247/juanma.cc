@@ -184,6 +184,8 @@ export interface I18n {
   space: {
     title: string
     intro: string
+    settingsTitle: string
+    backToNotes: string
     web: {
       title: string
       desc: string
@@ -1470,6 +1472,8 @@ export const en: I18n = {
   space: {
     title: 'Space',
     intro: 'Your personal area — private data and tools. Requires an authorized account.',
+    settingsTitle: 'Web settings',
+    backToNotes: 'Back to notes',
     web: {
       title: 'Web variables (live)',
       desc: 'Applied in real time to everyone on the site for 4 hours.',

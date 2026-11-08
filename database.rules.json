@@ -1,0 +1,30 @@
+{
+  "rules": {
+    "notes": {
+      ".read": "auth != null && auth.token.email_verified == true && (auth.token.email == 'juanmanueldiazgomez247@gmail.com' || auth.token.email == 'judiazgom@unal.edu.co')",
+      ".write": "auth != null && auth.token.email_verified == true && (auth.token.email == 'juanmanueldiazgomez247@gmail.com' || auth.token.email == 'judiazgom@unal.edu.co')",
+      "tree": {
+        "$id": {
+          ".validate": "newData.hasChildren(['kind', 'parent'])",
+          "kind": { ".validate": "newData.val() == 'note' || newData.val() == 'group'" },
+          "parent": { ".validate": "newData.isString() && newData.val().length < 64" },
+          "title": { ".validate": "newData.isString() && newData.val().length <= 300" },
+          "excerpt": { ".validate": "newData.isString() && newData.val().length <= 400" }
+        }
+      },
+      "text": {
+        "$id": { ".validate": "newData.isString()" }
+      },
+      "ydoc": {
+        "$id": {
+          "log": {
+            "$k": { ".validate": "newData.isString() && newData.val().length < 8000000" }
+          },
+          "snap": {
+            ".validate": "newData.hasChildren(['data', 'upTo'])"
+          }
+        }
+      }
+    }
+  }
+}
