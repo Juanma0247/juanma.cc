@@ -58,9 +58,14 @@ class ImageWidget extends WidgetType {
     el.className = 'cm-img-widget'
     const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
     el.innerHTML = imageHtml(esc(this.url), esc(this.alt))
+    el.addEventListener('click', e => {
+      const img = e.target.closest('img')
+      if (img) el.dispatchEvent(new CustomEvent('nt-image', { bubbles: true, detail: { src: img.currentSrc || img.src } }))
+    })
     return el
   }
-  ignoreEvent() { return false }
+  // A tap on the picture opens the viewer; a tap beside it still moves the cursor.
+  ignoreEvent(e) { return e.target?.tagName === 'IMG' }
 }
 
 class CheckboxWidget extends WidgetType {

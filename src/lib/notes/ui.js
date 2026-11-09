@@ -175,6 +175,10 @@ export function mountNotes(root, opts) {
     <div class="nt-menu" data-menu hidden></div>
     <dialog class="nt-dialog" data-dialog></dialog>
     <div class="nt-toast" data-toast hidden></div>
+    <div class="nt-viewer" data-viewer hidden role="dialog" aria-modal="true">
+      <img class="nt-viewer__img" data-viewer-img alt="" draggable="false">
+      <button class="nt-icon nt-viewer__close" data-act="close-viewer" data-t-title="close">${icon('x')}</button>
+    </div>
     <span class="nt-sr" aria-live="polite" data-status-live></span>
   `
 
@@ -201,6 +205,8 @@ export function mountNotes(root, opts) {
     toast: $('[data-toast]'),
     scroll: $('[data-scroll]'),
     live: $('[data-status-live]'),
+    viewer: $('[data-viewer]'),
+    vimg: $('[data-viewer-img]'),
   }
 
   const resolveNote = name => state.store?.findByTitle(name) ?? null
@@ -834,8 +840,179 @@ export function mountNotes(root, opts) {
   els.file.addEventListener('change', () => filesFrom(els.file))
   els.camera.addEventListener('change', () => filesFrom(els.camera))
 
+
+  // ---------- image viewer ----------
+  // Pinch and wheel zoom around the gesture point, drag to pan, double tap to
+  // toggle zoom, swipe down (when not zoomed) or tap the backdrop to close.
+  const V = { s: 1, x: 0, y: 0, w: 0, h: 0, ptr: new Map(), pinch: null, pan: null, tap: null, lastTap: null, drop: 0, timer: 0, animTimer: 0 }
+
+  function vApply() {
+    els.vimg.style.transform = `translate(${V.x}px, ${V.y + V.drop}px) scale(${V.s})`
+    els.viewer.style.setProperty('--nt-viewer-bg', String(Math.max(0.35, 0.94 - V.drop / 600)))
+  }
+
+  function vClamp() {
+    const vw = els.viewer.clientWidth
+    const vh = els.viewer.clientHeight
+    const W = V.w * V.s
+    const H = V.h * V.s
+    V.x = W <= vw ? (vw - W) / 2 : Math.min(0, Math.max(vw - W, V.x))
+    V.y = H <= vh ? (vh - H) / 2 : Math.min(0, Math.max(vh - H, V.y))
+  }
+
+  function vFit() {
+    const vw = els.viewer.clientWidth
+    const vh = els.viewer.clientHeight
+    const nw = els.vimg.naturalWidth || 1
+    const nh = els.vimg.naturalHeight || 1
+    const k = Math.min(vw / nw, vh / nh)
+    V.w = nw * k
+    V.h = nh * k
+    els.vimg.style.width = `${V.w}px`
+    els.vimg.style.height = `${V.h}px`
+    V.s = 1
+    V.drop = 0
+    vClamp()
+    vApply()
+  }
+
+  function vAnimate() {
+    els.viewer.classList.add('is-anim')
+    clearTimeout(V.animTimer)
+    V.animTimer = setTimeout(() => els.viewer.classList.remove('is-anim'), 240)
+  }
+
+  function vZoomAt(px, py, next, animate = false) {
+    const ns = Math.min(8, Math.max(1, next))
+    V.x = px - (px - V.x) * (ns / V.s)
+    V.y = py - (py - V.y) * (ns / V.s)
+    V.s = ns
+    vClamp()
+    if (animate) vAnimate()
+    vApply()
+  }
+
+  function openViewer(src) {
+    if (!src || src.startsWith('uploading://')) return
+    closeMenu()
+    document.activeElement?.blur?.()
+    els.vimg.style.width = ''
+    els.vimg.style.height = ''
+    els.vimg.style.transform = ''
+    V.s = 1
+    els.vimg.onload = () => { if (V.s <= 1.01 && !V.ptr.size) vFit() }
+    els.vimg.src = src
+    els.viewer.hidden = false
+    if (els.vimg.complete && els.vimg.naturalWidth) vFit()
+  }
+
+  function closeViewer() {
+    els.viewer.hidden = true
+    els.vimg.removeAttribute('src')
+    V.ptr.clear()
+    V.pinch = null
+    V.pan = null
+    V.tap = null
+    V.lastTap = null
+  }
+
+  const vPoint = e => {
+    const r = els.viewer.getBoundingClientRect()
+    return { x: e.clientX - r.left, y: e.clientY - r.top }
+  }
+
+  els.viewer.addEventListener('pointerdown', e => {
+    if (e.target.closest('[data-act]')) return
+    els.viewer.setPointerCapture(e.pointerId)
+    V.ptr.set(e.pointerId, vPoint(e))
+    if (V.ptr.size === 2) {
+      const [a, b] = [...V.ptr.values()]
+      V.pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2, s: V.s, x: V.x, y: V.y }
+      V.pan = null
+      V.tap = null
+    } else if (V.ptr.size === 1) {
+      const p = vPoint(e)
+      V.pan = { px: p.x, py: p.y, x: V.x, y: V.y }
+      V.tap = { x: p.x, y: p.y, at: Date.now(), onImg: e.target === els.vimg }
+    }
+  })
+
+  els.viewer.addEventListener('pointermove', e => {
+    if (!V.ptr.has(e.pointerId)) return
+    V.ptr.set(e.pointerId, vPoint(e))
+    if (V.pinch && V.ptr.size >= 2) {
+      const [a, b] = [...V.ptr.values()]
+      const d = Math.hypot(a.x - b.x, a.y - b.y)
+      const mx = (a.x + b.x) / 2
+      const my = (a.y + b.y) / 2
+      const ns = Math.min(8, Math.max(1, V.pinch.s * d / V.pinch.d))
+      V.x = mx - (V.pinch.mx - V.pinch.x) * (ns / V.pinch.s)
+      V.y = my - (V.pinch.my - V.pinch.y) * (ns / V.pinch.s)
+      V.s = ns
+      vClamp()
+      vApply()
+      return
+    }
+    if (!V.pan) return
+    const p = vPoint(e)
+    const dx = p.x - V.pan.px
+    const dy = p.y - V.pan.py
+    if (V.tap && Math.hypot(dx, dy) > 10) V.tap = null
+    if (V.s > 1.01) {
+      V.x = V.pan.x + dx
+      V.y = V.pan.y + dy
+      vClamp()
+    } else {
+      V.drop = Math.max(0, dy)
+    }
+    vApply()
+  })
+
+  function vEnd(e) {
+    if (!V.ptr.has(e.pointerId)) return
+    V.ptr.delete(e.pointerId)
+    if (V.ptr.size === 1) {
+      const [p] = [...V.ptr.values()]
+      V.pinch = null
+      V.pan = { px: p.x, py: p.y, x: V.x, y: V.y }
+      return
+    }
+    if (V.ptr.size) return
+    V.pinch = null
+    V.pan = null
+    if (V.drop > 0) {
+      if (V.drop > 110) { closeViewer(); return }
+      V.drop = 0
+      vAnimate()
+      vApply()
+    }
+    const tap = V.tap
+    V.tap = null
+    if (!tap || Date.now() - tap.at > 300) return
+    const prev = V.lastTap
+    if (prev && Date.now() - prev.at < 320 && Math.hypot(tap.x - prev.x, tap.y - prev.y) < 40) {
+      clearTimeout(V.timer)
+      V.lastTap = null
+      if (V.s > 1.01) { vAnimate(); vFit() } else vZoomAt(tap.x, tap.y, 2.75, true)
+      return
+    }
+    V.lastTap = tap
+    clearTimeout(V.timer)
+    if (!tap.onImg && V.s <= 1.01) V.timer = setTimeout(() => { if (V.lastTap === tap) closeViewer() }, 320)
+  }
+  els.viewer.addEventListener('pointerup', vEnd)
+  els.viewer.addEventListener('pointercancel', vEnd)
+  els.viewer.addEventListener('wheel', e => {
+    e.preventDefault()
+    const p = vPoint(e)
+    vZoomAt(p.x, p.y, V.s * Math.pow(1.0018, -e.deltaY))
+  }, { passive: false })
+  root.addEventListener('nt-image', e => openViewer(e.detail?.src))
+  window.addEventListener('resize', () => { if (!els.viewer.hidden) vFit() })
+
   // ---------- events ----------
   root.addEventListener('click', e => {
+    if (e.target.matches?.('.nt-read img')) { openViewer(e.target.currentSrc || e.target.src); return }
     const el = e.target.closest('[data-act], [data-row-act], [data-menu-act], [data-mode], [data-tool], [data-crumb], [data-open], [data-folder], .nt-row[data-id], .nt-wikilink, .nt-task')
     if (!el || !root.contains(el)) { closeMenu(); return }
     if (!el.closest('[data-menu]') && !el.matches('[data-row-act="menu"], [data-act="note-menu"]')) closeMenu()
@@ -888,6 +1065,7 @@ export function mountNotes(root, opts) {
         Promise.resolve(signOut ? signOut() : fbSignOut(auth)).catch(() => fbSignOut(auth))
         break
       case 'home': flush(); onHome?.(); break
+      case 'close-viewer': closeViewer(); break
       case 'new-note': newNote(); break
       case 'new-group': newGroup(); break
       case 'back': goList(); break
@@ -1015,7 +1193,7 @@ export function mountNotes(root, opts) {
     if (mod && e.altKey && e.key.toLowerCase() === 'n') { e.preventDefault(); newNote() }
     if (mod && e.shiftKey && e.key.toLowerCase() === 'f') { e.preventDefault(); goList(); els.search.focus() }
     if (mod && e.key === '.') { e.preventDefault(); toggleMode() }
-    if (e.key === 'Escape') closeMenu()
+    if (e.key === 'Escape') { if (!els.viewer.hidden) closeViewer(); closeMenu() }
   }
   window.addEventListener('keydown', onKey)
 
@@ -1167,6 +1345,7 @@ export function mountNotes(root, opts) {
     showList: () => { if (state.store) goList() },
     // Returns true when it consumed a "back" gesture (Android back button).
     back() {
+      if (!els.viewer.hidden) { closeViewer(); return true }
       if (els.dialog.open) { els.dialog.close(); return true }
       if (!els.menu.hidden) { closeMenu(); return true }
       if (!state.store) return false

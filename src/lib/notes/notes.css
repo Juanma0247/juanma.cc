@@ -547,6 +547,39 @@ span.cm-img-widget { display: inline-block; max-width: 100%; vertical-align: mid
   pointer-events: none;
 }
 
+/* ---------- image viewer ---------- */
+.nt-read img, .cm-img-widget img { cursor: zoom-in; }
+.nt-viewer {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  background: rgb(0 0 0 / var(--nt-viewer-bg, 0.94));
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.nt-viewer__img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: none;
+  transform-origin: 0 0;
+  will-change: transform;
+  -webkit-user-drag: none;
+}
+.nt-viewer.is-anim .nt-viewer__img { transition: transform 0.22s ease; }
+.nt-viewer__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+  color: #fff;
+  background: rgb(0 0 0 / 0.45);
+  border-radius: 50%;
+}
+.nt-viewer__close:hover { background: rgb(0 0 0 / 0.65); color: #fff; }
+
 /* ---------- phone ---------- */
 @media (max-width: 47.99rem) {
   .nt-shell { grid-template-columns: minmax(0, 1fr) !important; }
