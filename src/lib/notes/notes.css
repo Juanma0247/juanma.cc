@@ -404,6 +404,8 @@
 .nt-editor .cm-bullet { display: inline-block; width: 1ch; color: var(--nt-primary); font-weight: 700; }
 .nt-editor .cm-hr { display: inline-block; width: 100%; height: 1px; vertical-align: middle; background: var(--nt-line); }
 .nt-editor .cm-task-done { color: var(--nt-muted); text-decoration: line-through; }
+.nt-editor .cm-task-marker { font-family: var(--nt-mono); font-size: 0.92em; color: var(--nt-primary); }
+.nt-editor .cm-task-marker--done { color: var(--nt-muted); }
 .nt-editor .cm-table { font-family: var(--nt-mono); font-size: 0.88em; }
 .nt-editor .cm-img-src { color: var(--nt-muted); font-size: 0.85em; }
 .nt-editor .cm-placeholder { color: var(--nt-muted); }

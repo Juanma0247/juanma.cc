@@ -68,23 +68,6 @@ class ImageWidget extends WidgetType {
   ignoreEvent(e) { return e.target?.tagName === 'IMG' }
 }
 
-class CheckboxWidget extends WidgetType {
-  constructor(checked, pos) { super(); this.checked = checked; this.pos = pos }
-  eq(o) { return o.checked === this.checked && o.pos === this.pos }
-  toDOM(view) {
-    const box = document.createElement('input')
-    box.type = 'checkbox'
-    box.className = 'nt-task'
-    box.checked = this.checked
-    box.addEventListener('mousedown', e => {
-      e.preventDefault()
-      view.dispatch({ changes: { from: this.pos + 1, to: this.pos + 2, insert: this.checked ? ' ' : 'x' } })
-    })
-    return box
-  }
-  ignoreEvent() { return true }
-}
-
 class BulletWidget extends WidgetType {
   eq() { return true }
   toDOM() {
@@ -297,19 +280,15 @@ function buildDecorations(state, ctx) {
         case 'ListMark': {
           const item = n.node.parent
           const list = item?.parent
-          const task = item?.getChild('Task')
-          if (lineActive(n.from)) return
-          if (task) {
-            const end = Math.min(n.to + 1, doc.lineAt(n.from).to)
-            add(n.from, end, hide)
-          } else if (list?.name === 'BulletList') {
+          if (lineActive(n.from) || item?.getChild('Task')) return
+          if (list?.name === 'BulletList') {
             add(n.from, n.to, Decoration.replace({ widget: new BulletWidget() }))
           }
           return
         }
         case 'TaskMarker': {
           const checked = /x/i.test(state.sliceDoc(n.from, n.to))
-          if (!touches(n.from, n.to)) add(n.from, n.to, Decoration.replace({ widget: new CheckboxWidget(checked, n.from) }))
+          add(n.from, n.to, mark(checked ? 'cm-task-marker cm-task-marker--done' : 'cm-task-marker'))
           if (checked) {
             const line = doc.lineAt(n.from)
             add(n.to, line.to, mark('cm-task-done'))
