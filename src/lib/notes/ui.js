@@ -10,6 +10,7 @@ import { createEditor, commands } from './editor.js'
 import { createRenderer } from './render.js'
 import { uploadImage } from './upload.js'
 import { icon, GOOGLE } from './icons.js'
+import { relink, hasLink } from './links.js'
 
 export const LS = {
   last: 'jm-notes-last',
@@ -318,7 +319,9 @@ export function mountNotes(root, opts) {
     if (act === 'rename') {
       if (state.session?.id === id && root.dataset.view === 'note') { els.title.focus(); els.title.select(); return }
       const name = await askText(item.kind === 'group' ? t('groupName') : t('titlePlaceholder'), item.title)
-      if (name) store.rename(id, name)
+      if (!name) return
+      store.rename(id, name)
+      if (item.kind === 'note') renameLinks(id, item.title || '', name)
       return
     }
     if (act === 'move') {
@@ -648,6 +651,7 @@ export function mountNotes(root, opts) {
   function closeNote() {
     const s = state.session
     if (!s) return
+    commitTitle()
     rememberScroll()
     flushMeta()
     s.closed = true
@@ -726,6 +730,64 @@ export function mountNotes(root, opts) {
     const top = restore ? state.scrolls[id] : 0
     if (top) requestAnimationFrame(() => requestAnimationFrame(() => { els.scroll.scrollTop = top }))
     if (focusTitle) els.title.focus()
+  }
+
+  // When a note is renamed, [[old title]] becomes [[new title]] in every note.
+  // Each edit goes through the note's own Y.Doc so it syncs like a normal edit.
+  async function renameLinks(id, before, after) {
+    const from = (before || '').trim()
+    const to = (after || '').trim()
+    if (!from || !to || from === to || !state.store) return
+    const store = state.store
+    const clash = store.notes().some(n => n.id !== id && (n.title || '').trim().toLowerCase() === to.toLowerCase())
+    const targets = store.notes().filter(n => hasLink(store.texts[n.id], from) || state.session?.id === n.id)
+    let total = 0
+    for (const n of targets) {
+      try { total += await relinkNote(n.id, from, to) } catch (err) { console.warn('[notes] relink', err) }
+    }
+    if (total) toast(total === 1 ? t('linkUpdated') : t('linksUpdated', { n: total }))
+    if (clash) toast(t('titleTaken'), 4500)
+  }
+
+  async function relinkNote(id, from, to) {
+    const s = state.session
+    if (s && s.id === id && !s.closed) {
+      await s.sync.ready
+      const count = relink(s.sync.doc, s.text, from, to)
+      if (count) { s.dirty = true; flushMeta() }
+      return count
+    }
+    const sync = new NoteSync(db, id, { gate: state.gate })
+    try {
+      await sync.ready
+      const until = (ok, ms) => new Promise(resolve => {
+        const start = Date.now()
+        const tick = () => (ok() || Date.now() - start > ms ? resolve() : setTimeout(tick, 60))
+        tick()
+      })
+      await until(() => sync.listening, 4000)
+      const count = relink(sync.doc, sync.text, from, to)
+      if (count) {
+        state.store.saveMeta(id, sync.text.toString())
+        sync.flush()
+        await until(() => !sync.inflight && !sync.pending.length, 5000)
+      }
+      return count
+    } finally {
+      sync.destroy()
+    }
+  }
+
+  function commitTitle() {
+    const s = state.session
+    if (!s || s.titleBefore == null) return
+    const before = s.titleBefore
+    const after = els.title.value.trim()
+    if (after === before.trim()) return
+    clearTimeout(titleTimer)
+    state.store.rename(s.id, after)
+    s.titleBefore = after
+    renameLinks(s.id, before, after)
   }
 
   async function openByName(name) {
@@ -1113,6 +1175,11 @@ export function mountNotes(root, opts) {
     const value = els.title.value
     titleTimer = setTimeout(() => state.store.rename(s.id, value), 350)
   })
+  els.title.addEventListener('focus', () => {
+    const s = state.session
+    if (s) s.titleBefore = state.store.get(s.id)?.title || ''
+  })
+  els.title.addEventListener('change', commitTitle)
   els.title.addEventListener('keydown', e => {
     if (e.key === 'Enter' || (e.key === 'ArrowDown' && !e.shiftKey)) {
       e.preventDefault()
@@ -1249,6 +1316,7 @@ export function mountNotes(root, opts) {
   }
 
   function flush() {
+    commitTitle()
     rememberScroll()
     flushMeta()
     state.session?.sync.flush()
