@@ -17,7 +17,7 @@
   --nt-k3: #986801;
   --nt-k4: #4078f2;
   --nt-k5: #e45649;
-  --nt-online: #2f7ff0;
+  --nt-online: var(--nt-primary);
   --nt-saving: #e3a008;
   --nt-error: #e5484d;
   --nt-radius: 0.75rem;
@@ -30,11 +30,6 @@
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
 }
-
-@media (prefers-color-scheme: dark) {
-  .nt { --nt-online: #5aa2ff; }
-}
-html[data-theme="dark"] .nt { --nt-online: #5aa2ff; }
 
 .nt *, .nt *::before, .nt *::after { box-sizing: border-box; }
 .nt [hidden] { display: none !important; }

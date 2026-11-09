@@ -71,7 +71,7 @@ export const en = {
   helpImages: 'Paste, drop, pick or take a photo to add images.',
   helpLongPress: 'Long-press a card or a note for more options.',
   helpToolbar: 'The toolbar puts the buttons you use most at the start.',
-  helpStatus: 'The title color shows the connection: blue online, white connecting, amber saving, gray offline, red error.',
+  helpStatus: 'The title color shows the connection: cyan (your primary color) online, white connecting, amber saving, gray offline, red error.',
   tb: {
     heading: 'Heading',
     bold: 'Bold',
@@ -168,7 +168,7 @@ export const es = {
   helpImages: 'Pega, suelta, elige o toma una foto para agregar imágenes.',
   helpLongPress: 'Mantén presionada una tarjeta o una nota para ver más opciones.',
   helpToolbar: 'La barra de herramientas pone primero los botones que más usas.',
-  helpStatus: 'El color del título indica la conexión: azul en línea, blanco conectando, ámbar guardando, gris sin conexión, rojo error.',
+  helpStatus: 'El color del título indica la conexión: cian (tu color primario) en línea, blanco conectando, ámbar guardando, gris sin conexión, rojo error.',
   tb: {
     heading: 'Encabezado',
     bold: 'Negrita',
