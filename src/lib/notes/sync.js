@@ -14,7 +14,7 @@ const COMPACT_AT = 250
 // log of incremental updates; every client applies both (Yjs merges are
 // idempotent and commutative), so concurrent edits never overwrite each other.
 export class NoteSync {
-  constructor(db, id, { onStatus, onLocalChange } = {}) {
+  constructor(db, id, { onStatus, onLocalChange, gate = Promise.resolve() } = {}) {
     this.db = db
     this.id = id
     this.doc = new Y.Doc()
@@ -30,6 +30,8 @@ export class NoteSync {
     this.lastKey = null
     this.listening = false
     this.connected = false
+    this.authed = false
+    this.failed = false
     this.destroyed = false
     this.unsubs = []
     this.idb = new IndexeddbPersistence(`jm-note-${id}`, this.doc)
@@ -38,12 +40,31 @@ export class NoteSync {
       if (this.destroyed) return
       this.doc.on('update', this.onLocal)
       this.unsubs.push(onValue(ref(db, '.info/connected'), s => this.onConnection(s.val() === true)))
+      // Local content is usable right away; the server is only touched once the
+      // sign-in is confirmed, otherwise RTDB would reject the reads and cancel them.
+      gate.then(() => {
+        if (this.destroyed) return
+        this.authed = true
+        this.emitStatus()
+        if (this.connected) this.sync()
+      })
+    })
+  }
+
+  sync() {
+    this.reconcile().then(() => {
+      if (this.failed) { this.failed = false; this.emitStatus() }
+    }).catch(err => {
+      console.warn('[notes] sync', err)
+      this.failed = true
+      this.emitStatus()
     })
   }
 
   status() {
+    if (this.failed) return 'error'
     if (!this.connected) return 'offline'
-    if (!this.listening) return 'loading'
+    if (!this.authed || !this.listening) return 'loading'
     return this.pending.length || this.inflight ? 'saving' : 'synced'
   }
 
@@ -54,7 +75,7 @@ export class NoteSync {
   onConnection(online) {
     this.connected = online
     this.emitStatus()
-    if (online) this.reconcile().catch(err => console.warn('[notes] sync', err))
+    if (online && this.authed) this.sync()
   }
 
   // Pulls the server state, merges it locally and pushes whatever this device
@@ -112,6 +133,11 @@ export class NoteSync {
     clearTimeout(this.timer)
     this.timer = 0
     if (!this.pending.length) return
+    if (!this.authed) {
+      this.pending = []
+      this.emitStatus()
+      return
+    }
     const merged = this.pending.length === 1 ? this.pending[0] : Y.mergeUpdates(this.pending)
     this.pending = []
     this.send(merged)

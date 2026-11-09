@@ -1,4 +1,4 @@
-import { EditorState, StateField, StateEffect, Compartment, EditorSelection } from '@codemirror/state'
+import { EditorState, StateField, StateEffect, EditorSelection } from '@codemirror/state'
 import { EditorView, Decoration, WidgetType, keymap, drawSelection, dropCursor, placeholder } from '@codemirror/view'
 import { defaultKeymap, indentWithTab } from '@codemirror/commands'
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
@@ -467,8 +467,7 @@ export const commands = {
 
 const LIST_PREFIX = /^(\s*)([-*+]\s(\[[ xX]\]\s)?|\d+[.)]\s|>\s|#{1,6}\s)/
 
-export function createEditor({ parent, ytext, undoManager, ctx, mode = 'live', placeholderText = '' }) {
-  const preview = new Compartment()
+export function createEditor({ parent, ytext, undoManager, ctx, placeholderText = '' }) {
   const extensions = [
     markdown({ base: markdownLanguage, codeLanguages: languages }),
     syntaxHighlighting(highlight),
@@ -498,15 +497,12 @@ export function createEditor({ parent, ytext, undoManager, ctx, mode = 'live', p
       ...defaultKeymap,
     ]),
     clickHandlers(ctx),
-    preview.of(mode === 'live' ? livePreview(ctx) : []),
+    livePreview(ctx),
     EditorView.contentAttributes.of({ spellcheck: 'true', autocapitalize: 'sentences', autocorrect: 'on' }),
   ]
   const view = new EditorView({ parent, state: EditorState.create({ doc: ytext.toString(), extensions }) })
   return {
     view,
-    setMode(next) {
-      view.dispatch({ effects: preview.reconfigure(next === 'live' ? livePreview(ctx) : []) })
-    },
     refresh() {
       view.dispatch({ effects: refresh.of(null) })
     },

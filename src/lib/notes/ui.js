@@ -1,6 +1,6 @@
 import * as Y from 'yjs'
 import { getAuth, onAuthStateChanged, signOut as fbSignOut } from 'firebase/auth'
-import { getDatabase } from 'firebase/database'
+import { getDatabase, ref, onValue } from 'firebase/database'
 import { getStorage } from 'firebase/storage'
 import { FIREBASE_CONFIG, ROOT_ID, isAllowed } from './config.js'
 import { t } from './i18n.js'
@@ -9,56 +9,44 @@ import { NoteSync } from './sync.js'
 import { createEditor, commands } from './editor.js'
 import { createRenderer } from './render.js'
 import { uploadImage } from './upload.js'
+import { icon, GOOGLE } from './icons.js'
 
-const LS = {
+export const LS = {
   last: 'jm-notes-last',
   mode: 'jm-notes-mode',
   open: 'jm-notes-open-groups',
   side: 'jm-notes-side',
+  user: 'jm-notes-user',
+  peek: 'jm-notes-peek',
+  view: 'jm-notes-view',
+  folder: 'jm-notes-folder',
+  sort: 'jm-notes-sort',
+  scroll: 'jm-notes-scroll',
 }
 
-const ICON = {
-  search: '<path d="M9 3.5a5.5 5.5 0 1 0 3.4 9.83l3.63 3.64a.75.75 0 1 0 1.06-1.06l-3.63-3.64A5.5 5.5 0 0 0 9 3.5ZM5 9a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z"/>',
-  note: '<path d="M5.5 2A1.5 1.5 0 0 0 4 3.5v13A1.5 1.5 0 0 0 5.5 18h9a1.5 1.5 0 0 0 1.5-1.5V7.12a1.5 1.5 0 0 0-.44-1.06l-3.62-3.62A1.5 1.5 0 0 0 10.88 2H5.5Zm1.25 8h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1 0-1.5Zm0 3h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5Z"/>',
-  noteAdd: '<path d="M5.5 2A1.5 1.5 0 0 0 4 3.5v13A1.5 1.5 0 0 0 5.5 18h9a1.5 1.5 0 0 0 1.5-1.5V7.12a1.5 1.5 0 0 0-.44-1.06l-3.62-3.62A1.5 1.5 0 0 0 10.88 2H5.5Zm4.5 6a.75.75 0 0 1 .75.75v1.5h1.5a.75.75 0 0 1 0 1.5h-1.5v1.5a.75.75 0 0 1-1.5 0v-1.5h-1.5a.75.75 0 0 1 0-1.5h1.5v-1.5A.75.75 0 0 1 10 8Z"/>',
-  folder: '<path d="M3.75 3A1.75 1.75 0 0 0 2 4.75v10.5C2 16.22 2.78 17 3.75 17h12.5A1.75 1.75 0 0 0 18 15.25v-8.5A1.75 1.75 0 0 0 16.25 5h-5.69l-1.4-1.4A2 2 0 0 0 7.76 3H3.75Z"/>',
-  folderAdd: '<path d="M3.75 3A1.75 1.75 0 0 0 2 4.75v10.5C2 16.22 2.78 17 3.75 17h12.5A1.75 1.75 0 0 0 18 15.25v-8.5A1.75 1.75 0 0 0 16.25 5h-5.69l-1.4-1.4A2 2 0 0 0 7.76 3H3.75ZM10 8a.75.75 0 0 1 .75.75v1.5h1.5a.75.75 0 0 1 0 1.5h-1.5v1.5a.75.75 0 0 1-1.5 0v-1.5h-1.5a.75.75 0 0 1 0-1.5h1.5v-1.5A.75.75 0 0 1 10 8Z"/>',
-  caret: '<path d="M7.2 14.8a.75.75 0 0 1 0-1.06L10.94 10 7.2 6.26a.75.75 0 1 1 1.06-1.06l4.27 4.27a.75.75 0 0 1 0 1.06L8.26 14.8a.75.75 0 0 1-1.06 0Z"/>',
-  more: '<path d="M4 10a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm4.5 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm4.5 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z"/>',
-  plus: '<path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/>',
-  back: '<path d="M12.8 15.2a.75.75 0 0 1-1.06 0l-4.67-4.67a.75.75 0 0 1 0-1.06l4.67-4.67a.75.75 0 1 1 1.06 1.06L8.66 10l4.14 4.14a.75.75 0 0 1 0 1.06Z"/>',
-  side: '<path d="M3.5 3A1.5 1.5 0 0 0 2 4.5v11A1.5 1.5 0 0 0 3.5 17h13a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 16.5 3h-13ZM7 4.5h9.5v11H7v-11Z"/>',
-  gear: '<path fill-rule="evenodd" d="M8.34 1.8A1 1 0 0 1 9.32 1h1.36a1 1 0 0 1 .98.8l.3 1.48c.5.14.97.34 1.41.59l1.25-.84a1 1 0 0 1 1.27.13l.96.96a1 1 0 0 1 .12 1.26l-.83 1.25c.24.45.44.92.59 1.42l1.47.29a1 1 0 0 1 .8.98v1.36a1 1 0 0 1-.8.98l-1.47.3c-.15.5-.35.97-.59 1.41l.83 1.25a1 1 0 0 1-.12 1.27l-.96.96a1 1 0 0 1-1.27.12l-1.25-.83c-.44.24-.91.44-1.41.59l-.3 1.47a1 1 0 0 1-.98.8H9.32a1 1 0 0 1-.98-.8l-.3-1.47a6.96 6.96 0 0 1-1.41-.59l-1.25.83a1 1 0 0 1-1.26-.12l-.96-.96a1 1 0 0 1-.13-1.27l.84-1.25a6.96 6.96 0 0 1-.59-1.41l-1.47-.3A1 1 0 0 1 1 10.68V9.32a1 1 0 0 1 .8-.98l1.48-.3c.14-.49.34-.96.59-1.41l-.84-1.25a1 1 0 0 1 .13-1.26l.96-.96A1 1 0 0 1 5.38 2.93l1.25.84c.44-.25.92-.45 1.41-.59l.3-1.48ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>',
-  logout: '<path d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .41.34.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Zm10.97 2.97a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06l-2.25 2.25a.75.75 0 1 1-1.06-1.06l.97-.97H7.75a.75.75 0 0 1 0-1.5h7.19l-.97-.97a.75.75 0 0 1 0-1.06Z"/>',
-  image: '<path fill-rule="evenodd" d="M1 5.25A2.25 2.25 0 0 1 3.25 3h13.5A2.25 2.25 0 0 1 19 5.25v9.5A2.25 2.25 0 0 1 16.75 17H3.25A2.25 2.25 0 0 1 1 14.75v-9.5Zm1.5 5.81v3.69c0 .41.34.75.75.75h13.5a.75.75 0 0 0 .75-.75v-2.69l-2.22-2.22a.75.75 0 0 0-1.06 0l-1.91 1.91.47.47a.75.75 0 1 1-1.06 1.06L6.53 8.09a.75.75 0 0 0-1.06 0L2.5 11.06ZM12 7a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" clip-rule="evenodd"/>',
-  link: '<path d="M12.23 3.53a3.25 3.25 0 0 1 4.6 4.6l-1.72 1.71a.75.75 0 1 1-1.06-1.06l1.72-1.72a1.75 1.75 0 0 0-2.48-2.47l-3 3a1.75 1.75 0 0 0 0 2.47.75.75 0 1 1-1.06 1.06 3.25 3.25 0 0 1 0-4.6l3-3Zm-1.4 5.47a.75.75 0 0 1 1.06 0 3.25 3.25 0 0 1 0 4.6l-3 3a3.25 3.25 0 0 1-4.6-4.6l1.72-1.71a.75.75 0 1 1 1.06 1.06l-1.72 1.72a1.75 1.75 0 0 0 2.48 2.47l3-3a1.75 1.75 0 0 0 0-2.47.75.75 0 0 1 0-1.06Z"/>',
-  undo: '<path d="M7.8 3.97a.75.75 0 0 1 0 1.06L6.08 6.75h6.17a4.75 4.75 0 0 1 0 9.5h-3a.75.75 0 0 1 0-1.5h3a3.25 3.25 0 0 0 0-6.5H6.08l1.72 1.72a.75.75 0 1 1-1.06 1.06l-3-3a.75.75 0 0 1 0-1.06l3-3a.75.75 0 0 1 1.06 0Z"/>',
-  redo: '<path d="M12.2 3.97a.75.75 0 0 0 0 1.06l1.72 1.72H7.75a4.75 4.75 0 0 0 0 9.5h3a.75.75 0 0 0 0-1.5h-3a3.25 3.25 0 0 1 0-6.5h6.17l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3-3a.75.75 0 0 0 0-1.06l-3-3a.75.75 0 0 0-1.06 0Z"/>',
-}
-
-const svg = (name, extra = '') => `<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" ${extra}>${ICON[name]}</svg>`
-const GOOGLE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23Z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84Z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53Z"/></svg>'
-
+const LIST_RE = /^(\s*)([-*+]\s(\[[ xX]\]\s)?|\d+[.)]\s)/
 const TOOLS = [
-  ['heading', '<b>H</b>', v => commands.heading(v)],
-  ['bold', '<b>B</b>', v => commands.wrap(v, '**')],
-  ['italic', '<i>I</i>', v => commands.wrap(v, '*')],
-  ['strike', '<s>S</s>', v => commands.wrap(v, '~~')],
-  ['task', '☑', v => commands.prefix(v, '- [ ] ', /^(\s*)([-*+]\s(\[[ xX]\]\s)?|\d+[.)]\s)/)],
-  ['list', '•', v => commands.prefix(v, '- ', /^(\s*)([-*+]\s(\[[ xX]\]\s)?|\d+[.)]\s)/)],
-  ['olist', '1.', v => commands.prefix(v, '1. ', /^(\s*)([-*+]\s(\[[ xX]\]\s)?|\d+[.)]\s)/)],
-  ['math', '<span class="nt-tb__tex">∑</span>', v => commands.wrap(v, '$', '$', 'x')],
-  ['mathBlock', '<span class="nt-tb__tex">$$</span>', v => commands.insert(v, '\n$$\n\n$$\n', 4)],
-  ['image', svg('image'), null],
-  ['link', svg('link'), v => commands.link(v)],
-  ['noteLink', '[[ ]]', v => commands.wrap(v, '[[', ']]')],
-  ['code', '<code>`</code>', v => commands.wrap(v, '`')],
-  ['codeBlock', '<code>{ }</code>', v => commands.insert(v, '\n```\n\n```\n', 5)],
-  ['quote', '❝', v => commands.prefix(v, '> ', /^>\s/)],
-  ['table', '▦', v => commands.insert(v, '\n| A | B |\n| --- | --- |\n|  |  |\n', 3)],
-  ['undo', svg('undo'), null],
-  ['redo', svg('redo'), null],
+  ['heading', v => commands.heading(v)],
+  ['bold', v => commands.wrap(v, '**')],
+  ['italic', v => commands.wrap(v, '*')],
+  ['task', v => commands.prefix(v, '- [ ] ', LIST_RE)],
+  ['list', v => commands.prefix(v, '- ', LIST_RE)],
+  ['olist', v => commands.prefix(v, '1. ', LIST_RE)],
+  ['math', v => commands.wrap(v, '$', '$', 'x')],
+  ['mathBlock', v => commands.insert(v, '\n$$\n\n$$\n', 4)],
+  ['image', null],
+  ['camera', null],
+  ['link', v => commands.link(v)],
+  ['noteLink', v => commands.wrap(v, '[[', ']]')],
+  ['strike', v => commands.wrap(v, '~~')],
+  ['code', v => commands.wrap(v, '`')],
+  ['codeBlock', v => commands.insert(v, '\n```\n\n```\n', 5)],
+  ['quote', v => commands.prefix(v, '> ', /^>\s/)],
+  ['table', v => commands.insert(v, '\n| A | B |\n| --- | --- |\n|  |  |\n', 3)],
+  ['undo', null],
+  ['redo', null],
 ]
+const STATUS_KEY = { synced: 'statusSynced', saving: 'statusSaving', offline: 'statusOffline', loading: 'statusLoading', error: 'statusError' }
 
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
 
@@ -67,6 +55,9 @@ function readJSON(key, fallback) {
 }
 function writeLS(key, val) {
   try { localStorage.setItem(key, typeof val === 'string' ? val : JSON.stringify(val)) } catch {}
+}
+function dropLS(...keys) {
+  try { keys.forEach(k => localStorage.removeItem(k)) } catch {}
 }
 
 function relTime(ts) {
@@ -89,6 +80,7 @@ export function mountNotes(root, opts) {
     signIn,
     signOut,
     settingsHref = '',
+    onHome = null,
     getRoute = () => null,
     setRoute = () => {},
     autoHeight = true,
@@ -97,80 +89,93 @@ export function mountNotes(root, opts) {
   const auth = getAuth(firebaseApp)
   const db = getDatabase(firebaseApp, FIREBASE_CONFIG.databaseURL)
   const storage = getStorage(firebaseApp)
+  const phone = window.matchMedia('(max-width: 47.99rem)')
 
+  let resolveAuth
+  const newGate = () => new Promise(r => { resolveAuth = r })
+
+  const storedMode = localStorage.getItem(LS.mode)
   const state = {
     user: null,
+    authed: false,
+    gate: newGate(),
+    online: false,
     store: null,
     session: null,
     query: '',
-    mode: localStorage.getItem(LS.mode) || 'live',
+    mode: storedMode === 'read' ? 'read' : 'edit',
     open: new Set(readJSON(LS.open, [])),
-    activeGroup: ROOT_ID,
+    folder: localStorage.getItem(LS.folder) || ROOT_ID,
+    sort: localStorage.getItem(LS.sort) === 'recent' ? 'recent' : 'name',
     sideHidden: localStorage.getItem(LS.side) === '1',
+    peek: readJSON(LS.peek, null),
+    scrolls: readJSON(LS.scroll, {}),
   }
 
   root.classList.add('nt', 'no-katex')
   root.innerHTML = `
     <div class="nt-gate" hidden>
       <div class="nt-gate__card">
-        <span class="nt-gate__icon">${svg('note')}</span>
+        <span class="nt-gate__icon">${icon('note')}</span>
         <h2 data-t="gateTitle"></h2>
         <p data-t="gateDesc"></p>
         <p class="nt-gate__error" data-gate-error hidden data-t="unauthorized"></p>
         <p class="nt-gate__loading" data-gate-loading data-t="loading"></p>
-        <button class="nt-btn nt-btn--primary" data-act="signin" hidden>${GOOGLE}<span data-t="signIn"></span></button>
+        <button class="nt-btn nt-btn--light" data-act="signin" hidden>${GOOGLE}<span data-t="signIn"></span></button>
         <button class="nt-btn" data-act="signout" data-gate-signout hidden><span data-t="signOut"></span></button>
-        ${settingsHref ? `<a class="nt-btn nt-btn--ghost" href="${settingsHref}">${svg('gear')}<span data-t="webSettings"></span></a>` : ''}
+        ${settingsHref ? `<a class="nt-btn nt-btn--ghost" href="${settingsHref}">${icon('sliders')}<span data-t="webSettings"></span></a>` : ''}
       </div>
     </div>
     <div class="nt-shell" hidden>
       <aside class="nt-side">
         <div class="nt-side__head">
-          <label class="nt-search">${svg('search')}<input type="search" data-search data-t-placeholder="search" autocomplete="off"></label>
-          <button class="nt-icon" data-act="new-note" data-t-title="newNote">${svg('noteAdd')}</button>
-          <button class="nt-icon" data-act="new-group" data-t-title="newGroup">${svg('folderAdd')}</button>
+          <div class="nt-side__row">
+            <h2 class="nt-side__title nt-status-text" data-t="title"></h2>
+            <button class="nt-icon" data-act="new-note" data-t-title="newNote">${icon('noteAdd')}</button>
+            <button class="nt-icon" data-act="new-group" data-t-title="newGroup">${icon('folderAdd')}</button>
+          </div>
+          <label class="nt-search">${icon('search')}<input type="search" data-search data-t-placeholder="search" autocomplete="off" enterkeyhint="search"><button type="button" class="nt-search__clear" data-act="clear-search" hidden>${icon('x')}</button></label>
         </div>
         <nav class="nt-tree" data-tree data-drop="${ROOT_ID}"></nav>
+        <div class="nt-home nt-home--side" data-home-side></div>
         <div class="nt-side__foot">
           <img class="nt-avatar" data-avatar alt="" referrerpolicy="no-referrer">
           <span class="nt-user" data-user></span>
-          ${settingsHref ? `<a class="nt-icon" href="${settingsHref}" data-t-title="webSettings">${svg('gear')}</a>` : ''}
-          <button class="nt-icon" data-act="signout" data-t-title="signOut">${svg('logout')}</button>
+          ${settingsHref ? `<a class="nt-icon" href="${settingsHref}" data-t-title="webSettings">${icon('sliders')}</a>` : ''}
+          ${onHome ? `<button class="nt-icon" data-act="home" data-t-title="apps">${icon('home')}</button>` : ''}
+          <button class="nt-icon" data-act="signout" data-t-title="signOut">${icon('logout')}</button>
         </div>
       </aside>
       <section class="nt-main">
         <header class="nt-bar">
-          <button class="nt-icon nt-bar__back" data-act="back" data-t-title="back">${svg('back')}</button>
-          <button class="nt-icon nt-bar__side" data-act="toggle-side">${svg('side')}</button>
+          <button class="nt-icon nt-bar__back" data-act="back" data-t-title="back">${icon('chevronLeft')}</button>
+          <button class="nt-icon nt-bar__side" data-act="toggle-side">${icon('sidebar')}</button>
           <div class="nt-crumbs" data-crumbs></div>
-          <span class="nt-status" data-status></span>
           <div class="nt-modes" role="tablist" data-modes>
-            <button role="tab" data-mode="live" data-t="modeLive"></button>
-            <button role="tab" data-mode="source" data-t="modeSource"></button>
-            <button role="tab" data-mode="read" data-t="modeRead"></button>
+            <button role="tab" data-mode="edit">${icon('code')}<span data-t="modeCode"></span></button>
+            <button role="tab" data-mode="read">${icon('eye')}<span data-t="modeRead"></span></button>
           </div>
+          <button class="nt-icon" data-act="note-menu" data-t-title="noteOptions">${icon('more')}</button>
         </header>
         <div class="nt-scroll" data-scroll>
           <div class="nt-doc" data-doc hidden>
-            <input class="nt-title" data-title data-t-placeholder="titlePlaceholder" autocomplete="off" spellcheck="true">
+            <input class="nt-title nt-status-text" data-title data-t-placeholder="titlePlaceholder" autocomplete="off" spellcheck="true">
             <div class="nt-meta" data-meta></div>
             <div class="nt-editor" data-editor></div>
             <article class="nt-read" data-read hidden></article>
+            <section class="nt-backlinks" data-backlinks hidden></section>
           </div>
-          <div class="nt-empty" data-empty>
-            <p data-t="pickNote"></p>
-            <button class="nt-btn nt-btn--primary" data-act="new-note">${svg('plus')}<span data-t="newNote"></span></button>
-          </div>
+          <div class="nt-home nt-home--main" data-home-main></div>
         </div>
-        <div class="nt-toolbar" data-toolbar hidden>
-          ${TOOLS.map(([k, html]) => `<button type="button" data-tool="${k}" data-t-title="tb.${k}">${html}</button>`).join('')}
-          <input type="file" accept="image/*" multiple hidden data-file>
-        </div>
+        <div class="nt-toolbar" data-toolbar hidden></div>
+        <input type="file" accept="image/*" multiple hidden data-file>
+        <input type="file" accept="image/*" capture="environment" hidden data-camera>
       </section>
     </div>
     <div class="nt-menu" data-menu hidden></div>
     <dialog class="nt-dialog" data-dialog></dialog>
     <div class="nt-toast" data-toast hidden></div>
+    <span class="nt-sr" aria-live="polite" data-status-live></span>
   `
 
   const $ = sel => root.querySelector(sel)
@@ -178,21 +183,24 @@ export function mountNotes(root, opts) {
     gate: $('.nt-gate'),
     shell: $('.nt-shell'),
     tree: $('[data-tree]'),
+    homeSide: $('[data-home-side]'),
+    homeMain: $('[data-home-main]'),
     search: $('[data-search]'),
     crumbs: $('[data-crumbs]'),
-    status: $('[data-status]'),
     doc: $('[data-doc]'),
     title: $('[data-title]'),
     meta: $('[data-meta]'),
     editor: $('[data-editor]'),
     read: $('[data-read]'),
-    empty: $('[data-empty]'),
+    backlinks: $('[data-backlinks]'),
     toolbar: $('[data-toolbar]'),
     file: $('[data-file]'),
+    camera: $('[data-camera]'),
     menu: $('[data-menu]'),
     dialog: $('[data-dialog]'),
     toast: $('[data-toast]'),
     scroll: $('[data-scroll]'),
+    live: $('[data-status-live]'),
   }
 
   const resolveNote = name => state.store?.findByTitle(name) ?? null
@@ -202,46 +210,44 @@ export function mountNotes(root, opts) {
     root.querySelectorAll('[data-t]').forEach(el => { el.textContent = t(el.dataset.t) })
     root.querySelectorAll('[data-t-placeholder]').forEach(el => { el.placeholder = t(el.dataset.tPlaceholder) })
     root.querySelectorAll('[data-t-title]').forEach(el => { el.title = t(el.dataset.tTitle); el.setAttribute('aria-label', el.title) })
-    renderTree()
-    renderHeader()
+    renderAll()
+    renderToolbar()
   }
 
-  function toast(msg) {
+  function toast(msg, ms = 3200) {
     els.toast.textContent = msg
     els.toast.hidden = false
     clearTimeout(toast.timer)
-    toast.timer = setTimeout(() => { els.toast.hidden = true }, 3200)
+    toast.timer = setTimeout(() => { els.toast.hidden = true }, ms)
   }
 
   // ---------- dialogs ----------
-  function dialog(html, onReady) {
+  function dialog(html, hooks) {
     return new Promise(resolve => {
       const d = els.dialog
       d.innerHTML = `<form method="dialog" class="nt-dialog__form">${html}</form>`
       const form = d.querySelector('form')
       const done = val => { d.close(); resolve(val) }
-      form.addEventListener('submit', e => { e.preventDefault(); done(onReady.submit()) })
-      form.querySelector('[data-cancel]')?.addEventListener('click', () => done(null))
+      form.addEventListener('submit', e => { e.preventDefault(); done(hooks.submit()) })
+      form.querySelectorAll('[data-cancel]').forEach(b => b.addEventListener('click', () => done(null)))
       d.addEventListener('cancel', () => resolve(null), { once: true })
       d.showModal()
-      onReady.init?.(form)
+      hooks.init?.(form)
     })
   }
 
+  const actions = (okLabel, okClass = 'nt-btn--primary') => `<div class="nt-dialog__actions"><button type="button" class="nt-btn" data-cancel>${esc(t('cancel'))}</button><button class="nt-btn ${okClass}">${esc(okLabel)}</button></div>`
+
   function askText(label, value = '') {
     let input
-    return dialog(`
-      <label class="nt-dialog__label">${esc(label)}<input class="nt-input" value="${esc(value)}" required></label>
-      <div class="nt-dialog__actions"><button type="button" class="nt-btn" data-cancel>${esc(t('cancel'))}</button><button class="nt-btn nt-btn--primary">${esc(t('save'))}</button></div>`, {
+    return dialog(`<label class="nt-dialog__label">${esc(label)}<input class="nt-input" value="${esc(value)}" required></label>${actions(t('save'))}`, {
       init: f => { input = f.querySelector('input'); input.focus(); input.select() },
       submit: () => input.value.trim() || null,
     })
   }
 
   function askConfirm(msg) {
-    return dialog(`
-      <p class="nt-dialog__msg">${esc(msg)}</p>
-      <div class="nt-dialog__actions"><button type="button" class="nt-btn" data-cancel>${esc(t('cancel'))}</button><button class="nt-btn nt-btn--danger">${esc(t('ok'))}</button></div>`, {
+    return dialog(`<p class="nt-dialog__msg">${esc(msg)}</p>${actions(t('ok'), 'nt-btn--danger')}`, {
       init: f => f.querySelector('.nt-btn--danger').focus(),
       submit: () => true,
     })
@@ -258,28 +264,39 @@ export function mountNotes(root, opts) {
           <option value="${ROOT_ID}">${esc(t('root'))}</option>
           ${groups.map(g => `<option value="${g.id}">${'  '.repeat(g.depth + 1)}${esc(g.title || t('untitledGroup'))}</option>`).join('')}
         </select>
-      </label>
-      <div class="nt-dialog__actions"><button type="button" class="nt-btn" data-cancel>${esc(t('cancel'))}</button><button class="nt-btn nt-btn--primary">${esc(t('save'))}</button></div>`, {
+      </label>${actions(t('save'))}`, {
       init: f => { select = f.querySelector('select'); select.value = store.get(id)?.parent || ROOT_ID },
       submit: () => select.value,
     })
   }
 
+  function showHelp() {
+    const rows = [['touch', 'helpTwoFinger'], ['keyboard', 'helpShortcut'], ['noteLink', 'helpLinks'], ['camera', 'helpImages'], ['more', 'helpLongPress'], ['flame', 'helpToolbar'], ['help', 'helpStatus']]
+    dialog(`
+      <h3 class="nt-dialog__title">${icon('help')}${esc(t('helpTitle'))}</h3>
+      <ul class="nt-help">${rows.map(([ic, key]) => `<li>${icon(ic)}<span>${esc(t(key))}</span></li>`).join('')}</ul>
+      <div class="nt-dialog__actions"><button class="nt-btn nt-btn--primary">${esc(t('close'))}</button></div>`, { submit: () => true })
+  }
+
   // ---------- context menu ----------
-  function openMenu(anchor, id) {
-    const item = state.store.get(id)
+  function openMenu(anchor, id, { note = false } = {}) {
+    const item = state.store?.get(id)
     if (!item) return
-    const entries = item.kind === 'group'
-      ? [['new-note-in', 'newNoteHere'], ['new-group-in', 'newSubgroup'], ['rename', 'rename'], ['move', 'move'], ['delete', 'delete']]
-      : [['rename', 'rename'], ['move', 'move'], ['delete', 'delete']]
-    els.menu.innerHTML = entries.map(([act, key]) => `<button data-menu-act="${act}" data-id="${id}" class="${act === 'delete' ? 'is-danger' : ''}">${esc(t(key))}</button>`).join('')
+    const entries = []
+    if (item.kind === 'group') entries.push(['new-note-in', 'noteAdd', 'newNoteHere'], ['new-group-in', 'folderAdd', 'newSubgroup'])
+    entries.push(item.pinned ? ['pin', 'pinOff', 'unpin'] : ['pin', 'pin', 'pin'])
+    entries.push(['rename', 'edit', 'rename'], ['move', 'folderMove', 'move'])
+    if (note) entries.push(['help', 'help', 'help'])
+    entries.push(['delete', 'trash', 'delete'])
+    els.menu.innerHTML = entries.map(([act, ic, key]) => `<button data-menu-act="${act}" data-id="${id}" class="${act === 'delete' ? 'is-danger' : ''}">${icon(ic)}<span>${esc(t(key))}</span></button>`).join('')
     els.menu.hidden = false
     const r = anchor.getBoundingClientRect()
     const host = root.getBoundingClientRect()
     const mw = els.menu.offsetWidth
     const mh = els.menu.offsetHeight
     els.menu.style.left = `${Math.max(4, Math.min(r.right - host.left - mw, host.width - mw - 4))}px`
-    els.menu.style.top = `${Math.min(r.bottom - host.top + 4, host.height - mh - 4)}px`
+    const below = r.bottom - host.top + 4
+    els.menu.style.top = `${below + mh > host.height - 4 ? Math.max(4, r.top - host.top - mh - 4) : below}px`
   }
   const closeMenu = () => { els.menu.hidden = true }
 
@@ -290,7 +307,10 @@ export function mountNotes(root, opts) {
     if (!item) return
     if (act === 'new-note-in') return newNote(id)
     if (act === 'new-group-in') return newGroup(id)
+    if (act === 'pin') return store.togglePin(id)
+    if (act === 'help') return showHelp()
     if (act === 'rename') {
+      if (state.session?.id === id && root.dataset.view === 'note') { els.title.focus(); els.title.select(); return }
       const name = await askText(item.kind === 'group' ? t('groupName') : t('titlePlaceholder'), item.title)
       if (name) store.rename(id, name)
       return
@@ -307,12 +327,13 @@ export function mountNotes(root, opts) {
         : t('confirmDeleteNote', { name })
       if (!(await askConfirm(msg))) return
       const closing = state.session && (state.session.id === id || store.descendants(id).some(d => d.id === state.session.id))
-      if (closing) closeNote()
+      if (closing) { closeNote(); setView('list') }
+      if (state.folder === id || store.descendants(id).some(d => d.id === state.folder)) setFolder(item.parent || ROOT_ID)
       await store.remove(id)
     }
   }
 
-  // ---------- tree ----------
+  // ---------- labels ----------
   const saveOpen = () => writeLS(LS.open, [...state.open])
 
   function noteLabel(n) {
@@ -321,124 +342,275 @@ export function mountNotes(root, opts) {
     return first || t('untitled')
   }
 
+  function countLabel(id) {
+    const kids = state.store.children(id)
+    const g = kids.filter(k => k.kind === 'group').length
+    const n = kids.length - g
+    const parts = []
+    if (g) parts.push(g === 1 ? t('folderCount') : t('foldersCount', { n: g }))
+    if (n) parts.push(n === 1 ? t('noteCount') : t('notesCount', { n }))
+    return parts.join(' · ') || t('emptyGroup')
+  }
+
+  // ---------- desktop tree ----------
   function rowHtml(item, depth) {
     const active = state.session?.id === item.id ? ' is-active' : ''
     if (item.kind === 'group') {
       const open = state.open.has(item.id)
       const count = state.store.children(item.id).length
       return `<div class="nt-row nt-row--group${open ? ' is-open' : ''}${active}" data-id="${item.id}" data-kind="group" data-drop="${item.id}" draggable="true" style="--depth:${depth}" role="treeitem" aria-expanded="${open}">
-        <span class="nt-row__caret">${svg('caret')}</span>${svg('folder', 'class="nt-row__icon"')}
+        <span class="nt-row__caret">${icon('chevronRight')}</span>${icon('folder', 'nt-row__icon')}
         <span class="nt-row__title">${esc(item.title || t('untitledGroup'))}</span>
         <span class="nt-row__count">${count || ''}</span>
-        <button class="nt-row__btn" data-row-act="add" data-t-title="newNoteHere" title="${esc(t('newNoteHere'))}">${svg('plus')}</button>
-        <button class="nt-row__btn" data-row-act="menu" title="⋯">${svg('more')}</button>
+        <button class="nt-row__btn" data-row-act="add" title="${esc(t('newNoteHere'))}">${icon('plus')}</button>
+        <button class="nt-row__btn" data-row-act="menu" title="${esc(t('noteOptions'))}">${icon('more')}</button>
       </div>`
     }
     return `<div class="nt-row nt-row--note${active}" data-id="${item.id}" data-kind="note" draggable="true" style="--depth:${depth}" role="treeitem">
-      ${svg('note', 'class="nt-row__icon"')}
+      ${icon('note', 'nt-row__icon')}
       <span class="nt-row__title">${esc(noteLabel(item))}</span>
-      <button class="nt-row__btn" data-row-act="menu" title="⋯">${svg('more')}</button>
+      ${item.pinned ? icon('pin', 'nt-row__pin') : ''}
+      <button class="nt-row__btn" data-row-act="menu" title="${esc(t('noteOptions'))}">${icon('more')}</button>
     </div>`
   }
 
-  function renderLevel(parent, depth) {
+  function treeLevel(parent, depth) {
     let html = ''
     for (const item of state.store.children(parent)) {
       html += rowHtml(item, depth)
       if (item.kind === 'group' && state.open.has(item.id)) {
-        const inner = renderLevel(item.id, depth + 1)
-        html += inner || `<div class="nt-row nt-row--empty" style="--depth:${depth + 1}">${esc(t('emptyGroup'))}</div>`
+        html += treeLevel(item.id, depth + 1) || `<div class="nt-row nt-row--empty" style="--depth:${depth + 1}">${esc(t('emptyGroup'))}</div>`
       }
     }
     return html
   }
 
-  function renderSearch(q) {
+  function searchHtml(q) {
     const store = state.store
     const needle = q.toLowerCase()
     const hits = store.notes().filter(n => {
       const body = store.texts?.[n.id] ?? n.excerpt ?? ''
-      return (n.title || '').toLowerCase().includes(needle) || body.toLowerCase().includes(needle)
+      return (n.title || '').toLowerCase().includes(needle) || String(body).toLowerCase().includes(needle)
     }).sort((a, b) => (b.updated || 0) - (a.updated || 0))
-    if (!hits.length) return `<p class="nt-tree__empty">${esc(t('noResults'))}</p>`
-    return hits.map(n => {
+    if (!hits.length) return `<p class="nt-home__empty">${esc(t('noResults'))}</p>`
+    return `<div class="nt-hits">${hits.map(n => {
       const path = store.path(n.id).map(g => g.title).join(' / ')
-      const body = store.texts?.[n.id] ?? n.excerpt ?? ''
+      const body = String(store.texts?.[n.id] ?? n.excerpt ?? '')
       const i = body.toLowerCase().indexOf(needle)
-      const snippet = i >= 0 ? body.slice(Math.max(0, i - 30), i + 70).replace(/\s+/g, ' ') : ''
-      return `<div class="nt-row nt-row--note nt-row--hit${state.session?.id === n.id ? ' is-active' : ''}" data-id="${n.id}" data-kind="note" style="--depth:0">
-        ${svg('note', 'class="nt-row__icon"')}
+      const snippet = i >= 0 ? body.slice(Math.max(0, i - 30), i + 80).replace(/\s+/g, ' ') : ''
+      return `<div class="nt-row nt-row--hit${state.session?.id === n.id ? ' is-active' : ''}" data-open="${n.id}" role="button" tabindex="0">
+        ${icon('note', 'nt-row__icon')}
         <span class="nt-row__stack"><span class="nt-row__title">${esc(noteLabel(n))}</span>${path ? `<span class="nt-row__path">${esc(path)}</span>` : ''}${snippet ? `<span class="nt-row__snippet">${esc(snippet)}</span>` : ''}</span>
       </div>`
-    }).join('')
+    }).join('')}</div>`
   }
 
-  let treeFrame = 0
-  function renderTree() {
-    if (!state.store || treeFrame) return
-    treeFrame = requestAnimationFrame(() => {
-      treeFrame = 0
-      const q = state.query.trim()
-      if (q) els.tree.innerHTML = renderSearch(q)
-      else {
-        const html = renderLevel(ROOT_ID, 0)
-        els.tree.innerHTML = html || `<p class="nt-tree__empty">${esc(t('empty'))}</p>`
+  // ---------- home (cards) ----------
+  function noteCard(n, extra = '') {
+    return `<div class="nt-card nt-card--note${extra}" data-open="${n.id}" data-id="${n.id}" role="button" tabindex="0">
+      <span class="nt-card__head">${icon('note', 'nt-card__icon')}<span class="nt-card__title">${esc(noteLabel(n))}</span>${n.pinned ? icon('pin', 'nt-card__pin') : ''}</span>
+      ${n.excerpt ? `<span class="nt-card__excerpt">${esc(n.excerpt)}</span>` : ''}
+      <span class="nt-card__meta">${esc(relTime(n.updated))}</span>
+      <button class="nt-card__more" data-row-act="menu" aria-label="${esc(t('noteOptions'))}">${icon('more')}</button>
+    </div>`
+  }
+
+  function folderCard(g) {
+    const kids = state.store.children(g.id).slice(0, 3)
+    return `<div class="nt-card nt-card--folder" data-folder="${g.id}" data-id="${g.id}" role="button" tabindex="0">
+      <span class="nt-card__head">${icon('folder', 'nt-card__icon')}<span class="nt-card__title">${esc(g.title || t('untitledGroup'))}</span>${g.pinned ? icon('pin', 'nt-card__pin') : ''}</span>
+      <span class="nt-card__kids">${kids.map(k => `<span>${icon(k.kind === 'group' ? 'folder' : 'note')}${esc(k.kind === 'group' ? (k.title || t('untitledGroup')) : noteLabel(k))}</span>`).join('')}</span>
+      <span class="nt-card__meta">${esc(countLabel(g.id))}</span>
+      <button class="nt-card__more" data-row-act="menu" aria-label="${esc(t('noteOptions'))}">${icon('more')}</button>
+    </div>`
+  }
+
+  const section = (ic, title, body, tools = '') => `<section class="nt-sec"><h3 class="nt-sec__title">${icon(ic)}<span>${esc(title)}</span>${tools}</h3>${body}</section>`
+
+  function homeHtml() {
+    const store = state.store
+    const q = state.query.trim()
+    if (q) return searchHtml(q)
+    const folder = store.get(state.folder)?.kind === 'group' ? state.folder : ROOT_ID
+    let html = ''
+    if (folder !== ROOT_ID) {
+      const path = store.path(folder)
+      const g = store.get(folder)
+      html += `<div class="nt-where">
+        <button class="nt-icon" data-folder="${g.parent || ROOT_ID}" aria-label="${esc(t('back'))}">${icon('chevronLeft')}</button>
+        <div class="nt-where__text">
+          <span class="nt-where__path"><button data-folder="${ROOT_ID}">${esc(t('title'))}</button>${path.map(p => `<span>/</span><button data-folder="${p.id}">${esc(p.title || t('untitledGroup'))}</button>`).join('')}</span>
+          <span class="nt-where__title">${esc(g.title || t('untitledGroup'))}</span>
+        </div>
+        <button class="nt-icon" data-row-act="menu" data-id="${folder}" aria-label="${esc(t('noteOptions'))}">${icon('more')}</button>
+      </div>`
+    } else {
+      const last = store.lastOpened()
+      if (last) {
+        const path = store.path(last.id).map(p => p.title).join(' / ')
+        html += section('clock', t('continue'), `<div class="nt-card nt-card--hero" data-open="${last.id}" data-id="${last.id}" role="button" tabindex="0">
+          <span class="nt-card__head">${icon('note', 'nt-card__icon')}<span class="nt-card__title">${esc(noteLabel(last))}</span></span>
+          ${path ? `<span class="nt-card__path">${icon('folder')}${esc(path)}</span>` : ''}
+          ${last.excerpt ? `<span class="nt-card__excerpt">${esc(last.excerpt)}</span>` : ''}
+          <span class="nt-card__meta">${esc(t('openedWhen', { when: relTime(last.last) }))}</span>
+        </div>`)
       }
-    })
+      const freq = store.frequent(10).filter(x => !last || x.id !== last.id)
+      if (freq.length) {
+        html += section('flame', t('frequent'), `<div class="nt-chips">${freq.map(x => `<button class="nt-chip" ${x.kind === 'group' ? `data-folder="${x.id}"` : `data-open="${x.id}"`} data-id="${x.id}">${icon(x.kind === 'group' ? 'folder' : 'note')}<span>${esc(x.kind === 'group' ? (x.title || t('untitledGroup')) : noteLabel(x))}</span></button>`).join('')}</div>`)
+      }
+      const pins = store.pinned()
+      if (pins.length) html += section('pin', t('pinned'), `<div class="nt-grid">${pins.map(p => p.kind === 'group' ? folderCard(p) : noteCard(p)).join('')}</div>`)
+    }
+    const kids = store.children(folder)
+    const groups = kids.filter(k => k.kind === 'group')
+    let notes = kids.filter(k => k.kind === 'note')
+    if (state.sort === 'recent') notes = notes.sort((a, b) => (b.updated || 0) - (a.updated || 0))
+    if (groups.length) html += section('folder', t('folders'), `<div class="nt-grid">${groups.map(folderCard).join('')}</div>`)
+    const sortBtn = `<button class="nt-sec__tool" data-act="sort">${icon('sort')}<span>${esc(state.sort === 'recent' ? t('sortRecent') : t('sortName'))}</span></button>`
+    const body = notes.length
+      ? `<div class="nt-grid">${notes.map(n => noteCard(n)).join('')}</div>`
+      : `<p class="nt-home__empty">${esc(groups.length ? t('emptyGroup') : (folder === ROOT_ID && !kids.length ? t('empty') : t('emptyGroup')))}</p>`
+    if (notes.length || !groups.length) html += section('note', t('notes'), body, notes.length > 1 ? sortBtn : '')
+    return html
+  }
+
+  let frame = 0
+  function renderNow() {
+    cancelAnimationFrame(frame)
+    frame = 0
+    if (!state.store) return
+    if (phone.matches) {
+      els.homeSide.innerHTML = homeHtml()
+    } else {
+      const q = state.query.trim()
+      els.tree.innerHTML = q ? searchHtml(q) : (treeLevel(ROOT_ID, 0) || `<p class="nt-home__empty">${esc(t('empty'))}</p>`)
+      if (!state.session) els.homeMain.innerHTML = homeHtml()
+    }
+    renderHeader()
+    renderBacklinks()
+  }
+
+  function renderAll() {
+    if (!state.store || frame) return
+    frame = requestAnimationFrame(renderNow)
+  }
+
+  function setFolder(id, { touch = true } = {}) {
+    state.folder = id || ROOT_ID
+    writeLS(LS.folder, state.folder)
+    if (touch && state.folder !== ROOT_ID) state.store.touch(state.folder)
+    state.query = ''
+    els.search.value = ''
+    syncSearchClear()
+    if (!phone.matches && state.session) closeNote()
+    renderAll()
+    const host = phone.matches ? els.homeSide : els.scroll
+    host.scrollTop = 0
   }
 
   // ---------- header / status ----------
+  function currentStatus() {
+    if (state.session && root.dataset.view === 'note') return state.session.status
+    if (!state.authed) return 'loading'
+    return state.online ? 'synced' : 'offline'
+  }
+
+  function renderStatus() {
+    const st = currentStatus()
+    if (root.dataset.status === st) return
+    root.dataset.status = st
+    const label = t(STATUS_KEY[st])
+    root.querySelectorAll('.nt-status-text').forEach(el => { el.title = label })
+    els.live.textContent = label
+  }
+
   function renderHeader() {
     const s = state.session
     const item = s ? state.store?.get(s.id) : null
-    if (!item) {
-      els.crumbs.innerHTML = `<span class="nt-crumbs__title">${esc(t('title'))}</span>`
-    } else {
+    if (item) {
       const path = state.store.path(s.id)
       els.crumbs.innerHTML = path.map(g => `<button class="nt-crumbs__group" data-crumb="${g.id}">${esc(g.title || t('untitledGroup'))}</button><span class="nt-crumbs__sep">/</span>`).join('') +
-        `<span class="nt-crumbs__title">${esc(noteLabel(item))}</span>`
+        `<span class="nt-crumbs__title nt-status-text">${esc(noteLabel(item))}</span>`
       if (document.activeElement !== els.title && els.title.value !== (item.title || '')) els.title.value = item.title || ''
       const parts = []
       if (item.words) parts.push(t('words', { n: item.words }))
       if (item.updated) parts.push(t('edited', { when: relTime(item.updated) }))
       els.meta.textContent = parts.join(' · ')
+    } else {
+      els.crumbs.innerHTML = `<span class="nt-crumbs__title nt-status-text">${esc(t('title'))}</span>`
     }
     root.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === state.mode)))
+    root.dataset.status = ''
     renderStatus()
   }
 
-  function renderStatus() {
-    const st = state.session?.status || 'synced'
-    const key = { synced: 'statusSynced', saving: 'statusSaving', offline: 'statusOffline', loading: 'statusLoading' }[st]
-    els.status.dataset.state = st
-    els.status.title = t(key)
-    els.status.setAttribute('aria-label', t(key))
-    els.status.hidden = !state.session
+  let backlinksKey = ''
+  function renderBacklinks() {
+    const s = state.session
+    if (!s || !state.store) { els.backlinks.hidden = true; return }
+    const links = state.store.backlinks(s.id)
+    const key = s.id + ':' + links.map(l => l.id + l.title).join('|')
+    if (key === backlinksKey) return
+    backlinksKey = key
+    els.backlinks.hidden = !links.length
+    els.backlinks.innerHTML = links.length
+      ? `<h4>${icon('link')}<span>${esc(t('backlinks'))}</span></h4><div class="nt-chips">${links.map(l => `<button class="nt-chip" data-open="${l.id}">${icon('note')}<span>${esc(noteLabel(l))}</span></button>`).join('')}</div>`
+      : ''
+  }
+
+  // ---------- toolbar ----------
+  function renderToolbar() {
+    const store = state.store
+    const order = TOOLS.map(([key], i) => ({ key, i, score: store ? store.toolScore(key) : 0 }))
+      .sort((a, b) => (b.score - a.score) || (a.i - b.i))
+    els.toolbar.innerHTML = order.map(({ key }) => `<button type="button" data-tool="${key}" title="${esc(t('tb.' + key))}" aria-label="${esc(t('tb.' + key))}">${icon(key)}</button>`).join('')
+    els.toolbar.scrollLeft = 0
+  }
+
+  function runTool(key) {
+    const s = state.session
+    if (!s?.editor) return
+    state.store.useTool(key)
+    const view = s.editor.view
+    if (key === 'image') return els.file.click()
+    if (key === 'camera') return els.camera.click()
+    if (key === 'undo') { s.undo.undo(); return }
+    if (key === 'redo') { s.undo.redo(); return }
+    TOOLS.find(([k]) => k === key)?.[1]?.(view)
   }
 
   // ---------- notes ----------
+  function targetFolder() {
+    if (root.dataset.view === 'note' && state.session) return state.store.get(state.session.id)?.parent || ROOT_ID
+    return state.store.get(state.folder) ? state.folder : ROOT_ID
+  }
+
   function newNote(parent) {
-    const target = parent ?? state.activeGroup ?? ROOT_ID
+    const target = parent ?? targetFolder()
     const id = state.store.create('note', state.store.get(target) ? target : ROOT_ID, '')
     if (target !== ROOT_ID) { state.open.add(target); saveOpen() }
     state.query = ''
     els.search.value = ''
+    syncSearchClear()
     openNote(id, { focusTitle: true })
   }
 
-  async function newGroup(parent = ROOT_ID) {
+  async function newGroup(parent) {
+    const where = parent ?? targetFolder()
     const name = await askText(t('groupName'), t('untitledGroup'))
     if (!name) return
-    const id = state.store.create('group', parent, name)
-    if (parent !== ROOT_ID) state.open.add(parent)
+    const id = state.store.create('group', where, name)
+    if (where !== ROOT_ID) state.open.add(where)
     state.open.add(id)
-    state.activeGroup = id
     saveOpen()
-    renderTree()
+    renderAll()
   }
 
   function setView(view) {
     root.dataset.view = view
+    writeLS(LS.view, view)
+    renderStatus()
   }
 
   let metaTimer = 0
@@ -458,9 +630,19 @@ export function mountNotes(root, opts) {
     if (s && s.dirty) { s.dirty = false; state.store.saveMeta(s.id, s.sync.text.toString()) }
   }
 
+  function rememberScroll() {
+    const s = state.session
+    if (!s || !s.ready) return
+    state.scrolls[s.id] = Math.round(els.scroll.scrollTop)
+    const keys = Object.keys(state.scrolls)
+    if (keys.length > 60) delete state.scrolls[keys[0]]
+    writeLS(LS.scroll, state.scrolls)
+  }
+
   function closeNote() {
     const s = state.session
     if (!s) return
+    rememberScroll()
     flushMeta()
     s.closed = true
     s.text.unobserve(s.onText)
@@ -468,47 +650,64 @@ export function mountNotes(root, opts) {
     s.undo.destroy()
     if (s.uploads === 0) s.sync.destroy()
     state.session = null
+    backlinksKey = ''
     els.doc.hidden = true
     els.toolbar.hidden = true
-    els.empty.hidden = false
-    renderHeader()
-    renderTree()
+    els.homeMain.hidden = false
+    renderAll()
   }
 
-  async function openNote(id, { focusTitle = false, push = true } = {}) {
+  async function openNote(id, { focusTitle = false, push = true, restore = false } = {}) {
     const store = state.store
     if (!store.get(id)) { toast(t('noteDeleted')); return }
-    if (state.session?.id === id) { setView('note'); return }
+    if (state.session?.id === id) {
+      setView('note')
+      if (push) setRoute(id)
+      return
+    }
     closeNote()
     const sync = new NoteSync(db, id, {
+      gate: state.gate,
       onStatus: st => { if (state.session?.sync === sync) { state.session.status = st; renderStatus() } },
       onLocalChange: () => { if (state.session?.sync === sync) { state.session.dirty = true; scheduleMeta() } },
     })
-    const s = { id, sync, text: sync.text, status: 'loading', uploads: 0, closed: false, dirty: false, editor: null }
+    const s = { id, sync, text: sync.text, status: 'loading', uploads: 0, closed: false, dirty: false, editor: null, ready: false }
     s.undo = new Y.UndoManager(sync.text, { captureTimeout: 600 })
     s.onText = () => { if (state.mode === 'read') scheduleRead() }
     sync.text.observe(s.onText)
     state.session = s
-    state.activeGroup = store.get(id).parent || ROOT_ID
+    if (!restore) store.touch(id)
     writeLS(LS.last, id)
     if (push) setRoute(id)
     for (const g of store.path(id)) state.open.add(g.id)
     saveOpen()
-    els.empty.hidden = true
+    els.homeMain.hidden = true
     els.doc.hidden = false
     els.title.value = store.get(id).title || ''
-    els.editor.innerHTML = ''
+    const reading = state.mode === 'read'
+    els.editor.hidden = reading
+    els.read.hidden = !reading
+    els.toolbar.hidden = reading
+    const peek = state.peek
+    if (peek && peek.id === id && peek.docHtml && peek.mode === state.mode) {
+      ;(reading ? els.read : els.editor).innerHTML = peek.docHtml
+    } else {
+      els.editor.innerHTML = ''
+      els.read.innerHTML = ''
+    }
+    state.peek = null
     setView('note')
-    renderHeader()
-    renderTree()
+    renderToolbar()
+    renderNow()
+    if (restore && state.scrolls[id]) els.scroll.scrollTop = state.scrolls[id]
+    else els.scroll.scrollTop = 0
     await sync.ready
     if (state.session !== s) return
+    els.editor.innerHTML = ''
     s.editor = createEditor({
       parent: els.editor,
       ytext: sync.text,
       undoManager: s.undo,
-      mode: state.mode === 'source' ? 'source' : 'live',
-      placeholderText: '',
       ctx: {
         resolveNote,
         openNote: name => openByName(name),
@@ -516,8 +715,10 @@ export function mountNotes(root, opts) {
         insertImages: (view, files, pos) => insertImages(s, view, files, pos),
       },
     })
-    applyMode()
-    els.scroll.scrollTop = 0
+    if (reading) renderRead()
+    s.ready = true
+    const top = restore ? state.scrolls[id] : 0
+    if (top) requestAnimationFrame(() => requestAnimationFrame(() => { els.scroll.scrollTop = top }))
     if (focusTitle) els.title.focus()
   }
 
@@ -525,21 +726,34 @@ export function mountNotes(root, opts) {
     const id = resolveNote(name)
     if (id) return openNote(id)
     if (!(await askConfirm(t('noteMissing', { name })))) return
-    const nid = state.store.create('note', state.activeGroup, name)
-    openNote(nid)
+    openNote(state.store.create('note', targetFolder(), name))
   }
 
-  function applyMode() {
+  function setMode(mode) {
     const s = state.session
-    writeLS(LS.mode, state.mode)
-    root.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === state.mode)))
-    if (!s?.editor) return
-    const reading = state.mode === 'read'
+    const scrollable = els.scroll.scrollHeight - els.scroll.clientHeight
+    const ratio = scrollable > 0 ? els.scroll.scrollTop / scrollable : 0
+    state.mode = mode
+    writeLS(LS.mode, mode)
+    root.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === mode)))
+    if (!s) return
+    const reading = mode === 'read'
+    if (reading) document.activeElement?.blur?.()
     els.editor.hidden = reading
     els.read.hidden = !reading
     els.toolbar.hidden = reading
     if (reading) renderRead()
-    else s.editor.setMode(state.mode)
+    else s.editor?.refresh()
+    requestAnimationFrame(() => {
+      const next = els.scroll.scrollHeight - els.scroll.clientHeight
+      els.scroll.scrollTop = Math.round(ratio * next)
+    })
+  }
+
+  function toggleMode() {
+    if (!state.session) return
+    setMode(state.mode === 'read' ? 'edit' : 'read')
+    toast(state.mode === 'read' ? t('modeRead') : t('modeCode'), 900)
   }
 
   let readTimer = 0
@@ -581,9 +795,8 @@ export function mountNotes(root, opts) {
       const tag = Math.random().toString(36).slice(2, 10)
       const line = view.state.doc.lineAt(at)
       const before = at > line.from ? '\n' : ''
-      const ph = `![${t('uploading')}](uploading://${tag})`
-      const insert = `${before}${ph}\n`
-      view.dispatch({ changes: { from: at, insert }, selection: { anchor: at + insert.length }, userEvent: 'input.paste' })
+      const insert = `${before}![${t('uploading')}](uploading://${tag})\n`
+      view.dispatch({ changes: { from: at, insert }, selection: { anchor: at + insert.length }, userEvent: 'input.paste', scrollIntoView: true })
       at += insert.length
       s.uploads++
       uploadImage(storage, s.id, file)
@@ -602,8 +815,7 @@ export function mountNotes(root, opts) {
 
   function replacePlaceholder(s, tag, replacement) {
     const text = s.text.toString()
-    const re = new RegExp(`!\\[[^\\]\\n]*\\]\\(uploading://${tag}\\)\\n?`)
-    const m = re.exec(text)
+    const m = new RegExp(`!\\[[^\\]\\n]*\\]\\(uploading://${tag}\\)\\n?`).exec(text)
     if (!m) return
     const keepNewline = replacement && m[0].endsWith('\n') ? '\n' : ''
     s.sync.doc.transact(() => {
@@ -613,11 +825,20 @@ export function mountNotes(root, opts) {
     if (!s.closed) { s.dirty = true; scheduleMeta() }
   }
 
+  function filesFrom(input) {
+    const s = state.session
+    const files = [...input.files].filter(f => f.type.startsWith('image/') || /\.(jpe?g|png|webp|heic|gif)$/i.test(f.name))
+    input.value = ''
+    if (s?.editor && files.length) insertImages(s, s.editor.view, files, s.editor.view.state.selection.main.from)
+  }
+  els.file.addEventListener('change', () => filesFrom(els.file))
+  els.camera.addEventListener('change', () => filesFrom(els.camera))
+
   // ---------- events ----------
   root.addEventListener('click', e => {
-    const el = e.target.closest('[data-act], [data-row-act], [data-menu-act], [data-mode], [data-tool], [data-crumb], .nt-row, .nt-wikilink, .nt-task')
+    const el = e.target.closest('[data-act], [data-row-act], [data-menu-act], [data-mode], [data-tool], [data-crumb], [data-open], [data-folder], .nt-row[data-id], .nt-wikilink, .nt-task')
     if (!el || !root.contains(el)) { closeMenu(); return }
-    if (!el.closest('[data-menu]') && !el.matches('[data-row-act="menu"]')) closeMenu()
+    if (!el.closest('[data-menu]') && !el.matches('[data-row-act="menu"], [data-act="note-menu"]')) closeMenu()
 
     if (el.matches('.nt-task')) {
       e.preventDefault()
@@ -627,39 +848,34 @@ export function mountNotes(root, opts) {
     }
     if (el.matches('.nt-wikilink')) {
       e.preventDefault()
-      const id = el.dataset.noteId
-      if (id) openNote(id)
+      if (el.dataset.noteId) openNote(el.dataset.noteId)
       else openByName(el.dataset.noteName)
       return
     }
     if (el.dataset.menuAct) return menuAction(el.dataset.menuAct, el.dataset.id)
-    if (el.dataset.mode) {
-      state.mode = el.dataset.mode
-      applyMode()
-      return
-    }
-    if (el.dataset.crumb) {
-      state.open.add(el.dataset.crumb)
-      saveOpen()
-      setView('list')
-      renderTree()
-      return
-    }
     if (el.dataset.rowAct) {
       e.stopPropagation()
-      const id = el.closest('.nt-row').dataset.id
+      const id = el.dataset.id || el.closest('[data-id]')?.dataset.id
+      if (!id) return
       if (el.dataset.rowAct === 'add') return newNote(id)
       return openMenu(el, id)
     }
+    if (el.dataset.mode) return setMode(el.dataset.mode)
     if (el.dataset.tool) return runTool(el.dataset.tool)
-    if (el.matches('.nt-row') && el.dataset.id) {
+    if (el.dataset.crumb) {
+      setFolder(el.dataset.crumb)
+      if (phone.matches) { setView('list'); setRoute(null) }
+      return
+    }
+    if (el.dataset.open) return openNote(el.dataset.open)
+    if (el.dataset.folder) return setFolder(el.dataset.folder)
+    if (el.matches('.nt-row[data-id]')) {
       const { id, kind } = el.dataset
       if (kind === 'group') {
         if (state.open.has(id)) state.open.delete(id)
-        else state.open.add(id)
-        state.activeGroup = id
+        else { state.open.add(id); state.store.touch(id) }
         saveOpen()
-        renderTree()
+        renderAll()
       } else openNote(id)
       return
     }
@@ -671,9 +887,22 @@ export function mountNotes(root, opts) {
         closeNote()
         Promise.resolve(signOut ? signOut() : fbSignOut(auth)).catch(() => fbSignOut(auth))
         break
+      case 'home': flush(); onHome?.(); break
       case 'new-note': newNote(); break
       case 'new-group': newGroup(); break
       case 'back': goList(); break
+      case 'note-menu': if (state.session) openMenu(el, state.session.id, { note: true }); break
+      case 'sort':
+        state.sort = state.sort === 'recent' ? 'name' : 'recent'
+        writeLS(LS.sort, state.sort)
+        renderAll()
+        break
+      case 'clear-search':
+        els.search.value = ''
+        state.query = ''
+        syncSearchClear()
+        renderAll()
+        break
       case 'toggle-side':
         state.sideHidden = !state.sideHidden
         root.classList.toggle('nt--side-hidden', state.sideHidden)
@@ -682,32 +911,21 @@ export function mountNotes(root, opts) {
     }
   })
 
+  root.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('[role="button"][tabindex]')) {
+      e.preventDefault()
+      e.target.click()
+    }
+  })
+
   root.addEventListener('contextmenu', e => {
-    const row = e.target.closest('.nt-row[data-id]')
-    if (!row || row.classList.contains('nt-row--hit')) return
+    const card = e.target.closest('[data-id]')
+    if (!card || !state.store || card.closest('[data-menu]') || e.target.closest('.cm-editor')) return
     e.preventDefault()
-    openMenu(row, row.dataset.id)
+    openMenu(card, card.dataset.id)
   })
 
   els.toolbar.addEventListener('mousedown', e => { if (e.target.closest('[data-tool]')) e.preventDefault() })
-
-  function runTool(key) {
-    const s = state.session
-    if (!s?.editor) return
-    const view = s.editor.view
-    if (key === 'image') return els.file.click()
-    if (key === 'undo') { s.undo.undo(); return }
-    if (key === 'redo') { s.undo.redo(); return }
-    const tool = TOOLS.find(([k]) => k === key)
-    tool?.[2]?.(view)
-  }
-
-  els.file.addEventListener('change', () => {
-    const s = state.session
-    const files = [...els.file.files].filter(f => f.type.startsWith('image/'))
-    els.file.value = ''
-    if (s?.editor && files.length) insertImages(s, s.editor.view, files, s.editor.view.state.selection.main.from)
-  })
 
   let titleTimer = 0
   els.title.addEventListener('input', () => {
@@ -720,17 +938,46 @@ export function mountNotes(root, opts) {
   els.title.addEventListener('keydown', e => {
     if (e.key === 'Enter' || (e.key === 'ArrowDown' && !e.shiftKey)) {
       e.preventDefault()
-      state.session?.editor?.view.focus()
+      if (state.mode === 'edit') state.session?.editor?.view.focus()
     }
   })
 
+  function syncSearchClear() {
+    root.querySelector('[data-act="clear-search"]').hidden = !els.search.value
+  }
   els.search.addEventListener('input', () => {
     state.query = els.search.value
-    if (state.query) state.store?.loadTexts()
-    renderTree()
+    syncSearchClear()
+    renderAll()
   })
 
-  // Drag and drop to move notes and groups between groups (desktop).
+  let scrollTimer = 0
+  els.scroll.addEventListener('scroll', () => {
+    clearTimeout(scrollTimer)
+    scrollTimer = setTimeout(rememberScroll, 300)
+  }, { passive: true })
+
+  // Two fingers down and up without moving toggles Code / Read.
+  let two = null
+  const mid = (a, b) => ({ x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2, d: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) })
+  els.scroll.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) two = { at: Date.now(), ...mid(e.touches[0], e.touches[1]), moved: false }
+    else if (e.touches.length > 2) two = null
+  }, { passive: true })
+  els.scroll.addEventListener('touchmove', e => {
+    if (!two || e.touches.length !== 2) return
+    const m = mid(e.touches[0], e.touches[1])
+    if (Math.hypot(m.x - two.x, m.y - two.y) > 14 || Math.abs(m.d - two.d) > 18) two.moved = true
+  }, { passive: true })
+  els.scroll.addEventListener('touchend', e => {
+    if (!two || e.touches.length) return
+    const ok = !two.moved && Date.now() - two.at < 450
+    two = null
+    if (ok) toggleMode()
+  })
+  els.scroll.addEventListener('touchcancel', () => { two = null })
+
+  // Drag and drop to move notes and folders in the desktop tree.
   let dragId = null
   els.tree.addEventListener('dragstart', e => {
     const row = e.target.closest('.nt-row[data-id]')
@@ -766,13 +1013,17 @@ export function mountNotes(root, opts) {
     if (!state.store || root.hidden) return
     const mod = e.ctrlKey || e.metaKey
     if (mod && e.altKey && e.key.toLowerCase() === 'n') { e.preventDefault(); newNote() }
-    if (mod && e.shiftKey && e.key.toLowerCase() === 'f') { e.preventDefault(); setView('list'); els.search.focus() }
+    if (mod && e.shiftKey && e.key.toLowerCase() === 'f') { e.preventDefault(); goList(); els.search.focus() }
+    if (mod && e.key === '.') { e.preventDefault(); toggleMode() }
     if (e.key === 'Escape') closeMenu()
   }
   window.addEventListener('keydown', onKey)
 
   function onLang() { applyLabels(); if (state.mode === 'read') renderRead(); state.session?.editor?.refresh() }
   window.addEventListener('langchanged', onLang)
+
+  const onPhoneChange = () => renderAll()
+  phone.addEventListener('change', onPhoneChange)
 
   // Keeps the editor and its toolbar above the on-screen keyboard.
   function fitViewport() {
@@ -787,85 +1038,151 @@ export function mountNotes(root, opts) {
   window.addEventListener('resize', fitViewport)
 
   function goList() {
+    rememberScroll()
     setView('list')
-    if (window.matchMedia('(max-width: 47.99rem)').matches) setRoute(null)
+    if (phone.matches) setRoute(null)
+    renderAll()
+  }
+
+  // ---------- instant start ----------
+  // The whole UI is snapshotted when the app goes to the background, so the next
+  // launch can paint it before the bundle runs; see the boot script of the app.
+  function savePeek() {
+    if (!state.store || els.shell.hidden) return
+    const s = state.session
+    const view = root.dataset.view
+    try {
+      const html = root.innerHTML.replace(/contenteditable="true"/g, 'contenteditable="false"')
+      if (html.length > 450000) { dropLS(LS.peek); return }
+      const docHtml = s && view === 'note' ? (state.mode === 'read' ? els.read.innerHTML : els.editor.innerHTML).replace(/contenteditable="true"/g, 'contenteditable="false"') : ''
+      writeLS(LS.peek, {
+        html,
+        cls: root.className,
+        view,
+        status: root.dataset.status,
+        id: view === 'note' ? s?.id || null : null,
+        mode: state.mode,
+        docHtml,
+        scroll: Math.round(els.scroll.scrollTop),
+        homeScroll: Math.round(els.homeSide.scrollTop),
+        at: Date.now(),
+      })
+    } catch {}
+  }
+
+  function flush() {
+    rememberScroll()
+    flushMeta()
+    state.session?.sync.flush()
+    state.store?.flushTools()
+    savePeek()
   }
 
   // ---------- auth ----------
   function showGate(kind) {
     els.gate.hidden = false
     els.shell.hidden = true
+    root.dataset.view = 'gate'
     root.querySelector('[data-gate-loading]').hidden = kind !== 'loading'
     root.querySelector('[data-act="signin"]').hidden = kind !== 'signedout'
     root.querySelector('[data-gate-error]').hidden = kind !== 'unauthorized'
     root.querySelector('[data-gate-signout]').hidden = kind !== 'unauthorized'
   }
 
-  function startSession(user) {
+  function showUser(user) {
+    const avatar = $('[data-avatar]')
+    if (user.photoURL && avatar.getAttribute('src') !== user.photoURL) avatar.src = user.photoURL
+    avatar.hidden = !user.photoURL
+    $('[data-user]').textContent = user.displayName || user.email
+  }
+
+  let unsubConn = null
+  function startSession(user, { optimistic = false } = {}) {
     els.gate.hidden = true
     els.shell.hidden = false
     root.classList.toggle('nt--side-hidden', state.sideHidden)
-    const avatar = $('[data-avatar]')
-    avatar.src = user.photoURL || ''
-    avatar.hidden = !user.photoURL
-    $('[data-user]').textContent = user.displayName || user.email
-    if (!state.store) {
-      state.store = new NotesStore(db, storage).start()
-      state.store.subscribe(() => {
-        renderTree()
-        renderHeader()
-        const s = state.session
-        if (s && !state.store.get(s.id) && Object.keys(state.store.items).length) {
-          closeNote()
-          toast(t('noteDeleted'))
-        }
-      })
-    }
+    showUser(user)
+    state.store = new NotesStore(db, storage).start(state.gate)
+    state.store.subscribe(() => {
+      renderAll()
+      const s = state.session
+      if (s && !state.store.get(s.id) && Object.keys(state.store.items).length && state.authed) {
+        closeNote()
+        setView('list')
+        toast(t('noteDeleted'))
+      }
+    })
+    unsubConn = onValue(ref(db, '.info/connected'), snap => { state.online = snap.val() === true; renderStatus() })
     applyLabels()
     fitViewport()
     const route = getRoute()
-    const wide = window.matchMedia('(min-width: 48rem)').matches
-    const target = route || (wide ? localStorage.getItem(LS.last) : null)
-    if (target && state.store.get(target)) openNote(target, { push: !route })
-    else setView('list')
+    const lastView = localStorage.getItem(LS.view)
+    const last = localStorage.getItem(LS.last)
+    const target = route || ((lastView === 'note' || (!phone.matches && lastView !== 'list')) ? last : null)
+    if (target && state.store.get(target)) openNote(target, { push: !route && !optimistic, restore: true })
+    else {
+      setView('list')
+      renderNow()
+      if (state.peek?.homeScroll) els.homeSide.scrollTop = state.peek.homeScroll
+    }
+    state.peek = null
   }
 
   function stopSession() {
     closeNote()
     state.store?.stop()
     state.store = null
+    unsubConn?.()
+    unsubConn = null
     els.tree.innerHTML = ''
+    els.homeSide.innerHTML = ''
+    els.homeMain.innerHTML = ''
   }
 
-  showGate('loading')
-  applyLabels()
+  const cached = readJSON(LS.user, null)
+  if (cached && isAllowed(cached)) startSession(cached, { optimistic: true })
+  else showGate('loading')
+  if (!state.store) applyLabels()
+
   const unsubAuth = onAuthStateChanged(auth, user => {
     state.user = user
-    if (!user) { stopSession(); showGate('signedout'); return }
-    if (!isAllowed(user)) { stopSession(); showGate('unauthorized'); return }
-    startSession(user)
+    if (!user || !isAllowed(user)) {
+      const wasAuthed = state.authed
+      stopSession()
+      state.authed = false
+      if (wasAuthed) state.gate = newGate()
+      dropLS(LS.user, LS.peek)
+      showGate(user ? 'unauthorized' : 'signedout')
+      return
+    }
+    writeLS(LS.user, { uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL })
+    state.authed = true
+    resolveAuth()
+    if (!state.store) startSession(user)
+    else { showUser(user); renderStatus() }
   })
 
   return {
     openNote: id => state.store && openNote(id, { push: false }),
-    showList: () => setView('list'),
+    showList: () => { if (state.store) goList() },
     // Returns true when it consumed a "back" gesture (Android back button).
     back() {
       if (els.dialog.open) { els.dialog.close(); return true }
       if (!els.menu.hidden) { closeMenu(); return true }
-      if (root.dataset.view === 'note' && window.matchMedia('(max-width: 47.99rem)').matches) { goList(); return true }
+      if (!state.store) return false
+      if (root.dataset.view === 'note' && phone.matches) { goList(); return true }
+      if (state.query) { els.search.value = ''; state.query = ''; syncSearchClear(); renderAll(); return true }
+      if (state.folder !== ROOT_ID && state.store.get(state.folder)) { setFolder(state.store.get(state.folder).parent || ROOT_ID, { touch: false }); return true }
       return false
     },
-    flush() {
-      flushMeta()
-      state.session?.sync.flush()
-    },
+    flush,
     destroy() {
       unsubAuth()
       stopSession()
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('langchanged', onLang)
       window.removeEventListener('resize', fitViewport)
+      phone.removeEventListener('change', onPhoneChange)
     },
   }
 }

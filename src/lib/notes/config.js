@@ -19,6 +19,8 @@ export const PATHS = {
   tree: 'notes/tree',
   text: 'notes/text',
   ydoc: 'notes/ydoc',
+  usage: 'notes/usage',
+  tools: 'notes/prefs/toolbar',
 }
 
 export function isAllowed(user) {
